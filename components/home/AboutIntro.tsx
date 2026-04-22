@@ -41,18 +41,22 @@ export default function AboutIntro() {
 
           {/* Right - Image */}
           <div className="flex-1 relative">
-            <div className="rounded-2xl overflow-hidden shadow-2xl">
+            <div className="rounded-[40px] overflow-hidden shadow-2xl border-8 border-white">
               <img 
-                src="https://images.unsplash.com/photo-1509099836639-18ba1795216d?q=80&w=1931&auto=format&fit=crop" 
-                alt="Community Awareness" 
+                src="/assets/about_us.jpg" 
+                alt="Community Awareness Workshop" 
                 className="w-full h-auto object-cover"
               />
             </div>
             {/* Overlay Card */}
-            <div className="absolute -bottom-8 -left-8 bg-accent text-white p-6 rounded-xl shadow-xl max-w-[280px] hidden md:block">
-              <p className="font-display text-lg font-bold italic leading-snug">
-                &quot;Non-Political | Non-Commercial | Awareness-Focused&quot;
+            <div className="absolute -bottom-10 -left-10 bg-accent text-white p-8 rounded-3xl shadow-2xl max-w-[300px] hidden xl:block border-4 border-white">
+              <p className="font-display text-xl font-black italic leading-tight">
+                &quot;Knowledge is the strongest tool for social development.&quot;
               </p>
+              <div className="mt-4 flex gap-2">
+                <span className="w-8 h-1 bg-white/30 rounded-full" />
+                <span className="w-4 h-1 bg-white/30 rounded-full" />
+              </div>
             </div>
           </div>
         </div>

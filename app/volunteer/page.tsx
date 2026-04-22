@@ -5,8 +5,8 @@ import Link from "next/link";
 
 export default function VolunteerProgramsPage() {
   return (
-    <main className="min-h-screen pt-24">
-      <PageHero title="Volunteer Programs" />
+    <main className="min-h-screen">
+      <PageHero title="Volunteer Programs" image="/assets/s1.jpeg" />
       <section className="py-24 bg-bg">
         <div className="max-content">
           <div className="text-center mb-16 space-y-4">

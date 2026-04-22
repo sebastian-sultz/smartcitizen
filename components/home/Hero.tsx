@@ -11,7 +11,7 @@ export default function Hero() {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000 scale-105"
         style={{ 
-          backgroundImage: "url('https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=2070&auto=format&fit=crop')",
+          backgroundImage: "url('/assets/vision34.jpeg')",
         }}
       >
         <div className="absolute inset-0 bg-dark/60" />
@@ -23,8 +23,8 @@ export default function Hero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <span className="inline-block px-4 py-1.5 rounded-full bg-accent/20 border border-accent/30 text-accent-light text-[13px] font-bold uppercase tracking-[0.2em] mb-6">
-            EMPOWERING COMMUNITIES ACROSS INDIA
+          <span className="inline-block px-6 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-accent-light text-[13px] font-black uppercase tracking-[0.3em] mb-8">
+            Empowering Citizens • Changing Lives
           </span>
         </motion.div>
 
@@ -32,41 +32,49 @@ export default function Hero() {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-display text-5xl md:text-7xl lg:text-[80px] font-black mb-8 leading-[1.1]"
+          className="font-display text-5xl md:text-7xl lg:text-[90px] font-black mb-10 leading-[0.95] tracking-tight"
         >
-          Building a Smarter,<br />
-          <span className="text-accent">Safer, More Aware</span> Society.
+          Building a <span className="text-accent">Smarter</span>,<br />
+          Aware & Safer India.
         </motion.h1>
 
-        <motion.p
+        <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="max-w-2xl mx-auto text-lg md:text-xl text-white/80 font-light mb-10 leading-relaxed"
+          className="max-w-3xl mx-auto space-y-6 mb-12"
         >
-          GlobalSmart Citizens Foundation is a registered non-profit empowering
-          citizens through awareness, education, and grassroots action — across
-          environment, health, law, digital safety, and more.
-        </motion.p>
+          <p className="text-lg md:text-2xl text-white/90 font-medium leading-relaxed">
+            From climate change awareness to women's empowerment through sports — 
+            we are at the grassroots, making a difference every single day.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3 pt-2">
+            {['Non-Political', 'Non-Commercial', 'Social Welfare'].map((tag) => (
+              <span key={tag} className="px-4 py-1 rounded-lg bg-primary/20 border border-white/10 text-[12px] font-bold uppercase tracking-widest text-white/60">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.6 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          className="flex flex-col sm:flex-row items-center justify-center gap-5"
         >
           <Link 
             href="/donation" 
-            className="w-full sm:w-auto bg-accent hover:bg-accent-light text-white px-10 py-4 rounded-lg font-bold flex items-center justify-center gap-2 transition-all transform hover:-translate-y-1 shadow-xl shadow-accent/20"
+            className="w-full sm:w-auto bg-accent hover:bg-accent-light text-white px-12 py-5 rounded-2xl font-black flex items-center justify-center gap-3 transition-all transform hover:-translate-y-1 shadow-2xl shadow-accent/40 text-lg active:scale-95"
           >
-            <Heart size={20} fill="currentColor" />
-            Support the Cause
+            <Heart size={24} fill="currentColor" />
+            Support Our Mission
           </Link>
           <Link 
             href="/JoinUs" 
-            className="w-full sm:w-auto bg-transparent border-2 border-white hover:bg-white hover:text-dark text-white px-10 py-4 rounded-lg font-bold transition-all transform hover:-translate-y-1"
+            className="w-full sm:w-auto bg-white/10 backdrop-blur-md border-2 border-white/30 hover:bg-white hover:text-primary text-white px-12 py-5 rounded-2xl font-black transition-all transform hover:-translate-y-1 text-lg active:scale-95"
           >
-            Join as a Volunteer
+            Become a Volunteer
           </Link>
         </motion.div>
       </div>

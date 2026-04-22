@@ -1,15 +1,51 @@
 import { Scale, Shield, Heart, Baby, Wallet, UserCheck, Leaf, BookOpen, HandHeart } from "lucide-react";
 
 const impactItems = [
-  { icon: Scale, text: "Helping citizens understand legal rights, duties, and protections" },
-  { icon: Shield, text: "Educating people on digital safety, cyber fraud prevention, and online responsibility" },
-  { icon: Heart, text: "Promoting health awareness, mental well-being, women's health, and preventive care" },
-  { icon: Baby, text: "Protecting children through child rights, safety, and POCSO awareness" },
-  { icon: Wallet, text: "Encouraging financial literacy for safer household money management" },
-  { icon: UserCheck, text: "Supporting senior citizens with legal, digital, and financial awareness" },
-  { icon: Leaf, text: "Creating environmentally responsible communities through sustainability programs" },
-  { icon: BookOpen, text: "Guiding students with career awareness, stress management, and skill development" },
-  { icon: HandHeart, text: "Providing charitable support, counseling, and guidance during times of need" },
+  { 
+    icon: Scale, 
+    title: "Legal & Constitutional Awareness",
+    text: "Empowering citizens with knowledge of their fundamental rights, duties, and essential legal protections like FIR and Consumer Laws." 
+  },
+  { 
+    icon: Shield, 
+    title: "Digital & Cyber Safety",
+    text: "Educating communities on cyber fraud prevention, safe internet usage, and responsible social media ethics for a secure digital life." 
+  },
+  { 
+    icon: Heart, 
+    title: "Health & Mental Well-being",
+    text: "Promoting overall wellness through yoga, nutrition guidance, mental health awareness, and hygiene camps for all age groups." 
+  },
+  { 
+    icon: Baby, 
+    title: "Child Protection & Safety",
+    text: "Safeguarding the future through POCSO awareness, child rights education, and building secure environments for children to thrive." 
+  },
+  { 
+    icon: Wallet, 
+    title: "Financial Literacy",
+    text: "Guiding households towards financial security through awareness on banking, savings, and safe money management practices." 
+  },
+  { 
+    icon: UserCheck, 
+    title: "Senior Citizen Support",
+    text: "Providing dedicated legal, digital, and emotional support to help our elders live with dignity, safety, and technological confidence." 
+  },
+  { 
+    icon: Leaf, 
+    title: "Environmental Responsibility",
+    text: "Driving grassroots action for waste segregation, plastic-free living, and sustainable practices to protect our planet." 
+  },
+  { 
+    icon: BookOpen, 
+    title: "Education & Career Guidance",
+    text: "Bridging the information gap for students with career counseling, scholarship awareness, and professional skill development." 
+  },
+  { 
+    icon: HandHeart, 
+    title: "Social Welfare & Support",
+    text: "Standing with individuals in need through counseling, guidance, and charitable assistance for holistic community development." 
+  },
 ];
 
 export default function ImpactSection() {
@@ -21,15 +57,18 @@ export default function ImpactSection() {
           <h2 className="font-display text-4xl md:text-5xl font-bold text-white">How We Are Changing People&apos;s Lives</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {impactItems.map((item, i) => (
-            <div key={i} className="bg-white p-6 rounded-xl border-l-4 border-accent flex items-start gap-4 hover:shadow-xl transition-shadow">
-              <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary shrink-0">
-                <item.icon size={20} />
+            <div key={i} className="bg-white/5 backdrop-blur-sm p-8 rounded-[32px] border border-white/10 flex flex-col gap-6 hover:bg-white/10 hover:scale-[1.02] transition-all duration-300 group">
+              <div className="w-14 h-14 rounded-2xl bg-accent flex items-center justify-center text-white shadow-lg shadow-accent/20 group-hover:rotate-12 transition-transform">
+                <item.icon size={28} />
               </div>
-              <p className="text-text font-medium text-[15px] leading-snug pt-1">
-                {item.text}
-              </p>
+              <div className="space-y-3">
+                <h3 className="text-xl font-bold text-white group-hover:text-accent-light transition-colors">{item.title}</h3>
+                <p className="text-white/70 text-[15px] leading-relaxed">
+                  {item.text}
+                </p>
+              </div>
             </div>
           ))}
         </div>

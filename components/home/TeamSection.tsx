@@ -1,8 +1,8 @@
 const teamMembers = [
-  { name: "ALEXANDER GARY", role: "Founder", img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1974&auto=format&fit=crop" },
-  { name: "MELISSA MUNOZ", role: "Co-Founder", img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1974&auto=format&fit=crop" },
-  { name: "JOHN ABRAHAM", role: "Chief Editor", img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1974&auto=format&fit=crop" },
-  { name: "SILVIA STAN", role: "Manager", img: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1974&auto=format&fit=crop" },
+  { name: "Dr. Anuj Singh", role: "Legal Expert", img: "/assets/a4.png" },
+  { name: "Mrs. Kavita Rai", role: "Psychological Expert", img: "/assets/a1.png" },
+  { name: "Mr. Manoj Jain", role: "Financial Expert", img: "/assets/a11.png" },
+  { name: "Mr. Neeraj Kumar", role: "Digital & Cyber Expert", img: "/assets/a10.png" },
 ];
 
 export default function TeamSection() {

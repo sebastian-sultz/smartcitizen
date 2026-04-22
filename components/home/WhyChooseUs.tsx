@@ -32,8 +32,8 @@ export default function WhyChooseUs() {
           <div className="flex-1">
             <div className="rounded-2xl overflow-hidden shadow-2xl h-full min-h-[400px]">
               <img 
-                src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?q=80&w=1949&auto=format&fit=crop" 
-                alt="Community Group" 
+                src="/assets/a9.png" 
+                alt="Foundation Seminar" 
                 className="w-full h-full object-cover"
               />
             </div>

@@ -4,8 +4,8 @@ import { Users } from "lucide-react";
 
 export default function CommunityActivitiesPage() {
   return (
-    <main className="min-h-screen pt-24">
-      <PageHero title="Community Activities" />
+    <main className="min-h-screen">
+      <PageHero title="Community Activities" image="/assets/vision34.jpeg" />
       <section className="py-24 bg-bg">
         <div className="max-content">
           <div className="text-center mb-16 space-y-4">

@@ -84,8 +84,8 @@ const programs = [
 
 export default function ProgramsPage() {
   return (
-    <main className="min-h-screen pt-24">
-      <PageHero title="Our Programs" />
+    <main className="min-h-screen">
+      <PageHero title="Our Programs" image="/assets/vision34.jpeg" />
 
       <section className="py-24 bg-bg">
         <div className="max-content">

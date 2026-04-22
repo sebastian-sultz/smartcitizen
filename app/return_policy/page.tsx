@@ -41,7 +41,7 @@ const refundPolicies = [
 
 export default function RefundPolicyPage() {
   return (
-    <main className="min-h-screen pt-24">
+    <main className="min-h-screen">
       <PageHero title="Refund Policy" />
 
       <section className="py-24 bg-white">

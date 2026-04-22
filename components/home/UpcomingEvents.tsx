@@ -3,25 +3,25 @@ import { MoveRight } from "lucide-react";
 
 const events = [
   {
-    title: "Public Awareness Program",
-    date: "22 JUL 2026",
+    title: "Awareness & Guidance Program",
+    date: "05 JUL 2026",
     category: "Community",
-    desc: "GlobalSmart organizes programs educating communities, promoting responsibility, and encouraging positive change through awareness initiatives.",
-    img: "https://images.unsplash.com/photo-1544027993-37dbfe43562a?q=80&w=2070&auto=format&fit=crop"
+    desc: "A special program to provide legal and social guidance to community members, empowering them with knowledge.",
+    img: "/assets/a2.png"
   },
   {
-    title: "Environmental Awareness Initiative",
-    date: "24 JUL 2026",
-    category: "Sustainability",
+    title: "Eco-Friendly Awareness",
+    date: "12 JUL 2026",
+    category: "Environment",
     desc: "GlobalSmart promotes eco-friendly practices, tree plantation, waste reduction, and environmental awareness.",
-    img: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=2013&auto=format&fit=crop"
+    img: "/assets/a1.png"
   },
   {
     title: "Grassroots Cricket Promotion",
     date: "30 JUL 2026",
     category: "Sports",
     desc: "GlobalSmart Citizens Foundation conducts tournaments to inspire youth participation, develop skills, and strengthen community sports culture.",
-    img: "https://images.unsplash.com/photo-1531415074968-036ba1b565da?q=80&w=2067&auto=format&fit=crop"
+    img: "/assets/a23.jpeg"
   }
 ];
 

@@ -1,6 +1,8 @@
 import Hero from "@/components/home/Hero";
+import PartnerMarquee from "@/components/home/PartnerMarquee";
 import ImpactCounter from "@/components/home/ImpactCounter";
 import AboutIntro from "@/components/home/AboutIntro";
+import Priorities from "@/components/home/Priorities";
 import ProgramSection from "@/components/home/ProgramSection";
 import WhyChooseUs from "@/components/home/WhyChooseUs";
 import ImpactSection from "@/components/home/ImpactSection";
@@ -11,10 +13,12 @@ import CommunitySports from "@/components/home/CommunitySports";
 
 export default function Home() {
   return (
-    <main>
+    <main className="min-h-screen">
       <Hero />
+      <PartnerMarquee />
       <ImpactCounter />
       <AboutIntro />
+      <Priorities />
       <ProgramSection />
       <WhyChooseUs />
       <ImpactSection />

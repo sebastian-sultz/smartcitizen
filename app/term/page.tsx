@@ -53,7 +53,7 @@ const sections = [
 
 export default function TermsPage() {
   return (
-    <main className="min-h-screen pt-24">
+    <main className="min-h-screen">
       <PageHero title="Terms & Conditions" />
 
       <section className="py-24 bg-white">
