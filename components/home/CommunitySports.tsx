@@ -2,7 +2,7 @@ import { Trophy } from "lucide-react";
 
 export default function CommunitySports() {
   return (
-    <section className="py-24 bg-dark text-white overflow-hidden">
+    <section className="py-16 md:py-24 bg-dark text-white overflow-hidden">
       <div className="max-content">
         <div className="flex flex-col lg:flex-row gap-16 items-center">
           {/* Left - Text */}

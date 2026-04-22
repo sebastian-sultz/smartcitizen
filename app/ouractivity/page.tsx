@@ -6,7 +6,7 @@ export default function OurActivityPage() {
   return (
     <main className="min-h-screen">
       <PageHero title="Our Activities" image="/assets/vision34.jpeg" />
-      <section className="py-24 bg-bg">
+      <section className="py-16 md:py-24 bg-bg">
         <div className="max-content">
           <div className="text-center mb-16 space-y-4">
             <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-accent">ON THE GROUND</span>

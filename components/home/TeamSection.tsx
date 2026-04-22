@@ -7,7 +7,7 @@ const teamMembers = [
 
 export default function TeamSection() {
   return (
-    <section className="py-24 bg-surface">
+    <section className="py-16 md:py-24 bg-surface">
       <div className="max-content">
         <div className="text-center mb-16 space-y-4">
           <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-accent">OUR LEADERSHIP</span>

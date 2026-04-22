@@ -7,7 +7,7 @@ export default function EventsPage() {
     <main className="min-h-screen">
       <PageHero title="Events & Workshops" image="/assets/a1.png" />
 
-      <section className="py-24 bg-white">
+      <section className="py-16 md:py-24 bg-white">
         <div className="max-content">
           <div className="max-w-3xl mx-auto text-center space-y-6 mb-20">
             <h2 className="font-display text-4xl md:text-5xl font-bold text-text">WHAT&apos;S COMING</h2>

@@ -25,7 +25,7 @@ const reasons = [
 
 export default function WhyChooseUs() {
   return (
-    <section className="py-24 bg-bg-alt">
+    <section className="py-16 md:py-24 bg-bg-alt">
       <div className="max-content">
         <div className="flex flex-col lg:flex-row gap-16">
           {/* Left - Image */}

@@ -41,7 +41,7 @@ const priorities = [
 
 export default function Priorities() {
   return (
-    <section className="py-24 bg-white">
+    <section className="py-16 md:py-24 bg-white">
       <div className="max-content">
         <div className="text-center mb-16 space-y-4">
           <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-primary">CORE FOCUS</span>

@@ -3,7 +3,7 @@ import { MoveRight } from "lucide-react";
 
 export default function AboutIntro() {
   return (
-    <section className="py-24 bg-surface">
+    <section className="py-16 md:py-24 bg-surface">
       <div className="max-content">
         <div className="flex flex-col lg:flex-row items-center gap-16">
           {/* Left - Text */}

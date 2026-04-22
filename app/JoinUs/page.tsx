@@ -7,7 +7,7 @@ export default function JoinUsPage() {
     <main className="min-h-screen">
       <PageHero title="Join as a Volunteer" image="/assets/s1.jpeg" />
 
-      <section className="py-24 bg-bg">
+      <section className="py-16 md:py-24 bg-bg">
         <div className="max-content">
           <div className="flex flex-col lg:flex-row gap-16 items-start">
             {/* Left - Why Join */}

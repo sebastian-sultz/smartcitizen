@@ -13,7 +13,7 @@ const priorities = [
 ];
 
 export const OurStory = () => (
-  <section className="py-24 bg-white">
+  <section className="py-16 md:py-24 bg-white">
     <div className="max-content">
       <div className="flex flex-col lg:flex-row gap-16 items-center">
         <div className="flex-1 space-y-8">
@@ -45,7 +45,7 @@ export const OurStory = () => (
 );
 
 export const Priorities = () => (
-  <section className="py-24 bg-bg">
+  <section className="py-16 md:py-24 bg-bg">
     <div className="max-content">
       <div className="text-center mb-16 space-y-4">
         <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-accent">OUR PRIORITIES</span>
@@ -66,7 +66,7 @@ export const Priorities = () => (
 );
 
 export const CareerSection = () => (
-  <section className="py-24 bg-surface">
+  <section className="py-16 md:py-24 bg-surface">
     <div className="max-content">
       <div className="bg-primary rounded-[32px] p-8 md:p-16 text-white overflow-hidden relative">
         <div className="relative z-10">

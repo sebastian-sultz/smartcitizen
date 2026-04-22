@@ -6,7 +6,7 @@ export default function LeaderboardPage() {
     <main className="min-h-screen">
       <PageHero title="Participation Highlights" image="/assets/q8.jpeg" />
 
-      <section className="py-24 bg-white">
+      <section className="py-16 md:py-24 bg-white">
         <div className="max-content">
           <div className="max-w-3xl mx-auto text-center space-y-8">
             <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-accent">RECOGNITION</span>

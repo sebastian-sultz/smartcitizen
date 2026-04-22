@@ -50,7 +50,7 @@ const impactItems = [
 
 export default function ImpactSection() {
   return (
-    <section className="py-24 bg-primary">
+    <section className="py-16 md:py-24 bg-primary">
       <div className="max-content">
         <div className="text-center mb-16 space-y-4">
           <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-accent-light">OUR IMPACT</span>

@@ -16,7 +16,7 @@ export default function ContactPage() {
     <main className="min-h-screen">
       <PageHero title="Get Help & Support" image="/assets/vision34.jpeg" />
 
-      <section className="py-24 bg-white">
+      <section className="py-16 md:py-24 bg-white">
         <div className="max-content">
           {/* Empathy Statement */}
           <div className="max-w-4xl mx-auto text-center space-y-8 mb-24">

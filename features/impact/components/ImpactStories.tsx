@@ -3,7 +3,7 @@ import { FileText } from "lucide-react";
 
 export const ImpactStories = () => {
   return (
-    <section className="py-24 bg-surface">
+    <section className="py-16 md:py-24 bg-surface">
       <div className="max-content">
         <EmptyState 
           icon={FileText}

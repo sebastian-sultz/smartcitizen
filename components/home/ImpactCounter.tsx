@@ -44,7 +44,7 @@ function Counter({ end, label, suffix = "" }: CounterProps) {
 
 export default function ImpactCounter() {
   return (
-    <div className="bg-primary text-white py-10">
+    <div className="bg-primary text-white py-12 md:py-16">
       <div className="max-content">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 items-center">
           <Counter end={15} label="Programs" suffix="+" />

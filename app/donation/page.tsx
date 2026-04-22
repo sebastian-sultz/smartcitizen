@@ -6,7 +6,7 @@ export default function DonationPage() {
     <main className="min-h-screen">
       <PageHero title="Support the Cause" image="/assets/a2.png" />
 
-      <section className="py-24 bg-white">
+      <section className="py-16 md:py-24 bg-white">
         <div className="max-content">
           {/* Impact Message */}
           <div className="max-w-4xl mx-auto text-center space-y-8 mb-24">

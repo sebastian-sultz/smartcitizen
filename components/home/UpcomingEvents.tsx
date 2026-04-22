@@ -27,7 +27,7 @@ const events = [
 
 export default function UpcomingEvents() {
   return (
-    <section className="py-24 bg-bg">
+    <section className="py-16 md:py-24 bg-bg">
       <div className="max-content">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
           <div className="space-y-4 max-w-2xl">

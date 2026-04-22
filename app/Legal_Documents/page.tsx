@@ -7,7 +7,7 @@ export default function LegalDocsPage() {
     <main className="min-h-screen">
       <PageHero title="Official Legal Documents" image="/assets/a4.png" />
 
-      <section className="py-24 bg-white overflow-hidden">
+      <section className="py-16 md:py-24 bg-white overflow-hidden">
         <div className="max-content">
           <div className="max-w-4xl mb-20 space-y-6">
             <span className="text-[12px] font-black uppercase tracking-[0.3em] text-accent">TRUST & TRANSPARENCY</span>

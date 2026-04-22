@@ -10,14 +10,14 @@ export default function AnnouncementBar() {
 
   return (
     <div className="bg-primary text-white text-[13px] h-10 flex items-center justify-between px-4 md:px-6 relative z-50">
-      <div className="flex items-center gap-6 overflow-hidden whitespace-nowrap">
-        <a href="tel:+918429696969" className="flex items-center gap-2 hover:text-accent-light transition-colors">
-          <Phone size={14} />
-          <span className="hidden sm:inline">84 29 69 69 69</span>
+      <div className="flex items-center gap-4 md:gap-6 overflow-hidden">
+        <a href="tel:+918429696969" className="flex items-center gap-2 hover:text-accent-light transition-colors whitespace-nowrap">
+          <Phone size={14} className="shrink-0" />
+          <span className="font-bold">84 29 69 69 69</span>
         </a>
-        <a href="mailto:globalsmartcitizensfoundation@gmail.com" className="flex items-center gap-2 hover:text-accent-light transition-colors">
-          <Mail size={14} />
-          <span className="hidden sm:inline">globalsmartcitizensfoundation@gmail.com</span>
+        <a href="mailto:globalsmartcitizensfoundation@gmail.com" className="hidden md:flex items-center gap-2 hover:text-accent-light transition-colors whitespace-nowrap">
+          <Mail size={14} className="shrink-0" />
+          <span>globalsmartcitizensfoundation@gmail.com</span>
         </a>
       </div>
       
