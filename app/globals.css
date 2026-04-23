@@ -16,8 +16,8 @@
   --color-white: #FFFFFF;
   --color-dark: #0D0D0D;
 
-  --font-display: var(--font-fraunces);
-  --font-body: var(--font-dm-sans);
+  --font-display: var(--font-urbanist);
+  --font-body: var(--font-figtree);
 
   --radius-xl: 12px;
   --radius-lg: 8px;

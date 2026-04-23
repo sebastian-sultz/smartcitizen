@@ -1,16 +1,15 @@
 import type { Metadata } from "next";
-import { Fraunces, DM_Sans } from "next/font/google";
+import { Urbanist, Figtree } from "next/font/google";
 import "./globals.css";
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const urbanist = Urbanist({
+  variable: "--font-urbanist",
   subsets: ["latin"],
-  weight: ["400", "600", "700", "900"],
-  style: ["normal", "italic"],
+  weight: ["400", "500", "600", "700"],
 });
 
-const dmSans = DM_Sans({
-  variable: "--font-dm-sans",
+const figtree = Figtree({
+  variable: "--font-figtree",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600"],
 });
@@ -44,7 +43,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${dmSans.variable} scroll-smooth`}>
+    <html lang="en" className={`${urbanist.variable} ${figtree.variable} scroll-smooth`}>
       <body className="min-h-screen bg-bg text-text font-body selection:bg-primary selection:text-white flex flex-col">
         <AnnouncementBar />
         <Header />
