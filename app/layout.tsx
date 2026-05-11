@@ -33,9 +33,7 @@ export const metadata: Metadata = {
   },
 };
 
-import AnnouncementBar from "@/components/layout/AnnouncementBar";
-import Header from "@/components/layout/Header";
-import Footer from "@/components/layout/Footer";
+
 
 export default function RootLayout({
   children,
@@ -45,12 +43,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${urbanist.variable} ${figtree.variable} scroll-smooth`}>
       <body className="min-h-screen bg-bg text-text font-body selection:bg-primary selection:text-white flex flex-col">
-        <AnnouncementBar />
-        <Header />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        {children}
       </body>
     </html>
   );

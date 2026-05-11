@@ -1,0 +1,59 @@
+"use client";
+
+import React from "react";
+import { Bell, Search, User } from "lucide-react";
+import { usePathname } from "next/navigation";
+
+export function Header() {
+  const pathname = usePathname();
+  
+  // Convert pathname to breadcrumbs (e.g. /dashboard/awareness/category -> Dashboard / Awareness / Category)
+  const segments = pathname.split("/").filter(Boolean);
+  const breadcrumbs = segments.map(s => s.charAt(0).toUpperCase() + s.slice(1).replace("-", " "));
+
+  return (
+    <header className="sticky top-0 z-30 flex items-center justify-between px-6 py-4 bg-surface/80 backdrop-blur-md border-b border-border ml-0 lg:ml-72 transition-all">
+      <div className="flex items-center">
+        <div className="hidden lg:flex items-center space-x-2 text-sm text-text-muted">
+          {breadcrumbs.map((crumb, index) => (
+            <React.Fragment key={crumb}>
+              <span className={index === breadcrumbs.length - 1 ? "text-primary font-semibold" : ""}>
+                {crumb}
+              </span>
+              {index < breadcrumbs.length - 1 && <span className="mx-1">/</span>}
+            </React.Fragment>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex items-center space-x-4">
+        {/* Search Bar */}
+        <div className="hidden md:flex items-center bg-bg px-3 py-1.5 rounded-full border border-border">
+          <Search size={18} className="text-text-muted mr-2" />
+          <input 
+            type="text" 
+            placeholder="Search activities..." 
+            className="bg-transparent border-none outline-none text-sm w-48 placeholder:text-text-light"
+          />
+        </div>
+
+        {/* Notifications */}
+        <button className="relative p-2 text-text-muted hover:bg-bg rounded-full transition-colors">
+          <Bell size={20} />
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-accent rounded-full border-2 border-surface"></span>
+        </button>
+
+        {/* User Profile */}
+        <div className="flex items-center space-x-3 pl-4 border-l border-border">
+          <div className="hidden text-right lg:block">
+            <p className="text-sm font-semibold text-text">Administrator</p>
+            <p className="text-xs text-text-muted">Super Admin</p>
+          </div>
+          <div className="w-10 h-10 bg-primary/10 text-primary rounded-full flex items-center justify-center border border-primary/20">
+            <User size={20} />
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
