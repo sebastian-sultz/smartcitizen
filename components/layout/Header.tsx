@@ -165,13 +165,13 @@ export default function Header() {
             </div>
 
             <Link 
-              href="/ContactUs" 
+              href="/need-help" 
               className={cn(
-                "px-4 py-2 rounded-full font-bold text-[14px] transition-all hover:bg-primary/5",
+                "px-4 py-2 rounded-full font-bold text-[14px] transition-all hover:bg-primary/5 flex items-center gap-2",
                 isScrolled || isHome ? "text-text hover:text-primary" : "text-white hover:bg-white/10"
               )}
             >
-              Get Help
+              Need Help?
             </Link>
           </nav>
 
@@ -186,7 +186,7 @@ export default function Header() {
                   : "border-white/30 text-white hover:bg-white hover:text-primary"
               )}
             >
-              Join Us
+              Become a Smart Citizen
             </Link>
             <Link 
               href="/donation" 

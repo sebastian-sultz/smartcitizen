@@ -16,12 +16,12 @@ export default function VolunteerProgramsPage() {
               Meet our dedicated volunteers working together to create positive social change.
             </p>
           </div>
-          <EmptyState 
+            <EmptyState 
             icon={UserCheck}
             title="Volunteer Spotlight Coming Soon"
             description="We are currently profiling our incredible team of volunteers. Want to be featured here?"
-            ctaText="Register as a Volunteer"
-            ctaHref="/JoinUs"
+            ctaText="Apply as a Volunteer"
+            ctaHref="/volunteer/apply"
           />
 
           <div className="mt-24 bg-primary text-white rounded-[40px] p-12 text-center space-y-8">
@@ -31,8 +31,8 @@ export default function VolunteerProgramsPage() {
               create lasting impact in communities across India.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-               <Link href="/JoinUs" className="bg-accent hover:bg-accent-light text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-accent/20">
-                  Join as a Volunteer
+               <Link href="/volunteer/apply" className="bg-accent hover:bg-accent-light text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-accent/20">
+                  Apply as a Volunteer
                </Link>
                <Link href="/term" className="border border-white/20 hover:bg-white/10 text-white px-8 py-3 rounded-xl font-bold transition-all">
                   View Terms & Guidelines

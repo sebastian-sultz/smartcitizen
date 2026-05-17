@@ -28,63 +28,19 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { title: "Home", href: "/admin", icon: <Home className="w-5 h-5" /> },
+  { title: "Dashboard Overview", href: "/admin", icon: <Home className="w-5 h-5" /> },
+  { title: "User Management", href: "/admin/users", icon: <Users className="w-5 h-5" /> },
+  { title: "Volunteer Applications", href: "/admin/volunteers", icon: <HeartHandshake className="w-5 h-5" /> },
+  { title: "Awareness Campaigns", href: "/admin/campaigns", icon: <BookOpen className="w-5 h-5" /> },
+  { title: "Event Management", href: "/admin/events", icon: <Activity className="w-5 h-5" /> },
+  { title: "Abuse & Moderation", href: "/admin/moderation", icon: <HelpCircle className="w-5 h-5" /> },
   {
-    title: "Awareness Activities",
-    icon: <BookOpen className="w-5 h-5" />,
-    children: [
-      { title: "Add Awareness Category", href: "/admin/awareness/category" },
-      { title: "Add Designation", href: "/admin/awareness/designation" },
-      { title: "Add Awareness Activity", href: "/admin/awareness/activity" },
-      { title: "Add SC News", href: "/admin/awareness/news" },
-      { title: "Awareness Images", href: "/admin/awareness/images" },
-      { title: "Add Banner Image", href: "/admin/awareness/banner" },
-      { title: "Add Popup Image", href: "/admin/awareness/popup" },
-    ],
-  },
-  {
-    title: "Help & Support",
-    icon: <HelpCircle className="w-5 h-5" />,
-    children: [
-      { title: "User Message", href: "/admin/support/messages" },
-      { title: "User Feedback", href: "/admin/support/feedback" },
-      { title: "View Enquiry", href: "/admin/support/enquiries" },
-    ],
-  },
-  {
-    title: "Organization",
+    title: "Organization Setup",
     icon: <Building2 className="w-5 h-5" />,
     children: [
-      { title: "Add Organization", href: "/admin/organization/add" },
-      { title: "Organization Details", href: "/admin/organization/details" },
-      { title: "Add Role", href: "/admin/organization/role" },
-      { title: "Add Staff", href: "/admin/organization/staff" },
-      { title: "Manage Bank", href: "/admin/organization/bank" },
-    ],
-  },
-  {
-    title: "Smart Citizen Activity",
-    icon: <Activity className="w-5 h-5" />,
-    children: [
-      { title: "Add Smart Citizen Activity", href: "/admin/activities/add" },
-      { title: "Activity List", href: "/admin/activities/list" },
-    ],
-  },
-  {
-    title: "Smart Citizen Engagement",
-    icon: <Users className="w-5 h-5" />,
-    children: [
-      { title: "Add Engagement", href: "/admin/engagement/add" },
-      { title: "Engagement List", href: "/admin/engagement/list" },
-    ],
-  },
-  {
-    title: "Support Contribution",
-    icon: <HeartHandshake className="w-5 h-5" />,
-    children: [
-      { title: "Add Payment Mode", href: "/admin/donations/payment-mode" },
-      { title: "Donation Amount Master", href: "/admin/donations/amount-master" },
-      { title: "Donors List", href: "/admin/donations/list" },
+      { title: "Organization Details", href: "#" },
+      { title: "Manage Staff", href: "#" },
+      { title: "Bank Details", href: "#" },
     ],
   },
 ];

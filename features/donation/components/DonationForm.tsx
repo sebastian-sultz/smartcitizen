@@ -1,13 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Heart, Upload, Send } from "lucide-react";
+import { Heart, Upload, Send, CheckCircle2, Download } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 
 export const DonationForm = () => {
+  const [step, setStep] = useState<"form" | "success">("form");
+  const [trxDetails, setTrxDetails] = useState({ id: "", amount: "" });
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -28,13 +32,55 @@ export const DonationForm = () => {
       paymentMode: Yup.string().required("Please select a payment mode"),
       transactionId: Yup.string().required("Transaction ID is required"),
     }),
-    onSubmit: async (values, { setSubmitting, resetForm }) => {
+    onSubmit: async (values, { setSubmitting }) => {
+      setSubmitting(true);
       await new Promise((resolve) => setTimeout(resolve, 2000));
-      alert("Donation details submitted successfully!");
-      resetForm();
+      
+      setTrxDetails({
+        id: values.transactionId || `TRX-${Math.floor(100000 + Math.random() * 900000)}`,
+        amount: values.amount
+      });
+      setStep("success");
       setSubmitting(false);
     },
   });
+
+  if (step === "success") {
+    return (
+      <Card className="flex-1 bg-bg border-border text-center py-8">
+        <CardContent className="space-y-6">
+          <div className="w-24 h-24 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle2 size={48} />
+          </div>
+          <h3 className="text-3xl font-display font-bold text-text">Donation Successful!</h3>
+          <p className="text-text-muted text-[16px] max-w-md mx-auto">
+            Thank you for your generous contribution of <span className="font-bold text-text">₹{trxDetails.amount}</span>. Your support empowers us to build a smarter nation.
+          </p>
+          
+          <div className="bg-white p-6 rounded-2xl border border-border inline-block text-left w-full max-w-sm mt-4 shadow-sm">
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-text-muted text-[14px]">Transaction ID</span>
+              <span className="font-mono font-bold text-text">{trxDetails.id}</span>
+            </div>
+            <div className="flex justify-between items-center mb-3">
+              <span className="text-text-muted text-[14px]">Status</span>
+              <span className="px-2.5 py-1 bg-green-100 text-green-700 text-[12px] font-bold uppercase rounded-full tracking-wider">Completed</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+            <Button onClick={() => alert("Downloading PDF Receipt...")} variant="outline" className="flex items-center gap-2">
+              <Download size={18} />
+              Download Receipt
+            </Button>
+            <Button onClick={() => window.location.href = "/citizen"} className="flex items-center gap-2">
+              Go to Dashboard
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="flex-1 bg-bg border-border">

@@ -2,34 +2,48 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Users, Building2, Heart, Award, ArrowUpRight, TrendingUp } from "lucide-react";
+import { Users, UserCheck, Heart, Megaphone, ArrowUpRight, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const stats = [
-  {
-    title: "Total Smart Citizens",
-    value: "12,458",
-    change: "+12%",
-    icon: <Users className="w-6 h-6" />,
-    color: "bg-blue-500",
-  },
-  {
-    title: "Partner Organizations",
-    value: "142",
-    change: "+5%",
-    icon: <Building2 className="w-6 h-6" />,
-    color: "bg-teal-600",
-  },
-  {
-    title: "Total Donations",
-    value: "₹ 4,25,000",
-    change: "+18%",
-    icon: <Heart className="w-6 h-6" />,
-    color: "bg-accent",
-  },
-];
+import { useAdminStore } from "@/features/admin/store/useAdminStore";
 
 export function DashboardOverview() {
+  const { users, volunteerApps, events, campaigns } = useAdminStore();
+
+  const activeUsersCount = users.filter(u => u.status === 'Active').length;
+  const activeVolunteersCount = users.filter(u => u.role === 'Volunteer' || u.role === 'Coordinator').length;
+  const activeCampaignsCount = campaigns.filter(c => c.status === 'Active').length;
+
+  const stats = [
+    {
+      title: "Total Smart Citizens",
+      value: activeUsersCount.toString(),
+      change: "+12%",
+      icon: <Users className="w-6 h-6" />,
+      color: "bg-blue-500",
+    },
+    {
+      title: "Active Volunteers",
+      value: activeVolunteersCount.toString(),
+      change: "+5%",
+      icon: <UserCheck className="w-6 h-6" />,
+      color: "bg-teal-600",
+    },
+    {
+      title: "Total Donations",
+      value: "₹ 4,25,000",
+      change: "+18%",
+      icon: <Heart className="w-6 h-6" />,
+      color: "bg-accent",
+    },
+    {
+      title: "Active Campaigns",
+      value: activeCampaignsCount.toString(),
+      change: "+2%",
+      icon: <Megaphone className="w-6 h-6" />,
+      color: "bg-orange-500",
+    }
+  ];
+
   return (
     <div className="space-y-8">
       <div>
@@ -38,7 +52,7 @@ export function DashboardOverview() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
           <motion.div
             key={stat.title}

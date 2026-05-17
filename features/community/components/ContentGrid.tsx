@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 import EmptyState from "@/components/ui/EmptyState";
 import { LucideIcon } from "lucide-react";
+import { EventRegisterButton } from "./EventRegisterButton";
 
 interface ContentItem {
   id: string | number;
@@ -76,10 +77,14 @@ export const ContentGrid = ({ items, type, emptyIcon, emptyTitle, emptyDesc }: C
             </p>
           </CardHeader>
           <CardContent>
-            <Link href={`/${type}s/${item.id}`} className="flex items-center gap-2 text-[14px] font-bold text-primary group-hover:gap-3 transition-all">
-              Read More
-              <ArrowRight size={16} />
-            </Link>
+            {type === 'event' ? (
+              <EventRegisterButton />
+            ) : (
+              <Link href={`/${type}s/${item.id}`} className="flex items-center gap-2 text-[14px] font-bold text-primary group-hover:gap-3 transition-all">
+                Read More
+                <ArrowRight size={16} />
+              </Link>
+            )}
           </CardContent>
         </Card>
       ))}

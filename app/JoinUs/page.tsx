@@ -1,11 +1,11 @@
 import PageHero from "@/components/layout/PageHero";
 import { CheckCircle2 } from "lucide-react";
-import { VolunteerForm } from "@/features/volunteer";
+import { RegisterForm } from "@/features/auth/components/RegisterForm";
 
 export default function JoinUsPage() {
   return (
     <main className="min-h-screen">
-      <PageHero title="Join as a Volunteer" image="/assets/s1.jpeg" />
+      <PageHero title="Become a Smart Citizen" image="/assets/s1.jpeg" />
 
       <section className="py-16 md:py-24 bg-bg">
         <div className="max-content">
@@ -16,7 +16,7 @@ export default function JoinUsPage() {
                 <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-accent">MAKE AN IMPACT</span>
                 <h2 className="font-display text-4xl md:text-5xl font-bold text-text">Become a Smart Citizen</h2>
                 <p className="text-text-muted text-[18px] leading-relaxed">
-                  Join a growing movement of aware, responsible, and empowered volunteers
+                  Join a growing movement of aware, responsible, and empowered citizens
                   who are making real differences in communities across India.
                 </p>
               </div>
@@ -25,14 +25,14 @@ export default function JoinUsPage() {
                 <div className="space-y-6">
                   <h4 className="text-xl font-bold text-primary flex items-center gap-2">
                     <CheckCircle2 size={24} />
-                    We Welcome:
+                    As a Smart Citizen, you can:
                   </h4>
                   <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {[
-                      "Social workers and community volunteers",
-                      "Educators, counselors, and trainers",
-                      "Legal, digital, and health awareness professionals",
-                      "Students and youth volunteers"
+                      "Participate in awareness campaigns",
+                      "Access our community support directory",
+                      "Invite friends to the movement",
+                      "Apply for volunteer programs"
                     ].map((item, i) => (
                       <li key={i} className="flex items-center gap-3 bg-white p-4 rounded-xl border border-border text-[15px] text-text-muted">
                         <span className="w-2 h-2 rounded-full bg-accent shrink-0" />
@@ -44,7 +44,7 @@ export default function JoinUsPage() {
               </div>
             </div>
 
-            <VolunteerForm />
+            <RegisterForm />
           </div>
         </div>
       </section>
