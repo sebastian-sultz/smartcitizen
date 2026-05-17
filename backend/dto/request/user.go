@@ -1,0 +1,14 @@
+package request
+
+type RegisterUser struct {
+	Name         string  `json:"name" binding:"required"`
+	Phone        string  `json:"phone" binding:"required"`
+	Password     string  `json:"password" binding:"required,min=6"`
+	ProfilePhoto *string `json:"profile_photo"`
+	ReferralID   *string `json:"referral_id"`
+}
+
+type LoginUser struct {
+	Phone    string `json:"phone" binding:"required"`
+	Password string `json:"password" binding:"required"`
+}
