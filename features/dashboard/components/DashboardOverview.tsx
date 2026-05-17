@@ -27,13 +27,6 @@ const stats = [
     icon: <Heart className="w-6 h-6" />,
     color: "bg-accent",
   },
-  {
-    title: "Completed Quizzes",
-    value: "8,920",
-    change: "+24%",
-    icon: <Award className="w-6 h-6" />,
-    color: "bg-purple-500",
-  },
 ];
 
 export function DashboardOverview() {
@@ -45,7 +38,7 @@ export function DashboardOverview() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {stats.map((stat, index) => (
           <motion.div
             key={stat.title}
@@ -60,7 +53,7 @@ export function DashboardOverview() {
             )} />
             
             <div className="flex justify-between items-start mb-4">
-              <div className={cn("p-3 rounded-xl text-white shadow-lg", stat.color)}>
+               <div className={cn("p-3 rounded-xl text-white shadow-lg", stat.color)}>
                 {stat.icon}
               </div>
               <span className="flex items-center text-xs font-bold text-success bg-success/10 px-2 py-1 rounded-full">
@@ -100,7 +93,7 @@ export function DashboardOverview() {
               <div key={i} className="flex items-start space-x-3 p-3 rounded-lg hover:bg-bg transition-colors cursor-pointer">
                 <div className="w-2 h-2 mt-2 bg-accent rounded-full shrink-0" />
                 <div>
-                  <p className="text-sm font-medium text-text">New Expert KYC Pending</p>
+                  <p className="text-sm font-medium text-text">New Volunteer Registration Pending</p>
                   <p className="text-xs text-text-light">2 hours ago</p>
                 </div>
               </div>

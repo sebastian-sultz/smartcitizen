@@ -11,8 +11,6 @@ const aboutLinks = [
   { name: "About the Foundation", href: "/About" },
   { name: "Mission & Vision", href: "/mission" },
   { name: "Our Social Impact", href: "/impact" },
-  { name: "Our Partners & Experts", href: "/partner" },
-  { name: "Awareness Quiz", href: "/playquize" },
   { name: "Participation Highlights", href: "/leaderboard" },
   { name: "Legal Documents", href: "/Legal_Documents" },
 ];

@@ -1,260 +1,1044 @@
-# Smart Citizen Admin Panel - Legacy Audit & Modernization Blueprint
-
-# Project Overview
-
-*   **Website Purpose**: The Global Smart Citizens Foundation (GSCF) platform is designed to promote social awareness, civic engagement, and community support through activities, quizzes, and expert-led initiatives.
-*   **NGO/Business Domain**: Non-Governmental Organization (NGO) focusing on social awareness, global citizenship, and community empowerment.
-*   **Admin Panel Purpose**: To manage awareness content, user contributions (donations), educational quizzes, support enquiries, and expert verification.
-*   **Technology Assumptions**:
-    *   **Backend**: ASP.NET WebForms (.aspx)
-    *   **Frontend**: Legacy HTML/CSS with server-side postbacks.
-    *   **UI Framework**: Likely a custom or basic Bootstrap-based theme for ASP.NET.
-    *   **Architecture**: Monolithic, server-side rendered.
-*   **Legacy Architecture Observations**:
-    *   Relies heavily on `ViewState` and postbacks for form submissions.
-    *   URL structure is flat (e.g., `/admin/add_quize.aspx`).
-    *   Navigation is a fixed sidebar with dropdowns.
-    *   Table actions are often postback-driven rather than client-side interactions.
-
-# Authentication System
-
-*   **Login Flow**: `https://globalsmartcitizensfoundation.org/adminLogin.aspx`
-    *   Fields: Username, Password.
-    *   Validation: Required fields.
-    *   Logic: Server-side credential check.
-*   **Forgot Password flow**: Not prominently visible on the admin login page; likely managed via database or manual reset.
-*   **Session behavior**: Standard ASP.NET session management.
-*   **Timeout behavior**: Re-directs to login page after session expiry.
-*   **Role handling**: Single 'Admin' role observed for the provided credentials.
-*   **Redirect logic**: Redirects to `admin/Home.aspx` upon successful login.
-
-# Navigation Architecture
-
-*   **Sidebar Structure**:
-    *   **Home**
-    *   **Awareness Activities** (Dropdown)
-    *   **Help & Support** (Dropdown)
-    *   **Organization** (Dropdown)
-    *   **Quizzes** (Dropdown)
-    *   **Smart Citizen Activity** (Dropdown)
-    *   **Smart Citizen Engagement** (Dropdown)
-    *   **Support Contribution** (Dropdown)
-    *   **Logout**
-*   **Topbar structure**: Minimal; contains logo and likely a logout shortcut.
-*   **Breadcrumbs**: Not implemented in the legacy system.
-*   **Access conditions**: Requires active admin session.
-
-# Module Documentation
-
-## 1. Awareness Activities
-
-### Purpose
-To manage educational and social awareness content, categories, and experts.
-
-### Route/Page URL
-Multiple pages under `/admin/`:
-- `add_awareness_category.aspx`
-- `Add_Designation.aspx`
-- `Add_Awareness_Activity.aspx`
-- `Add_News.aspx`
-- `Awareness_Images.aspx`
-- `Add_Banner.aspx`
-- `Add_Popup.aspx`
-- `Awareness_Experts.aspx`
-- `User_KYC_Details.aspx`
-- `Add_Expert_Category.aspx`
-- `Global_Citizen_Verification.aspx`
-
-### User Roles Allowed
-Admin
-
-### UI Layout Structure
-Table at the top or bottom, with an "Add New" form usually present on the same page or a separate modal.
-
-### Tables
-- **Awareness Categories**: ID, Category Name, Status, Action (Edit/Delete).
-- **Activities**: ID, Title, Category, Date, Status, Action.
-- **Experts**: ID, Name, Category, Photo, Action.
-
-### Filters
-Basic keyword search on some list pages.
-
-### Form Fields (General)
-- Category Name (Text)
-- Title (Text)
-- Description (Rich Text/TextArea)
-- Image/File Upload
-- Status (Dropdown: Active/Inactive)
-
-### Validation Rules
-- Required: Title, Category, Images.
-- File Types: .jpg, .png.
+# Technical Product Requirements Document (Technical PRD)
+## Global Smart Citizen Foundation Platform
 
 ---
 
-## 2. Quizzes
+# 1. Project Overview
 
-### Purpose
-To create and manage educational quizzes for users.
+## Project Name
+Global Smart Citizen Foundation Platform
 
-### Route/Page URL
-- `add_quize.aspx`
-- `view_quize_result.aspx`
+## Project Type
+NGO-based Citizen Awareness & Volunteer Coordination Platform
 
-### Tables
-- **Quiz List**: ID, Quiz Topic, Created Date, Action.
-- **Quiz Results**: ID, User Name, Quiz Topic, Score, Date.
+## Objective
+Build a scalable full-stack web platform for the Global Smart Citizen Foundation that enables:
+- Smart Citizen registrations
+- Volunteer management
+- Community awareness participation
+- Need Help directory
+- Event & awareness campaign management
+- Participation tracking
+- Donations/contributions
+- Admin operations
+- Analytics & moderation
 
-### Form Fields
-- Quiz Topic Name (Text)
-- Question (Text)
-- Option A, B, C, D (Text)
-- Correct Answer (Dropdown)
-
----
-
-## 3. Help & Support
-
-### Purpose
-To handle user communications, complaints, and suggestions.
-
-### Route/Page URL
-- `AdminComplain.aspx`
-- `AdminSuggestion.aspx`
-- `View_Enquiry.aspx`
-
-### Tables
-- **Complaints**: ID, User Name, Message, Date, Status.
-- **Enquiries**: ID, Name, Email, Subject, Message, Date.
-
-### Actions
-- Mark as Read
-- Reply (Not fully functional in all views)
+The platform must be:
+- Fully responsive
+- SEO optimized
+- Scalable
+- Secure
+- Role-based
+- Production ready
 
 ---
 
-## 4. Support Contribution
+# 2. Tech Stack
 
-### Purpose
-To monitor and manage financial contributions/donations.
-
-### Route/Page URL
-- `View_Donation.aspx`
-
-### Tables
-- **Donations**: ID, Donor Name, Amount, Transaction ID, Date, Status.
-
-### Export Features
-- Likely supports CSV/Excel export for donation records (standard legacy requirement).
+## Frontend
+- Next.js (App Router)
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- React Hook Form
+- Zod validation
+- TanStack Query
+- Zustand (if lightweight state needed)
 
 ---
 
-## 5. Broken Modules (Technical Debt)
-
-The following modules/pages are currently returning 404 or are missing files:
-*   **Organization**: Add Organization, Organization Details, Add Role, Add Staff, Manage Bank.
-*   **Smart Citizen Activity**: Add Activity, List - reported as 404.
-*   **Smart Citizen Engagement**: Add Engagement, Engagement List.
-
----
-
-# UX Audit
-
-*   **UX problems**:
-    *   Form-heavy pages with poor visual hierarchy.
-    *   No confirmation dialogs for destructive actions.
-    *   Poor feedback on submission success (usually just a page reload).
-*   **Accessibility issues**:
-    *   Low color contrast.
-    *   Missing `alt` tags on images.
-    *   Non-semantic HTML.
-*   **Responsiveness issues**:
-    *   Sidebar breaks on mobile.
-    *   Tables overflow on small screens without horizontal scroll or card view transformation.
-*   **Performance issues**:
-    *   Large `ViewState` payloads slowing down page interactions.
-    *   Synchronous file uploads.
-
-# Suggested Modern Architecture
-
-### Frontend Stack
-- **Framework**: Next.js 14+ (App Router)
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
-- **Components**: shadcn/ui
-- **State Management**: TanStack Query (Server state), Zustand (Client state)
-- **Forms**: React Hook Form + Zod
-- **Data Display**: TanStack Table
-
-### Backend Stack (Modernized)
-- **Language**: Go (Golang) 1.22+
-- **Framework**: Gin-Gonic or Echo
-- **Database**: PostgreSQL 16+
-- **ORM/Query**: GORM or sqlx
-- **Migration Tool**: golang-migrate or GORM Migrations
-- **Auth**: JWT with custom middleware + Bcrypt for hashing
-- **API Style**: RESTful JSON API
-
-# Migration Strategy
-
-1.  **Phase 1: Database Migration**: Schema extraction from legacy SQL Server and migration to PostgreSQL.
-2.  **Phase 2: Go API Development**: Build a high-performance API layer in Go to handle legacy logic.
-3.  **Phase 3: Hybrid Shell**: Build the new admin portal shell (Navigation/Auth) in Next.js.
-4.  **Phase 4: Module Migration**: Migrate modules one by one (starting with working ones like Awareness Activities).
-5.  **Phase 5: Cutover**: Switch DNS to the new system.
-
-# UI Component Inventory
-
-To maintain consistency in the redesign, the following reusable components are identified:
-
-| Component | Legacy Usage | Modern Equivalent (shadcn/ui) |
-| :--- | :--- | :--- |
-| **Sidebar Navigation** | Static list with JS dropdowns | `Sheet` + `NavigationMenu` |
-| **Data Table** | ASP.NET GridView | `TanStack Table` + `Checkbox` (Bulk) |
-| **Status Badge** | Text (Active/Inactive) | `Badge` (variant: success/destructive) |
-| **Form Input** | `<asp:TextBox>` | `Input` |
-| **Rich Text Editor** | Standard `<textarea>` | `Tiptap` or `Quill` |
-| **File Upload** | `<asp:FileUpload>` | Custom `Dropzone` component |
-| **Action Dropdown** | Inline links (Edit/Delete) | `DropdownMenu` (Row actions) |
-| **Modal Dialog** | Popups (rarely used) | `Dialog` |
-| **Stat Card** | Dashboard boxes | `Card` with icons and trends |
-
-# Detailed Redesign Implementation Prompt
-
-Use the following prompt to instruct an AI developer to build the new system:
+## Backend
+- Golang
+- Gin Framework OR Fiber
+- JWT Authentication
+- REST APIs
+- Clean Architecture
+- Repository Pattern
 
 ---
 
-### MODERN ADMIN PANEL REBUILD PROMPT (FRONTEND)
-
-**Role**: Senior Frontend Engineer
-**Task**: Build a high-performance, responsive admin portal for GSCF.
-
-**Requirements**:
-1. **Tech Stack**: Next.js latest (App Router), TypeScript, Tailwind CSS, shadcn/ui.
-2. **Layout**: Collapsible sidebar, mobile-responsive nav, and consistent dashboard shell.
-3. **Data Management**: Use TanStack Query for all API calls to the Go backend.
-4. **Forms**: Implement `react-hook-form` with `zod` schema validation for all awareness and quiz content.
-5. **Interactive Elements**: Use `sonner` for notifications and skeleton states for loading.
+## Database
+- PostgreSQL
 
 ---
 
-### MODERN ADMIN PANEL REBUILD PROMPT (BACKEND)
-
-**Role**: Senior Backend Engineer (Go/Golang)
-**Task**: Build a scalable, secure REST API in Go with a PostgreSQL backend.
-
-**Requirements**:
-1. **Tech Stack**: Go 1.22+, PostgreSQL, Gin or Echo framework.
-2. **Architecture**: Clean Architecture (Handlers -> Services -> Repositories).
-3. **Database**: Implement PostgreSQL schema matching the legacy GSCF entities (Awareness, Quizzes, Donations).
-4. **Authentication**: Implement JWT-based auth with refresh tokens and role-based middleware.
-5. **Features**:
-   - CRUD endpoints for all Awareness activities.
-   - Quiz management logic (Validation of answers, result storage).
-   - Donation tracking API with support for transaction logging.
-   - Automated DB migrations using `golang-migrate`.
-6. **Performance**: Ensure optimized queries and proper indexing for PostgreSQL.
+## Storage
+- AWS S3 OR Cloudinary
 
 ---
 
+## Authentication
+- Mobile Number + Password
+- OTP Verification
+- JWT Access Token
+- Refresh Token
+- HttpOnly Cookies
+
+---
+
+## Payments
+- Razorpay
+OR
+- PhonePe
+
+---
+
+## Hosting
+### Frontend
+- Vercel
+
+### Backend
+- AWS EC2 / DigitalOcean / Railway
+
+### Database
+- Supabase PostgreSQL OR AWS RDS
+
+---
+
+# 3. User Roles
+
+## Roles
+1. Guest
+2. Smart Citizen
+3. Active Smart Citizen
+4. Volunteer
+5. Coordinator
+6. Block Coordinator
+7. District Coordinator
+8. State Coordinator
+9. National Coordinator
+10. Admin
+
+---
+
+# 4. High-Level System Architecture
+
+## Frontend Architecture
+Use:
+- App Router architecture
+- Server Components where possible
+- Client Components only when required
+- Route Groups
+- Feature-based folder structure
+
+---
+
+## Suggested Frontend Structure
+
+```bash
+src/
+ ├── app/
+ ├── components/
+ ├── features/
+ ├── services/
+ ├── hooks/
+ ├── lib/
+ ├── store/
+ ├── types/
+ ├── schemas/
+ ├── utils/
+ └── constants/
+```
+
+---
+
+## Backend Architecture
+Use Clean Architecture:
+
+```bash
+cmd/
+internal/
+ ├── handlers/
+ ├── services/
+ ├── repositories/
+ ├── middleware/
+ ├── models/
+ ├── routes/
+ ├── config/
+ ├── utils/
+ ├── validators/
+ └── database/
+```
+
+---
+
+# 5. Core Functional Modules
+
+## Modules
+1. Public Website
+2. Authentication
+3. Smart Citizen Registration
+4. Dashboard
+5. Awareness Participation System
+6. Volunteer Management
+7. Need Help Module
+8. Search & Discovery
+9. Donation System
+10. Event Management
+11. Notifications
+12. Admin Panel
+13. Consent & Privacy
+14. Moderation System
+15. Analytics
+
+---
+
+# 6. Public Website Module
+
+## Public Pages
+
+### Required Pages
+- Home
+- About Us
+- Mission & Vision
+- Awareness Campaigns
+- Events
+- Become Smart Citizen
+- Need Help
+- Contact Us
+- Privacy Policy
+- Terms & Conditions
+
+---
+
+## Homepage Sections
+
+### Hero Section
+- NGO introduction
+- Awareness messaging
+- CTA buttons
+
+---
+
+### Main CTA Buttons
+1. Become a Smart Citizen
+2. Need Help?
+
+---
+
+### Awareness Section
+- Blogs
+- Articles
+- Awareness content
+- Campaigns
+
+---
+
+### Event Section
+- Upcoming events
+- Event highlights
+
+---
+
+### Need Help Preview
+- Featured volunteers/professionals
+- Categories
+
+---
+
+# 7. Authentication Module
+
+## Registration Flow
+
+### Smart Citizen Registration
+Fields:
+- Full Name
+- Mobile Number
+- OTP Verification
+- Password
+
+Workflow:
+1. User submits mobile number
+2. OTP sent
+3. OTP verified
+4. Password created
+5. Smart Citizen ID generated
+6. Account created
+
+---
+
+## Login Flow
+Fields:
+- Mobile Number
+- Password
+
+---
+
+## Forgot Password
+Workflow:
+1. Enter mobile number
+2. Send OTP
+3. Verify OTP
+4. Reset password
+
+---
+
+## Security Requirements
+- Password hashing using bcrypt
+- JWT token authentication
+- HttpOnly cookies
+- Refresh token support
+- Rate limiting
+- OTP expiry
+- Brute force protection
+
+---
+
+# 8. Smart Citizen Module
+
+## Smart Citizen Features
+Users can:
+- Login to dashboard
+- Upload profile photo
+- Update profile
+- View Smart Citizen ID
+- Participate in awareness campaigns
+- Share participation invite links
+- View contribution history
+- Access Need Help module
+
+---
+
+## Smart Citizen ID Generation
+Format Example:
+
+```txt
+GSC000523
+```
+
+Requirements:
+- Unique
+- Permanent
+- Non-editable
+- Auto-generated
+
+---
+
+# 9. Dashboard Module
+
+## Dashboard Sections
+
+### Personal Profile Card
+Display:
+- Profile photo
+- Full name
+- Mobile number
+- Smart Citizen ID
+- Role
+- Registration date
+
+---
+
+### Participation Stats
+Display:
+- Awareness participation count
+- Participation Invite Network count
+- Volunteer eligibility status
+- Contribution statistics
+
+---
+
+### Contribution History
+Display:
+- Amount
+- Date
+- Transaction ID
+- Payment status
+- Download receipt option
+
+---
+
+### Notifications
+Display:
+- Campaign notifications
+- Event notifications
+- Admin announcements
+
+---
+
+# 10. Awareness Participation System
+
+## Purpose
+Track awareness participation and community engagement.
+
+---
+
+## Participation Invite Link
+Each Smart Citizen gets:
+- Unique participation invite link
+
+Example:
+
+```txt
+/gsc/invite/abc123
+```
+
+---
+
+## Tracking Requirements
+Track:
+- Invited users
+- Registration conversions
+- Community participation activity
+- Awareness campaign participation
+
+---
+
+## Important Restriction
+The system must NOT:
+- Mention earnings
+- Mention commissions
+- Mention financial recruitment
+
+---
+
+# 11. Volunteer Management System
+
+## Volunteer Application
+
+### Eligibility Indicators
+System should internally track:
+- Participation Invite Network activity
+- Awareness participation
+- Community engagement
+- Participation duration
+
+---
+
+## Volunteer Application Form
+
+### Personal Information
+- Full name
+- Mobile number
+- Alternate mobile number
+- Email
+- Address (optional)
+- State (optional)
+- District (optional)
+- Pin code (optional)
+
+---
+
+### Professional Information
+- Profession category
+- Specialization
+- Experience
+- Public description
+
+---
+
+### Media Upload
+- Profile image
+
+---
+
+### Consent Fields
+Checkboxes:
+- Agree to volunteer guidelines
+- Consent to public profile visibility
+- Consent for Need Help visibility
+- Show phone publicly toggle
+
+---
+
+## Volunteer Approval Flow
+1. User submits form
+2. Admin review
+3. Approve/reject
+4. Volunteer profile activated
+
+---
+
+# 12. Need Help Module
+
+## Purpose
+Professional/community support discovery module.
+
+---
+
+## Accessible By
+Only authenticated Smart Citizens.
+
+---
+
+## Volunteer Visibility Rules
+Only volunteers who:
+- Are approved
+- Have enabled public visibility
+- Have given consent
+
+shall appear.
+
+---
+
+## Search Categories
+- Teachers
+- Lawyers
+- Doctors
+- Educators
+- Consultants
+- Social workers
+
+---
+
+## Search Filters
+- Profession
+- Expertise
+- Name
+- State
+- District
+- City
+- Pin code
+
+---
+
+## Volunteer Public Profile
+Fields:
+- Name
+- Photo
+- Profession
+- Expertise
+- Description
+- Contact options
+- Optional address
+
+---
+
+## Contact Methods
+- WhatsApp redirect
+- Platform contact request
+- Public phone number (optional)
+
+---
+
+# 13. Event Management System
+
+## Event Features
+Admins can:
+- Create events
+- Update events
+- Delete events
+- Publish events
+
+---
+
+## Event Fields
+- Title
+- Description
+- Banner image
+- Event date
+- Location
+- Event category
+- Registration limit
+
+---
+
+## User Features
+Users can:
+- View events
+- Register for events
+- Receive reminders
+
+---
+
+# 14. Donation System
+
+## Donation Features
+Users can:
+- Make donations
+- View donation history
+- Download receipts
+- Print acknowledgements
+
+---
+
+## Payment Gateway Integration
+Support:
+- Razorpay
+- PhonePe
+
+---
+
+## Store Payment Details
+Store:
+- Amount
+- Transaction ID
+- Payment status
+- Gateway response
+- Receipt number
+- Timestamp
+
+---
+
+## Donation Rules
+Donations are:
+- Voluntary
+- Non-refundable (unless admin policy allows)
+- Not investment-based
+
+---
+
+# 15. Search & Discovery System
+
+## Search Engine Requirements
+Users should search volunteers by:
+- Profession
+- Expertise
+- State
+- District
+- Pin code
+- Name
+
+---
+
+## Backend Search Optimization
+Use:
+- PostgreSQL indexes
+- Full-text search
+- Optimized queries
+
+---
+
+# 16. Consent & Privacy Module
+
+## Privacy Controls
+Users can:
+- Control profile visibility
+- Hide/show phone number
+- Request profile removal
+- Manage public information
+
+---
+
+## Consent Requirements
+Store:
+- Consent timestamps
+- Consent type
+- Consent status
+
+---
+
+## GDPR-style Compliance
+Support:
+- Data deletion request
+- Consent withdrawal
+- Profile visibility control
+
+---
+
+# 17. Abuse & Moderation Module
+
+## Features
+Users can:
+- Report profile
+- Block user
+
+---
+
+## Admin Features
+Admins can:
+- Moderate reports
+- Suspend users
+- Delete abusive profiles
+- Restrict visibility
+
+---
+
+## Spam Protection
+Implement:
+- Rate limiting
+- Captcha (optional)
+- Abuse detection
+
+---
+
+# 18. Notification System
+
+## Channels
+- SMS
+- WhatsApp
+- Email (future)
+
+---
+
+## Notification Types
+- Registration success
+- OTP
+- Event reminders
+- Donation receipts
+- Volunteer approval
+- Campaign announcements
+
+---
+
+# 19. Role & Permission System
+
+## RBAC (Role-Based Access Control)
+
+Permissions should be role-based.
+
+---
+
+## Admin Access
+Full platform access.
+
+---
+
+## Volunteer Access
+Can:
+- Manage own profile
+- View authorized analytics
+- Access Need Help visibility controls
+
+Cannot:
+- Access admin analytics
+- Access other volunteer private data
+
+---
+
+# 20. Coordinator System
+
+## Coordinator Roles
+- Coordinator
+- Block Coordinator
+- District Coordinator
+- State Coordinator
+- National Coordinator
+
+---
+
+## Internal Participation Metrics
+System should internally track:
+- Participation Invite Network size
+- Awareness participation scale
+- Community engagement impact
+
+These metrics are for organizational/admin evaluation only.
+
+---
+
+## Coordinator Responsibilities
+- Volunteer engagement
+- Campaign support
+- Regional coordination
+- Event coordination
+- Community outreach
+
+---
+
+# 21. Admin Panel
+
+## Admin Dashboard Widgets
+Display:
+- Total users
+- Total volunteers
+- Total coordinators
+- Total donations
+- Event statistics
+- Participation analytics
+- Geographic analytics
+
+---
+
+## User Management
+Features:
+- Search users
+- Edit users
+- Suspend users
+- Delete users
+- Change roles
+
+---
+
+## Volunteer Management
+Features:
+- Approve/reject volunteers
+- Manage volunteer visibility
+- Verify profiles
+
+---
+
+## Event Management
+Features:
+- CRUD operations for events
+- Event registrations
+- Event analytics
+
+---
+
+## Campaign Management
+Features:
+- Create campaigns
+- Publish awareness content
+- Manage campaigns
+
+---
+
+## Moderation Panel
+Features:
+- Abuse reports
+- Spam reports
+- Blocked users
+- Moderation actions
+
+---
+
+# 22. Database Design (High Level)
+
+## Core Tables
+
+### users
+- id
+- full_name
+- mobile_number
+- password_hash
+- role
+- smart_citizen_id
+- created_at
+
+---
+
+### volunteer_profiles
+- user_id
+- profession
+- specialization
+- experience
+- description
+- public_visibility
+- show_phone_publicly
+
+---
+
+### participation_invites
+- inviter_id
+- invited_user_id
+- created_at
+
+---
+
+### donations
+- id
+- user_id
+- amount
+- payment_status
+- transaction_id
+- gateway_response
+
+---
+
+### events
+- id
+- title
+- description
+- event_date
+- location
+
+---
+
+### event_registrations
+- user_id
+- event_id
+
+---
+
+### notifications
+- id
+- user_id
+- type
+- message
+
+---
+
+### abuse_reports
+- id
+- reporter_id
+- reported_user_id
+- reason
+- status
+
+---
+
+# 23. API Standards
+
+## API Rules
+- REST APIs
+- Versioned APIs
+
+Example:
+
+```txt
+/api/v1/
+```
+
+---
+
+## Response Structure
+
+### Success Response
+```json
+{
+  "success": true,
+  "message": "Success",
+  "data": {}
+}
+```
+
+---
+
+### Error Response
+```json
+{
+  "success": false,
+  "message": "Error message"
+}
+```
+
+---
+
+# 24. Security Requirements
+
+## Mandatory Security Features
+- JWT authentication
+- HttpOnly cookies
+- Password hashing
+- SQL injection prevention
+- XSS protection
+- CSRF protection
+- Rate limiting
+- Input validation
+- Role-based middleware
+- Audit logs
+
+---
+
+# 25. Frontend UI Requirements
+
+## UI Guidelines
+- Professional NGO design
+- Fully responsive
+- Accessible UI
+- Clean dashboard experience
+- Mobile-first design
+
+---
+
+## Styling
+Use:
+- Tailwind CSS
+- shadcn/ui components
+
+---
+
+## Component Requirements
+Reusable components:
+- Buttons
+- Forms
+- Dialogs
+- Drawers
+- Tables
+- Pagination
+- Cards
+- Alerts
+- Loaders
+
+---
+
+# 26. SEO Requirements
+
+## SEO Implementation
+- Dynamic metadata
+- Open Graph tags
+- Structured data
+- Sitemap
+- robots.txt
+- SSR rendering
+
+---
+
+# 27. Deployment Requirements
+
+## Frontend Deployment
+- Vercel
+
+---
+
+## Backend Deployment
+- Dockerized Golang API
+- Nginx reverse proxy
+
+---
+
+## CI/CD
+Recommended:
+- GitHub Actions
+
+---
+
+# 28. Scalability Requirements
+
+The system should support:
+- Millions of users
+- Large traffic spikes
+- Horizontal scaling
+- CDN support
+- Optimized database indexing
+
+---
+
+# 29. Logging & Monitoring
+
+## Monitoring Tools
+Recommended:
+- Grafana
+- Prometheus
+- Sentry
+
+---
+
+## Logging
+Track:
+- Authentication logs
+- Admin actions
+- Payment logs
+- API errors
+- Abuse reports
+
+---
+
+# 30. Future Scope
+
+Future features may include:
+- Mobile apps
+- AI chatbot
+- Multi-language support
+- Push notifications
+- Advanced analytics
+- Volunteer badges
+- E-learning system
+- Community forums
+
+---
+
+# 31. Final Development Notes
+
+## Important Architectural Notes
+The platform must:
+- Maintain NGO positioning
+- Avoid MLM-style wording
+- Avoid earnings-based systems
+- Maintain admin-controlled governance
+- Prioritize privacy & consent
+- Maintain scalable architecture
+
+---
+
+## Final Objective
+Build a scalable, secure, NGO-focused citizen awareness and volunteer coordination platform with:
+- Modern architecture
+- Secure authentication
+- Robust admin panel
+- Community engagement systems
+- Need Help discovery functionality
+- Event/campaign management
+- Volunteer coordination tools
+- Pa

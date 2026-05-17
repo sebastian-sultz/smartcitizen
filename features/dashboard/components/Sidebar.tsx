@@ -40,10 +40,6 @@ const navItems: NavItem[] = [
       { title: "Awareness Images", href: "/admin/awareness/images" },
       { title: "Add Banner Image", href: "/admin/awareness/banner" },
       { title: "Add Popup Image", href: "/admin/awareness/popup" },
-      { title: "Awareness Experts", href: "/admin/awareness/experts" },
-      { title: "User KYC Details", href: "/admin/awareness/kyc" },
-      { title: "Add Expert Category", href: "/admin/awareness/expert-category" },
-      { title: "Global Citizen Verification", href: "/admin/awareness/verification" },
     ],
   },
   {
@@ -64,15 +60,6 @@ const navItems: NavItem[] = [
       { title: "Add Role", href: "/admin/organization/role" },
       { title: "Add Staff", href: "/admin/organization/staff" },
       { title: "Manage Bank", href: "/admin/organization/bank" },
-    ],
-  },
-  {
-    title: "Quizzes",
-    icon: <GraduationCap className="w-5 h-5" />,
-    children: [
-      { title: "Add Quiz Topic", href: "/admin/quizzes/topic" },
-      { title: "Add Questions", href: "/admin/quizzes/questions" },
-      { title: "Show Results", href: "/admin/quizzes/results" },
     ],
   },
   {

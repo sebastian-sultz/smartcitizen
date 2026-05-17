@@ -1,8 +1,8 @@
 const teamMembers = [
-  { name: "Dr. Anuj Singh", role: "Legal Expert", img: "/assets/a4.png" },
-  { name: "Mrs. Kavita Rai", role: "Psychological Expert", img: "/assets/a1.png" },
-  { name: "Mr. Manoj Jain", role: "Financial Expert", img: "/assets/a11.png" },
-  { name: "Mr. Neeraj Kumar", role: "Digital & Cyber Expert", img: "/assets/a10.png" },
+  { name: "Dr. Anuj Singh", role: "Legal Advisor / Staff", img: "/assets/a4.png" },
+  { name: "Mrs. Kavita Rai", role: "Community Well-being Lead", img: "/assets/a1.png" },
+  { name: "Mr. Manoj Jain", role: "Financial Literacy Contributor", img: "/assets/a11.png" },
+  { name: "Mr. Neeraj Kumar", role: "Digital Safety Contributor", img: "/assets/a10.png" },
 ];
 
 export default function TeamSection() {
@@ -11,7 +11,7 @@ export default function TeamSection() {
       <div className="max-content">
         <div className="text-center mb-16 space-y-4">
           <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-accent">OUR LEADERSHIP</span>
-          <h2 className="font-display text-4xl md:text-5xl font-bold text-text">Meet the Experts Behind the Mission</h2>
+          <h2 className="font-display text-4xl md:text-5xl font-bold text-text">Meet the Leadership Behind the Mission</h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
