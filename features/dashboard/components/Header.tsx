@@ -3,6 +3,7 @@
 import React from "react";
 import { Bell, Search, User } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { Button } from "@/components/ui/Button";
 
 export function Header() {
   const pathname = usePathname();
@@ -38,10 +39,10 @@ export function Header() {
         </div>
 
         {/* Notifications */}
-        <button className="relative p-2 text-text-muted hover:bg-bg rounded-full transition-colors">
+        <Button variant="ghost" size="icon" className="relative text-text-muted hover:bg-bg">
           <Bell size={20} />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-accent rounded-full border-2 border-surface"></span>
-        </button>
+        </Button>
 
         {/* User Profile */}
         <div className="flex items-center space-x-3 pl-4 border-l border-border">

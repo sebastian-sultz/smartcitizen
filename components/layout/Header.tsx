@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { ChevronDown, Menu, X, Heart } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
@@ -97,12 +98,12 @@ export default function Header() {
               onMouseEnter={() => setActiveDropdown('about')}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className={cn(
+              <Button variant="ghost" className={cn(
                 "px-4 py-2 rounded-full font-bold text-[14px] flex items-center gap-1 transition-all hover:bg-primary/5",
                 isScrolled || isHome ? "text-text hover:text-primary" : "text-white hover:bg-white/10"
               )}>
                 About <ChevronDown size={14} className={cn("transition-transform duration-300", activeDropdown === 'about' && "rotate-180")} />
-              </button>
+              </Button>
               <AnimatePresence>
                 {activeDropdown === 'about' && (
                   <motion.div 
@@ -133,12 +134,12 @@ export default function Header() {
               onMouseEnter={() => setActiveDropdown('activity')}
               onMouseLeave={() => setActiveDropdown(null)}
             >
-              <button className={cn(
+              <Button variant="ghost" className={cn(
                 "px-4 py-2 rounded-full font-bold text-[14px] flex items-center gap-1 transition-all hover:bg-primary/5",
                 isScrolled || isHome ? "text-text hover:text-primary" : "text-white hover:bg-white/10"
               )}>
                 Activity <ChevronDown size={14} className={cn("transition-transform duration-300", activeDropdown === 'activity' && "rotate-180")} />
-              </button>
+              </Button>
               <AnimatePresence>
                 {activeDropdown === 'activity' && (
                   <motion.div 
@@ -198,7 +199,9 @@ export default function Header() {
           </div>
 
           {/* Mobile Menu Toggle */}
-          <button 
+          <Button 
+            variant="ghost"
+            size="icon"
             className={cn(
               "lg:hidden p-3 rounded-full transition-all active:scale-90",
               isScrolled || isHome ? "bg-primary/5 text-primary" : "bg-white/10 text-white"
@@ -206,7 +209,7 @@ export default function Header() {
             onClick={() => setMobileMenuOpen(true)}
           >
             <Menu size={24} />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -233,12 +236,14 @@ export default function Header() {
                   <span className="font-display font-black text-2xl text-primary leading-none">GlobalSmart</span>
                   <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted opacity-60">Foundation</span>
                 </div>
-                <button 
+                <Button 
+                  variant="secondary"
+                  size="icon"
                   onClick={() => setMobileMenuOpen(false)} 
                   className="w-10 h-10 rounded-full bg-white border border-border flex items-center justify-center text-text hover:text-red-500 transition-colors"
                 >
                   <X size={20} />
-                </button>
+                </Button>
               </div>
 
               <div className="flex-1 p-6 md:p-8 overflow-y-auto">

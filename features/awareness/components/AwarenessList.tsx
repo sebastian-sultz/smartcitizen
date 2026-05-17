@@ -5,6 +5,7 @@ import { MoreHorizontal, Edit, Trash2, Plus, Search } from "lucide-react";
 import { motion } from "framer-motion";
 import { AwarenessActivity } from "../types";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/Button";
 
 const mockActivities: AwarenessActivity[] = [
   {
@@ -44,10 +45,9 @@ export function AwarenessList() {
           <h2 className="text-2xl font-bold text-text">Awareness Activities</h2>
           <p className="text-text-muted">Manage and track all social awareness initiatives.</p>
         </div>
-        <button className="flex items-center justify-center px-4 py-2 bg-primary text-white rounded-xl hover:bg-primary-light transition-colors shadow-lg">
-          <Plus size={20} className="mr-2" />
+        <Button variant="primary" startIcon={<Plus size={20} />}>
           Add Activity
-        </button>
+        </Button>
       </div>
 
       <div className="bg-surface rounded-2xl shadow-card border border-border overflow-hidden">
@@ -117,15 +117,15 @@ export function AwarenessList() {
                   </td>
                   <td className="px-6 py-4 text-right">
                     <div className="flex items-center justify-end space-x-2">
-                      <button className="p-2 text-text-muted hover:text-primary hover:bg-primary/10 rounded-lg transition-colors">
+                      <Button variant="ghost-primary" size="icon" shape="square">
                         <Edit size={16} />
-                      </button>
-                      <button className="p-2 text-text-muted hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-colors">
+                      </Button>
+                      <Button variant="ghost-danger" size="icon" shape="square">
                         <Trash2 size={16} />
-                      </button>
-                      <button className="p-2 text-text-muted hover:bg-bg rounded-lg transition-colors">
+                      </Button>
+                      <Button variant="ghost-muted" size="icon" shape="square">
                         <MoreHorizontal size={16} />
-                      </button>
+                      </Button>
                     </div>
                   </td>
                 </motion.tr>
@@ -137,10 +137,10 @@ export function AwarenessList() {
         <div className="p-4 border-t border-border flex items-center justify-between text-sm text-text-muted">
           <div>Showing 3 of 42 activities</div>
           <div className="flex items-center gap-2">
-            <button className="px-3 py-1 bg-bg border border-border rounded-lg disabled:opacity-50">Previous</button>
-            <button className="px-3 py-1 bg-primary text-white rounded-lg">1</button>
-            <button className="px-3 py-1 bg-bg border border-border rounded-lg">2</button>
-            <button className="px-3 py-1 bg-bg border border-border rounded-lg">Next</button>
+            <Button variant="secondary" size="xs" shape="square" noShadow normalCase className="font-medium">Previous</Button>
+            <Button variant="primary" size="xs" shape="square" noShadow normalCase>1</Button>
+            <Button variant="secondary" size="xs" shape="square" noShadow normalCase className="font-medium">2</Button>
+            <Button variant="secondary" size="xs" shape="square" noShadow normalCase className="font-medium">Next</Button>
           </div>
         </div>
       </div>

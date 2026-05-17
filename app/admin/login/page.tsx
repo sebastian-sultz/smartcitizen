@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { LogIn, ShieldCheck, Mail, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/Button";
 
 const loginSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
@@ -61,7 +62,7 @@ export default function LoginPage() {
                         placeholder="admin@smartcitizen.org"
                         className={cn(
                           "w-full pl-12 pr-4 py-3 bg-bg border rounded-2xl outline-none transition-all focus:ring-2 focus:ring-primary/20",
-                          errors.email && touched.email ? "border-red-500" : "border-border"
+                          errors.email && touched.email ? "border-red-50" : "border-border"
                         )}
                       />
                     </div>
@@ -94,20 +95,15 @@ export default function LoginPage() {
                   <a href="#" className="text-primary font-bold hover:underline">Forgot password?</a>
                 </div>
 
-                <button
+                <Button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full flex items-center justify-center py-4 bg-primary text-white font-bold rounded-2xl hover:bg-primary-light transition-all shadow-xl shadow-primary/10 disabled:opacity-50 group"
+                  variant="primary"
+                  loading={isSubmitting}
+                  startIcon={!isSubmitting && <LogIn size={20} className="group-hover:translate-x-1 transition-transform" />}
+                  className="w-full py-4 text-base group"
                 >
-                  {isSubmitting ? (
-                    "Authenticating..."
-                  ) : (
-                    <>
-                      <LogIn size={20} className="mr-2 group-hover:translate-x-1 transition-transform" />
-                      Sign In
-                    </>
-                  )}
-                </button>
+                  Sign In
+                </Button>
               </Form>
             )}
           </Formik>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { MoveRight } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 
 const amounts = [100, 200, 500, 1000, 2000];
 
@@ -38,21 +39,21 @@ export function DonationCTA() {
             <div className="space-y-6">
               <div className="flex flex-wrap gap-3">
                 {amounts.map((amount) => (
-                  <button
+                  <Button
+                    variant={selectedAmount === amount ? "accent" : "secondary"}
                     key={amount}
+                    shape="pill"
+                    noShadow
+                    normalCase
                     onClick={() => setSelectedAmount(amount)}
-                    className={`px-6 py-3 rounded-full font-bold transition-all border-2 ${
-                      selectedAmount === amount 
-                      ? "bg-accent border-accent text-white shadow-lg shadow-accent/20 scale-105" 
-                      : "bg-white border-border text-text-muted hover:border-accent hover:text-accent"
-                    }`}
+                    className="text-base px-6 py-3"
                   >
                     ₹{amount}
-                  </button>
+                  </Button>
                 ))}
-                <button className="px-6 py-3 rounded-full font-bold border-2 border-border text-text-muted hover:border-accent hover:text-accent bg-white transition-all">
+                <Button variant="secondary" shape="pill" noShadow normalCase className="text-base px-6 py-3">
                   Other Amount
-                </button>
+                </Button>
               </div>
 
               <Link 

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Users, UserCheck, Heart, Megaphone, ArrowUpRight, TrendingUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAdminStore } from "@/features/admin/store/useAdminStore";
+import { Button } from "@/components/ui/Button";
 
 export function DashboardOverview() {
   const { users, volunteerApps, events, campaigns } = useAdminStore();
@@ -113,9 +114,9 @@ export function DashboardOverview() {
               </div>
             ))}
           </div>
-          <button className="w-full mt-6 text-sm font-semibold text-primary hover:underline">
+          <Button variant="text" fullWidth className="mt-6 text-sm font-semibold text-primary">
             View All Notifications
-          </button>
+          </Button>
         </div>
       </div>
     </div>

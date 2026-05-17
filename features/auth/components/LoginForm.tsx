@@ -80,13 +80,14 @@ export const LoginForm = () => {
             <div className="space-y-2">
               <div className="flex justify-between items-center px-1">
                 <label className="text-[14px] font-bold text-text">Password</label>
-                <button 
+                <Button 
                   type="button" 
+                  variant="text"
                   onClick={() => setView("forgot")}
-                  className="text-[12px] text-primary font-bold hover:underline"
+                  className="text-[12px] p-0 h-auto"
                 >
                   Forgot password?
-                </button>
+                </Button>
               </div>
               <div className="relative">
                 <Input
@@ -97,13 +98,15 @@ export const LoginForm = () => {
                   {...formik.getFieldProps("password")}
                   error={formik.touched.password ? (formik.errors.password as string) : undefined}
                 />
-                <button 
+                <Button 
                   type="button" 
+                  variant="ghost-muted"
+                  size="icon"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-11 -translate-y-1/2 text-text-light hover:text-primary transition-colors"
+                  className="absolute right-4 top-11 -translate-y-1/2 p-1 w-auto h-auto"
                 >
                   {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
-                </button>
+                </Button>
               </div>
             </div>
           )}
@@ -138,7 +141,7 @@ export const LoginForm = () => {
           <Button 
             type="submit" 
             size="lg" 
-            className="w-full" 
+            fullWidth
             isLoading={formik.isSubmitting}
           >
             {view === "login" && "Log In"}
@@ -156,13 +159,14 @@ export const LoginForm = () => {
             </div>
           ) : (
             <div className="pt-4 text-center">
-              <button 
+              <Button 
                 type="button"
+                variant="text"
                 onClick={() => setView("login")}
-                className="text-[14px] text-primary font-bold hover:underline"
+                className="text-[14px] p-0 h-auto"
               >
                 Back to Login
-              </button>
+              </Button>
             </div>
           )}
         </form>

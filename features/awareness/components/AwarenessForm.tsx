@@ -5,6 +5,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { X, Upload, Save } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/Button";
 
 const validationSchema = Yup.object().shape({
   title: Yup.string()
@@ -51,12 +52,14 @@ export function AwarenessForm({ initialValues, onClose }: AwarenessFormProps) {
           <h3 className="text-xl font-bold text-text">
             {initialValues ? "Edit Awareness Activity" : "Create New Awareness Activity"}
           </h3>
-          <button 
+          <Button 
+            variant="ghost-muted"
+            size="icon"
+            shape="circle"
             onClick={onClose}
-            className="p-2 hover:bg-bg rounded-full transition-colors text-text-muted"
           >
             <X size={20} />
-          </button>
+          </Button>
         </div>
 
         <Formik
@@ -80,7 +83,7 @@ export function AwarenessForm({ initialValues, onClose }: AwarenessFormProps) {
                   <Field
                     name="title"
                     className={`w-full px-4 py-2.5 bg-bg border rounded-xl outline-none transition-all focus:ring-2 focus:ring-primary/20 ${
-                      errors.title && touched.title ? "border-red-500" : "border-border"
+                      errors.title && touched.title ? "border-red-50" : "border-border"
                     }`}
                     placeholder="e.g. Tree Plantation Drive"
                   />
@@ -158,27 +161,23 @@ export function AwarenessForm({ initialValues, onClose }: AwarenessFormProps) {
               </div>
 
               <div className="pt-6 border-t border-border flex items-center justify-end space-x-3 bg-bg/30 -mx-6 -mb-6 px-6 py-4">
-                <button
+                <Button
                   type="button"
+                  variant="ghost-muted"
                   onClick={onClose}
-                  className="px-6 py-2.5 text-sm font-semibold text-text-muted hover:bg-bg rounded-xl transition-colors"
+                  className="px-6 py-2.5 text-sm"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="flex items-center px-8 py-2.5 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primary-light transition-all shadow-lg shadow-primary/20 disabled:opacity-50"
+                  variant="primary"
+                  loading={isSubmitting}
+                  startIcon={!isSubmitting && <Save size={18} />}
+                  className="px-8 py-2.5 text-sm font-bold"
                 >
-                  {isSubmitting ? (
-                    "Saving..."
-                  ) : (
-                    <>
-                      <Save size={18} className="mr-2" />
-                      Save Activity
-                    </>
-                  )}
-                </button>
+                  Save Activity
+                </Button>
               </div>
             </Form>
           )}

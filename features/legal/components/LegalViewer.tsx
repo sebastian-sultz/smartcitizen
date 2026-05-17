@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FileText, ExternalLink, Download, ChevronRight, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/Button";
 
 const documents = [
   {
@@ -37,19 +38,20 @@ export default function LegalViewer() {
       {/* Sidebar - Document List */}
       <div className="w-full lg:w-1/3 space-y-4">
         {documents.map((doc) => (
-          <button
+          <Button
+            variant="ghost"
             key={doc.id}
             onClick={() => setActiveDoc(doc)}
             className={cn(
-              "w-full text-left p-6 rounded-3xl transition-all duration-300 border flex items-center justify-between group",
+              "w-full text-left p-6 rounded-3xl transition-all duration-300 border flex items-center justify-between group h-auto normal-case font-normal",
               activeDoc.id === doc.id
-                ? "bg-primary border-primary shadow-xl shadow-primary/20 text-white"
-                : "bg-white border-border hover:border-primary/50 text-text"
+                ? "bg-primary border-primary shadow-xl shadow-primary/20 text-white hover:bg-primary hover:text-white"
+                : "bg-white border-border hover:border-primary/50 text-text hover:bg-white"
             )}
           >
             <div className="flex items-center gap-4">
               <div className={cn(
-                "w-12 h-12 rounded-2xl flex items-center justify-center transition-colors",
+                "w-12 h-12 rounded-2xl flex items-center justify-center transition-colors shrink-0",
                 activeDoc.id === doc.id ? "bg-white/20" : "bg-primary/5 text-primary group-hover:bg-primary group-hover:text-white"
               )}>
                 <FileText size={24} />
@@ -67,11 +69,11 @@ export default function LegalViewer() {
             <ChevronRight 
               size={20} 
               className={cn(
-                "transition-transform",
+                "transition-transform shrink-0",
                 activeDoc.id === doc.id ? "translate-x-0" : "-translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0"
               )} 
             />
-          </button>
+          </Button>
         ))}
 
         <div className="p-8 rounded-[32px] bg-accent/5 border border-accent/10 mt-8 space-y-4">

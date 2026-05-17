@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Search, Filter, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
 import { ProfessionalCard } from "./ProfessionalCard";
 import EmptyState from "@/components/ui/EmptyState";
 
@@ -104,17 +105,14 @@ export const NeedHelpDirectory = () => {
           </div>
           <div className="flex flex-wrap gap-2">
             {categories.map((cat) => (
-              <button
+              <Button
+                variant={selectedCategory === cat ? "primary" : "secondary"}
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-full text-[14px] font-bold transition-all ${
-                  selectedCategory === cat 
-                    ? "bg-primary text-white shadow-md shadow-primary/20" 
-                    : "bg-bg text-text-muted hover:bg-primary/5 hover:text-primary border border-border"
-                }`}
+                className="rounded-full font-bold px-5 py-2 text-sm normal-case shadow-none"
               >
                 {cat}
-              </button>
+              </Button>
             ))}
           </div>
         </div>

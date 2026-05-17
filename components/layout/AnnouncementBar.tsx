@@ -2,6 +2,7 @@
 
 import { Phone, Mail, X } from "lucide-react";
 import { useState } from "react";
+import { Button } from "@/components/ui/Button";
 
 export default function AnnouncementBar() {
   const [isVisible, setIsVisible] = useState(true);
@@ -23,13 +24,15 @@ export default function AnnouncementBar() {
       
       <div className="flex items-center gap-4">
         <span className="font-semibold hidden lg:inline">12A & 80G Certified NGO</span>
-        <button 
+        <Button 
+          variant="ghost"
+          size="icon"
           onClick={() => setIsVisible(false)}
-          className="p-1 hover:bg-white/10 rounded-full transition-colors"
+          className="p-1 hover:bg-white/10 text-white rounded-full transition-colors"
           aria-label="Dismiss announcement"
         >
           <X size={16} />
-        </button>
+        </Button>
       </div>
     </div>
   );

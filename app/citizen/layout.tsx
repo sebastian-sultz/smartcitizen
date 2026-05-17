@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import Link from "next/link";
 import { LayoutDashboard, Settings, UserCircle, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 export default function CitizenLayout({ children }: { children: ReactNode }) {
   return (
@@ -31,10 +32,10 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
         </nav>
 
         <div className="absolute bottom-0 w-full md:w-64 p-4 border-t border-border">
-          <button className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-red-500 hover:bg-red-50 font-bold text-[14px] transition-colors">
-            <LogOut size={18} />
+          <Button variant="ghost-danger" fullWidth alignLeft normalCase className="gap-3 px-4 py-3 text-[14px]">
+            <LogOut size={18} className="shrink-0" />
             Log Out
-          </button>
+          </Button>
         </div>
       </aside>
 

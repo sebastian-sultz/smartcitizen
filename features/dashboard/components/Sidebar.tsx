@@ -19,6 +19,7 @@ import {
   LogOut
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/Button";
 
 interface NavItem {
   title: string;
@@ -60,12 +61,15 @@ export function Sidebar() {
   return (
     <>
       {/* Mobile Toggle */}
-      <button
+      <Button
+        variant="primary"
+        size="icon"
+        shape="square"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className="fixed top-4 left-4 z-50 p-2 bg-primary text-white rounded-md lg:hidden"
+        className="fixed top-4 left-4 z-50 lg:hidden"
       >
         {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
-      </button>
+      </Button>
 
       {/* Sidebar Overlay */}
       {!isSidebarOpen && (
@@ -101,10 +105,14 @@ export function Sidebar() {
               return (
                 <div key={item.title}>
                   {hasChildren ? (
-                    <button
+                    <Button
+                      variant="ghost-white"
+                      shape="square"
+                      fullWidth
+                      normalCase
                       onClick={() => toggleMenu(item.title)}
                       className={cn(
-                        "flex items-center justify-between w-full p-3 text-sm font-medium rounded-lg hover:bg-white/10 transition-colors group",
+                        "justify-between p-3 text-sm font-normal group h-auto",
                         isOpen && "bg-white/5"
                       )}
                     >
@@ -113,7 +121,7 @@ export function Sidebar() {
                         {item.title}
                       </div>
                       {isOpen ? <ChevronDown size={16} /> : <ChevronRight size={16} />}
-                    </button>
+                    </Button>
                   ) : (
                     <Link
                       href={item.href || "#"}
@@ -132,7 +140,7 @@ export function Sidebar() {
                   {hasChildren && isOpen && (
                     <div className="mt-1 ml-4 space-y-1 border-l border-white/10 pl-4">
                       {item.children?.map((child) => (
-                        <Link
+                         <Link
                           key={child.title}
                           href={child.href || "#"}
                           className={cn(
@@ -151,16 +159,21 @@ export function Sidebar() {
           </nav>
 
           <div className="pt-4 mt-4 border-t border-white/10">
-            <button 
+            <Button 
+              variant="ghost-danger-white"
+              shape="square"
+              fullWidth
+              alignLeft
+              normalCase
               onClick={() => {
                 // Mock logout
                 window.location.href = "/admin/login";
               }}
-              className="flex items-center w-full p-3 text-sm font-medium text-white/70 rounded-lg hover:bg-red-500/10 hover:text-red-400 transition-colors"
+              className="p-3 text-sm h-auto"
             >
-              <LogOut className="w-5 h-5 mr-3" />
+              <LogOut className="w-5 h-5 mr-3 shrink-0" />
               Sign Out
-            </button>
+            </Button>
           </div>
         </div>
       </aside>
