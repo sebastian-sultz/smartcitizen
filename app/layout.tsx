@@ -41,7 +41,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${urbanist.variable} ${figtree.variable} scroll-smooth`}>
+    <html lang="en" className={`${urbanist.variable} ${figtree.variable} scroll-smooth`} data-scroll-behavior="smooth">
       <body className="min-h-screen bg-bg text-text font-body selection:bg-primary selection:text-white flex flex-col">
         {children}
       </body>

@@ -5,13 +5,18 @@
     "semantic_hash": "239f3ebf717465dc636818a1a619398d"
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/next-env.d.ts": {
-    "mtime": 1779048795.791807,
-    "ast_hash": "2a74d3909800ca5467fa83b0ab4a4890",
+    "mtime": 1779051451.0662658,
+    "ast_hash": "d0f8375ae1199dc7acd3977fc33b78b8",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/package.json": {
-    "mtime": 1779050324.281617,
-    "ast_hash": "5681ef53867ab73f276f81773117e4ef",
+    "mtime": 1779051136.6573796,
+    "ast_hash": "e5f6e6281deea4b690fce45bfca97a27",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/components.json": {
+    "mtime": 1779051113.1689777,
+    "ast_hash": "a0238eb4ceb9341a82b6e3640ca96743",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/tsconfig.json": {
@@ -30,9 +35,9 @@
     "semantic_hash": "9b77af189a21a7a64e4bd7a426f64176"
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/app/layout.tsx": {
-    "mtime": 1779040110.086081,
-    "ast_hash": "42f3dcd9b68131e297f628695cbd49f8",
-    "semantic_hash": "42f3dcd9b68131e297f628695cbd49f8"
+    "mtime": 1779051510.943222,
+    "ast_hash": "b3868ad349811c55899f6a4cca207b11",
+    "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/app/donation/page.tsx": {
     "mtime": 1776888972.531509,
@@ -500,7 +505,7 @@
     "semantic_hash": "91103ede2043035a9010b5ab4ea48742"
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/features/legal/components/LegalViewer.tsx": {
-    "mtime": 1779047246.643883,
+    "mtime": 1779051115.1957867,
     "ast_hash": "ca881dac1703f319e303f57616349ba6",
     "semantic_hash": ""
   },
@@ -539,6 +544,11 @@
     "ast_hash": "f31a12d068827e12ebdecbda4c121065",
     "semantic_hash": ""
   },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/components/ui/table.tsx": {
+    "mtime": 1779051335.4569385,
+    "ast_hash": "96c37532fa43b1ef8ff7ed8f80a8b933",
+    "semantic_hash": ""
+  },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/components/ui/Button.tsx": {
     "mtime": 1779048547.7229557,
     "ast_hash": "0cd4ecb9a93c285715e0e93cf2fadc52",
@@ -575,7 +585,7 @@
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/lib/utils.ts": {
-    "mtime": 1779050664.2558303,
+    "mtime": 1779051308.780095,
     "ast_hash": "3681cdbfabf84f8747efd2f0f9d069de",
     "semantic_hash": ""
   },
