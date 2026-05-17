@@ -34,7 +34,7 @@ const featuredPrograms = [
   },
 ];
 
-export default function ProgramSection() {
+export function ProgramSection() {
   return (
     <section className="py-24 bg-bg">
       <div className="max-content">

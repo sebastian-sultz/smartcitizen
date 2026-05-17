@@ -6,7 +6,7 @@ import Link from "next/link";
 
 const amounts = [100, 200, 500, 1000, 2000];
 
-export default function DonationCTA() {
+export function DonationCTA() {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
 
   return (

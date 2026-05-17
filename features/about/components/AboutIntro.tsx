@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { MoveRight } from "lucide-react";
 
-export default function AboutIntro() {
+export function AboutIntro() {
   return (
     <section className="py-16 md:py-24 bg-surface">
       <div className="max-content">

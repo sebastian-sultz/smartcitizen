@@ -1,5 +1,5 @@
 import PageHero from "@/components/layout/PageHero";
-import WhyChooseUs from "@/components/home/WhyChooseUs";
+import { WhyChooseUs } from "@/features/about";
 import { ImpactStories } from "@/features/impact";
 
 export default function ImpactPage() {

@@ -1,15 +1,8 @@
-import Hero from "@/components/home/Hero";
-import PartnerMarquee from "@/components/home/PartnerMarquee";
-import ImpactCounter from "@/components/home/ImpactCounter";
-import AboutIntro from "@/components/home/AboutIntro";
-import Priorities from "@/components/home/Priorities";
-import ProgramSection from "@/components/home/ProgramSection";
-import WhyChooseUs from "@/components/home/WhyChooseUs";
-import ImpactSection from "@/components/home/ImpactSection";
-import TeamSection from "@/components/home/TeamSection";
-import UpcomingEvents from "@/components/home/UpcomingEvents";
-import DonationCTA from "@/components/home/DonationCTA";
-import CommunitySports from "@/components/home/CommunitySports";
+import { Hero } from "@/features/home";
+import { PartnerMarquee, AboutIntro, CoreFocus, WhyChooseUs, TeamSection } from "@/features/about";
+import { ImpactCounter, ImpactSection } from "@/features/impact";
+import { ProgramSection, UpcomingEvents, CommunitySports } from "@/features/community";
+import { DonationCTA } from "@/features/donation";
 
 export default function Home() {
   return (
@@ -18,7 +11,7 @@ export default function Home() {
       <PartnerMarquee />
       <ImpactCounter />
       <AboutIntro />
-      <Priorities />
+      <CoreFocus />
       <ProgramSection />
       <WhyChooseUs />
       <ImpactSection />

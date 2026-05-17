@@ -23,7 +23,7 @@ const reasons = [
   }
 ];
 
-export default function WhyChooseUs() {
+export function WhyChooseUs() {
   return (
     <section className="py-16 md:py-24 bg-bg-alt">
       <div className="max-content">

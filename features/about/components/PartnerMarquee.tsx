@@ -8,7 +8,7 @@ const partners = [
   "Legal Aid Society", "Global Citizen Network", "Eco Warriors India"
 ];
 
-export default function PartnerMarquee() {
+export function PartnerMarquee() {
   return (
     <div className="py-12 bg-white border-y border-border overflow-hidden">
       <div className="max-content mb-8 text-center">

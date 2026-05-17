@@ -1,4 +1,3 @@
-import TeamSection from "@/components/home/TeamSection";
 import { TreePine, Zap, Droplets, Wind, CloudSun, Recycle } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/Card";

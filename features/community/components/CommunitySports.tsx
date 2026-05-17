@@ -1,6 +1,6 @@
 import { Trophy } from "lucide-react";
 
-export default function CommunitySports() {
+export function CommunitySports() {
   return (
     <section className="py-16 md:py-24 bg-dark text-white overflow-hidden">
       <div className="max-content">

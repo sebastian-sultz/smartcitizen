@@ -5,7 +5,7 @@ const teamMembers = [
   { name: "Mr. Neeraj Kumar", role: "Digital Safety Contributor", img: "/assets/a10.png" },
 ];
 
-export default function TeamSection() {
+export function TeamSection() {
   return (
     <section className="py-16 md:py-24 bg-surface">
       <div className="max-content">

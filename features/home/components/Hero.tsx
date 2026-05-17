@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Heart, ArrowRight, CheckCircle2 } from "lucide-react";
 
-export default function Hero() {
+export function Hero() {
   return (
     <section className="relative min-h-screen flex items-center bg-[#F9F8F6] overflow-hidden pt-24 pb-20 lg:pt-27 lg:pb-12">
       {/* Unique Abstract Background */}

@@ -39,7 +39,7 @@ const priorities = [
   },
 ];
 
-export default function Priorities() {
+export function CoreFocus() {
   return (
     <section className="py-16 md:py-24 bg-white">
       <div className="max-content">

@@ -48,7 +48,7 @@ const impactItems = [
   },
 ];
 
-export default function ImpactSection() {
+export function ImpactSection() {
   return (
     <section className="py-16 md:py-24 bg-primary">
       <div className="max-content">
