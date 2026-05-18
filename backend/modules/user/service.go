@@ -1,15 +1,18 @@
 package user
 
 import (
+	"context"
 	"errors"
 
 	"backend/dto/request"
+	"backend/pkg/cloudinary"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type Service interface {
 	Register(req *request.RegisterUser) (*User, error)
 	Login(req *request.LoginUser) (*User, error)
+	UpdateProfilePhoto(ctx context.Context, id string, url string, publicID string) error
 }
 
 type service struct {
@@ -59,4 +62,20 @@ func (s *service) Login(req *request.LoginUser) (*User, error) {
 	}
 
 	return user, nil
+}
+
+func (s *service) UpdateProfilePhoto(ctx context.Context, id string, url string, publicID string) error {
+	user, err := s.repo.FindByID(id)
+	if err != nil {
+		return errors.New("user not found")
+	}
+
+	if user.ProfilePhotoPublicID != nil && *user.ProfilePhotoPublicID != "" {
+		_ = cloudinary.DeleteImage(ctx, *user.ProfilePhotoPublicID)
+	}
+
+	user.ProfilePhoto = &url
+	user.ProfilePhotoPublicID = &publicID
+
+	return s.repo.Update(user)
 }

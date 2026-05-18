@@ -35,6 +35,7 @@ type User struct {
 	Phone                string   `gorm:"uniqueIndex;not null" json:"phone"`
 	Password             string   `gorm:"not null" json:"-"`
 	ProfilePhoto         *string  `json:"profile_photo"`
+	ProfilePhotoPublicID *string  `json:"-"`
 	UserType             UserType `gorm:"type:varchar(20);not null;default:'member'" json:"user_type"`
 	TotalPayments        int      `gorm:"default:0" json:"total_payments"`
 	TotalAmount          float64  `gorm:"default:0.0" json:"total_amount"`

@@ -7,6 +7,8 @@ import (
 type Repository interface {
 	Create(user *User) error
 	FindByPhone(phone string) (*User, error)
+	FindByID(id string) (*User, error)
+	Update(user *User) error
 }
 
 type repository struct {
@@ -28,4 +30,17 @@ func (r *repository) FindByPhone(phone string) (*User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+
+func (r *repository) FindByID(id string) (*User, error) {
+	var user User
+	err := r.db.Where("id = ?", id).First(&user).Error
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
+func (r *repository) Update(user *User) error {
+	return r.db.Save(user).Error
 }

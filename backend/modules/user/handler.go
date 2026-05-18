@@ -6,6 +6,7 @@ import (
 
 	"backend/dto/request"
 	"backend/dto/response"
+	"backend/pkg/cloudinary"
 	"backend/pkg/jwt"
 	"github.com/gin-gonic/gin"
 )
@@ -23,6 +24,7 @@ func (h *Handler) RegisterRoutes(router *gin.RouterGroup) {
 	{
 		auth.POST("/register", h.Register)
 		auth.POST("/login", h.Login)
+		auth.PUT("/profile-photo/:id", h.UpdateProfilePhoto)
 	}
 }
 
@@ -98,4 +100,38 @@ func (h *Handler) Login(c *gin.Context) {
 	c.SetCookie("refresh_token", refreshToken, 7*24*60*60, "/", "", false, true)
 
 	c.JSON(http.StatusOK, gin.H{"message": "logged in successfully", "user": mapToResponse(user)})
+}
+
+func (h *Handler) UpdateProfilePhoto(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user id is required"})
+		return
+	}
+
+	file, _, err := c.Request.FormFile("profile_photo")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "profile_photo file is required"})
+		return
+	}
+	defer file.Close()
+
+	// Need context for cloudinary
+	url, publicID, err := cloudinary.UploadImage(c.Request.Context(), file, "smartcitizen/profiles")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to upload image"})
+		return
+	}
+
+	// Update user in DB
+	err = h.service.UpdateProfilePhoto(c.Request.Context(), id, url, publicID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "profile photo updated successfully",
+		"url": url,
+	})
 }

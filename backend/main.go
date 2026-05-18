@@ -5,7 +5,9 @@ import (
 	"os"
 
 	"backend/infrastructure/database"
+	"backend/modules/event"
 	"backend/modules/user"
+	"backend/pkg/cloudinary"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
@@ -16,6 +18,10 @@ func main() {
 		log.Println("No .env file found, relying on environment variables")
 	}
 
+	if err := cloudinary.InitCloudinary(); err != nil {
+		log.Fatalf("Failed to initialize cloudinary: %v", err)
+	}
+
 	dsn := os.Getenv("DATABASE_URL")
 	if dsn == "" {
 		dsn = "host=localhost user=postgres password=postgres dbname=smart_db port=5432 sslmode=disable"
@@ -23,7 +29,7 @@ func main() {
 	db := database.Connect(dsn)
 
 	// In Postgres, to use gen_random_uuid(), pgcrypto extension is often needed, but from PG 13 it is built-in.
-	err := db.AutoMigrate(&user.User{})
+	err := db.AutoMigrate(&user.User{}, &event.Event{})
 	if err != nil {
 		log.Fatalf("Failed to auto migrate: %v", err)
 	}
@@ -36,6 +42,11 @@ func main() {
 	userHandler := user.NewHandler(userService)
 
 	userHandler.RegisterRoutes(api)
+
+	eventRepo := event.NewRepository(db)
+	eventService := event.NewService(eventRepo)
+	eventHandler := event.NewHandler(eventService)
+	eventHandler.RegisterRoutes(api)
 
 	port := os.Getenv("PORT")
 	if port == "" {
