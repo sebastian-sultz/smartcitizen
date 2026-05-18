@@ -6,6 +6,7 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 interface ContactFormProps {
   helpAreas: { title: string }[];
@@ -68,17 +69,19 @@ export const ContactForm = ({ helpAreas }: ContactFormProps) => {
           </div>
           <div className="space-y-2">
             <label className="text-[14px] font-bold text-text ml-1 block">Area of Help Needed *</label>
-            <select 
-              className={`w-full px-6 py-4 rounded-xl bg-bg border outline-none transition-all appearance-none ${
-                formik.touched.helpArea && formik.errors.helpArea ? "border-red-500" : "border-border focus:border-primary"
-              }`}
-              {...formik.getFieldProps("helpArea")}
+            <Select 
+              value={formik.values.helpArea} 
+              onValueChange={(val) => formik.setFieldValue("helpArea", val)}
             >
-              <option value="">Select an area</option>
-              {helpAreas.map((area, i) => (
-                <option key={i} value={area.title}>{area.title}</option>
-              ))}
-            </select>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select an area" />
+              </SelectTrigger>
+              <SelectContent>
+                {helpAreas.map((area, i) => (
+                  <SelectItem key={i} value={area.title}>{area.title}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             {formik.touched.helpArea && formik.errors.helpArea && (
               <p className="text-red-500 text-[12px] ml-1">{formik.errors.helpArea}</p>
             )}

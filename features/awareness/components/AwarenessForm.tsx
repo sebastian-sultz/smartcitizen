@@ -3,9 +3,11 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { X, Upload, Save } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Upload, Save } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 const validationSchema = Yup.object().shape({
   title: Yup.string()
@@ -41,26 +43,13 @@ export function AwarenessForm({ initialValues, onClose }: AwarenessFormProps) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="bg-surface w-full max-w-2xl rounded-2xl shadow-2xl border border-border overflow-hidden"
-      >
-        <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-bg/30">
-          <h3 className="text-xl font-bold text-text">
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent showCloseButton={true} className="p-0 overflow-hidden max-w-2xl gap-0">
+        <DialogHeader className="px-6 py-4 border-b border-border bg-bg/30 flex flex-row items-center justify-between">
+          <DialogTitle className="text-xl font-bold text-text">
             {initialValues ? "Edit Awareness Activity" : "Create New Awareness Activity"}
-          </h3>
-          <Button 
-            variant="ghost-muted"
-            size="icon"
-            shape="circle"
-            onClick={onClose}
-          >
-            <X size={20} />
-          </Button>
-        </div>
+          </DialogTitle>
+        </DialogHeader>
 
         <Formik
           initialValues={defaultValues}
@@ -68,77 +57,80 @@ export function AwarenessForm({ initialValues, onClose }: AwarenessFormProps) {
           onSubmit={(values, { setSubmitting }) => {
             console.log("Form Values:", values);
             setTimeout(() => {
-              alert("Activity saved successfully!");
+               alert("Activity saved successfully!");
               setSubmitting(false);
               onClose();
             }, 1000);
           }}
         >
-          {({ isSubmitting, errors, touched }) => (
+          {({ values, setFieldValue, isSubmitting, errors, touched }) => (
             <Form className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Title */}
                 <div className="space-y-1.5 md:col-span-2">
-                  <label htmlFor="title" className="text-sm font-semibold text-text">Activity Title</label>
+                  <label htmlFor="title" className="text-sm font-semibold text-text ml-1 block">Activity Title</label>
                   <Field
                     name="title"
-                    className={`w-full px-4 py-2.5 bg-bg border rounded-xl outline-none transition-all focus:ring-2 focus:ring-primary/20 ${
-                      errors.title && touched.title ? "border-red-50" : "border-border"
+                    className={`w-full px-6 py-4 bg-bg border rounded-xl outline-none transition-all focus:border-primary ${
+                      errors.title && touched.title ? "border-red-500" : "border-border"
                     }`}
                     placeholder="e.g. Tree Plantation Drive"
                   />
-                  <ErrorMessage name="title" component="p" className="text-xs text-red-500 mt-1" />
+                  <ErrorMessage name="title" component="p" className="text-xs text-red-500 mt-1 ml-1" />
                 </div>
 
                 {/* Category */}
                 <div className="space-y-1.5">
-                  <label htmlFor="categoryId" className="text-sm font-semibold text-text">Category</label>
-                  <Field
-                    as="select"
-                    name="categoryId"
-                    className={`w-full px-4 py-2.5 bg-bg border rounded-xl outline-none transition-all focus:ring-2 focus:ring-primary/20 ${
-                      errors.categoryId && touched.categoryId ? "border-red-500" : "border-border"
-                    }`}
+                  <label htmlFor="categoryId" className="text-sm font-semibold text-text ml-1 block">Category</label>
+                  <Select 
+                    value={values.categoryId} 
+                    onValueChange={(val) => setFieldValue("categoryId", val)}
                   >
-                    <option value="">Select Category</option>
-                    <option value="cat1">Environment</option>
-                    <option value="cat2">Health</option>
-                    <option value="cat3">Education</option>
-                  </Field>
-                  <ErrorMessage name="categoryId" component="p" className="text-xs text-red-500 mt-1" />
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cat1">Environment</SelectItem>
+                      <SelectItem value="cat2">Health</SelectItem>
+                      <SelectItem value="cat3">Education</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {errors.categoryId && touched.categoryId && (
+                    <p className="text-xs text-red-500 mt-1 ml-1">{errors.categoryId}</p>
+                  )}
                 </div>
 
                 {/* Date */}
                 <div className="space-y-1.5">
-                  <label htmlFor="date" className="text-sm font-semibold text-text">Activity Date</label>
+                  <label htmlFor="date" className="text-sm font-semibold text-text ml-1 block">Activity Date</label>
                   <Field
                     type="date"
                     name="date"
-                    className={`w-full px-4 py-2.5 bg-bg border rounded-xl outline-none transition-all focus:ring-2 focus:ring-primary/20 ${
+                    className={`w-full px-6 py-4 bg-bg border rounded-xl outline-none transition-all focus:border-primary ${
                       errors.date && touched.date ? "border-red-500" : "border-border"
                     }`}
                   />
-                  <ErrorMessage name="date" component="p" className="text-xs text-red-500 mt-1" />
+                  <ErrorMessage name="date" component="p" className="text-xs text-red-500 mt-1 ml-1" />
                 </div>
 
                 {/* Description */}
                 <div className="space-y-1.5 md:col-span-2">
-                  <label htmlFor="description" className="text-sm font-semibold text-text">Description</label>
+                  <label htmlFor="description" className="text-sm font-semibold text-text ml-1 block">Description</label>
                   <Field
                     as="textarea"
                     name="description"
                     rows={4}
-                    className={`w-full px-4 py-2.5 bg-bg border rounded-xl outline-none transition-all focus:ring-2 focus:ring-primary/20 ${
+                    className={`w-full px-6 py-4 bg-bg border rounded-xl outline-none transition-all focus:border-primary resize-none ${
                       errors.description && touched.description ? "border-red-500" : "border-border"
                     }`}
                     placeholder="Provide details about the activity..."
                   />
-                  <ErrorMessage name="description" component="p" className="text-xs text-red-500 mt-1" />
+                  <ErrorMessage name="description" component="p" className="text-xs text-red-500 mt-1 ml-1" />
                 </div>
 
                 {/* Image Upload (Visual Placeholder) */}
                 <div className="md:col-span-2">
-                  <label className="text-sm font-semibold text-text block mb-1.5">Cover Image</label>
+                  <label className="text-sm font-semibold text-text block mb-1.5 ml-1">Cover Image</label>
                   <div className="border-2 border-dashed border-border rounded-xl p-8 flex flex-col items-center justify-center bg-bg/50 hover:bg-bg transition-colors cursor-pointer group">
                     <Upload className="text-text-light group-hover:text-primary transition-colors mb-2" size={32} />
                     <p className="text-sm text-text-muted">Click to upload or drag and drop</p>
@@ -147,16 +139,15 @@ export function AwarenessForm({ initialValues, onClose }: AwarenessFormProps) {
                 </div>
 
                 {/* Status Toggle */}
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-3 ml-1 md:col-span-2">
                   <span className="text-sm font-semibold text-text">Status:</span>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <Field type="checkbox" name="status" className="sr-only peer" 
-                      value="Active" 
-                      checked={true} // Simplified for demo
+                  <div className="flex items-center">
+                    <Switch 
+                      checked={values.status === "Active"} 
+                      onCheckedChange={(checked) => setFieldValue("status", checked ? "Active" : "Inactive")}
                     />
-                    <div className="w-11 h-6 bg-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                    <span className="ml-3 text-sm font-medium text-text-muted">Active</span>
-                  </label>
+                    <span className="ml-3 text-sm font-bold text-text">{values.status}</span>
+                  </div>
                 </div>
               </div>
 
@@ -182,7 +173,7 @@ export function AwarenessForm({ initialValues, onClose }: AwarenessFormProps) {
             </Form>
           )}
         </Formik>
-      </motion.div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -6,7 +6,9 @@ import { UserPlus, Shield, Info } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import Link from "next/link";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
 
 export const VolunteerForm = () => {
   const formik = useFormik({
@@ -67,7 +69,7 @@ export const VolunteerForm = () => {
           
           {/* Section 1: Personal Info */}
           <div className="space-y-6">
-            <h3 className="font-bold text-lg text-text border-b border-border pb-2">Personal Information</h3>
+            <h3 className="font-bold text-lg text-text pb-2">Personal Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Input label="Full Name *" placeholder="Your legal name" {...formik.getFieldProps("fullName")} error={formik.touched.fullName ? formik.errors.fullName : undefined} />
               <Input label="Mobile Number *" type="tel" placeholder="10-digit mobile number" {...formik.getFieldProps("mobileNumber")} error={formik.touched.mobileNumber ? formik.errors.mobileNumber : undefined} />
@@ -76,9 +78,11 @@ export const VolunteerForm = () => {
             </div>
           </div>
 
+          <Separator className="my-6" />
+
           {/* Section 2: Location */}
           <div className="space-y-6">
-            <h3 className="font-bold text-lg text-text border-b border-border pb-2">Location (Optional)</h3>
+            <h3 className="font-bold text-lg text-text pb-2">Location (Optional)</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
                 <Input label="Address" placeholder="Street address" {...formik.getFieldProps("address")} />
@@ -89,48 +93,58 @@ export const VolunteerForm = () => {
             </div>
           </div>
 
+          <Separator className="my-6" />
+
           {/* Section 3: Professional Info */}
           <div className="space-y-6">
-            <h3 className="font-bold text-lg text-text border-b border-border pb-2">Professional Information</h3>
+            <h3 className="font-bold text-lg text-text pb-2">Professional Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-[14px] font-bold text-text">Profession Category *</label>
-                <select 
-                  className="w-full h-12 px-4 rounded-xl border border-border bg-bg focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-text"
-                  {...formik.getFieldProps("profession")}
+                <label className="text-[14px] font-bold text-text ml-1 block">Profession Category *</label>
+                <Select 
+                  value={formik.values.profession} 
+                  onValueChange={(val) => formik.setFieldValue("profession", val)}
                 >
-                  <option value="">Select Category</option>
-                  <option value="Lawyer">Lawyer</option>
-                  <option value="Doctor">Doctor / Medical</option>
-                  <option value="Teacher">Educator / Teacher</option>
-                  <option value="Counselor">Counselor</option>
-                  <option value="Social Worker">Social Worker</option>
-                  <option value="IT Professional">IT Professional</option>
-                  <option value="Other">Other</option>
-                </select>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Lawyer">Lawyer</SelectItem>
+                    <SelectItem value="Doctor">Doctor / Medical</SelectItem>
+                    <SelectItem value="Teacher">Educator / Teacher</SelectItem>
+                    <SelectItem value="Counselor">Counselor</SelectItem>
+                    <SelectItem value="Social Worker">Social Worker</SelectItem>
+                    <SelectItem value="IT Professional">IT Professional</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
                 {formik.touched.profession && formik.errors.profession && (
-                  <p className="text-red-500 text-[12px]">{formik.errors.profession}</p>
+                  <p className="text-red-500 text-[12px] ml-1">{formik.errors.profession}</p>
                 )}
               </div>
               <Input label="Specialization" placeholder="e.g. Consumer Law" {...formik.getFieldProps("specialization")} />
               <Input label="Experience" placeholder="e.g. 5 years" {...formik.getFieldProps("experience")} />
               <div className="space-y-2">
-                <label className="text-[14px] font-bold text-text">Apply for Coordinator Role (Optional)</label>
-                <select 
-                  className="w-full h-12 px-4 rounded-xl border border-border bg-bg focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-text"
-                  {...formik.getFieldProps("applyCoordinator")}
+                <label className="text-[14px] font-bold text-text ml-1 block">Apply for Coordinator Role (Optional)</label>
+                <Select 
+                  value={formik.values.applyCoordinator} 
+                  onValueChange={(val) => formik.setFieldValue("applyCoordinator", val)}
                 >
-                  <option value="">Not Applying</option>
-                  <option value="Block">Block Coordinator</option>
-                  <option value="District">District Coordinator</option>
-                  <option value="State">State Coordinator</option>
-                  <option value="National">National Coordinator</option>
-                </select>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Not Applying" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Block">Block Coordinator</SelectItem>
+                    <SelectItem value="District">District Coordinator</SelectItem>
+                    <SelectItem value="State">State Coordinator</SelectItem>
+                    <SelectItem value="National">National Coordinator</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="md:col-span-2 space-y-2">
-                <label className="text-[14px] font-bold text-text">Public Description</label>
+                <label className="text-[14px] font-bold text-text ml-1 block">Public Description</label>
                 <textarea 
-                  className="w-full p-4 rounded-xl border border-border bg-bg focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-text min-h-[100px] resize-none"
+                  className="w-full p-6 rounded-xl border border-border bg-bg focus:border-primary outline-none transition-all text-text min-h-[100px] resize-none"
                   placeholder="Describe how you can help the community..."
                   {...formik.getFieldProps("description")}
                 />
@@ -138,43 +152,63 @@ export const VolunteerForm = () => {
             </div>
           </div>
 
+          <Separator className="my-6" />
+
           {/* Section 4: Consent & Privacy */}
           <div className="space-y-6">
-            <h3 className="font-bold text-lg text-text border-b border-border pb-2">Consent & Privacy</h3>
-            <div className="space-y-4 bg-bg-alt p-6 rounded-xl border border-border">
+            <h3 className="font-bold text-lg text-text pb-2">Consent & Privacy</h3>
+            <div className="space-y-6 bg-bg-alt p-6 rounded-xl border border-border">
               
-              <label className="flex items-start gap-3 cursor-pointer group">
-                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-border text-primary focus:ring-primary" {...formik.getFieldProps("consentGuidelines")} />
-                <div>
-                  <p className="text-[14px] font-bold text-text group-hover:text-primary transition-colors">I agree to the Volunteer Guidelines *</p>
-                  <p className="text-[12px] text-text-muted mt-1">I have read and accept the terms and conditions.</p>
-                </div>
-              </label>
-              {formik.touched.consentGuidelines && formik.errors.consentGuidelines && (
-                <p className="text-red-500 text-[12px] ml-7">{formik.errors.consentGuidelines}</p>
-              )}
+              <div className="space-y-1">
+                <label className="flex items-start gap-4 cursor-pointer group">
+                  <Checkbox 
+                    checked={formik.values.consentGuidelines}
+                    onCheckedChange={(checked) => formik.setFieldValue("consentGuidelines", !!checked)}
+                    className="mt-0.5"
+                  />
+                  <div>
+                    <p className="text-[14px] font-bold text-text group-hover:text-primary transition-colors">I agree to the Volunteer Guidelines *</p>
+                    <p className="text-[12px] text-text-muted mt-0.5">I have read and accept the terms and conditions.</p>
+                  </div>
+                </label>
+                {formik.touched.consentGuidelines && formik.errors.consentGuidelines && (
+                  <p className="text-red-500 text-[12px] ml-9">{formik.errors.consentGuidelines}</p>
+                )}
+              </div>
 
-              <label className="flex items-start gap-3 cursor-pointer group">
-                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-border text-primary focus:ring-primary" {...formik.getFieldProps("consentPublicProfile")} />
+              <label className="flex items-start gap-4 cursor-pointer group">
+                <Checkbox 
+                  checked={formik.values.consentPublicProfile}
+                  onCheckedChange={(checked) => formik.setFieldValue("consentPublicProfile", !!checked)}
+                  className="mt-0.5"
+                />
                 <div>
                   <p className="text-[14px] font-bold text-text group-hover:text-primary transition-colors">Public Profile Visibility</p>
-                  <p className="text-[12px] text-text-muted mt-1">Allow my profile to be publicly visible on the platform.</p>
+                  <p className="text-[12px] text-text-muted mt-0.5">Allow my profile to be publicly visible on the platform.</p>
                 </div>
               </label>
 
-              <label className="flex items-start gap-3 cursor-pointer group">
-                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-border text-primary focus:ring-primary" {...formik.getFieldProps("consentNeedHelp")} />
+              <label className="flex items-start gap-4 cursor-pointer group">
+                <Checkbox 
+                  checked={formik.values.consentNeedHelp}
+                  onCheckedChange={(checked) => formik.setFieldValue("consentNeedHelp", !!checked)}
+                  className="mt-0.5"
+                />
                 <div>
                   <p className="text-[14px] font-bold text-text group-hover:text-primary transition-colors">List in "Need Help" Directory</p>
-                  <p className="text-[12px] text-text-muted mt-1">Make my profile available in the community support directory so citizens can contact me.</p>
+                  <p className="text-[12px] text-text-muted mt-0.5">Make my profile available in the community support directory so citizens can contact me.</p>
                 </div>
               </label>
 
-              <label className="flex items-start gap-3 cursor-pointer group">
-                <input type="checkbox" className="mt-1 w-4 h-4 rounded border-border text-primary focus:ring-primary" {...formik.getFieldProps("showPhonePublicly")} />
+              <label className="flex items-start gap-4 cursor-pointer group">
+                <Checkbox 
+                  checked={formik.values.showPhonePublicly}
+                  onCheckedChange={(checked) => formik.setFieldValue("showPhonePublicly", !!checked)}
+                  className="mt-0.5"
+                />
                 <div>
                   <p className="text-[14px] font-bold text-text group-hover:text-primary transition-colors">Show Phone Number Publicly</p>
-                  <p className="text-[12px] text-text-muted mt-1">Allow citizens to see my phone number. If unchecked, they can only contact you via platform request.</p>
+                  <p className="text-[12px] text-text-muted mt-0.5">Allow citizens to see my phone number. If unchecked, they can only contact you via platform request.</p>
                 </div>
               </label>
 

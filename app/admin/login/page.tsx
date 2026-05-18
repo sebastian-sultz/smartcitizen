@@ -7,6 +7,7 @@ import { LogIn, ShieldCheck, Mail, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const loginSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
@@ -88,8 +89,8 @@ export default function LoginPage() {
                 </div>
 
                 <div className="flex items-center justify-between text-xs">
-                  <label className="flex items-center cursor-pointer text-text-muted">
-                    <input type="checkbox" className="mr-2 accent-primary" />
+                  <label className="flex items-center cursor-pointer text-text-muted gap-2">
+                    <Checkbox />
                     Remember me
                   </label>
                   <a href="#" className="text-primary font-bold hover:underline">Forgot password?</a>

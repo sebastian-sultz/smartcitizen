@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Filter, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { ProfessionalCard } from "./ProfessionalCard";
 import EmptyState from "@/components/ui/EmptyState";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const mockProfessionals = [
   {
@@ -60,6 +62,12 @@ const categories = ["All", "Lawyer", "Doctor", "Counselor", "Financial Advisor",
 export const NeedHelpDirectory = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const filteredProfessionals = mockProfessionals.filter((prof) => {
     const matchesSearch = 
@@ -86,15 +94,20 @@ export const NeedHelpDirectory = () => {
             />
           </div>
           <div className="md:w-[250px] relative">
-            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-text-light">
+            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-text-light z-10">
               <MapPin size={20} />
             </div>
-            <select className="w-full h-14 pl-12 pr-4 rounded-xl border border-border bg-bg focus:border-primary focus:ring-1 focus:ring-primary outline-none text-[15px] appearance-none transition-all text-text">
-              <option value="">All Locations</option>
-              <option value="Delhi NCR">Delhi NCR</option>
-              <option value="Mumbai">Mumbai</option>
-              <option value="Bangalore">Bangalore</option>
-            </select>
+            <Select defaultValue="">
+              <SelectTrigger className="w-full h-14 pl-12 text-[15px]">
+                <SelectValue placeholder="All Locations" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">All Locations</SelectItem>
+                <SelectItem value="Delhi NCR">Delhi NCR</SelectItem>
+                <SelectItem value="Mumbai">Mumbai</SelectItem>
+                <SelectItem value="Bangalore">Bangalore</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -119,7 +132,13 @@ export const NeedHelpDirectory = () => {
       </div>
 
       {/* Results */}
-      {filteredProfessionals.length > 0 ? (
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-72 w-full rounded-2xl" />
+          ))}
+        </div>
+      ) : filteredProfessionals.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredProfessionals.map((prof) => (
             <ProfessionalCard key={prof.id} {...prof} />

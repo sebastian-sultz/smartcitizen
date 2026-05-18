@@ -7,6 +7,7 @@ import { Heart, Upload, Send, CheckCircle2, Download } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 export const DonationForm = () => {
   const [step, setStep] = useState<"form" | "success">("form");
@@ -126,18 +127,20 @@ export const DonationForm = () => {
           
           <div className="space-y-2">
             <label className="text-[14px] font-bold text-text ml-1 block">Payment Mode *</label>
-            <select 
-              className={`w-full px-6 py-4 rounded-xl bg-white border outline-none transition-all appearance-none ${
-                formik.touched.paymentMode && formik.errors.paymentMode ? "border-red-500" : "border-border focus:border-primary"
-              }`}
-              {...formik.getFieldProps("paymentMode")}
+            <Select 
+              value={formik.values.paymentMode} 
+              onValueChange={(val) => formik.setFieldValue("paymentMode", val)}
             >
-              <option value="">Select Payment Mode</option>
-              <option value="IMPS">IMPS Transfer (INR)</option>
-              <option value="PhonePe">PhonePe Transfer</option>
-              <option value="GooglePay">Google Pay Transfer</option>
-              <option value="Paytm">Paytm</option>
-            </select>
+              <SelectTrigger className="w-full bg-white">
+                <SelectValue placeholder="Select Payment Mode" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="IMPS">IMPS Transfer (INR)</SelectItem>
+                <SelectItem value="PhonePe">PhonePe Transfer</SelectItem>
+                <SelectItem value="GooglePay">Google Pay Transfer</SelectItem>
+                <SelectItem value="Paytm">Paytm</SelectItem>
+              </SelectContent>
+            </Select>
             {formik.touched.paymentMode && formik.errors.paymentMode && (
               <p className="text-red-500 text-[12px] ml-1">{formik.errors.paymentMode}</p>
             )}

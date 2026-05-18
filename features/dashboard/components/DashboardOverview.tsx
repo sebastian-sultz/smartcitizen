@@ -6,6 +6,13 @@ import { Users, UserCheck, Heart, Megaphone, ArrowUpRight, TrendingUp } from "lu
 import { cn } from "@/lib/utils";
 import { useAdminStore } from "@/features/admin/store/useAdminStore";
 import { Button } from "@/components/ui/Button";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 export function DashboardOverview() {
   const { users, volunteerApps, events, campaigns } = useAdminStore();
@@ -49,7 +56,9 @@ export function DashboardOverview() {
     <div className="space-y-8">
       <div>
         <h2 className="text-2xl font-bold text-text">Dashboard Overview</h2>
-        <p className="text-text-muted">Welcome back, Admin. Here's what's happening today.</p>
+        <p className="text-text-muted">
+          Welcome back, Admin. Here's what's happening today.
+        </p>
       </div>
 
       {/* Stats Grid */}
@@ -62,13 +71,20 @@ export function DashboardOverview() {
             transition={{ delay: index * 0.1 }}
             className="bg-surface p-6 rounded-2xl shadow-card border border-border relative overflow-hidden group"
           >
-            <div className={cn(
-              "absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 rounded-full opacity-10 transition-transform group-hover:scale-125",
-              stat.color
-            )} />
-            
+            <div
+              className={cn(
+                "absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 rounded-full opacity-10 transition-transform group-hover:scale-125",
+                stat.color,
+              )}
+            />
+
             <div className="flex justify-between items-start mb-4">
-               <div className={cn("p-3 rounded-xl text-white shadow-lg", stat.color)}>
+              <div
+                className={cn(
+                  "p-3 rounded-xl text-white shadow-lg",
+                  stat.color,
+                )}
+              >
                 {stat.icon}
               </div>
               <span className="flex items-center text-xs font-bold text-success bg-success/10 px-2 py-1 rounded-full">
@@ -77,8 +93,12 @@ export function DashboardOverview() {
               </span>
             </div>
 
-            <h3 className="text-text-muted text-sm font-medium">{stat.title}</h3>
-            <p className="text-2xl font-bold text-text mt-1">{stat.value}</p>
+            <h3 className="text-text-muted text-sm font-medium">
+              {stat.title}
+            </h3>
+            <p className="text-2xl font-bold text-text mt-1">
+              {stat.value}
+            </p>
           </motion.div>
         ))}
       </div>
@@ -91,10 +111,15 @@ export function DashboardOverview() {
               <TrendingUp className="mr-2 text-primary" size={20} />
               Recent Engagement Trends
             </h3>
-            <select className="text-xs bg-bg border border-border rounded-md px-2 py-1">
-              <option>Last 7 Days</option>
-              <option>Last 30 Days</option>
-            </select>
+            <Select defaultValue="Last 7 Days">
+              <SelectTrigger className="w-36 h-9 py-1 px-3 text-xs">
+                <SelectValue placeholder="Last 7 Days" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Last 7 Days">Last 7 Days</SelectItem>
+                <SelectItem value="Last 30 Days">Last 30 Days</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="h-64 flex items-center justify-center border-2 border-dashed border-border rounded-xl text-text-light italic">
             Visual analytics charts will be implemented here.
@@ -105,16 +130,25 @@ export function DashboardOverview() {
           <h3 className="font-bold text-lg mb-6">Recent Alerts</h3>
           <div className="space-y-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex items-start space-x-3 p-3 rounded-lg hover:bg-bg transition-colors cursor-pointer">
+              <div
+                key={i}
+                className="flex items-start space-x-3 p-3 rounded-lg hover:bg-bg transition-colors cursor-pointer"
+              >
                 <div className="w-2 h-2 mt-2 bg-accent rounded-full shrink-0" />
                 <div>
-                  <p className="text-sm font-medium text-text">New Volunteer Registration Pending</p>
+                  <p className="text-sm font-medium text-text">
+                    New Volunteer Registration Pending
+                  </p>
                   <p className="text-xs text-text-light">2 hours ago</p>
                 </div>
               </div>
             ))}
           </div>
-          <Button variant="text" fullWidth className="mt-6 text-sm font-semibold text-primary">
+          <Button
+            variant="text"
+            fullWidth
+            className="mt-6 text-sm font-semibold text-primary"
+          >
             View All Notifications
           </Button>
         </div>

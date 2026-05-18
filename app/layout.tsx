@@ -35,6 +35,8 @@ export const metadata: Metadata = {
 
 
 
+import { TooltipProvider } from "@/components/ui/tooltip";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -43,7 +45,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${urbanist.variable} ${figtree.variable} scroll-smooth`} data-scroll-behavior="smooth">
       <body className="min-h-screen bg-bg text-text font-body selection:bg-primary selection:text-white flex flex-col">
-        {children}
+        <TooltipProvider>{children}</TooltipProvider>
       </body>
     </html>
   );

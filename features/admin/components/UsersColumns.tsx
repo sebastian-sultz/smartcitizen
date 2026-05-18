@@ -3,6 +3,7 @@ import { Header } from "@/components/ui/TableComponent";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Ban, CheckCircle2 } from "lucide-react";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
 export const getUsersColumns = (
   updateUserRole: (id: string, role: any) => void,
@@ -23,15 +24,19 @@ export const getUsersColumns = (
   {
     label: "Role",
     render: (user) => (
-      <select 
-        className="text-[13px] border border-border rounded-lg px-2 py-1 bg-white"
-        value={user.role}
-        onChange={(e) => updateUserRole(user.id, e.target.value as any)}
+      <Select 
+        value={user.role} 
+        onValueChange={(val) => updateUserRole(user.id, val as any)}
       >
-        <option value="Smart Citizen">Smart Citizen</option>
-        <option value="Volunteer">Volunteer</option>
-        <option value="Coordinator">Coordinator</option>
-      </select>
+        <SelectTrigger className="w-36 h-8 py-1 px-2 text-[13px]">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="Smart Citizen">Smart Citizen</SelectItem>
+          <SelectItem value="Volunteer">Volunteer</SelectItem>
+          <SelectItem value="Coordinator">Coordinator</SelectItem>
+        </SelectContent>
+      </Select>
     ),
   },
   {
