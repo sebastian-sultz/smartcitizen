@@ -1,16 +1,16 @@
 # Graph Report - smartcitizen  (2026-05-19)
 
 ## Corpus Check
-- 156 files · ~2,437,572 words
+- 156 files · ~2,437,609 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1074 nodes · 1890 edges · 123 communities (75 shown, 48 thin omitted)
+- 1074 nodes · 1892 edges · 123 communities (75 shown, 48 thin omitted)
 - Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 11 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c091569c`
+- Built from commit: `18e59279`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -161,8 +161,8 @@
 ## Communities (123 total, 48 thin omitted)
 
 ### Community 0 - "Public Pages & Policies"
-Cohesion: 0.16
-Nodes (5): BlogsPage(), EventsPage(), PageHero(), PageHeroProps, LeaderboardPage()
+Cohesion: 0.18
+Nodes (4): PageHero(), PageHeroProps, LeaderboardPage(), LegalDocsPage()
 
 ### Community 1 - "Forms & Citizen Dashboard"
 Cohesion: 0.07
@@ -205,7 +205,7 @@ Cohesion: 0.48
 Nodes (5): ContactInfo(), Facebook(), Instagram(), Twitter(), Youtube()
 
 ### Community 12 - "Root Layout & Fonts"
-Cohesion: 0.27
+Cohesion: 0.3
 Nodes (8): figtree, metadata, RootLayout(), urbanist, Tooltip(), TooltipContent(), TooltipProvider(), TooltipTrigger()
 
 ### Community 13 - "Admin Login Page"
@@ -218,11 +218,11 @@ Nodes (34): dependencies, class-variance-authority, clsx, formik, framer-motion,
 
 ### Community 22 - "Community 22"
 Cohesion: 0.09
-Nodes (22): 20. Coordinator System, 24. Security Requirements, 26. SEO Requirements, 28. Scalability Requirements, 29. Logging & Monitoring, 30. Future Scope, 31. Final Development Notes, 3. User Roles (+14 more)
+Nodes (21): 18. Notification System, 24. Security Requirements, 26. SEO Requirements, 28. Scalability Requirements, 29. Logging & Monitoring, 30. Future Scope, 31. Final Development Notes, 3. User Roles (+13 more)
 
 ### Community 23 - "Community 23"
 Cohesion: 0.11
-Nodes (18): 17. Recognition & Appreciation System, 18. Operational Support & Volunteer Assistance, 22. Notification System, 23. Coordinator Responsibilities, 28. Conclusion, 4. Platform Positioning, 6. Platform Modules, Communication Channels (+10 more)
+Nodes (18): 14. Search & Discovery System, 17. Recognition & Appreciation System, 18. Operational Support & Volunteer Assistance, 22. Notification System, 28. Conclusion, 4. Platform Positioning, 6. Platform Modules, Communication Channels (+10 more)
 
 ### Community 24 - "Community 24"
 Cohesion: 0.18
@@ -393,8 +393,8 @@ Cohesion: 0.25
 Nodes (3): AboutPage(), ImpactPage(), Home()
 
 ### Community 85 - "Community 85"
-Cohesion: 0.67
-Nodes (3): 18. Notification System, Channels, Notification Types
+Cohesion: 0.5
+Nodes (4): 20. Coordinator System, Coordinator Responsibilities, Coordinator Roles, Internal Participation Metrics
 
 ### Community 86 - "Community 86"
 Cohesion: 0.07
@@ -434,14 +434,14 @@ Nodes (3): 15. Search & Discovery System, Backend Search Optimization, Search En
 
 ### Community 112 - "Community 112"
 Cohesion: 0.67
-Nodes (3): 14. Search & Discovery System, Search Filters, Search Result Information
+Nodes (3): 23. Coordinator Responsibilities, Coordinator Functions, Internal Participation Thresholds (Administrative Reference)
 
 ### Community 113 - "Community 113"
 Cohesion: 0.67
 Nodes (3): 27. Legal & Compliance Considerations, Important Compliance Principle, Mandatory Legal Review Areas
 
 ## Knowledge Gaps
-- **382 isolated node(s):** `config`, `name`, `version`, `private`, `dev` (+377 more)
+- **380 isolated node(s):** `config`, `name`, `version`, `private`, `dev` (+375 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **48 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -449,15 +449,15 @@ Nodes (3): 27. Legal & Compliance Considerations, Important Compliance Principle
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `cn()` connect `Admin Dashboard & Tables` to `Forms & Citizen Dashboard`, `Community 100`, `Layout & Navigation Utilities`, `Package Dependencies & Scripts`, `Root Layout & Fonts`, `Citizen Layout`, `Community 86`?**
-  _High betweenness centrality (0.084) - this node is a cross-community bridge._
+  _High betweenness centrality (0.082) - this node is a cross-community bridge._
 - **Why does `clsx` connect `Citizen Layout` to `Admin Dashboard & Tables`?**
-  _High betweenness centrality (0.022) - this node is a cross-community bridge._
+  _High betweenness centrality (0.021) - this node is a cross-community bridge._
 - **Why does `Button` connect `Community 86` to `Forms & Citizen Dashboard`, `Admin Dashboard & Tables`, `Community 100`, `Layout & Navigation Utilities`, `Awareness Activities & Forms`?**
-  _High betweenness centrality (0.020) - this node is a cross-community bridge._
+  _High betweenness centrality (0.019) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `cn()` (e.g. with `clsx` and `clsx`) actually correct?**
   _`cn()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `config`, `name`, `version` to the rest of the system?**
-  _382 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _380 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Forms & Citizen Dashboard` be split into smaller, more focused modules?**
   _Cohesion score 0.07 - nodes in this community are weakly interconnected._
 - **Should `Admin Dashboard & Tables` be split into smaller, more focused modules?**
