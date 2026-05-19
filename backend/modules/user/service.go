@@ -12,6 +12,7 @@ import (
 type Service interface {
 	Register(req *request.RegisterUser) (*User, error)
 	Login(req *request.LoginUser) (*User, error)
+	ForgetPassword(req *request.ForgetPassword) error
 	UpdateProfilePhoto(ctx context.Context, id string, url string, publicID string) error
 }
 
@@ -62,6 +63,22 @@ func (s *service) Login(req *request.LoginUser) (*User, error) {
 	}
 
 	return user, nil
+}
+
+func (s *service) ForgetPassword(req *request.ForgetPassword) error {
+	user, err := s.repo.FindByPhone(req.Phone)
+	if err != nil {
+		return errors.New("user not found")
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	user.Password = string(hashedPassword)
+
+	return s.repo.Update(user)
 }
 
 func (s *service) UpdateProfilePhoto(ctx context.Context, id string, url string, publicID string) error {

@@ -12,3 +12,8 @@ type LoginUser struct {
 	Phone    string `json:"phone" binding:"required"`
 	Password string `json:"password" binding:"required"`
 }
+
+type ForgetPassword struct {
+	Phone       string `json:"phone" binding:"required"`
+	NewPassword string `json:"new_password" binding:"required,min=6"`
+}

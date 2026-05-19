@@ -24,6 +24,7 @@ func (h *Handler) RegisterRoutes(router *gin.RouterGroup) {
 	{
 		auth.POST("/register", h.Register)
 		auth.POST("/login", h.Login)
+		auth.POST("/forget-password", h.ForgetPassword)
 		auth.PUT("/profile-photo/:id", h.UpdateProfilePhoto)
 	}
 }
@@ -100,6 +101,22 @@ func (h *Handler) Login(c *gin.Context) {
 	c.SetCookie("refresh_token", refreshToken, 7*24*60*60, "/", "", false, true)
 
 	c.JSON(http.StatusOK, gin.H{"message": "logged in successfully", "user": mapToResponse(user)})
+}
+
+func (h *Handler) ForgetPassword(c *gin.Context) {
+	var req request.ForgetPassword
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := h.service.ForgetPassword(&req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "password updated successfully"})
 }
 
 func (h *Handler) UpdateProfilePhoto(c *gin.Context) {
