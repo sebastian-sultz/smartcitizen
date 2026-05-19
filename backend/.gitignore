@@ -1,0 +1,6 @@
+# Binaries
+backend
+backend.exe
+
+# Environment variables
+.env

@@ -1,0 +1,149 @@
+package event
+
+import (
+	"net/http"
+
+	"backend/dto/request"
+	"backend/dto/response"
+	"backend/pkg/cloudinary"
+
+	"github.com/gin-gonic/gin"
+)
+
+type Handler struct {
+	service Service
+}
+
+func NewHandler(service Service) *Handler {
+	return &Handler{service: service}
+}
+
+func (h *Handler) RegisterRoutes(router *gin.RouterGroup) {
+	events := router.Group("/events")
+	{
+		events.POST("/", h.CreateEvent)
+		events.GET("/", h.GetAllEvents)
+		events.GET("/:id", h.GetEvent)
+		events.PUT("/:id", h.UpdateEvent)
+		events.PUT("/:id/image", h.UpdateEventImage)
+		events.DELETE("/:id", h.DeleteEvent)
+	}
+}
+
+func mapToResponse(e *Event) response.Event {
+	return response.Event{
+		ID:             e.ID,
+		EventName:      e.EventName,
+		EventDate:      e.EventDate,
+		EventAddress:   e.EventAddress,
+		OrganizerName:  e.OrganizerName,
+		OrganizerPhone: e.OrganizerPhone,
+		Description:    e.Description,
+		Image:          e.Image,
+		CreatedAt:      e.CreatedAt,
+		UpdatedAt:      e.UpdatedAt,
+	}
+}
+
+func (h *Handler) CreateEvent(c *gin.Context) {
+	var req request.CreateEvent
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	event, err := h.service.CreateEvent(&req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"message": "event created", "event": mapToResponse(event)})
+}
+
+func (h *Handler) GetAllEvents(c *gin.Context) {
+	events, err := h.service.GetAllEvents()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	var res []response.Event
+	for _, e := range events {
+		res = append(res, mapToResponse(&e))
+	}
+
+	c.JSON(http.StatusOK, gin.H{"events": res})
+}
+
+func (h *Handler) GetEvent(c *gin.Context) {
+	id := c.Param("id")
+	event, err := h.service.GetEvent(id)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "event not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"event": mapToResponse(event)})
+}
+
+func (h *Handler) UpdateEvent(c *gin.Context) {
+	id := c.Param("id")
+	var req request.UpdateEvent
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	event, err := h.service.UpdateEvent(id, &req)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "event updated", "event": mapToResponse(event)})
+}
+
+func (h *Handler) UpdateEventImage(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "event id is required"})
+		return
+	}
+
+	file, _, err := c.Request.FormFile("image")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "image file is required"})
+		return
+	}
+	defer file.Close()
+
+	url, publicID, err := cloudinary.UploadImage(c.Request.Context(), file, "smartcitizen/events")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to upload image"})
+		return
+	}
+
+	err = h.service.UpdateEventImage(c.Request.Context(), id, url, publicID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "event image updated successfully",
+		"url": url,
+	})
+}
+
+func (h *Handler) DeleteEvent(c *gin.Context) {
+	id := c.Param("id")
+
+	err := h.service.DeleteEvent(c.Request.Context(), id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "event deleted successfully"})
+}

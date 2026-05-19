@@ -1,0 +1,48 @@
+package event
+
+import (
+	"gorm.io/gorm"
+)
+
+type Repository interface {
+	Create(event *Event) error
+	FindByID(id string) (*Event, error)
+	FindAll() ([]Event, error)
+	Update(event *Event) error
+	Delete(id string) error
+}
+
+type repository struct {
+	db *gorm.DB
+}
+
+func NewRepository(db *gorm.DB) Repository {
+	return &repository{db: db}
+}
+
+func (r *repository) Create(event *Event) error {
+	return r.db.Create(event).Error
+}
+
+func (r *repository) FindByID(id string) (*Event, error) {
+	var event Event
+	err := r.db.Where("id = ?", id).First(&event).Error
+	if err != nil {
+		return nil, err
+	}
+	return &event, nil
+}
+
+func (r *repository) FindAll() ([]Event, error) {
+	var events []Event
+	err := r.db.Find(&events).Error
+	return events, err
+}
+
+func (r *repository) Update(event *Event) error {
+	return r.db.Save(event).Error
+}
+
+func (r *repository) Delete(id string) error {
+	return r.db.Where("id = ?", id).Delete(&Event{}).Error
+}
