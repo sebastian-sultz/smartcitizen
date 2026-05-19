@@ -67,7 +67,7 @@ export function ProgramSection() {
 
         <div className="mt-16 text-center">
           <Link 
-            href="/ourwork" 
+            href="/our_work" 
             className="inline-flex items-center gap-2 px-8 py-3 rounded-lg border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all"
           >
             View All 15 Programs

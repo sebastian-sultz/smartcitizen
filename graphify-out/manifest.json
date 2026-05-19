@@ -10,7 +10,7 @@
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/next-env.d.ts": {
-    "mtime": 1779190506.7720008,
+    "mtime": 1779191969.5703936,
     "ast_hash": "2a74d3909800ca5467fa83b0ab4a4890",
     "semantic_hash": ""
   },
@@ -40,8 +40,8 @@
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/layout.tsx": {
-    "mtime": 1779190380.9870894,
-    "ast_hash": "955e441fef606ba3230937555bf03ae1",
+    "mtime": 1779192652.546751,
+    "ast_hash": "6d7d0268bf4cc3fa44c2afd8a36bee44",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/donation/page.tsx": {
@@ -54,14 +54,9 @@
     "ast_hash": "fea93f4c1c0acee181d2e3f41eab06e4",
     "semantic_hash": ""
   },
-  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/volunteractivity/page.tsx": {
-    "mtime": 1779190040.1690779,
-    "ast_hash": "c37ca9bedfd7f55d6f188f769a25b3f6",
-    "semantic_hash": ""
-  },
-  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/MemberLogin/page.tsx": {
-    "mtime": 1779190040.1614537,
-    "ast_hash": "68ed2d6c373da1cc97e985feff04f13b",
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/contact_us/page.tsx": {
+    "mtime": 1779190040.1607149,
+    "ast_hash": "31c69bcfc2431f3d89ad65378ba2eb30",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/term/page.tsx": {
@@ -119,7 +114,7 @@
     "ast_hash": "48da863dc0a9bab6dfbe7c5386fb4008",
     "semantic_hash": ""
   },
-  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/About/page.tsx": {
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/about/page.tsx": {
     "mtime": 1779190040.1604064,
     "ast_hash": "6e3182ede49ed7238fb2886915b3faa4",
     "semantic_hash": ""
@@ -144,14 +139,14 @@
     "ast_hash": "3876dc6cdd5a88b05aac77c52abd042f",
     "semantic_hash": ""
   },
-  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/ourwork/page.tsx": {
-    "mtime": 1779190040.167732,
-    "ast_hash": "45bb7d0693c6a07e2890f98db58c9055",
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/member_login/page.tsx": {
+    "mtime": 1779190040.1614537,
+    "ast_hash": "68ed2d6c373da1cc97e985feff04f13b",
     "semantic_hash": ""
   },
-  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/ouractivity/page.tsx": {
-    "mtime": 1779190040.1674752,
-    "ast_hash": "88aa4a16836b756be755dc3438fea1db",
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/volunteer_activity/page.tsx": {
+    "mtime": 1779191879.2872057,
+    "ast_hash": "a7ea370da4bce9b7c844ce7ec7525cb6",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/volunteer/page.tsx": {
@@ -164,24 +159,9 @@
     "ast_hash": "c0a6b5c72333bd53534bb373343bb79e",
     "semantic_hash": ""
   },
-  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/ContactUs/page.tsx": {
-    "mtime": 1779190040.1607149,
-    "ast_hash": "31c69bcfc2431f3d89ad65378ba2eb30",
-    "semantic_hash": ""
-  },
-  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/need-help/page.tsx": {
-    "mtime": 1779190040.1672943,
-    "ast_hash": "c1d7d2099d8177fec9efe767e15c37c9",
-    "semantic_hash": ""
-  },
-  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/Legal_Documents/page.tsx": {
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/legal_documents/page.tsx": {
     "mtime": 1779190040.1612115,
     "ast_hash": "99677ed07ff613a9db6f14043f36c719",
-    "semantic_hash": ""
-  },
-  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/JoinUs/page.tsx": {
-    "mtime": 1779190040.1609776,
-    "ast_hash": "c12867b7752ce5266e7f94cfc0afc0a3",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/(public)/layout.tsx": {
@@ -194,6 +174,21 @@
     "ast_hash": "1e1744d355a4d9eb29f3ea86fb37ba8f",
     "semantic_hash": ""
   },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/join_us/page.tsx": {
+    "mtime": 1779190040.1609776,
+    "ast_hash": "c12867b7752ce5266e7f94cfc0afc0a3",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/need_help/page.tsx": {
+    "mtime": 1779190040.1672943,
+    "ast_hash": "c1d7d2099d8177fec9efe767e15c37c9",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/our_activity/page.tsx": {
+    "mtime": 1779190040.1674752,
+    "ast_hash": "88aa4a16836b756be755dc3438fea1db",
+    "semantic_hash": ""
+  },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/return_policy/page.tsx": {
     "mtime": 1779190040.168153,
     "ast_hash": "6234adf702dc5ecdfcc971570ccbd5f8",
@@ -202,6 +197,11 @@
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/events/page.tsx": {
     "mtime": 1779190040.1648958,
     "ast_hash": "610c7aae2139cfd41a100d93c99cd839",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/our_work/page.tsx": {
+    "mtime": 1779190040.167732,
+    "ast_hash": "45bb7d0693c6a07e2890f98db58c9055",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/impact/page.tsx": {
@@ -250,8 +250,8 @@
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/home/components/Hero.tsx": {
-    "mtime": 1779190040.2277184,
-    "ast_hash": "c458089ec2c6a25d6bf6d3cc47690fe4",
+    "mtime": 1779191848.4638307,
+    "ast_hash": "98080002d523b2b39f41e315dbd722ff",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/contact/index.ts": {
@@ -275,13 +275,13 @@
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/auth/components/LoginForm.tsx": {
-    "mtime": 1779190040.2221878,
-    "ast_hash": "7efe73452614316e170245fb653bd049",
+    "mtime": 1779191834.5784419,
+    "ast_hash": "b7c7f6f8aaf16f5ee8a26ad1e3909d5a",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/auth/components/RegisterForm.tsx": {
-    "mtime": 1779190040.2224422,
-    "ast_hash": "1fa09d5f629bd6851e2924e3e74ed956",
+    "mtime": 1779191841.7383037,
+    "ast_hash": "bdc4aab32abb274e3e384dfda883d270",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/awareness/AwarenessFeature.tsx": {
@@ -375,13 +375,13 @@
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/about/components/AboutContent.tsx": {
-    "mtime": 1779190040.2192543,
-    "ast_hash": "30f43b91dd1deba7e9f9d65379a08e7c",
+    "mtime": 1779191860.6878786,
+    "ast_hash": "c00a904cb4ab16b02ccf2ab131d9fd2c",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/about/components/AboutIntro.tsx": {
-    "mtime": 1779190040.2193913,
-    "ast_hash": "25f9c977c5e2f870f69a846fa6c92910",
+    "mtime": 1779191854.990788,
+    "ast_hash": "0b2c14d4d5825cbbf3686949b069b982",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/about/components/TeamSection.tsx": {
@@ -475,8 +475,8 @@
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/community/components/ProgramSection.tsx": {
-    "mtime": 1779190040.2248921,
-    "ast_hash": "cee1253a9038273f53cb4a5c645f1315",
+    "mtime": 1779191870.9906044,
+    "ast_hash": "7f337cd574806f7c2b7b637ad9c3b83e",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/community/components/EventRegisterButton.tsx": {
@@ -490,8 +490,8 @@
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/community/components/ContentGrid.tsx": {
-    "mtime": 1779190040.22459,
-    "ast_hash": "54c3495fd61b3c37cb0cba6df298b081",
+    "mtime": 1779191865.2526007,
+    "ast_hash": "fd0ed7f49038f02fd12213a735fed12b",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/community/components/CommunitySports.tsx": {
@@ -630,8 +630,8 @@
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/components/layout/Footer.tsx": {
-    "mtime": 1779190040.215831,
-    "ast_hash": "8f20990075b2bdcc023c3a4058fd3085",
+    "mtime": 1779191827.2420878,
+    "ast_hash": "e9effab06d4d6ecf38e469161cd81b47",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/components/layout/AnnouncementBar.tsx": {
@@ -640,8 +640,8 @@
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/components/layout/Header.tsx": {
-    "mtime": 1779190040.2160552,
-    "ast_hash": "914224a0ed98669028d38b4437596c64",
+    "mtime": 1779191822.4222734,
+    "ast_hash": "111e39653994fc2541a1b404d8e470f5",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/lib/utils.ts": {

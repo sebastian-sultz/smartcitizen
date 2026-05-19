@@ -95,7 +95,7 @@ export const CareerSection = () => (
             </div>
           </div>
           <div className="mt-16 text-center">
-            <Link href="/JoinUs" className="inline-block bg-accent hover:bg-accent-light text-white px-10 py-4 rounded-xl font-bold transition-all shadow-xl shadow-accent/20">
+            <Link href="/join_us" className="inline-block bg-accent hover:bg-accent-light text-white px-10 py-4 rounded-xl font-bold transition-all shadow-xl shadow-accent/20">
               Join as a Volunteer
             </Link>
           </div>

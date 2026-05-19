@@ -31,7 +31,7 @@ export function AboutIntro() {
             </div>
 
             <Link 
-              href="/About" 
+              href="/about" 
               className="inline-flex items-center gap-2 font-bold text-primary hover:text-primary-light transition-colors group"
             >
               Learn More About Us

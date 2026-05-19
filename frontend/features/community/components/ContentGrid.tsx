@@ -31,7 +31,7 @@ export const ContentGrid = ({ items, type, emptyIcon, emptyTitle, emptyDesc }: C
         title={emptyTitle}
         description={emptyDesc}
         ctaText={type === 'event' ? "Join as Volunteer" : undefined}
-        ctaHref={type === 'event' ? "/JoinUs" : undefined}
+        ctaHref={type === 'event' ? "/join_us" : undefined}
       />
     );
   }

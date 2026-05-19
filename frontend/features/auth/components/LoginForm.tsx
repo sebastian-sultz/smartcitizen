@@ -154,7 +154,7 @@ export const LoginForm = () => {
           {view === "login" ? (
             <div className="pt-4 text-center">
               <p className="text-[14px] text-text-muted">
-                Don&apos;t have an account? <Link href="/JoinUs" className="text-primary font-bold hover:underline">Become a Smart Citizen</Link>
+                Don&apos;t have an account? <Link href="/join_us" className="text-primary font-bold hover:underline">Become a Smart Citizen</Link>
               </p>
             </div>
           ) : (

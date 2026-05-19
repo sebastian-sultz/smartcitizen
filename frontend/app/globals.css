@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@300;400;500;600&family=Urbanist:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -23,7 +22,7 @@
   --color-white: #FFFFFF;
   --color-dark: #0D0D0D;
 
-  --font-display: var(--font-urbanist);
+  --font-display: var(--font-source-sans-3);
   --font-body: var(--font-figtree);
 
   --radius-xl: 12px;
@@ -34,7 +33,7 @@
 }
 
 :root {
-  --font-urbanist: 'Urbanist', sans-serif;
+  --font-source-sans-3: 'Source Sans 3', sans-serif;
   --font-figtree: 'Figtree', sans-serif;
   --background: var(--color-bg);
   --foreground: var(--color-text);

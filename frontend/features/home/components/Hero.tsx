@@ -99,7 +99,7 @@ export function Hero() {
                 <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
               </Link>
               <Link
-                href="/JoinUs"
+                href="/join_us"
                 className="group w-full sm:w-auto px-8 py-4 rounded-2xl border-2 border-border hover:border-primary hover:text-primary text-text font-black flex items-center justify-center gap-2 transition-all active:scale-95 text-[15px]"
               >
                 Become a Volunteer

@@ -77,14 +77,14 @@ export default function Footer() {
             <ul className="space-y-3 text-[15px] text-white/70">
               {[
                 { name: "Home", href: "/" },
-                { name: "About the Foundation", href: "/About" },
+                { name: "About the Foundation", href: "/about" },
                 { name: "Mission & Vision", href: "/mission" },
-                { name: "Our Programs", href: "/ourwork" },
-                { name: "Our Activities", href: "/ouractivity" },
+                { name: "Our Programs", href: "/our_work" },
+                { name: "Our Activities", href: "/our_activity" },
                 { name: "Upcoming Events", href: "/events" },
                 { name: "Awareness Blogs", href: "/blogs" },
-                { name: "Join as Volunteer", href: "/JoinUs" },
-                { name: "Get Help", href: "/ContactUs" },
+                { name: "Join as Volunteer", href: "/join_us" },
+                { name: "Get Help", href: "/contact_us" },
               ].map((link) => (
                 <li key={link.name}>
                   <Link href={link.href} className="hover:text-accent transition-colors flex items-center gap-2">
@@ -104,7 +104,7 @@ export default function Footer() {
                 { name: "Terms & Conditions", href: "/term" },
                 { name: "Privacy Policy", href: "/privacy_policy" },
                 { name: "Refund Policy", href: "/return_policy" },
-                { name: "Legal Documents", href: "/Legal_Documents" },
+                { name: "Legal Documents", href: "/legal_documents" },
               ].map((link) => (
                 <li key={link.name}>
                   <Link href={link.href} className="hover:text-accent transition-colors flex items-center gap-2">

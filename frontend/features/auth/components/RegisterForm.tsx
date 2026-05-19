@@ -138,7 +138,7 @@ export const RegisterForm = () => {
             {step === "details" && (
               <div className="pt-4 text-center">
                 <p className="text-[14px] text-text-muted">
-                  Already a Smart Citizen? <Link href="/MemberLogin" className="text-primary font-bold hover:underline">Log In</Link>
+                  Already a Smart Citizen? <Link href="/member_login" className="text-primary font-bold hover:underline">Log In</Link>
                 </p>
               </div>
             )}

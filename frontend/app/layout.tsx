@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Urbanist, Figtree } from "next/font/google";
+import { Source_Sans_3, Figtree } from "next/font/google";
 import "./globals.css";
 
-const urbanist = Urbanist({
-  variable: "--font-urbanist",
+const sourceSans3 = Source_Sans_3({
+  variable: "--font-source-sans-3",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
 });
@@ -43,7 +43,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${urbanist.variable} ${figtree.variable} scroll-smooth`} data-scroll-behavior="smooth">
+    <html lang="en" className={`${sourceSans3.variable} ${figtree.variable} scroll-smooth`} data-scroll-behavior="smooth">
       <body className="min-h-screen bg-bg text-text font-body selection:bg-primary selection:text-white flex flex-col">
         <TooltipProvider>{children}</TooltipProvider>
       </body>

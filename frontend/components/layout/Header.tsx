@@ -9,18 +9,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 
 const aboutLinks = [
-  { name: "About the Foundation", href: "/About" },
+  { name: "About the Foundation", href: "/about" },
   { name: "Mission & Vision", href: "/mission" },
   { name: "Our Social Impact", href: "/impact" },
   { name: "Participation Highlights", href: "/leaderboard" },
-  { name: "Legal Documents", href: "/Legal_Documents" },
+  { name: "Legal Documents", href: "/legal_documents" },
 ];
 
 const activityLinks = [
   { name: "Awareness Blogs", href: "/blogs" },
-  { name: "Community Activities", href: "/volunteractivity" },
-  { name: "Our Programs", href: "/ourwork" },
-  { name: "Our Activities", href: "/ouractivity" },
+  { name: "Community Activities", href: "/volunteer_activity" },
+  { name: "Our Programs", href: "/our_work" },
+  { name: "Our Activities", href: "/our_activity" },
   { name: "Upcoming Programs", href: "/events" },
   { name: "Volunteer Programs", href: "/volunteer" },
 ];
@@ -166,7 +166,7 @@ export default function Header() {
             </div>
 
             <Link 
-              href="/need-help" 
+              href="/need_help" 
               className={cn(
                 "px-4 py-2 rounded-full font-bold text-[14px] transition-all hover:bg-primary/5 flex items-center gap-2",
                 isScrolled || isHome ? "text-text hover:text-primary" : "text-white hover:bg-white/10"
@@ -179,7 +179,7 @@ export default function Header() {
           {/* CTAs */}
           <div className="hidden lg:flex items-center gap-3">
             <Link 
-              href="/JoinUs" 
+              href="/join_us" 
               className={cn(
                 "px-6 py-2.5 rounded-full font-bold transition-all text-[14px] border-2",
                 isScrolled || isHome 
@@ -291,14 +291,14 @@ export default function Header() {
 
               <div className="p-8 bg-bg border-t border-border space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <Link href="/JoinUs" className="bg-primary text-white text-center py-3.5 rounded-2xl font-bold text-[14px] shadow-lg shadow-primary/20" onClick={() => setMobileMenuOpen(false)}>
+                  <Link href="/join_us" className="bg-primary text-white text-center py-3.5 rounded-2xl font-bold text-[14px] shadow-lg shadow-primary/20" onClick={() => setMobileMenuOpen(false)}>
                     Join Us
                   </Link>
                   <Link href="/donation" className="bg-accent text-white text-center py-3.5 rounded-2xl font-bold text-[14px] shadow-lg shadow-accent/20" onClick={() => setMobileMenuOpen(false)}>
                     Support
                   </Link>
                 </div>
-                <Link href="/ContactUs" className="block w-full text-center py-3.5 rounded-2xl border-2 border-primary text-primary font-bold text-[14px]" onClick={() => setMobileMenuOpen(false)}>
+                <Link href="/contact_us" className="block w-full text-center py-3.5 rounded-2xl border-2 border-primary text-primary font-bold text-[14px]" onClick={() => setMobileMenuOpen(false)}>
                   Get Help
                 </Link>
               </div>
