@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
+import { performLogout } from "@/lib/api-helpers";
 
 interface NavItem {
   title: string;
@@ -165,10 +166,7 @@ export function Sidebar() {
               fullWidth
               alignLeft
               normalCase
-              onClick={() => {
-                // Mock logout
-                window.location.href = "/admin/login";
-              }}
+              onClick={() => performLogout('/admin/login')}
               className="p-3 text-sm h-auto"
             >
               <LogOut className="w-5 h-5 mr-3 shrink-0" />

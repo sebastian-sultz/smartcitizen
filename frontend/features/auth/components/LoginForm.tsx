@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Link from "next/link";
+import { loginUser, forgetPassword } from "../api";
+import { toast } from "sonner";
 
 export const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -36,20 +38,33 @@ export const LoginForm = () => {
     }),
     onSubmit: async (values, { setSubmitting }) => {
       setSubmitting(true);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      if (view === "login") {
-        alert("Login successful! Redirecting to dashboard...");
-        window.location.href = "/citizen";
-      } else if (view === "forgot") {
-        setView("otp");
-      } else if (view === "otp") {
-        setView("reset");
-      } else if (view === "reset") {
-        alert("Password reset successfully. Please log in.");
-        setView("login");
+      try {
+        if (view === "login") {
+          const res = await loginUser({
+            phone: values.mobileNumber,
+            password: values.password,
+          });
+          toast.success(res.message || "Login successful!");
+          // Wait briefly for toast
+          await new Promise((resolve) => setTimeout(resolve, 800));
+          window.location.href = "/citizen";
+        } else if (view === "forgot") {
+          setView("otp");
+        } else if (view === "otp") {
+          setView("reset");
+        } else if (view === "reset") {
+          await forgetPassword({
+            phone: values.mobileNumber,
+            new_password: values.newPassword,
+          });
+          toast.success("Password reset successfully. Please log in.");
+          setView("login");
+        }
+      } catch (err: any) {
+        console.error("Login/Auth action failed:", err);
+      } finally {
+        setSubmitting(false);
       }
-      setSubmitting(false);
     },
   });
 

@@ -1,14 +1,63 @@
 "use client";
 
-import { useAdminStore } from "../store/useAdminStore";
+import { useEffect, useState } from "react";
+import { getAllEvents, deleteEvent as apiDeleteEvent } from "@/features/community/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Trash2, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { TableComponent } from "@/components/ui/TableComponent";
 import { getEventsColumns } from "./EventsColumns";
+import { toast } from "sonner";
+
+interface EventItem {
+  id: string;
+  title: string;
+  date: string;
+  location: string;
+  status: 'Upcoming' | 'Completed' | 'Cancelled';
+}
 
 export const EventsTable = () => {
-  const { events, deleteEvent } = useAdminStore();
+  const [events, setEvents] = useState<EventItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchEvents = async () => {
+    try {
+      const fetched = await getAllEvents();
+      const mapped = fetched.map(e => ({
+        id: e.id,
+        title: e.event_name,
+        date: new Date(e.event_date).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+        location: e.event_address,
+        status: 'Upcoming' as const
+      }));
+      setEvents(mapped);
+    } catch (err) {
+      console.error("Failed to fetch events:", err);
+    }
+  };
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      try {
+        await fetchEvents();
+      } finally {
+        setLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const deleteEvent = async (id: string) => {
+    try {
+      await apiDeleteEvent(id);
+      setEvents(prev => prev.filter(e => e.id !== id));
+      toast.success("Event deleted successfully");
+    } catch (err) {
+      console.error("Failed to delete event:", err);
+    }
+  };
 
   const columns = getEventsColumns(deleteEvent);
 
@@ -24,6 +73,7 @@ export const EventsTable = () => {
         <TableComponent 
           headers={columns} 
           data={events} 
+          loading={loading}
           emptyMessage="No events found" 
           className="shadow-none border-0" 
         />

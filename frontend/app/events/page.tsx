@@ -1,8 +1,62 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import PageHero from "@/components/layout/PageHero";
 import { Info } from "lucide-react";
-import { ContentGrid } from "@/features/community";
+import { ContentGrid, getAllEvents, EventResponse } from "@/features/community";
+
+const EventSkeleton = () => (
+  <div className="border border-border/60 rounded-3xl p-6 bg-white space-y-4 animate-pulse">
+    <div className="aspect-[16/10] bg-zinc-100 rounded-2xl w-full" />
+    <div className="space-y-3">
+      <div className="h-4 bg-zinc-100 rounded-md w-1/4" />
+      <div className="h-6 bg-zinc-100 rounded-md w-3/4" />
+      <div className="h-4 bg-zinc-100 rounded-md w-full" />
+      <div className="h-4 bg-zinc-100 rounded-md w-5/6" />
+    </div>
+    <div className="pt-4 border-t border-border/40 flex justify-between items-center">
+      <div className="h-4 bg-zinc-100 rounded-md w-1/3" />
+      <div className="h-4 bg-zinc-100 rounded-md w-1/4" />
+    </div>
+  </div>
+);
 
 export default function EventsPage() {
+  const [events, setEvents] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const fetched = await getAllEvents();
+        if (fetched && fetched.length > 0) {
+          const mapped = fetched.map((e: EventResponse) => ({
+            id: e.id,
+            title: e.event_name,
+            desc: e.description,
+            date: new Date(e.event_date).toLocaleDateString("en-US", {
+              month: "long",
+              day: "numeric",
+              year: "numeric"
+            }),
+            location: e.event_address,
+            image: e.image || "/assets/a1.png"
+          }));
+          setEvents(mapped);
+        } else {
+          setEvents([]);
+        }
+      } catch (err) {
+        console.error("Failed to fetch events:", err);
+        setEvents([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
   return (
     <main className="min-h-screen">
       <PageHero title="Events & Workshops" image="/assets/a1.png" />
@@ -16,38 +70,21 @@ export default function EventsPage() {
             </p>
           </div>
 
-          <ContentGrid 
-            items={[
-              {
-                id: "e1",
-                title: "Digital Literacy & Cyber Safety Workshop",
-                desc: "Learn how to protect yourself from cyber fraud and navigate the digital world safely.",
-                date: "May 15, 2026",
-                location: "Teliarganj, Allahabad",
-                image: "/assets/a1.png"
-              },
-              {
-                id: "e2",
-                title: "Legal Awareness & Basic Rights Roadshow",
-                desc: "Empowering communities with essential knowledge of their fundamental rights and legal protections.",
-                date: "May 22, 2026",
-                location: "Civil Lines, Allahabad",
-                image: "/assets/a4.png"
-              },
-              {
-                id: "e3",
-                title: "Women's Health & Hygiene Camp",
-                desc: "Focused sessions on health, nutrition, and menstrual hygiene for women and girls.",
-                date: "June 05, 2026",
-                location: "Foundation Center",
-                image: "/assets/a3.png"
-              }
-            ]}
-            type="event"
-            emptyIcon={Info}
-            emptyTitle="No Upcoming Events"
-            emptyDesc="We are currently planning our next set of awareness workshops. Check back soon!"
-          />
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <EventSkeleton />
+              <EventSkeleton />
+              <EventSkeleton />
+            </div>
+          ) : (
+            <ContentGrid 
+              items={events}
+              type="event"
+              emptyIcon={Info}
+              emptyTitle="No Upcoming Events"
+              emptyDesc="We are currently planning our next set of awareness workshops. Check back soon!"
+            />
+          )}
         </div>
       </section>
     </main>

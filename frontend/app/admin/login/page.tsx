@@ -3,14 +3,18 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { LogIn, ShieldCheck, Mail, Lock } from "lucide-react";
+import { LogIn, ShieldCheck, Phone, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { loginUser } from "@/features/auth";
+import { toast } from "sonner";
 
 const loginSchema = Yup.object().shape({
-  email: Yup.string().email("Invalid email").required("Email is required"),
+  phone: Yup.string()
+    .matches(/^[0-9]{10}$/, "Enter a valid 10-digit mobile number")
+    .required("Mobile number is required"),
   password: Yup.string().min(4, "Password too short").required("Password is required"),
 });
 
@@ -39,35 +43,44 @@ export default function LoginPage() {
           </div>
 
           <Formik
-            initialValues={{ email: "", password: "" }}
+            initialValues={{ phone: "", password: "" }}
             validationSchema={loginSchema}
-            onSubmit={(values, { setSubmitting }) => {
-              console.log("Login Attempt:", values);
-              // Mock login
-              setTimeout(() => {
-                router.push("/admin");
+            onSubmit={async (values, { setSubmitting }) => {
+              setSubmitting(true);
+              try {
+                const res = await loginUser({
+                  phone: values.phone,
+                  password: values.password,
+                });
+                toast.success(res.message || "Logged in successfully!");
+                // Wait briefly for toast
+                await new Promise((resolve) => setTimeout(resolve, 800));
+                window.location.href = "/admin";
+              } catch (err: any) {
+                console.error("Admin login failed:", err);
+              } finally {
                 setSubmitting(false);
-              }, 1000);
+              }
             }}
           >
             {({ isSubmitting, errors, touched }) => (
               <Form className="space-y-6">
                 <div className="space-y-4">
                   <div className="space-y-1.5">
-                    <label className="text-xs font-bold uppercase text-text-light tracking-widest ml-1">Email Address</label>
+                    <label className="text-xs font-bold uppercase text-text-light tracking-widest ml-1">Mobile Number</label>
                     <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-text-light" size={18} />
+                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-text-light" size={18} />
                       <Field
-                        name="email"
-                        type="email"
-                        placeholder="admin@smartcitizen.org"
+                        name="phone"
+                        type="tel"
+                        placeholder="10-digit mobile number"
                         className={cn(
                           "w-full pl-12 pr-4 py-3 bg-bg border rounded-2xl outline-none transition-all focus:ring-2 focus:ring-primary/20",
-                          errors.email && touched.email ? "border-red-50" : "border-border"
+                          errors.phone && touched.phone ? "border-red-500" : "border-border"
                         )}
                       />
                     </div>
-                    <ErrorMessage name="email" component="p" className="text-xs text-red-500 mt-1 ml-1" />
+                    <ErrorMessage name="phone" component="p" className="text-xs text-red-500 mt-1 ml-1" />
                   </div>
 
                   <div className="space-y-1.5">

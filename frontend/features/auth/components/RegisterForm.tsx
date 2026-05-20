@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Link from "next/link";
+import { registerUser } from "../api";
+import { toast } from "sonner";
 
 export const RegisterForm = () => {
   const [step, setStep] = useState<"details" | "otp" | "success">("details");
@@ -38,17 +40,30 @@ export const RegisterForm = () => {
     }),
     onSubmit: async (values, { setSubmitting }) => {
       setSubmitting(true);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      if (step === "details") {
-        setStep("otp");
-      } else if (step === "otp") {
-        // Mock ID generation
-        const mockId = `GSC${Math.floor(100000 + Math.random() * 900000)}`;
-        setGeneratedId(mockId);
-        setStep("success");
+      try {
+        if (step === "details") {
+          // Transition to OTP step (mocked OTP)
+          setStep("otp");
+        } else if (step === "otp") {
+          const res = await registerUser({
+            name: values.fullName,
+            phone: values.mobileNumber,
+            password: values.password,
+          });
+          
+          toast.success(res.message || "Registration successful!");
+          // Use the first 8 characters of UUID for display ID
+          const displayId = res.user?.id 
+            ? `GSC-${res.user.id.substring(0, 8).toUpperCase()}` 
+            : "GSC-MEMBER";
+          setGeneratedId(displayId);
+          setStep("success");
+        }
+      } catch (err: any) {
+        console.error("Registration failed:", err);
+      } finally {
+        setSubmitting(false);
       }
-      setSubmitting(false);
     },
   });
 
@@ -103,8 +118,15 @@ export const RegisterForm = () => {
 
             {step === "otp" && (
               <>
-                <div className="bg-blue-50 border border-blue-100 text-blue-800 p-3 rounded-lg text-sm text-center">
-                  OTP sent to {formik.values.mobileNumber}
+                <div className="bg-blue-50 border border-blue-100 text-blue-800 p-3 rounded-lg text-sm text-center flex flex-col items-center gap-1.5">
+                  <span>OTP sent to <strong>{formik.values.mobileNumber}</strong></span>
+                  <button 
+                    type="button" 
+                    onClick={() => setStep("details")}
+                    className="text-primary font-bold hover:underline text-xs"
+                  >
+                    Change mobile number
+                  </button>
                 </div>
                 <Input
                   label="Enter OTP"
