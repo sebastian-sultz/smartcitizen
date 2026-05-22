@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/Button";
 import { Trash2 } from "lucide-react";
 
 export const getEventsColumns = (
-  deleteEvent: (id: string) => void
+  deleteEvent: (id: string) => void,
+  showConfirm: (options: any) => void
 ): Header<any>[] => [
   {
     label: "Event ID",
@@ -44,9 +45,14 @@ export const getEventsColumns = (
           size="icon"
           shape="square"
           onClick={() => {
-            if(confirm("Delete this event?")) {
-              deleteEvent(event.id);
-            }
+            showConfirm({
+              title: "Delete Event",
+              message: "Are you sure you want to delete this event? This action cannot be undone.",
+              confirmText: "Delete",
+              cancelText: "Cancel",
+              type: "error",
+              onConfirm: () => deleteEvent(event.id),
+            });
           }}
           title="Delete Event"
         >

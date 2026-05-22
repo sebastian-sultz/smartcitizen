@@ -35,7 +35,7 @@ func (r *repository) FindByID(id string) (*Event, error) {
 
 func (r *repository) FindAll() ([]Event, error) {
 	var events []Event
-	err := r.db.Find(&events).Error
+	err := r.db.Order("created_at desc").Find(&events).Error
 	return events, err
 }
 

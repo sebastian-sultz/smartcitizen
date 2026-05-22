@@ -1,5 +1,6 @@
 import { QrCode, Building2 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
+import Image from "next/image";
 
 export const PaymentInfo = () => {
   return (
@@ -13,8 +14,14 @@ export const PaymentInfo = () => {
           <p className="text-text-muted text-[14px]">Scan QR Code using any UPI app to make a quick and secure donation.</p>
         </CardHeader>
         <CardContent className="space-y-8 text-center">
-          <div className="aspect-square max-w-[200px] mx-auto bg-bg p-4 rounded-2xl border border-border overflow-hidden">
-            <img src="/assets/qr.png" alt="UPI QR Code" className="w-full h-full object-cover" />
+          <div className="relative aspect-square max-w-[200px] mx-auto bg-bg p-4 rounded-2xl border border-border overflow-hidden">
+            <Image 
+              src="/assets/qr.png" 
+              alt="UPI QR Code" 
+              fill
+              sizes="(max-width: 768px) 100vw, 200px"
+              className="object-cover" 
+            />
           </div>
           <div className="flex flex-wrap justify-center gap-3">
              {["Paytm", "PhonePe", "GPay", "UPI"].map(tag => (

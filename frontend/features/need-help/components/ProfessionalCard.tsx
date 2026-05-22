@@ -1,6 +1,8 @@
 import { MapPin, Briefcase, Phone, MessageCircle } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/Card";
+import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
+import Image from "next/image";
 
 interface ProfessionalCardProps {
   name: string;
@@ -22,17 +24,26 @@ export const ProfessionalCard = ({
   showPhone,
 }: ProfessionalCardProps) => {
   return (
-    <div className="bg-white rounded-2xl p-6 border border-border shadow-card hover:shadow-xl transition-all group">
+    <Card className="rounded-2xl p-6 shadow-card hover:shadow-xl transition-all group">
       <div className="flex items-start gap-4">
-        <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0 overflow-hidden border border-primary/20">
+        <div className="relative w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0 overflow-hidden border border-primary/20">
           {photoUrl ? (
-            <img src={photoUrl} alt={name} className="w-full h-full object-cover" />
+            <Image 
+              src={photoUrl} 
+              alt={name} 
+              fill
+              sizes="64px"
+              className="object-cover" 
+            />
           ) : (
             <span className="font-display font-bold text-xl">{name.charAt(0)}</span>
           )}
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-display text-xl font-bold text-text truncate">{name}</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="font-display text-xl font-bold text-text truncate">{name}</h3>
+            <Badge variant="success" className="h-4.5 text-[9px] px-1.5 py-0 shrink-0">Verified</Badge>
+          </div>
           <div className="flex items-center gap-2 text-accent text-[12px] font-bold uppercase tracking-widest mt-1">
             <Briefcase size={14} />
             <span className="truncate">{profession}</span>
@@ -74,6 +85,7 @@ export const ProfessionalCard = ({
           </Button>
         )}
       </div>
-    </div>
+    </Card>
   );
 };
+

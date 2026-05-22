@@ -8,8 +8,11 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Badge } from "@/components/ui/Badge";
+import { useAlert } from "@/components/ui/AlertProvider";
 
 export const DonationForm = () => {
+  const { showAlert } = useAlert();
   const [step, setStep] = useState<"form" | "success">("form");
   const [trxDetails, setTrxDetails] = useState({ id: "", amount: "" });
 
@@ -65,12 +68,20 @@ export const DonationForm = () => {
             </div>
             <div className="flex justify-between items-center mb-3">
               <span className="text-text-muted text-[14px]">Status</span>
-              <span className="px-2.5 py-1 bg-green-100 text-green-700 text-[12px] font-bold uppercase rounded-full tracking-wider">Completed</span>
+              <Badge variant="success">Completed</Badge>
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-            <Button onClick={() => alert("Downloading PDF Receipt...")} variant="outline" className="flex items-center gap-2">
+            <Button 
+              onClick={() => showAlert({
+                title: "Receipt Download",
+                message: "Downloading PDF Receipt...",
+                type: "info"
+              })} 
+              variant="outline" 
+              className="flex items-center gap-2"
+            >
               <Download size={18} />
               Download Receipt
             </Button>
@@ -97,14 +108,20 @@ export const DonationForm = () => {
             <Input
               label="Name *"
               placeholder="Full Name"
-              {...formik.getFieldProps("name")}
+              name="name"
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               error={formik.touched.name ? (formik.errors.name as string) : undefined}
             />
             <Input
               label="Email ID *"
               type="email"
               placeholder="email@example.com"
-              {...formik.getFieldProps("email")}
+              name="email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               error={formik.touched.email ? (formik.errors.email as string) : undefined}
             />
           </div>
@@ -113,25 +130,31 @@ export const DonationForm = () => {
               label="Mobile Number *"
               type="tel"
               placeholder="10-digit number"
-              {...formik.getFieldProps("mobileNumber")}
+              name="mobileNumber"
+              value={formik.values.mobileNumber}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               error={formik.touched.mobileNumber ? (formik.errors.mobileNumber as string) : undefined}
             />
             <Input
               label="Amount (₹) *"
               type="number"
               placeholder="Enter amount"
-              {...formik.getFieldProps("amount")}
+              name="amount"
+              value={formik.values.amount}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               error={formik.touched.amount ? (formik.errors.amount as string) : undefined}
             />
           </div>
           
           <div className="space-y-2">
-            <label className="text-[14px] font-bold text-text ml-1 block">Payment Mode *</label>
+            <label id="payment-mode-label" htmlFor="paymentMode" className="text-[14px] font-bold text-text ml-1 block">Payment Mode *</label>
             <Select 
               value={formik.values.paymentMode} 
               onValueChange={(val) => formik.setFieldValue("paymentMode", val)}
             >
-              <SelectTrigger className="w-full bg-white">
+              <SelectTrigger id="paymentMode" aria-labelledby="payment-mode-label" className="w-full bg-white">
                 <SelectValue placeholder="Select Payment Mode" />
               </SelectTrigger>
               <SelectContent>
@@ -149,7 +172,10 @@ export const DonationForm = () => {
           <Input
             label="UTR / Transaction Hash / Slip *"
             placeholder="Transaction Reference Number"
-            {...formik.getFieldProps("transactionId")}
+            name="transactionId"
+            value={formik.values.transactionId}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
             error={formik.touched.transactionId ? (formik.errors.transactionId as string) : undefined}
           />
 
@@ -158,11 +184,11 @@ export const DonationForm = () => {
             <div className="relative">
               <input 
                 type="file" 
-                className="hidden" 
+                className="sr-only peer" 
                 id="receipt" 
                 onChange={(e) => formik.setFieldValue("receipt", e.currentTarget.files?.[0])} 
               />
-              <label htmlFor="receipt" className="w-full flex items-center justify-between px-6 py-4 rounded-xl bg-white border border-border border-dashed cursor-pointer hover:bg-white/50 transition-all">
+              <label htmlFor="receipt" className="w-full flex items-center justify-between px-6 py-4 rounded-xl bg-white border border-border border-dashed cursor-pointer hover:bg-white/50 transition-all peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2">
                 <span className="text-text-muted">{formik.values.receipt ? (formik.values.receipt as File).name : "Choose file..."}</span>
                 <Upload size={20} className="text-text-light" />
               </label>

@@ -4,8 +4,10 @@ import { useState } from "react";
 import { Shield, EyeOff, Trash2, Smartphone, Eye } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
+import { useAlert } from "@/components/ui/AlertProvider";
 
 export const PrivacyControls = () => {
+  const { showAlert, showConfirm } = useAlert();
   const [showPhone, setShowPhone] = useState(false);
   const [inDirectory, setInDirectory] = useState(true);
 
@@ -80,9 +82,20 @@ export const PrivacyControls = () => {
             variant="outline" 
             className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
             onClick={() => {
-              if(confirm("Are you sure you want to request data deletion? This action cannot be undone and you will lose access to the Smart Citizen network.")) {
-                alert("Data deletion request submitted to administrators.");
-              }
+              showConfirm({
+                title: "Delete Profile",
+                message: "Are you sure you want to request data deletion? This action cannot be undone and you will lose access to the Smart Citizen network.",
+                confirmText: "Delete",
+                cancelText: "Cancel",
+                type: "error",
+                onConfirm: () => {
+                  showAlert({
+                    title: "Deletion Requested",
+                    message: "Data deletion request submitted to administrators.",
+                    type: "success"
+                  });
+                }
+              });
             }}
           >
             Request Profile Deletion

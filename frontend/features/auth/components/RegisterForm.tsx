@@ -102,7 +102,10 @@ export const RegisterForm = () => {
                   label="Full Name"
                   placeholder="Your legal name"
                   icon={<User size={20} />}
-                  {...formik.getFieldProps("fullName")}
+                  name="fullName"
+                  value={formik.values.fullName}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   error={formik.touched.fullName ? (formik.errors.fullName as string) : undefined}
                 />
                 <Input
@@ -110,7 +113,10 @@ export const RegisterForm = () => {
                   placeholder="10-digit mobile number"
                   type="tel"
                   icon={<Phone size={20} />}
-                  {...formik.getFieldProps("mobileNumber")}
+                  name="mobileNumber"
+                  value={formik.values.mobileNumber}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   error={formik.touched.mobileNumber ? (formik.errors.mobileNumber as string) : undefined}
                 />
               </>
@@ -133,7 +139,10 @@ export const RegisterForm = () => {
                   placeholder="4-digit code"
                   type="text"
                   maxLength={4}
-                  {...formik.getFieldProps("otp")}
+                  name="otp"
+                  value={formik.values.otp}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   error={formik.touched.otp ? (formik.errors.otp as string) : undefined}
                 />
                 <Input
@@ -141,7 +150,10 @@ export const RegisterForm = () => {
                   placeholder="••••••••"
                   type="password"
                   icon={<Lock size={20} />}
-                  {...formik.getFieldProps("password")}
+                  name="password"
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   error={formik.touched.password ? (formik.errors.password as string) : undefined}
                 />
               </>

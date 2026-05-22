@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 font-bold transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none select-none outline-none",
+  "inline-flex items-center justify-center gap-2 font-bold transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none select-none outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
   {
     variants: {
       variant: {
@@ -96,6 +96,8 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         ref={ref as any}
         type={asChild ? undefined : type}
+        disabled={asChild ? undefined : (props.disabled || isBtnLoading)}
+        aria-busy={isBtnLoading ? "true" : undefined}
         className={cn(
           buttonVariants({ variant, size, shape }),
           normalCase && "normal-case font-medium",

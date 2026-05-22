@@ -1,6 +1,7 @@
 import { TreePine, Zap, Droplets, Wind, CloudSun, Recycle } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/Card";
+import Image from "next/image";
 
 const priorities = [
   { icon: TreePine, title: "Stop Cutting Down Trees" },
@@ -34,8 +35,14 @@ export const OurStory = () => (
           </div>
         </div>
         <div className="flex-1">
-          <div className="rounded-2xl overflow-hidden shadow-2xl aspect-[4/3]">
-            <img src="/assets/about_us.jpg" alt="Foundation Work" className="w-full h-full object-cover" />
+          <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3]">
+            <Image 
+              src="/assets/about_us.jpg" 
+              alt="Foundation Work" 
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover" 
+            />
           </div>
         </div>
       </div>

@@ -1,16 +1,16 @@
-# Graph Report - smartcitizen  (2026-05-19)
+# Graph Report - smartcitizen  (2026-05-23)
 
 ## Corpus Check
-- 163 files · ~2,438,870 words
+- 170 files · ~2,445,669 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1133 nodes · 1992 edges · 129 communities (81 shown, 48 thin omitted)
-- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 11 edges (avg confidence: 0.8)
+- 1187 nodes · 2149 edges · 132 communities (80 shown, 52 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 15 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `1c1430c7`
+- Built from commit: `0adc64f3`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -87,7 +87,6 @@
 - [[_COMMUNITY_Community 70|Community 70]]
 - [[_COMMUNITY_Community 71|Community 71]]
 - [[_COMMUNITY_Community 72|Community 72]]
-- [[_COMMUNITY_Community 73|Community 73]]
 - [[_COMMUNITY_Community 74|Community 74]]
 - [[_COMMUNITY_Community 75|Community 75]]
 - [[_COMMUNITY_Community 76|Community 76]]
@@ -129,6 +128,7 @@
 - [[_COMMUNITY_Community 113|Community 113]]
 - [[_COMMUNITY_Community 114|Community 114]]
 - [[_COMMUNITY_Community 115|Community 115]]
+- [[_COMMUNITY_Community 116|Community 116]]
 - [[_COMMUNITY_Community 117|Community 117]]
 - [[_COMMUNITY_Community 118|Community 118]]
 - [[_COMMUNITY_Community 119|Community 119]]
@@ -136,46 +136,53 @@
 - [[_COMMUNITY_Community 123|Community 123]]
 - [[_COMMUNITY_Community 124|Community 124]]
 - [[_COMMUNITY_Community 125|Community 125]]
-- [[_COMMUNITY_Community 126|Community 126]]
 - [[_COMMUNITY_Community 127|Community 127]]
+- [[_COMMUNITY_Community 129|Community 129]]
+- [[_COMMUNITY_Community 130|Community 130]]
+- [[_COMMUNITY_Community 132|Community 132]]
+- [[_COMMUNITY_Community 135|Community 135]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `Button` - 67 edges
-2. `cn()` - 52 edges
+1. `Button` - 73 edges
+2. `cn()` - 54 edges
 3. `Card` - 36 edges
 4. `CardContent` - 36 edges
 5. `CardHeader` - 32 edges
 6. `CardTitle` - 30 edges
-7. `useAdminStore` - 20 edges
-8. `Badge()` - 18 edges
-9. `Select()` - 18 edges
-10. `SelectValue()` - 18 edges
+7. `Badge()` - 22 edges
+8. `useAlert()` - 21 edges
+9. `useAdminStore` - 20 edges
+10. `Input` - 19 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `cn()` --calls--> `clsx`  [INFERRED]
   frontend/lib/utils.ts → package.json
 - `cn()` --calls--> `clsx`  [INFERRED]
   frontend/lib/utils.ts → frontend/package.json
-- `DashboardOverview()` --calls--> `useAdminStore`  [EXTRACTED]
-  frontend/features/dashboard/components/DashboardOverview.tsx → frontend/features/admin/store/useAdminStore.ts
-- `getEventById()` --calls--> `handleApiError()`  [EXTRACTED]
-  frontend/features/community/api.ts → frontend/lib/api-helpers.ts
-- `updateEvent()` --calls--> `handleApiError()`  [EXTRACTED]
-  frontend/features/community/api.ts → frontend/lib/api-helpers.ts
+- `main()` --calls--> `InitCloudinary()`  [INFERRED]
+  backend/main.go → backend/pkg/cloudinary/cloudinary.go
+- `main()` --calls--> `Connect()`  [INFERRED]
+  backend/main.go → backend/infrastructure/database/database.go
+- `main()` --calls--> `CORSMiddleware()`  [INFERRED]
+  backend/main.go → backend/infrastructure/middleware/cors.go
 
-## Communities (129 total, 48 thin omitted)
+## Communities (132 total, 52 thin omitted)
 
-### Community 1 - "Forms & Citizen Dashboard"
-Cohesion: 0.15
-Nodes (18): AwarenessFeature(), AwarenessPage(), metadata, AwarenessForm(), AwarenessFormProps, validationSchema, AwarenessList(), Dialog() (+10 more)
+### Community 0 - "Public Pages & Policies"
+Cohesion: 0.52
+Nodes (5): Tabs(), TabsContent(), TabsList(), tabsListVariants, TabsTrigger()
+
+### Community 3 - "Admin Dashboard & Tables"
+Cohesion: 0.5
+Nodes (4): 17. Abuse & Moderation Module, Admin Features, Features, Spam Protection
 
 ### Community 4 - "Package Dependencies & Scripts"
 Cohesion: 0.05
 Nodes (36): dependencies, class-variance-authority, clsx, formik, framer-motion, @hugeicons/core-free-icons, @hugeicons/react, lucide-react (+28 more)
 
 ### Community 5 - "Layout & Navigation Utilities"
-Cohesion: 0.18
-Nodes (10): AnnouncementBar(), Facebook(), Footer(), Instagram(), Twitter(), Youtube(), aboutLinks, activityLinks (+2 more)
+Cohesion: 0.24
+Nodes (7): AnnouncementBar(), Facebook(), Footer(), Instagram(), Twitter(), Youtube(), PublicLayout()
 
 ### Community 6 - "TypeScript Configuration"
 Cohesion: 0.1
@@ -186,8 +193,8 @@ Cohesion: 0.14
 Nodes (7): ImpactStories(), LeaderboardHighlights(), OurActivityPage(), EmptyState(), EmptyStateProps, VolunteerProgramsPage(), CommunityActivitiesPage()
 
 ### Community 8 - "Awareness Activities & Forms"
-Cohesion: 0.33
-Nodes (3): PageHero(), PageHeroProps, LeaderboardPage()
+Cohesion: 0.13
+Nodes (21): figtree, metadata, RootLayout(), sourceSans3, urbanist, AlertProvider(), Toaster(), Spinner() (+13 more)
 
 ### Community 9 - "About & Team Content"
 Cohesion: 0.1
@@ -202,24 +209,24 @@ Cohesion: 0.48
 Nodes (5): ContactInfo(), Facebook(), Instagram(), Twitter(), Youtube()
 
 ### Community 12 - "Root Layout & Fonts"
-Cohesion: 0.27
-Nodes (9): figtree, metadata, RootLayout(), sourceSans3, urbanist, Tooltip(), TooltipContent(), TooltipProvider() (+1 more)
+Cohesion: 0.05
+Nodes (62): AwarenessFeature(), AwarenessPage(), metadata, CitizenLayout(), AwarenessForm(), AwarenessFormProps, validationSchema, AwarenessList() (+54 more)
 
 ### Community 13 - "Admin Login Page"
-Cohesion: 0.05
-Nodes (13): main(), DeleteImage(), InitCloudinary(), UploadImage(), Connect(), Handler, mapToResponse(), Service (+5 more)
+Cohesion: 0.18
+Nodes (6): Claims, GenerateTokens(), ParseToken(), AuthMiddleware(), Handler, mapToResponse()
 
 ### Community 17 - "Citizen Layout"
 Cohesion: 0.06
 Nodes (35): dependencies, axios, class-variance-authority, clsx, formik, framer-motion, lucide-react, next (+27 more)
 
 ### Community 22 - "Community 22"
-Cohesion: 0.09
-Nodes (22): 16. Consent & Privacy Module, 18. Notification System, 24. Security Requirements, 26. SEO Requirements, 28. Scalability Requirements, 29. Logging & Monitoring, 30. Future Scope, 3. User Roles (+14 more)
+Cohesion: 0.08
+Nodes (24): 15. Search & Discovery System, 18. Notification System, 24. Security Requirements, 26. SEO Requirements, 28. Scalability Requirements, 29. Logging & Monitoring, 30. Future Scope, 31. Final Development Notes (+16 more)
 
 ### Community 23 - "Community 23"
-Cohesion: 0.1
-Nodes (19): 18. Operational Support & Volunteer Assistance, 20. Abuse & Moderation System, 22. Notification System, 24. Security Requirements, 28. Conclusion, 4. Platform Positioning, 6. Platform Modules, Admin Moderation Rights (+11 more)
+Cohesion: 0.09
+Nodes (22): 17. Recognition & Appreciation System, 18. Operational Support & Volunteer Assistance, 20. Abuse & Moderation System, 22. Notification System, 24. Security Requirements, 28. Conclusion, 4. Platform Positioning, 6. Platform Modules (+14 more)
 
 ### Community 24 - "Community 24"
 Cohesion: 0.18
@@ -270,8 +277,8 @@ Cohesion: 0.29
 Nodes (7): 7. Need Help Functionality, Contact Options, Module Purpose, Privacy Controls, Supported Profiles, User Access, Visibility Rules
 
 ### Community 36 - "Community 36"
-Cohesion: 0.5
-Nodes (4): 25. Frontend UI Requirements, Component Requirements, Styling, UI Guidelines
+Cohesion: 0.25
+Nodes (3): AboutPage(), ImpactPage(), Home()
 
 ### Community 37 - "Community 37"
 Cohesion: 0.33
@@ -334,12 +341,12 @@ Cohesion: 0.5
 Nodes (4): 13. Event Management System, Event Features, Event Fields, User Features
 
 ### Community 52 - "Community 52"
-Cohesion: 0.36
-Nodes (8): Pagination(), PaginationContent(), PaginationEllipsis(), PaginationItem(), PaginationLink(), PaginationLinkProps, PaginationNext(), PaginationPrevious()
+Cohesion: 0.4
+Nodes (4): sessions, tabOrder, local, worktrees
 
 ### Community 53 - "Community 53"
-Cohesion: 0.1
-Nodes (30): forgetPassword(), loginUser(), registerUser(), AuthResponse, ForgetPasswordPayload, ForgetPasswordResponse, LoginPayload, RegisterPayload (+22 more)
+Cohesion: 0.06
+Nodes (57): forgetPassword(), loginUser(), registerUser(), AuthResponse, ForgetPasswordPayload, ForgetPasswordResponse, LoginPayload, RegisterPayload (+49 more)
 
 ### Community 54 - "Community 54"
 Cohesion: 0.5
@@ -355,7 +362,7 @@ Nodes (21): aliases, components, hooks, lib, ui, utils, iconLibrary, menuAccent 
 
 ### Community 57 - "Community 57"
 Cohesion: 0.5
-Nodes (4): 27. Deployment Requirements, Backend Deployment, CI/CD, Frontend Deployment
+Nodes (4): 20. Coordinator System, Coordinator Responsibilities, Coordinator Roles, Internal Participation Metrics
 
 ### Community 58 - "Community 58"
 Cohesion: 0.5
@@ -369,10 +376,6 @@ Nodes (4): 12. Awareness Participation System, Community Participation System, I
 Cohesion: 0.5
 Nodes (4): 19. Consent & Privacy Management, Compliance Standards, Consent Management, Privacy Controls
 
-### Community 61 - "Community 61"
-Cohesion: 0.36
-Nodes (9): Table(), TableBody(), TableCaption(), TableCell(), TableFooter(), TableHead(), TableHeader(), TableRow() (+1 more)
-
 ### Community 62 - "Community 62"
 Cohesion: 0.5
 Nodes (4): 25. Non-Functional Requirements, Performance, Scalability, SEO Requirements
@@ -385,45 +388,33 @@ Nodes (4): 9. Authentication System, Authentication Flow, Forgot Password Functi
 Cohesion: 0.1
 Nodes (19): compilerOptions, allowJs, esModuleInterop, incremental, isolatedModules, jsx, lib, module (+11 more)
 
-### Community 67 - "Community 67"
-Cohesion: 0.22
-Nodes (3): BlogsPage(), DEFAULT_EVENTS, EventsPage()
-
-### Community 73 - "Community 73"
-Cohesion: 0.67
-Nodes (3): 31. Final Development Notes, Final Objective, Important Architectural Notes
-
-### Community 84 - "Community 84"
-Cohesion: 0.52
-Nodes (5): Tabs(), TabsContent(), TabsList(), tabsListVariants, TabsTrigger()
-
-### Community 85 - "Community 85"
+### Community 82 - "Community 82"
 Cohesion: 0.5
-Nodes (4): 20. Coordinator System, Coordinator Responsibilities, Coordinator Roles, Internal Participation Metrics
+Nodes (4): 16. Consent & Privacy Module, Consent Requirements, GDPR-style Compliance, Privacy Controls
 
 ### Community 86 - "Community 86"
-Cohesion: 0.07
-Nodes (44): CitizenLayout(), mockActivities, ContactForm(), ContactFormProps, DashboardOverview(), DonationForm(), documents, LegalViewer() (+36 more)
-
-### Community 87 - "Community 87"
-Cohesion: 0.67
-Nodes (3): 3. Platform Objectives, Primary Objectives, Secondary Objectives
+Cohesion: 0.36
+Nodes (8): Pagination(), PaginationContent(), PaginationEllipsis(), PaginationItem(), PaginationLink(), PaginationLinkProps, PaginationNext(), PaginationPrevious()
 
 ### Community 90 - "Community 90"
 Cohesion: 0.06
-Nodes (53): AdminCampaignsPage(), CareerSection(), OurStory(), priorities, campaignsColumns, Campaign, CampaignsTable(), initialCampaigns (+45 more)
+Nodes (51): AdminCampaignsPage(), CareerSection(), OurStory(), priorities, campaignsColumns, Campaign, CampaignsTable(), initialCampaigns (+43 more)
 
 ### Community 91 - "Community 91"
 Cohesion: 0.4
 Nodes (3): Base, User, UserType
+
+### Community 97 - "Community 97"
+Cohesion: 0.67
+Nodes (3): 3. Platform Objectives, Primary Objectives, Secondary Objectives
 
 ### Community 99 - "Community 99"
 Cohesion: 0.4
 Nodes (4): code:bash (npm run dev), Deploy on Vercel, Getting Started, Learn More
 
 ### Community 100 - "Community 100"
-Cohesion: 0.31
-Nodes (5): Header(), NavItem, navItems, Sidebar(), DashboardLayout()
+Cohesion: 0.17
+Nodes (5): EventsPage(), PageHero(), PageHeroProps, LeaderboardPage(), NeedHelpPage()
 
 ### Community 101 - "Community 101"
 Cohesion: 0.5
@@ -433,17 +424,21 @@ Nodes (3): ForgetPassword, LoginUser, RegisterUser
 Cohesion: 0.5
 Nodes (3): Answer, Q: all the code components are completely mobile responsive?, Source Nodes
 
+### Community 107 - "Community 107"
+Cohesion: 0.5
+Nodes (4): 27. Deployment Requirements, Backend Deployment, CI/CD, Frontend Deployment
+
 ### Community 108 - "Community 108"
 Cohesion: 0.5
-Nodes (4): 17. Abuse & Moderation Module, Admin Features, Features, Spam Protection
+Nodes (4): 25. Frontend UI Requirements, Component Requirements, Styling, UI Guidelines
 
 ### Community 110 - "Community 110"
 Cohesion: 0.67
 Nodes (3): config, parseJwt(), proxy()
 
 ### Community 111 - "Community 111"
-Cohesion: 0.67
-Nodes (3): 15. Search & Discovery System, Backend Search Optimization, Search Engine Requirements
+Cohesion: 0.25
+Nodes (7): 1. Preferred UI Components, 2. Next.js Image Optimization, 3. Styling with Tailwind CSS, 4. General React & TypeScript Standards, 5. Mobile-First and Theme Responsive Design, code:tsx (import Image from "next/image";), Frontend Coding Rules
 
 ### Community 112 - "Community 112"
 Cohesion: 0.67
@@ -453,37 +448,41 @@ Nodes (3): 14. Search & Discovery System, Search Filters, Search Result Informat
 Cohesion: 0.67
 Nodes (3): 27. Legal & Compliance Considerations, Important Compliance Principle, Mandatory Legal Review Areas
 
+### Community 123 - "Community 123"
+Cohesion: 0.33
+Nodes (4): main(), stringPtr(), Connect(), CORSMiddleware()
+
 ### Community 124 - "Community 124"
 Cohesion: 0.5
 Nodes (4): 2. Foundation Overview, Core Vision, Mission, Organization Name
 
-### Community 126 - "Community 126"
+### Community 132 - "Community 132"
 Cohesion: 0.67
-Nodes (3): 17. Recognition & Appreciation System, Purpose, Recognition Types
+Nodes (3): config, middleware(), parseJwt()
 
-### Community 127 - "Community 127"
+### Community 135 - "Community 135"
 Cohesion: 0.67
 Nodes (3): 23. Coordinator Responsibilities, Coordinator Functions, Internal Participation Thresholds (Administrative Reference)
 
 ## Knowledge Gaps
-- **397 isolated node(s):** `config`, `name`, `version`, `private`, `dev` (+392 more)
+- **419 isolated node(s):** `config`, `name`, `version`, `private`, `dev` (+414 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **48 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **52 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `cn()` connect `Community 86` to `Forms & Citizen Dashboard`, `Package Dependencies & Scripts`, `Layout & Navigation Utilities`, `Community 100`, `Root Layout & Fonts`, `Citizen Layout`, `Community 52`, `Community 84`, `Community 90`, `Community 123`, `Community 61`?**
-  _High betweenness centrality (0.095) - this node is a cross-community bridge._
-- **Why does `Button` connect `Community 90` to `Forms & Citizen Dashboard`, `Community 100`, `Layout & Navigation Utilities`, `Community 52`, `Community 86`?**
-  _High betweenness centrality (0.026) - this node is a cross-community bridge._
+- **Why does `cn()` connect `Root Layout & Fonts` to `Public Pages & Policies`, `Package Dependencies & Scripts`, `Awareness Activities & Forms`, `Citizen Layout`, `Community 53`, `Community 86`, `Community 90`, `Community 63`?**
+  _High betweenness centrality (0.090) - this node is a cross-community bridge._
+- **Why does `Button` connect `Root Layout & Fonts` to `Layout & Navigation Utilities`, `Community 73`, `Community 53`, `Community 86`, `Community 90`?**
+  _High betweenness centrality (0.038) - this node is a cross-community bridge._
+- **Why does `clsx` connect `Package Dependencies & Scripts` to `Root Layout & Fonts`?**
+  _High betweenness centrality (0.025) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `cn()` (e.g. with `clsx` and `clsx`) actually correct?**
   _`cn()` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `config`, `name`, `version` to the rest of the system?**
-  _397 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _419 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Package Dependencies & Scripts` be split into smaller, more focused modules?**
   _Cohesion score 0.05 - nodes in this community are weakly interconnected._
 - **Should `TypeScript Configuration` be split into smaller, more focused modules?**
   _Cohesion score 0.1 - nodes in this community are weakly interconnected._
-- **Should `Community Activities & Highlights` be split into smaller, more focused modules?**
-  _Cohesion score 0.14 - nodes in this community are weakly interconnected._

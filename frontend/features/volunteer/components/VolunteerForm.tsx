@@ -10,7 +10,10 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 
+import { useAlert } from "@/components/ui/AlertProvider";
+
 export const VolunteerForm = () => {
+  const { showAlert } = useAlert();
   const formik = useFormik({
     initialValues: {
       fullName: "",
@@ -43,10 +46,16 @@ export const VolunteerForm = () => {
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       setSubmitting(true);
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      alert("Application submitted! It is now pending admin review.");
+      showAlert({
+        title: "Application Submitted",
+        message: "Application submitted! It is now pending admin review.",
+        type: "success",
+        onClose: () => {
+          window.location.href = "/citizen";
+        }
+      });
       resetForm();
       setSubmitting(false);
-      window.location.href = "/citizen";
     },
   });
 
@@ -71,10 +80,44 @@ export const VolunteerForm = () => {
           <div className="space-y-6">
             <h3 className="font-bold text-lg text-text pb-2">Personal Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input label="Full Name *" placeholder="Your legal name" {...formik.getFieldProps("fullName")} error={formik.touched.fullName ? formik.errors.fullName : undefined} />
-              <Input label="Mobile Number *" type="tel" placeholder="10-digit mobile number" {...formik.getFieldProps("mobileNumber")} error={formik.touched.mobileNumber ? formik.errors.mobileNumber : undefined} />
-              <Input label="Alternate Mobile" type="tel" placeholder="Optional" {...formik.getFieldProps("altMobileNumber")} />
-              <Input label="Email Address" type="email" placeholder="Optional" {...formik.getFieldProps("email")} error={formik.touched.email ? formik.errors.email : undefined} />
+              <Input 
+                label="Full Name *" 
+                placeholder="Your legal name" 
+                name="fullName"
+                value={formik.values.fullName}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.fullName ? formik.errors.fullName : undefined} 
+              />
+              <Input 
+                label="Mobile Number *" 
+                type="tel" 
+                placeholder="10-digit mobile number" 
+                name="mobileNumber"
+                value={formik.values.mobileNumber}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.mobileNumber ? formik.errors.mobileNumber : undefined} 
+              />
+              <Input 
+                label="Alternate Mobile" 
+                type="tel" 
+                placeholder="Optional" 
+                name="altMobileNumber"
+                value={formik.values.altMobileNumber}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              <Input 
+                label="Email Address" 
+                type="email" 
+                placeholder="Optional" 
+                name="email"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.email ? formik.errors.email : undefined} 
+              />
             </div>
           </div>
 
@@ -85,11 +128,39 @@ export const VolunteerForm = () => {
             <h3 className="font-bold text-lg text-text pb-2">Location (Optional)</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="md:col-span-2">
-                <Input label="Address" placeholder="Street address" {...formik.getFieldProps("address")} />
+                <Input 
+                  label="Address" 
+                  placeholder="Street address" 
+                  name="address"
+                  value={formik.values.address}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                />
               </div>
-              <Input label="State" placeholder="e.g. Maharashtra" {...formik.getFieldProps("state")} />
-              <Input label="District" placeholder="e.g. Mumbai" {...formik.getFieldProps("district")} />
-              <Input label="Pin Code" placeholder="6 digits" {...formik.getFieldProps("pincode")} />
+              <Input 
+                label="State" 
+                placeholder="e.g. Maharashtra" 
+                name="state"
+                value={formik.values.state}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              <Input 
+                label="District" 
+                placeholder="e.g. Mumbai" 
+                name="district"
+                value={formik.values.district}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              <Input 
+                label="Pin Code" 
+                placeholder="6 digits" 
+                name="pincode"
+                value={formik.values.pincode}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
             </div>
           </div>
 
@@ -100,12 +171,12 @@ export const VolunteerForm = () => {
             <h3 className="font-bold text-lg text-text pb-2">Professional Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-[14px] font-bold text-text ml-1 block">Profession Category *</label>
+                <label id="profession-label" htmlFor="profession" className="text-[14px] font-bold text-text ml-1 block">Profession Category *</label>
                 <Select 
                   value={formik.values.profession} 
                   onValueChange={(val) => formik.setFieldValue("profession", val)}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger id="profession" aria-labelledby="profession-label" className="w-full">
                     <SelectValue placeholder="Select Category" />
                   </SelectTrigger>
                   <SelectContent>
@@ -122,15 +193,29 @@ export const VolunteerForm = () => {
                   <p className="text-red-500 text-[12px] ml-1">{formik.errors.profession}</p>
                 )}
               </div>
-              <Input label="Specialization" placeholder="e.g. Consumer Law" {...formik.getFieldProps("specialization")} />
-              <Input label="Experience" placeholder="e.g. 5 years" {...formik.getFieldProps("experience")} />
+               <Input 
+                label="Specialization" 
+                placeholder="e.g. Consumer Law" 
+                name="specialization"
+                value={formik.values.specialization}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              <Input 
+                label="Experience" 
+                placeholder="e.g. 5 years" 
+                name="experience"
+                value={formik.values.experience}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
               <div className="space-y-2">
-                <label className="text-[14px] font-bold text-text ml-1 block">Apply for Coordinator Role (Optional)</label>
+                <label id="apply-coordinator-label" htmlFor="applyCoordinator" className="text-[14px] font-bold text-text ml-1 block">Apply for Coordinator Role (Optional)</label>
                 <Select 
                   value={formik.values.applyCoordinator} 
                   onValueChange={(val) => formik.setFieldValue("applyCoordinator", val)}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger id="applyCoordinator" aria-labelledby="apply-coordinator-label" className="w-full">
                     <SelectValue placeholder="Not Applying" />
                   </SelectTrigger>
                   <SelectContent>
@@ -142,11 +227,15 @@ export const VolunteerForm = () => {
                 </Select>
               </div>
               <div className="md:col-span-2 space-y-2">
-                <label className="text-[14px] font-bold text-text ml-1 block">Public Description</label>
+                <label htmlFor="description" className="text-[14px] font-bold text-text ml-1 block">Public Description</label>
                 <textarea 
-                  className="w-full p-6 rounded-xl border border-border bg-bg focus:border-primary outline-none transition-all text-text min-h-[100px] resize-none"
+                  id="description"
+                  className="w-full p-6 rounded-xl border border-border bg-bg focus:border-primary outline-none transition-all text-text min-h-[100px] resize-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                   placeholder="Describe how you can help the community..."
-                  {...formik.getFieldProps("description")}
+                  name="description"
+                  value={formik.values.description}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                 />
               </div>
             </div>

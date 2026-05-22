@@ -1,5 +1,6 @@
 import { Calendar, MapPin, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Card, CardHeader, CardContent } from "@/components/ui/Card";
 import EmptyState from "@/components/ui/EmptyState";
 import { LucideIcon } from "lucide-react";
@@ -42,13 +43,15 @@ export const ContentGrid = ({ items, type, emptyIcon, emptyTitle, emptyDesc }: C
         <Card key={item.id} className="group hover:shadow-2xl transition-all duration-500">
           {item.image && (
             <div className="aspect-video overflow-hidden relative">
-              <img 
+              <Image 
                 src={item.image} 
                 alt={item.title} 
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className="object-cover group-hover:scale-105 transition-transform duration-700" 
               />
               {item.category && (
-                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-primary">
+                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest text-primary z-10">
                   {item.category}
                 </div>
               )}

@@ -1,4 +1,5 @@
 import { Trophy } from "lucide-react";
+import Image from "next/image";
 
 export function CommunitySports() {
   return (
@@ -48,20 +49,24 @@ export function CommunitySports() {
           {/* Right - Images */}
           <div className="flex-1 w-full grid grid-cols-2 gap-4">
             <div className="space-y-4 pt-12">
-               <div className="rounded-2xl overflow-hidden aspect-[3/4] shadow-2xl">
-                  <img 
+               <div className="rounded-2xl overflow-hidden aspect-[3/4] shadow-2xl relative">
+                  <Image 
                     src="/assets/a23.jpeg" 
                     alt="Cricket Match" 
-                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-700" 
+                    fill
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                    className="object-cover hover:scale-110 transition-transform duration-700" 
                   />
                </div>
             </div>
             <div className="space-y-4">
-               <div className="rounded-2xl overflow-hidden aspect-[3/4] shadow-2xl">
-                  <img 
+               <div className="rounded-2xl overflow-hidden aspect-[3/4] shadow-2xl relative">
+                  <Image 
                     src="/assets/a26.jpeg" 
                     alt="Team Trophy" 
-                    className="w-full h-full object-cover hover:scale-110 transition-transform duration-700" 
+                    fill
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                    className="object-cover hover:scale-110 transition-transform duration-700" 
                   />
                </div>
             </div>

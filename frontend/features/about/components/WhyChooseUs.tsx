@@ -1,4 +1,5 @@
 import { Check } from "lucide-react";
+import Image from "next/image";
 
 const reasons = [
   {
@@ -25,16 +26,18 @@ const reasons = [
 
 export function WhyChooseUs() {
   return (
-    <section className="py-16 md:py-24 bg-bg-alt">
+    <section className="py-12 md:py-16 bg-bg-alt">
       <div className="max-content">
         <div className="flex flex-col lg:flex-row gap-16">
           {/* Left - Image */}
           <div className="flex-1">
-            <div className="rounded-2xl overflow-hidden shadow-2xl h-full min-h-[400px]">
-              <img 
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl h-full min-h-[400px]">
+              <Image 
                 src="/assets/a9.png" 
                 alt="Foundation Seminar" 
-                className="w-full h-full object-cover"
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
               />
             </div>
           </div>

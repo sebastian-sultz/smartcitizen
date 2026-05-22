@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const teamMembers = [
   { name: "Dr. Anuj Singh", role: "Legal Advisor / Staff", img: "/assets/a4.png" },
   { name: "Mrs. Kavita Rai", role: "Community Well-being Lead", img: "/assets/a1.png" },
@@ -17,11 +19,13 @@ export function TeamSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {teamMembers.map((member, i) => (
             <div key={i} className="group cursor-default">
-              <div className="aspect-square rounded-2xl overflow-hidden mb-6 shadow-card group-hover:shadow-xl transition-all duration-300 transform group-hover:-translate-y-2">
-                <img 
+              <div className="relative aspect-square rounded-2xl overflow-hidden mb-6 shadow-card group-hover:shadow-xl transition-all duration-300 transform group-hover:-translate-y-2">
+                <Image 
                   src={member.img} 
                   alt={member.name} 
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
                 />
               </div>
               <div className="text-center">

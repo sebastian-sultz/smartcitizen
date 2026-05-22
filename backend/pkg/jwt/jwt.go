@@ -44,3 +44,25 @@ func GenerateTokens(userID uuid.UUID, userType string, secret string) (string, s
 
 	return accessTokenString, refreshTokenString, nil
 }
+
+// ParseToken parses and validates a JWT token string using the secret.
+func ParseToken(tokenString string, secret string) (*Claims, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, jwt.ErrSignatureInvalid
+		}
+		return []byte(secret), nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	claims, ok := token.Claims.(*Claims)
+	if !ok || !token.Valid {
+		return nil, jwt.ErrSignatureInvalid
+	}
+
+	return claims, nil
+}
+

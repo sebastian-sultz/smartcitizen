@@ -36,6 +36,8 @@ export const metadata: Metadata = {
 
 
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AlertProvider } from "@/components/ui/AlertProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function RootLayout({
   children,
@@ -45,7 +47,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${sourceSans3.variable} ${figtree.variable} scroll-smooth`} data-scroll-behavior="smooth">
       <body className="min-h-screen bg-bg text-text font-body selection:bg-primary selection:text-white flex flex-col">
-        <TooltipProvider>{children}</TooltipProvider>
+        <TooltipProvider>
+          <AlertProvider>
+            {children}
+            <Toaster />
+          </AlertProvider>
+        </TooltipProvider>
       </body>
     </html>
   );

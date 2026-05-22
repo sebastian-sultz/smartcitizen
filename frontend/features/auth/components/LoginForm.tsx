@@ -86,7 +86,10 @@ export const LoginForm = () => {
               placeholder="10-digit mobile number"
               type="tel"
               icon={<Phone size={20} />}
-              {...formik.getFieldProps("mobileNumber")}
+              name="mobileNumber"
+              value={formik.values.mobileNumber}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               error={formik.touched.mobileNumber ? (formik.errors.mobileNumber as string) : undefined}
             />
           )}
@@ -110,7 +113,10 @@ export const LoginForm = () => {
                   placeholder="••••••••"
                   icon={<Lock size={20} />}
                   className="pr-12"
-                  {...formik.getFieldProps("password")}
+                  name="password"
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
                   error={formik.touched.password ? (formik.errors.password as string) : undefined}
                 />
                 <Button 
@@ -136,7 +142,10 @@ export const LoginForm = () => {
                 placeholder="4-digit code"
                 type="text"
                 maxLength={4}
-                {...formik.getFieldProps("otp")}
+                name="otp"
+                value={formik.values.otp}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 error={formik.touched.otp ? (formik.errors.otp as string) : undefined}
               />
             </>
@@ -148,7 +157,10 @@ export const LoginForm = () => {
               placeholder="••••••••"
               type="password"
               icon={<Lock size={20} />}
-              {...formik.getFieldProps("newPassword")}
+              name="newPassword"
+              value={formik.values.newPassword}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
               error={formik.touched.newPassword ? (formik.errors.newPassword as string) : undefined}
             />
           )}

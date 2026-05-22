@@ -26,6 +26,7 @@ func (h *Handler) RegisterRoutes(router *gin.RouterGroup) {
 		auth.POST("/login", h.Login)
 		auth.POST("/forget-password", h.ForgetPassword)
 		auth.PUT("/profile-photo/:id", h.UpdateProfilePhoto)
+		auth.POST("/refresh", h.Refresh)
 	}
 }
 
@@ -151,4 +152,34 @@ func (h *Handler) UpdateProfilePhoto(c *gin.Context) {
 		"message": "profile photo updated successfully",
 		"url": url,
 	})
+}
+
+func (h *Handler) Refresh(c *gin.Context) {
+	refreshToken, err := c.Cookie("refresh_token")
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "refresh token missing"})
+		return
+	}
+
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		secret = "supersecret"
+	}
+
+	claims, err := jwt.ParseToken(refreshToken, secret)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "invalid refresh token"})
+		return
+	}
+
+	accessToken, newRefreshToken, err := jwt.GenerateTokens(claims.UserID, claims.UserType, secret)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate tokens"})
+		return
+	}
+
+	c.SetCookie("access_token", accessToken, 15*60, "/", "", false, true)
+	c.SetCookie("refresh_token", newRefreshToken, 7*24*60*60, "/", "", false, true)
+
+	c.JSON(http.StatusOK, gin.H{"message": "token refreshed successfully"})
 }

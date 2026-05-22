@@ -4,7 +4,20 @@ import { User, Activity, Share2, Heart, Award, Bell, Shield } from "lucide-react
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 
+import { useAlert } from "@/components/ui/AlertProvider";
+
 export const CitizenDashboard = () => {
+  const { showAlert } = useAlert();
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText("https://gscf.org/invite/GSC-849201");
+    showAlert({
+      title: "Link Copied",
+      message: "Your unique invite link has been copied to your clipboard!",
+      type: "success",
+    });
+  };
+
   return (
     <div className="space-y-8">
       
@@ -69,7 +82,7 @@ export const CitizenDashboard = () => {
               <div className="flex-1 bg-bg p-3 rounded-xl border border-border text-[14px] font-mono text-text-muted truncate">
                 https://gscf.org/invite/GSC-849201
               </div>
-              <Button onClick={() => alert("Link copied to clipboard!")}>Copy Link</Button>
+              <Button onClick={handleCopyLink}>Copy Link</Button>
             </div>
             
             <div className="mt-6 bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-3">

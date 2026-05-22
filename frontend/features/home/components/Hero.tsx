@@ -2,7 +2,9 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import Image from "next/image";
 import { Heart, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
 export function Hero() {
   return (
@@ -10,24 +12,8 @@ export function Hero() {
       {/* Unique Abstract Background */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         {/* Animated Mesh Gradients */}
-        <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 90, 0],
-            x: [0, 100, 0],
-          }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-[20%] -right-[10%] w-[60%] h-[60%] bg-primary/5 rounded-full blur-[120px]"
-        />
-        <motion.div
-          animate={{
-            scale: [1, 1.3, 1],
-            rotate: [0, -90, 0],
-            x: [0, -50, 0],
-          }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute -bottom-[10%] -left-[5%] w-[50%] h-[50%] bg-accent/5 rounded-full blur-[100px]"
-        />
+        <div className="absolute -top-[20%] -right-[10%] w-[60%] h-[60%] bg-primary/10 rounded-full blur-[120px] animate-pulse-slow" />
+        <div className="absolute -bottom-[10%] -left-[5%] w-[50%] h-[50%] bg-accent/10 rounded-full blur-[100px] animate-pulse-slower" />
 
         {/* SVG Subtle Pattern Overlay */}
         <div
@@ -90,24 +76,36 @@ export function Hero() {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start"
             >
-              <Link
-                href="/donation"
-                className="group relative w-full sm:w-auto bg-primary hover:bg-primary-light text-white px-8 py-4 rounded-2xl font-black flex items-center justify-center gap-3 transition-all shadow-xl shadow-primary/20 active:scale-95 overflow-hidden"
+              <Button
+                asChild
+                variant="primary"
+                className="w-full sm:w-auto px-8 py-4 rounded-2xl font-black shadow-xl shadow-primary/20 active:scale-95 overflow-hidden h-auto"
               >
-                <Heart size={18} fill="currentColor" />
-                Support Mission
-                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-              </Link>
-              <Link
-                href="/join_us"
-                className="group w-full sm:w-auto px-8 py-4 rounded-2xl border-2 border-border hover:border-primary hover:text-primary text-text font-black flex items-center justify-center gap-2 transition-all active:scale-95 text-[15px]"
+                <Link
+                  href="/donation"
+                  className="group relative flex items-center justify-center gap-3"
+                >
+                  <Heart size={18} fill="currentColor" />
+                  Support Mission
+                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                </Link>
+              </Button>
+              <Button
+                asChild
+                variant="secondary"
+                className="w-full sm:w-auto px-8 py-4 rounded-2xl border-2 border-border hover:border-primary hover:text-primary text-text font-black active:scale-95 text-[15px] h-auto"
               >
-                Become a Volunteer
-                <ArrowRight
-                  size={18}
-                  className="group-hover:translate-x-1 transition-transform"
-                />
-              </Link>
+                <Link
+                  href="/need_help"
+                  className="group flex items-center justify-center gap-2"
+                >
+                  Need Help
+                  <ArrowRight
+                    size={18}
+                    className="group-hover:translate-x-1 transition-transform"
+                  />
+                </Link>
+              </Button>
             </motion.div>
 
             {/* Impact Highlights */}
@@ -142,10 +140,13 @@ export function Hero() {
             className="flex-1 relative w-full max-w-2xl"
           >
             <div className="relative aspect-[4/5] md:aspect-square rounded-[40px] md:rounded-[80px] overflow-hidden shadow-[0_40px_80px_-15px_rgba(0,0,0,0.2)]">
-              <img
+              <Image
                 src="/assets/vision34.jpeg"
                 alt="Foundation Impact"
-                className="w-full h-full object-cover"
+                fill
+                priority
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/60 to-transparent opacity-40" />
 

@@ -1,7 +1,16 @@
-import { Hero } from "@/features/home";
-import { PartnerMarquee, AboutIntro, CoreFocus, WhyChooseUs, TeamSection } from "@/features/about";
-import { ImpactCounter, ImpactSection } from "@/features/impact";
-import { ProgramSection, UpcomingEvents, CommunitySports } from "@/features/community";
+import { Hero, MediaPresence } from "@/features/home";
+import {
+  PartnerMarquee,
+  AboutIntro,
+  CoreFocus,
+  WhyChooseUs,
+} from "@/features/about";
+import { ImpactCounter } from "@/features/impact";
+import {
+  ProgramSection,
+  UpcomingEvents,
+  LatestActivities,
+} from "@/features/community";
 import { DonationCTA } from "@/features/donation";
 
 export default function Home() {
@@ -9,16 +18,16 @@ export default function Home() {
     <main className="min-h-screen">
       <Hero />
       <PartnerMarquee />
-      <ImpactCounter />
       <AboutIntro />
       <CoreFocus />
       <ProgramSection />
-      <WhyChooseUs />
-      <ImpactSection />
-      <TeamSection />
+      <ImpactCounter />
+      <LatestActivities />
       <UpcomingEvents />
+      <WhyChooseUs />
       <DonationCTA />
-      <CommunitySports />
+      <MediaPresence />
     </main>
   );
 }
+

@@ -6,6 +6,8 @@ import { Plus } from "lucide-react";
 import { TableComponent } from "@/components/ui/TableComponent";
 import { campaignsColumns } from "./CampaignsColumns";
 
+import { useAlert } from "@/components/ui/AlertProvider";
+
 interface Campaign {
   id: string;
   title: string;
@@ -19,11 +21,12 @@ const initialCampaigns: Campaign[] = [
 ];
 
 export const CampaignsTable = () => {
+  const { showAlert } = useAlert();
   return (
     <Card className="w-full">
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <CardTitle>Awareness Campaigns</CardTitle>
-        <Button size="sm" variant="primary" startIcon={<Plus size={16} />} onClick={() => alert("Open Create Campaign Modal")}>
+        <Button size="sm" variant="primary" startIcon={<Plus size={16} />} onClick={() => showAlert("Open Create Campaign Modal")} className="w-full sm:w-auto">
           Create Campaign
         </Button>
       </CardHeader>

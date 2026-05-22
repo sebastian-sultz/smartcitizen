@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { MoveRight } from "lucide-react";
+import Image from "next/image";
 
 export function AboutIntro() {
   return (
-    <section className="py-16 md:py-24 bg-surface">
+    <section className="py-12 md:py-16 bg-surface">
       <div className="max-content">
         <div className="flex flex-col lg:flex-row items-center gap-16">
           {/* Left - Text */}
@@ -41,11 +42,13 @@ export function AboutIntro() {
 
           {/* Right - Image */}
           <div className="flex-1 relative">
-            <div className="rounded-[40px] overflow-hidden shadow-2xl border-8 border-white">
-              <img 
+            <div className="relative rounded-[40px] overflow-hidden shadow-2xl border-8 border-white aspect-[4/3] w-full">
+              <Image 
                 src="/assets/about_us.jpg" 
                 alt="Community Awareness Workshop" 
-                className="w-full h-auto object-cover"
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
               />
             </div>
             {/* Overlay Card */}

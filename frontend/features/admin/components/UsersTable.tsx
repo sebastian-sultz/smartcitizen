@@ -45,9 +45,9 @@ export const UsersTable = () => {
 
   return (
     <Card className="w-full">
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <CardTitle>User Management</CardTitle>
-        <div className="w-64">
+        <div className="w-full sm:w-64">
           <Input 
             placeholder="Search users..." 
             icon={<Search size={18} />} 

@@ -18,7 +18,7 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-bg flex flex-col md:flex-row">
       
       {/* Sidebar Navigation */}
-      <aside className="w-full md:w-64 bg-white border-r border-border shrink-0 relative">
+      <aside className="w-full md:w-64 bg-white border-r border-border shrink-0 md:h-screen md:sticky md:top-0 flex flex-col">
         <div className="p-6 border-b border-border">
           <Link href="/" className="flex flex-col">
             <span className="font-display font-black text-xl text-primary leading-none">GlobalSmart</span>
@@ -26,7 +26,7 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
           </Link>
         </div>
         
-        <nav className="p-4 space-y-1">
+        <nav className="p-4 space-y-1 flex-1">
           <Link 
             href="/citizen" 
             className={cn(
@@ -65,7 +65,7 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
           </Link>
         </nav>
 
-        <div className="absolute bottom-0 w-full p-4 border-t border-border bg-white">
+        <div className="p-4 border-t border-border bg-white mt-auto">
           <Button 
             variant="ghost-danger" 
             fullWidth 

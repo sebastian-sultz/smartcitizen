@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { MoveRight } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 
 const amounts = [100, 200, 500, 1000, 2000];
@@ -11,7 +12,7 @@ export function DonationCTA() {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
 
   return (
-    <section className="py-24 bg-bg-alt overflow-hidden">
+    <section className="py-12 md:py-16 bg-bg-alt overflow-hidden">
       <div className="max-content">
         <div className="flex flex-col lg:flex-row gap-16">
           {/* Left - Message */}
@@ -78,8 +79,8 @@ export function DonationCTA() {
                 <p className="text-text-muted text-[15px]">Scan QR Code using PhonePe, Google Pay, or Paytm</p>
                 <div className="max-w-[240px] mx-auto p-4 bg-bg border border-border rounded-xl">
                   {/* Placeholder for QR Code */}
-                  <div className="aspect-square bg-white border border-border flex items-center justify-center overflow-hidden">
-                    <img src="/assets/qr.png" alt="UPI QR Code" className="w-full h-full object-cover" />
+                  <div className="aspect-square bg-white border border-border flex items-center justify-center overflow-hidden relative">
+                    <Image src="/assets/qr.png" alt="UPI QR Code" width={240} height={240} className="w-full h-full object-cover" />
                   </div>
                 </div>
                 <div className="flex justify-center gap-4 text-primary font-bold text-[14px]">

@@ -5,6 +5,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import EmptyState from "@/components/ui/EmptyState";
 
+import { useAlert } from "@/components/ui/AlertProvider";
+
 const mockDonations = [
   {
     id: "TRX-829310",
@@ -16,6 +18,7 @@ const mockDonations = [
 ];
 
 export const ContributionHistory = () => {
+  const { showAlert } = useAlert();
   return (
     <Card>
       <CardHeader>
@@ -48,7 +51,7 @@ export const ContributionHistory = () => {
                       </span>
                     </td>
                     <td className="py-4 text-right">
-                      <Button variant="outline" size="sm" onClick={() => alert("Downloading receipt...")}>
+                      <Button variant="outline" size="sm" onClick={() => showAlert("Downloading receipt...")}>
                         <Download size={14} className="mr-2" />
                         PDF
                       </Button>

@@ -36,9 +36,9 @@ const featuredPrograms = [
 
 export function ProgramSection() {
   return (
-    <section className="py-24 bg-bg">
+    <section className="py-12 md:py-16 bg-bg">
       <div className="max-content">
-        <div className="text-center mb-16 space-y-4">
+        <div className="text-center mb-8 md:mb-10 space-y-4">
           <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-accent">OUR PROGRAMS</span>
           <h2 className="font-display text-4xl md:text-5xl font-bold text-text">What We Stand For</h2>
           <p className="text-text-muted max-w-2xl mx-auto">
@@ -65,7 +65,7 @@ export function ProgramSection() {
           ))}
         </div>
 
-        <div className="mt-16 text-center">
+        <div className="mt-8 md:mt-10 text-center">
           <Link 
             href="/our_work" 
             className="inline-flex items-center gap-2 px-8 py-3 rounded-lg border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all"

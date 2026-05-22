@@ -49,3 +49,18 @@ export const deleteEvent = async (id: string): Promise<void> => {
     handleApiError(error, "Failed to delete event");
   }
 };
+
+export const updateEventImage = async (id: string, imageFile: File): Promise<string> => {
+  try {
+    const formData = new FormData();
+    formData.append("image", imageFile);
+    const response = await api.put<{ url: string }>(`/events/${id}/image`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data.url;
+  } catch (error: any) {
+    handleApiError(error, "Failed to upload event image");
+  }
+};

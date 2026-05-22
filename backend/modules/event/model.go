@@ -15,6 +15,9 @@ type Event struct {
 	OrganizerName  string         `gorm:"not null" json:"organizer_name"`
 	OrganizerPhone string         `gorm:"not null" json:"organizer_phone"`
 	Description    string         `json:"description"`
+	Category       string         `gorm:"type:varchar(100);default:'Community'" json:"category"`
+	RegistrationLink string       `gorm:"type:text" json:"registration_link"`
+	CtaText        string         `gorm:"type:varchar(100);default:'Register Now'" json:"cta_text"`
 	Image          *string        `json:"image"`
 	ImagePublicID  *string        `json:"-"`
 	CreatedAt      time.Time      `json:"created_at"`

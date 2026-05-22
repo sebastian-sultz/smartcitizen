@@ -21,7 +21,9 @@ func NewHandler(service Service) *Handler {
 func (h *Handler) RegisterRoutes(router *gin.RouterGroup) {
 	events := router.Group("/events")
 	{
+		events.POST("", h.CreateEvent)
 		events.POST("/", h.CreateEvent)
+		events.GET("", h.GetAllEvents)
 		events.GET("/", h.GetAllEvents)
 		events.GET("/:id", h.GetEvent)
 		events.PUT("/:id", h.UpdateEvent)
@@ -32,16 +34,19 @@ func (h *Handler) RegisterRoutes(router *gin.RouterGroup) {
 
 func mapToResponse(e *Event) response.Event {
 	return response.Event{
-		ID:             e.ID,
-		EventName:      e.EventName,
-		EventDate:      e.EventDate,
-		EventAddress:   e.EventAddress,
-		OrganizerName:  e.OrganizerName,
-		OrganizerPhone: e.OrganizerPhone,
-		Description:    e.Description,
-		Image:          e.Image,
-		CreatedAt:      e.CreatedAt,
-		UpdatedAt:      e.UpdatedAt,
+		ID:               e.ID,
+		EventName:        e.EventName,
+		EventDate:        e.EventDate,
+		EventAddress:     e.EventAddress,
+		OrganizerName:    e.OrganizerName,
+		OrganizerPhone:   e.OrganizerPhone,
+		Description:      e.Description,
+		Category:         e.Category,
+		RegistrationLink: e.RegistrationLink,
+		CtaText:          e.CtaText,
+		Image:            e.Image,
+		CreatedAt:        e.CreatedAt,
+		UpdatedAt:        e.UpdatedAt,
 	}
 }
 

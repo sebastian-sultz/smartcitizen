@@ -14,6 +14,9 @@ type Event struct {
 	OrganizerName  string    `json:"organizer_name"`
 	OrganizerPhone string    `json:"organizer_phone"`
 	Description    string    `json:"description"`
+	Category       string    `json:"category"`
+	RegistrationLink string  `json:"registration_link"`
+	CtaText        string    `json:"cta_text"`
 	Image          *string   `json:"image"`
 	CreatedAt      time.Time `json:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at"`

@@ -5,6 +5,7 @@ import { Search, Filter, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { ProfessionalCard } from "./ProfessionalCard";
+import { NeedHelpHeader } from "./NeedHelpHeader";
 import EmptyState from "@/components/ui/EmptyState";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -82,8 +83,13 @@ export const NeedHelpDirectory = () => {
 
   return (
     <div className="space-y-8">
+      <NeedHelpHeader />
+      
       {/* Search and Filters */}
-      <div className="bg-white rounded-2xl p-6 border border-border shadow-sm space-y-6">
+      <div className="bg-white rounded-2xl p-6 border border-border shadow-sm space-y-6 relative overflow-hidden">
+        {/* Top official accent stripe */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-primary" />
+        
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <Input
@@ -97,12 +103,12 @@ export const NeedHelpDirectory = () => {
             <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-text-light z-10">
               <MapPin size={20} />
             </div>
-            <Select defaultValue="">
+            <Select defaultValue="all">
               <SelectTrigger className="w-full h-14 pl-12 text-[15px]">
                 <SelectValue placeholder="All Locations" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Locations</SelectItem>
+                <SelectItem value="all">All Locations</SelectItem>
                 <SelectItem value="Delhi NCR">Delhi NCR</SelectItem>
                 <SelectItem value="Mumbai">Mumbai</SelectItem>
                 <SelectItem value="Bangalore">Bangalore</SelectItem>

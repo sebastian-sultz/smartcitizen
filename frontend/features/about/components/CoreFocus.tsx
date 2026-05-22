@@ -41,9 +41,9 @@ const priorities = [
 
 export function CoreFocus() {
   return (
-    <section className="py-16 md:py-24 bg-white">
+    <section className="py-12 md:py-16 bg-white">
       <div className="max-content">
-        <div className="text-center mb-16 space-y-4">
+        <div className="text-center mb-8 md:mb-10 space-y-4">
           <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-primary">CORE FOCUS</span>
           <h2 className="font-display text-4xl md:text-5xl font-bold text-text">Our Priorities</h2>
           <p className="text-text-muted max-w-2xl mx-auto">

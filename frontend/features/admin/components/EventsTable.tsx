@@ -8,6 +8,8 @@ import { Plus } from "lucide-react";
 import { TableComponent } from "@/components/ui/TableComponent";
 import { getEventsColumns } from "./EventsColumns";
 import { toast } from "sonner";
+import { CreateEventModal } from "./CreateEventModal";
+import { useAlert } from "@/components/ui/AlertProvider";
 
 interface EventItem {
   id: string;
@@ -18,8 +20,10 @@ interface EventItem {
 }
 
 export const EventsTable = () => {
+  const { showConfirm } = useAlert();
   const [events, setEvents] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
 
   const fetchEvents = async () => {
     try {
@@ -59,15 +63,22 @@ export const EventsTable = () => {
     }
   };
 
-  const columns = getEventsColumns(deleteEvent);
+  const columns = getEventsColumns(deleteEvent, showConfirm);
 
   return (
     <Card className="w-full">
-      <CardHeader className="flex flex-row items-center justify-between">
+      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <CardTitle>Event Management</CardTitle>
-        <Button size="sm" variant="primary" startIcon={<Plus size={16} />} onClick={() => alert("Open Create Event Modal")}>
+        <Button 
+          size="sm" 
+          variant="primary" 
+          startIcon={<Plus size={16} />}
+          onClick={() => setOpen(true)}
+          className="w-full sm:w-auto"
+        >
           Create Event
         </Button>
+        <CreateEventModal open={open} onOpenChange={setOpen} onSuccess={fetchEvents} />
       </CardHeader>
       <CardContent>
         <TableComponent 
