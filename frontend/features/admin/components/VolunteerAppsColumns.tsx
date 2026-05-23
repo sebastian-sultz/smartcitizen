@@ -2,11 +2,12 @@ import React from "react";
 import { Header } from "@/components/ui/TableComponent";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { XCircle } from "lucide-react";
+import { VolunteerResponse } from "@/features/volunteer/types";
 
 export const getVolunteerAppsColumns = (
   updateVolunteerAppStatus: (id: string, status: any) => void
-): Header<any>[] => [
+): Header<VolunteerResponse>[] => [
   {
     label: "App ID",
     render: (app) => <span className="text-[14px] font-mono text-text-muted">{app.id}</span>,
@@ -17,25 +18,25 @@ export const getVolunteerAppsColumns = (
   },
   {
     label: "Profession",
-    render: (app) => <span className="text-[14px] text-text-muted">{app.profession}</span>,
+    render: (app) => <span className="text-[14px] text-text-muted">{app.profession || "N/A"}</span>,
   },
   {
     label: "Applied Role",
-    render: (app) => <span className="text-[14px] text-text-muted">{app.applyForRole !== 'None' ? app.applyForRole : 'Volunteer'}</span>,
+    render: (app) => <span className="text-[14px] text-text-muted">Volunteer</span>,
   },
   {
     label: "Date",
-    render: (app) => <span className="text-[14px] text-text-muted">{app.appliedDate}</span>,
+    render: (app) => (
+      <span className="text-[14px] text-text-muted">
+        {new Date(app.created_at).toLocaleDateString()}
+      </span>
+    ),
   },
   {
     label: "Status",
     render: (app) => (
-      <Badge variant={
-        app.status === 'Approved' ? 'success' : 
-        app.status === 'Rejected' ? 'danger' : 
-        'warning'
-      }>
-        {app.status}
+      <Badge variant="success">
+        Approved
       </Badge>
     ),
   },
@@ -43,29 +44,17 @@ export const getVolunteerAppsColumns = (
     label: "Actions",
     render: (app) => (
       <div className="flex items-center justify-end gap-2">
-        {app.status === 'Pending' && (
-          <>
-            <Button 
-              variant="ghost-success"
-              size="icon"
-              shape="square"
-              onClick={() => updateVolunteerAppStatus(app.id, 'Approved')}
-              title="Approve"
-            >
-              <CheckCircle2 size={18} />
-            </Button>
-            <Button 
-              variant="ghost-danger"
-              size="icon"
-              shape="square"
-              onClick={() => updateVolunteerAppStatus(app.id, 'Rejected')}
-              title="Reject"
-            >
-              <XCircle size={18} />
-            </Button>
-          </>
-        )}
+        <Button 
+          variant="ghost-danger"
+          size="icon"
+          shape="square"
+          onClick={() => updateVolunteerAppStatus(app.id, 'Rejected')}
+          title="Remove Volunteer"
+        >
+          <XCircle size={18} />
+        </Button>
       </div>
     ),
   },
 ];
+

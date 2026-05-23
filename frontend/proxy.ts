@@ -1,15 +1,15 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 function parseJwt(token: string) {
   try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
     const jsonPayload = decodeURIComponent(
       atob(base64)
-        .split('')
-        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join(""),
     );
     return JSON.parse(jsonPayload);
   } catch (e) {
@@ -22,30 +22,35 @@ export async function proxy(request: NextRequest) {
 
   // Let static assets, api, or next internals pass through
   if (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/api') ||
-    pathname.includes('.') ||
-    pathname === '/favicon.ico'
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/api") ||
+    pathname.includes(".") ||
+    pathname === "/favicon.ico"
   ) {
     return NextResponse.next();
   }
 
-  let token = request.cookies.get('access_token')?.value;
-  const refreshToken = request.cookies.get('refresh_token')?.value;
+  let token = request.cookies.get("access_token")?.value;
+  const refreshToken = request.cookies.get("refresh_token")?.value;
   let responseCookiesToSet: string[] = [];
   let isRefreshed = false;
 
-  const isProtectedRoute = pathname.startsWith('/admin') || pathname.startsWith('/citizen');
-  const isAuthRoute = pathname === '/member_login' || pathname === '/admin/login' || pathname === '/join_us';
+  const isProtectedRoute =
+    pathname.startsWith("/admin") || pathname.startsWith("/citizen");
+  const isAuthRoute =
+    pathname === "/member_login" ||
+    pathname === "/admin/login" ||
+    pathname === "/join_us";
 
   // Server-side silent token refresh if access_token is expired/missing but refresh_token exists
   if (!token && refreshToken && (isProtectedRoute || isAuthRoute)) {
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8090/api';
+      const apiUrl =
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8090/api";
       const refreshResponse = await fetch(`${apiUrl}/auth/refresh`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Cookie': `refresh_token=${refreshToken}`,
+          Cookie: `refresh_token=${refreshToken}`,
         },
       });
 
@@ -56,7 +61,7 @@ export async function proxy(request: NextRequest) {
 
         // Parse new access token to verify auth status for routing
         for (const cookieStr of setCookieHeaders) {
-          if (cookieStr.trim().startsWith('access_token=')) {
+          if (cookieStr.trim().startsWith("access_token=")) {
             const match = cookieStr.match(/access_token=([^;]+)/);
             if (match) {
               token = match[1];
@@ -66,7 +71,7 @@ export async function proxy(request: NextRequest) {
         }
       }
     } catch (e) {
-      console.error('Server-side token refresh failed in middleware:', e);
+      console.error("Server-side token refresh failed in middleware:", e);
     }
   }
 
@@ -77,31 +82,35 @@ export async function proxy(request: NextRequest) {
   const createResponse = (nextResponse: NextResponse) => {
     if (isRefreshed && responseCookiesToSet.length > 0) {
       responseCookiesToSet.forEach((cookie) => {
-        nextResponse.headers.append('Set-Cookie', cookie);
+        nextResponse.headers.append("Set-Cookie", cookie);
       });
     }
     return nextResponse;
   };
 
   // Admin routes protection
-  if (pathname.startsWith('/admin') && pathname !== '/admin/login') {
-    if (!token || userType !== 'admin') {
-      const redirectRes = NextResponse.redirect(new URL('/admin/login', request.url));
+  if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
+    if (!token || userType !== "admin") {
+      const redirectRes = NextResponse.redirect(
+        new URL("/admin/login", request.url),
+      );
       if (!token) {
-        redirectRes.cookies.delete('access_token');
-        redirectRes.cookies.delete('refresh_token');
+        redirectRes.cookies.delete("access_token");
+        redirectRes.cookies.delete("refresh_token");
       }
       return redirectRes;
     }
   }
 
   // Citizen/Member routes protection
-  if (pathname.startsWith('/citizen')) {
-    if (!token || (userType !== 'member' && userType !== 'admin')) {
-      const redirectRes = NextResponse.redirect(new URL('/member_login', request.url));
+  if (pathname.startsWith("/citizen")) {
+    if (!token || userType !== "member") {
+      const redirectRes = NextResponse.redirect(
+        new URL("/member_login", request.url),
+      );
       if (!token) {
-        redirectRes.cookies.delete('access_token');
-        redirectRes.cookies.delete('refresh_token');
+        redirectRes.cookies.delete("access_token");
+        redirectRes.cookies.delete("refresh_token");
       }
       return redirectRes;
     }
@@ -111,14 +120,18 @@ export async function proxy(request: NextRequest) {
   // An admin visiting /member_login should NOT be redirected (they're not a member).
   // A member visiting /admin/login should NOT be redirected (they're not an admin).
   if (token && userType) {
-    if (pathname === '/member_login' || pathname === '/join_us') {
-      if (userType === 'member') {
-        return createResponse(NextResponse.redirect(new URL('/citizen', request.url)));
+    if (pathname === "/member_login" || pathname === "/join_us") {
+      if (userType === "member") {
+        return createResponse(
+          NextResponse.redirect(new URL("/citizen", request.url)),
+        );
       }
     }
-    if (pathname === '/admin/login') {
-      if (userType === 'admin') {
-        return createResponse(NextResponse.redirect(new URL('/admin', request.url)));
+    if (pathname === "/admin/login") {
+      if (userType === "admin") {
+        return createResponse(
+          NextResponse.redirect(new URL("/admin", request.url)),
+        );
       }
     }
   }
@@ -127,5 +140,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|assets|public).*)'],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|assets|public).*)"],
 };

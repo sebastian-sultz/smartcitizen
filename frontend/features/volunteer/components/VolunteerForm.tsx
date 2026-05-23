@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { UserPlus, Shield, Info } from "lucide-react";
@@ -11,9 +12,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 
 import { useAlert } from "@/components/ui/AlertProvider";
+import { getProfile } from "@/features/auth/api";
+import { createVolunteer } from "../api";
 
 export const VolunteerForm = () => {
   const { showAlert } = useAlert();
+  const [userId, setUserId] = useState<string | null>(null);
+
   const formik = useFormik({
     initialValues: {
       fullName: "",
@@ -39,25 +44,67 @@ export const VolunteerForm = () => {
       mobileNumber: Yup.string()
         .matches(/^[0-9]{10}$/, "Enter a valid 10-digit mobile number")
         .required("Mobile number is required"),
-      email: Yup.string().email("Invalid email address"),
+      email: Yup.string().email("Invalid email address").required("Email is required"),
       profession: Yup.string().required("Profession is required"),
       consentGuidelines: Yup.boolean().oneOf([true], "You must accept the guidelines"),
     }),
     onSubmit: async (values, { setSubmitting, resetForm }) => {
+      if (!userId) {
+        showAlert({
+          title: "Submission Failed",
+          message: "You must be signed in to apply as a volunteer.",
+          type: "error",
+        });
+        return;
+      }
       setSubmitting(true);
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      showAlert({
-        title: "Application Submitted",
-        message: "Application submitted! It is now pending admin review.",
-        type: "success",
-        onClose: () => {
-          window.location.href = "/citizen";
-        }
-      });
-      resetForm();
-      setSubmitting(false);
+      try {
+        await createVolunteer({
+          user_id: userId,
+          name: values.fullName,
+          email: values.email,
+          phone: values.mobileNumber,
+          alternate_phone: values.altMobileNumber,
+          address: values.address,
+          city: values.state,
+          district: values.district,
+          pincode: values.pincode,
+          profession: values.profession,
+          experience: values.experience,
+        });
+
+        showAlert({
+          title: "Application Submitted",
+          message: "Your volunteer application has been submitted successfully!",
+          type: "success",
+          onClose: () => {
+            window.location.href = "/citizen";
+          }
+        });
+        resetForm();
+      } catch (err: any) {
+        console.error("Volunteer submit failed:", err);
+      } finally {
+        setSubmitting(false);
+      }
     },
   });
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const profile = await getProfile();
+        if (profile) {
+          setUserId(profile.id);
+          formik.setFieldValue("fullName", profile.name);
+          formik.setFieldValue("mobileNumber", profile.phone);
+        }
+      } catch (err) {
+        console.error("Failed to load user profile:", err);
+      }
+    };
+    loadProfile();
+  }, []);
 
   return (
     <Card className="w-full shadow-2xl relative overflow-hidden">
@@ -69,7 +116,7 @@ export const VolunteerForm = () => {
         </div>
         <div>
           <CardTitle className="text-2xl">Volunteer Application</CardTitle>
-          <p className="text-text-muted text-sm mt-1">Upgrade your Smart Citizen profile</p>
+          <p className="text-text-muted text-sm mt-1">Apply to become an active community volunteer</p>
         </div>
       </CardHeader>
       

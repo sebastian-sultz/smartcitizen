@@ -3,38 +3,46 @@ import { Header } from "@/components/ui/TableComponent";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Trash2 } from "lucide-react";
+import { EventResponse } from "@/features/community/types";
 
 export const getEventsColumns = (
   deleteEvent: (id: string) => void,
   showConfirm: (options: any) => void
-): Header<any>[] => [
+): Header<EventResponse>[] => [
   {
     label: "Event ID",
     render: (event) => <span className="text-[14px] font-mono text-text-muted">{event.id}</span>,
   },
   {
     label: "Title",
-    render: (event) => <span className="text-[14px] font-bold text-text">{event.title}</span>,
+    render: (event) => <span className="text-[14px] font-bold text-text">{event.event_name}</span>,
   },
   {
     label: "Date",
-    render: (event) => <span className="text-[14px] text-text-muted">{event.date}</span>,
+    render: (event) => (
+      <span className="text-[14px] text-text-muted">
+        {new Date(event.event_date).toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        })}
+      </span>
+    ),
   },
   {
     label: "Location",
-    render: (event) => <span className="text-[14px] text-text-muted">{event.location}</span>,
+    render: (event) => <span className="text-[14px] text-text-muted">{event.event_address}</span>,
   },
   {
     label: "Status",
-    render: (event) => (
-      <Badge variant={
-        event.status === 'Upcoming' ? 'info' : 
-        event.status === 'Completed' ? 'success' : 
-        'danger'
-      }>
-        {event.status}
-      </Badge>
-    ),
+    render: (event) => {
+      const isCompleted = new Date(event.event_date) < new Date();
+      return (
+        <Badge variant={isCompleted ? "success" : "info"}>
+          {isCompleted ? "Completed" : "Upcoming"}
+        </Badge>
+      );
+    },
   },
   {
     label: "Actions",
@@ -62,3 +70,4 @@ export const getEventsColumns = (
     ),
   },
 ];
+

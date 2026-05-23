@@ -53,9 +53,7 @@ export default function LoginPage() {
                   password: values.password,
                 });
                 toast.success(res.message || "Logged in successfully!");
-                // Wait briefly for toast
-                await new Promise((resolve) => setTimeout(resolve, 800));
-                window.location.href = "/admin";
+                router.push("/admin");
               } catch (err: any) {
                 console.error("Admin login failed:", err);
               } finally {

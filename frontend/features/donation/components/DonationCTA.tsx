@@ -65,8 +65,7 @@ export function DonationCTA() {
               </Link>
 
               <p className="text-[13px] text-text-light italic">
-                All contributions are voluntary and used strictly for social awareness,
-                community development, and operational support.
+                All donations are eligible for tax deduction under Section 80G. Contributions are voluntary and used strictly for social awareness, community development, and operational support.
               </p>
             </div>
           </div>

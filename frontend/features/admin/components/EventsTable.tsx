@@ -11,31 +11,18 @@ import { toast } from "sonner";
 import { CreateEventModal } from "./CreateEventModal";
 import { useAlert } from "@/components/ui/AlertProvider";
 
-interface EventItem {
-  id: string;
-  title: string;
-  date: string;
-  location: string;
-  status: 'Upcoming' | 'Completed' | 'Cancelled';
-}
+import { EventResponse } from "@/features/community/types";
 
 export const EventsTable = () => {
   const { showConfirm } = useAlert();
-  const [events, setEvents] = useState<EventItem[]>([]);
+  const [events, setEvents] = useState<EventResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
 
   const fetchEvents = async () => {
     try {
       const fetched = await getAllEvents();
-      const mapped = fetched.map(e => ({
-        id: e.id,
-        title: e.event_name,
-        date: new Date(e.event_date).toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }),
-        location: e.event_address,
-        status: 'Upcoming' as const
-      }));
-      setEvents(mapped);
+      setEvents(fetched);
     } catch (err) {
       console.error("Failed to fetch events:", err);
     }
@@ -62,6 +49,7 @@ export const EventsTable = () => {
       console.error("Failed to delete event:", err);
     }
   };
+
 
   const columns = getEventsColumns(deleteEvent, showConfirm);
 

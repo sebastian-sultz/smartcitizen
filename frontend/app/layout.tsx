@@ -38,15 +38,27 @@ export const metadata: Metadata = {
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AlertProvider } from "@/components/ui/AlertProvider";
 import { Toaster } from "@/components/ui/sonner";
+import { cookies } from "next/headers";
+import { parseJwt } from "@/lib/auth-token";
+import { AuthInitializer } from "@/components/providers/AuthInitializer";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("access_token")?.value;
+  const payload = token ? parseJwt(token) : null;
+  
+  const initialSession = payload
+    ? { userId: payload.user_id, userType: payload.user_type }
+    : null;
+
   return (
     <html lang="en" className={`${sourceSans3.variable} ${figtree.variable} scroll-smooth`} data-scroll-behavior="smooth">
       <body className="min-h-screen bg-bg text-text font-body selection:bg-primary selection:text-white flex flex-col">
+        <AuthInitializer session={initialSession} />
         <TooltipProvider>
           <AlertProvider>
             {children}

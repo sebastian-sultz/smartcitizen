@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 
@@ -195,6 +196,15 @@ func (h *Handler) Refresh(c *gin.Context) {
 
 func (h *Handler) GetProfile(c *gin.Context) {
 	idStr := c.Param("id")
+	if idStr == "me" {
+		userID, exists := c.Get("userID")
+		if !exists {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+			return
+		}
+		idStr = fmt.Sprintf("%v", userID)
+	}
+
 	if idStr == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "user id is required"})
 		return

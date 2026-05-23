@@ -38,3 +38,11 @@ export interface ForgetPasswordPayload {
 export interface ForgetPasswordResponse {
   message: string;
 }
+
+export interface SystemStatsResponse {
+  total_users: number;
+  total_payments: number;
+  total_amount: number;
+  total_referrals: number;
+}
+

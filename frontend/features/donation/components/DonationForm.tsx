@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Heart, Upload, Send, CheckCircle2, Download } from "lucide-react";
+import { Heart, Upload, Send, CheckCircle2, Download, Shield } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
@@ -25,6 +25,7 @@ export const DonationForm = () => {
       paymentMode: "",
       transactionId: "",
       receipt: null,
+      pan: "",
     },
     validationSchema: Yup.object({
       name: Yup.string().required("Name is required"),
@@ -35,6 +36,9 @@ export const DonationForm = () => {
       amount: Yup.number().positive("Amount must be positive").required("Amount is required"),
       paymentMode: Yup.string().required("Please select a payment mode"),
       transactionId: Yup.string().required("Transaction ID is required"),
+      pan: Yup.string()
+        .matches(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/i, "Enter a valid 10-character PAN (e.g. ABCDE1234F)")
+        .nullable(),
     }),
     onSubmit: async (values, { setSubmitting }) => {
       setSubmitting(true);
@@ -103,6 +107,12 @@ export const DonationForm = () => {
         <CardTitle>Make a Donation</CardTitle>
       </CardHeader>
       <CardContent>
+        <div className="mb-6 bg-green-50/70 border border-green-100 rounded-xl p-4 flex gap-3">
+          <Shield className="text-green-600 shrink-0 mt-0.5" size={18} />
+          <p className="text-[13px] text-green-800 leading-normal">
+            <span className="font-bold">80G Tax Benefit:</span> Donations to Global Smart Citizens Foundation are tax-exempt under Section 80G of the Income Tax Act, 1961. PAN is mandatory to claim tax deduction benefits.
+          </p>
+        </div>
         <form onSubmit={formik.handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Input
@@ -169,15 +179,26 @@ export const DonationForm = () => {
             )}
           </div>
 
-          <Input
-            label="UTR / Transaction Hash / Slip *"
-            placeholder="Transaction Reference Number"
-            name="transactionId"
-            value={formik.values.transactionId}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={formik.touched.transactionId ? (formik.errors.transactionId as string) : undefined}
-          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Input
+              label="UTR / Transaction Hash / Slip *"
+              placeholder="Transaction Reference Number"
+              name="transactionId"
+              value={formik.values.transactionId}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.transactionId ? (formik.errors.transactionId as string) : undefined}
+            />
+            <Input
+              label="PAN (Optional - Required for 80G)"
+              placeholder="Enter 10-character PAN"
+              name="pan"
+              value={formik.values.pan}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.pan ? (formik.errors.pan as string) : undefined}
+            />
+          </div>
 
           <div className="space-y-2">
             <label className="text-[14px] font-bold text-text ml-1 block">Receipt Upload</label>

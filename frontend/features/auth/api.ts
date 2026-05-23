@@ -1,6 +1,6 @@
 import api from "@/lib/axios";
 import { handleApiError } from "@/lib/api-helpers";
-import { RegisterPayload, LoginPayload, ForgetPasswordPayload, AuthResponse, ForgetPasswordResponse } from "./types";
+import { RegisterPayload, LoginPayload, ForgetPasswordPayload, AuthResponse, ForgetPasswordResponse, UserResponse, SystemStatsResponse } from "./types";
 
 export const loginUser = async (payload: LoginPayload): Promise<AuthResponse> => {
   try {
@@ -31,3 +31,40 @@ export const forgetPassword = async (payload: ForgetPasswordPayload): Promise<Fo
     handleApiError(error, "Password reset failed");
   }
 };
+
+export const getProfile = async (): Promise<UserResponse> => {
+  try {
+    const response = await api.get<{ user: UserResponse }>('/auth/profile/me');
+    return response.data.user;
+  } catch (error: any) {
+    handleApiError(error, "Failed to load user profile");
+    throw error;
+  }
+};
+
+export const updateProfilePhoto = async (id: string, file: File): Promise<string> => {
+  try {
+    const formData = new FormData();
+    formData.append("profile_photo", file);
+    const response = await api.put<{ url: string }>(`/auth/profile-photo/${id}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data.url;
+  } catch (error: any) {
+    handleApiError(error, "Failed to upload profile photo");
+    throw error;
+  }
+};
+
+export const getSystemStats = async (): Promise<SystemStatsResponse> => {
+  try {
+    const response = await api.get<SystemStatsResponse>("/auth/stats");
+    return response.data;
+  } catch (error: any) {
+    handleApiError(error, "Failed to load system statistics");
+    throw error;
+  }
+};
+

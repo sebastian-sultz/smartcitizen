@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
+import { useAuthStore } from "@/store/authStore";
 
 const aboutLinks = [
   { name: "About the Foundation", href: "/about" },
@@ -27,6 +28,8 @@ const activityLinks = [
 ];
 
 export default function Header() {
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const userType = useAuthStore((state) => state.userType);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -270,22 +273,41 @@ export default function Header() {
 
           {/* CTAs */}
           <div className="hidden lg:flex items-center gap-3">
-            <Button
-              asChild
-              variant="outline"
-              shape="pill"
-              className={cn(
-                "px-5 py-2.5 text-[14px] border-2 font-bold transition-all h-auto",
-                isScrolled || isHome
-                  ? "border-primary/20 text-primary hover:bg-primary hover:text-white"
-                  : "border-white/30 text-white hover:bg-white hover:text-primary",
-              )}
-            >
-              <Link href="/member_login" className="flex items-center gap-2">
-                <LogIn size={16} />
-                Sign In
-              </Link>
-            </Button>
+            {isLoggedIn ? (
+              <Button
+                asChild
+                variant="outline"
+                shape="pill"
+                className={cn(
+                  "px-5 py-2.5 text-[14px] border-2 font-bold transition-all h-auto",
+                  isScrolled || isHome
+                    ? "border-primary/20 text-primary hover:bg-primary hover:text-white"
+                    : "border-white/30 text-white hover:bg-white hover:text-primary",
+                )}
+              >
+                <Link href={userType === "admin" ? "/admin" : "/citizen"} className="flex items-center gap-2">
+                  <LogIn size={16} />
+                  Dashboard
+                </Link>
+              </Button>
+            ) : (
+              <Button
+                asChild
+                variant="outline"
+                shape="pill"
+                className={cn(
+                  "px-5 py-2.5 text-[14px] border-2 font-bold transition-all h-auto",
+                  isScrolled || isHome
+                    ? "border-primary/20 text-primary hover:bg-primary hover:text-white"
+                    : "border-white/30 text-white hover:bg-white hover:text-primary",
+                )}
+              >
+                <Link href="/member_login" className="flex items-center gap-2">
+                  <LogIn size={16} />
+                  Sign In
+                </Link>
+              </Button>
+            )}
             <Button
               asChild
               variant="accent"
@@ -460,32 +482,65 @@ export default function Header() {
                   </Link>
                 </Button>
                 <div className="grid grid-cols-2 gap-3">
-                  <Button
-                    asChild
-                    variant="outline"
-                    className="py-3.5 rounded-2xl font-bold text-[14px] h-auto border-2"
-                  >
-                    <Link
-                      href="/member_login"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center justify-center gap-2"
-                    >
-                      <LogIn size={16} />
-                      Sign In
-                    </Link>
-                  </Button>
-                  <Button
-                    asChild
-                    variant="primary"
-                    className="py-3.5 rounded-2xl font-bold text-[14px] shadow-lg shadow-primary/20 h-auto"
-                  >
-                    <Link
-                      href="/need_help"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Get Help
-                    </Link>
-                  </Button>
+                  {isLoggedIn ? (
+                    <>
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="py-3.5 rounded-2xl font-bold text-[14px] h-auto border-2"
+                      >
+                        <Link
+                          href={userType === "admin" ? "/admin" : "/citizen"}
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center justify-center gap-2"
+                        >
+                          <LogIn size={16} />
+                          Dashboard
+                        </Link>
+                      </Button>
+                      <Button
+                        asChild
+                        variant="primary"
+                        className="py-3.5 rounded-2xl font-bold text-[14px] shadow-lg shadow-primary/20 h-auto"
+                      >
+                        <Link
+                          href="/need_help"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Get Help
+                        </Link>
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        asChild
+                        variant="outline"
+                        className="py-3.5 rounded-2xl font-bold text-[14px] h-auto border-2"
+                      >
+                        <Link
+                          href="/member_login"
+                          onClick={() => setMobileMenuOpen(false)}
+                          className="flex items-center justify-center gap-2"
+                        >
+                          <LogIn size={16} />
+                          Sign In
+                        </Link>
+                      </Button>
+                      <Button
+                        asChild
+                        variant="primary"
+                        className="py-3.5 rounded-2xl font-bold text-[14px] shadow-lg shadow-primary/20 h-auto"
+                      >
+                        <Link
+                          href="/need_help"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Get Help
+                        </Link>
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </motion.div>

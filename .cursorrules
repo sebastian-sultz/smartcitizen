@@ -1,0 +1,15 @@
+# Cursor & AI Agent Rules
+
+## Always Use Graphify First
+This project features a graphify knowledge graph located at `graphify-out/`.
+
+When interacting with this codebase:
+1. **Mandatory Query First**: BEFORE performing any codebase search, directory listings, file reads, or running grep commands, you MUST query the graphify knowledge graph first. Use `graphify query "<your question>"` (via terminal/CLI) or the equivalent `query_graph` MCP tool.
+2. **Relationships and Focus**: Use `graphify path "<A>" "<B>"` (or `shortest_path`) to understand relationships between components, and `graphify explain "<concept>"` (or `get_node`) to inspect specific concept subgraphs.
+3. **Wiki Navigation**: If `graphify-out/wiki/index.md` exists, navigate it first rather than reading raw codebase files directly.
+4. **Graph Updates**: After editing any code files, run `graphify update .` to keep the AST graph current and synchronized (AST updates are local and cost zero API tokens).
+
+## Next.js 16+ Routing and Proxy (No middleware.ts)
+- Next.js 16+ has deprecated the `middleware.ts` file convention and the `middleware` function export in favor of `proxy.ts` and the `proxy` function export.
+- **DO NOT** create or rename any files to `middleware.ts` or `middleware.js` in the `frontend` folder.
+- All routing middleware, path matching rules, redirects, header manipulation, and token silent refresh flows must reside inside [frontend/proxy.ts](file:///Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/proxy.ts).

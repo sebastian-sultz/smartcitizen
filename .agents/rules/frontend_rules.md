@@ -52,4 +52,7 @@ Do not use raw HTML tags if a corresponding custom UI component is available in 
 * **Theme Compliance**: Follow the project's design system using the HSL color variables and Tailwind custom class tokens configured in `tailwind.config.js` and `globals.css` (e.g., use classes like `text-primary`, `bg-bg`, `border-border`, etc. instead of hardcoded hex values).
 * **Responsive Spacing**: Ensure padding, margin, and typography scale appropriately for different viewports (e.g., use `p-6 md:p-12`, `py-12 md:py-16`, and `text-2xl md:text-4xl`).
 
-
+### 6. Next.js 16+ Routing and Proxy (No middleware.ts)
+* **Never** create or rename files to `middleware.ts` or `middleware.js` in the frontend directory. Next.js 16+ has deprecated `middleware.ts` in favor of `proxy.ts` (or `proxy.js`).
+* The exported function must be named `proxy`, not `middleware`.
+* All route protection, redirection, header modification, and silent token refreshes must be defined inside [frontend/proxy.ts](file:///Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/proxy.ts). Next.js natively calls this file.

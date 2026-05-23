@@ -24,6 +24,9 @@ export default function DonationPage() {
                 sustainability. Every donation is not just support — it is hope, empowerment, and
                 a step towards a better tomorrow.
               </p>
+              <p className="font-semibold text-text">
+                Note: All donations to GlobalSmart Citizens Foundation are eligible for tax deduction under Section 80G of the Income Tax Act, 1961.
+              </p>
             </div>
           </div>
 
