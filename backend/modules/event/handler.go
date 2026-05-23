@@ -5,7 +5,9 @@ import (
 
 	"backend/dto/request"
 	"backend/dto/response"
+	"backend/infrastructure/middleware"
 	"backend/pkg/cloudinary"
+	"backend/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -20,11 +22,10 @@ func NewHandler(service Service) *Handler {
 
 func (h *Handler) RegisterRoutes(router *gin.RouterGroup) {
 	events := router.Group("/events")
+	events.Use(middleware.AuthMiddleware())
 	{
 		events.POST("", h.CreateEvent)
-		events.POST("/", h.CreateEvent)
 		events.GET("", h.GetAllEvents)
-		events.GET("/", h.GetAllEvents)
 		events.GET("/:id", h.GetEvent)
 		events.PUT("/:id", h.UpdateEvent)
 		events.PUT("/:id/image", h.UpdateEventImage)
@@ -36,6 +37,7 @@ func mapToResponse(e *Event) response.Event {
 	return response.Event{
 		ID:               e.ID,
 		EventName:        e.EventName,
+		EventType:        string(e.EventType),
 		EventDate:        e.EventDate,
 		EventAddress:     e.EventAddress,
 		OrganizerName:    e.OrganizerName,
@@ -67,7 +69,10 @@ func (h *Handler) CreateEvent(c *gin.Context) {
 }
 
 func (h *Handler) GetAllEvents(c *gin.Context) {
-	events, err := h.service.GetAllEvents()
+	pagination := utils.GetPaginationFromContext(c)
+	eventType := c.Query("event_type")
+
+	events, err := h.service.GetAllEvents(eventType, &pagination)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -78,7 +83,10 @@ func (h *Handler) GetAllEvents(c *gin.Context) {
 		res = append(res, mapToResponse(&e))
 	}
 
-	c.JSON(http.StatusOK, gin.H{"events": res})
+	c.JSON(http.StatusOK, gin.H{
+		"events":     res,
+		"pagination": pagination,
+	})
 }
 
 func (h *Handler) GetEvent(c *gin.Context) {

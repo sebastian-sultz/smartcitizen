@@ -6,12 +6,13 @@ import (
 
 	"backend/dto/request"
 	"backend/pkg/cloudinary"
+	"backend/pkg/utils"
 )
 
 type Service interface {
 	CreateEvent(req *request.CreateEvent) (*Event, error)
 	GetEvent(id string) (*Event, error)
-	GetAllEvents() ([]Event, error)
+	GetAllEvents(eventType string, pagination *utils.Pagination) ([]Event, error)
 	UpdateEvent(id string, req *request.UpdateEvent) (*Event, error)
 	UpdateEventImage(ctx context.Context, id string, url string, publicID string) error
 	DeleteEvent(ctx context.Context, id string) error
@@ -34,9 +35,14 @@ func (s *service) CreateEvent(req *request.CreateEvent) (*Event, error) {
 	if ctaText == "" {
 		ctaText = "Register Now"
 	}
+	eventType := req.EventType
+	if eventType == "" {
+		eventType = string(EventEventType)
+	}
 
 	event := &Event{
 		EventName:        req.EventName,
+		EventType:        EventType(eventType),
 		EventDate:        req.EventDate,
 		EventAddress:     req.EventAddress,
 		OrganizerName:    req.OrganizerName,
@@ -58,8 +64,8 @@ func (s *service) GetEvent(id string) (*Event, error) {
 	return s.repo.FindByID(id)
 }
 
-func (s *service) GetAllEvents() ([]Event, error) {
-	return s.repo.FindAll()
+func (s *service) GetAllEvents(eventType string, pagination *utils.Pagination) ([]Event, error) {
+	return s.repo.FindAll(eventType, pagination)
 }
 
 func (s *service) UpdateEvent(id string, req *request.UpdateEvent) (*Event, error) {
@@ -70,6 +76,9 @@ func (s *service) UpdateEvent(id string, req *request.UpdateEvent) (*Event, erro
 
 	if req.EventName != nil {
 		event.EventName = *req.EventName
+	}
+	if req.EventType != nil {
+		event.EventType = EventType(*req.EventType)
 	}
 	if req.EventDate != nil {
 		event.EventDate = *req.EventDate

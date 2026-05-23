@@ -9,6 +9,7 @@ import (
 type Event struct {
 	ID             uuid.UUID `json:"id"`
 	EventName      string    `json:"event_name"`
+	EventType      string    `json:"event_type"`
 	EventDate      time.Time `json:"event_date"`
 	EventAddress   string    `json:"event_address"`
 	OrganizerName  string    `json:"organizer_name"`

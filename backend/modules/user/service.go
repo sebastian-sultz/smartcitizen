@@ -10,6 +10,7 @@ import (
 )
 
 type Service interface {
+	GetUser(id string) (*User, error)
 	Register(req *request.RegisterUser) (*User, error)
 	Login(req *request.LoginUser) (*User, error)
 	ForgetPassword(req *request.ForgetPassword) error
@@ -22,6 +23,10 @@ type service struct {
 
 func NewService(repo Repository) Service {
 	return &service{repo: repo}
+}
+
+func (s *service) GetUser(id string) (*User, error) {
+	return s.repo.FindByID(id)
 }
 
 func (s *service) Register(req *request.RegisterUser) (*User, error) {

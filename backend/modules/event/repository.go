@@ -1,13 +1,14 @@
 package event
 
 import (
+	"backend/pkg/utils"
 	"gorm.io/gorm"
 )
 
 type Repository interface {
 	Create(event *Event) error
 	FindByID(id string) (*Event, error)
-	FindAll() ([]Event, error)
+	FindAll(eventType string, pagination *utils.Pagination) ([]Event, error)
 	Update(event *Event) error
 	Delete(id string) error
 }
@@ -33,9 +34,20 @@ func (r *repository) FindByID(id string) (*Event, error) {
 	return &event, nil
 }
 
-func (r *repository) FindAll() ([]Event, error) {
+func (r *repository) FindAll(eventType string, pagination *utils.Pagination) ([]Event, error) {
 	var events []Event
-	err := r.db.Order("created_at desc").Find(&events).Error
+	query := r.db.Model(&Event{})
+
+	if eventType != "" {
+		query = query.Where("event_type = ?", eventType)
+	}
+
+	if err := query.Count(&pagination.TotalRows).Error; err != nil {
+		return nil, err
+	}
+	pagination.Calculate()
+
+	err := query.Order("created_at desc").Limit(pagination.Limit).Offset(pagination.Offset).Find(&events).Error
 	return events, err
 }
 

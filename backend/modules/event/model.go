@@ -7,8 +7,16 @@ import (
 	"gorm.io/gorm"
 )
 
+type EventType string
+
+const (
+	ActivityEventType EventType = "Activity"
+	EventEventType    EventType = "Event"
+)
+
 type Event struct {
 	ID             uuid.UUID      `gorm:"type:uuid;primaryKey" json:"id"`
+	EventType      EventType      `gorm:"type:varchar(50);default:'Event'" json:"event_type"`
 	EventName      string         `gorm:"not null" json:"event_name"`
 	EventDate      time.Time      `gorm:"not null" json:"event_date"`
 	EventAddress   string         `gorm:"not null" json:"event_address"`

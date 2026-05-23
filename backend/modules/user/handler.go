@@ -1,13 +1,16 @@
 package user
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 
 	"backend/dto/request"
 	"backend/dto/response"
+	"backend/infrastructure/middleware"
 	"backend/pkg/cloudinary"
 	"backend/pkg/jwt"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -25,8 +28,12 @@ func (h *Handler) RegisterRoutes(router *gin.RouterGroup) {
 		auth.POST("/register", h.Register)
 		auth.POST("/login", h.Login)
 		auth.POST("/forget-password", h.ForgetPassword)
-		auth.PUT("/profile-photo/:id", h.UpdateProfilePhoto)
 		auth.POST("/refresh", h.Refresh)
+
+		protected := auth.Group("")
+		protected.Use(middleware.AuthMiddleware())
+		protected.PUT("/profile-photo/:id", h.UpdateProfilePhoto)
+		protected.GET("/profile/:id", h.GetProfile)
 	}
 }
 
@@ -150,7 +157,7 @@ func (h *Handler) UpdateProfilePhoto(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "profile photo updated successfully",
-		"url": url,
+		"url":     url,
 	})
 }
 
@@ -182,4 +189,26 @@ func (h *Handler) Refresh(c *gin.Context) {
 	c.SetCookie("refresh_token", newRefreshToken, 7*24*60*60, "/", "", false, true)
 
 	c.JSON(http.StatusOK, gin.H{"message": "token refreshed successfully"})
+}
+
+func (h *Handler) GetProfile(c *gin.Context) {
+	userID, exists := c.Get("id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	idStr := fmt.Sprintf("%v", userID)
+	if idStr == "" {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid token claims"})
+		return
+	}
+
+	user, err := h.service.GetUser(idStr)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"user": mapToResponse(user)})
 }
