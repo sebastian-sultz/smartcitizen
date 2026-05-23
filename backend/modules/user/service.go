@@ -6,6 +6,7 @@ import (
 
 	"backend/dto/request"
 	"backend/pkg/cloudinary"
+
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -15,6 +16,7 @@ type Service interface {
 	Login(req *request.LoginUser) (*User, error)
 	ForgetPassword(req *request.ForgetPassword) error
 	UpdateProfilePhoto(ctx context.Context, id string, url string, publicID string) error
+	GetSystemStats() (int64, int64, int64, float64, error)
 }
 
 type service struct {
@@ -100,4 +102,8 @@ func (s *service) UpdateProfilePhoto(ctx context.Context, id string, url string,
 	user.ProfilePhotoPublicID = &publicID
 
 	return s.repo.Update(user)
+}
+
+func (s *service) GetSystemStats() (int64, int64, int64, float64, error) {
+	return s.repo.GetSystemStats()
 }

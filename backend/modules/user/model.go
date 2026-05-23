@@ -37,9 +37,10 @@ type User struct {
 	ProfilePhoto         *string  `json:"profile_photo"`
 	ProfilePhotoPublicID *string  `json:"-"`
 	UserType             UserType `gorm:"type:varchar(20);not null;default:'member'" json:"user_type"`
-	TotalPayments        int      `gorm:"default:0" json:"total_payments"`
+	TotalPayments        int64    `gorm:"default:0" json:"total_payments"`
 	TotalAmount          float64  `gorm:"default:0.0" json:"total_amount"`
-	ReferralPaymentCount int      `gorm:"default:0" json:"referral_payment_count"`
+	ReferralPaymentCount int64    `gorm:"default:0" json:"referral_payment_count"`
+	TotalReferrals       int64    `gorm:"default:0" json:"total_referrals"`
 	ReferralID           *string  `json:"referral_id"`
 	IsPhoneVerified      bool     `gorm:"default:false" json:"is_phone_verified"` // For future OTP implementation
 }

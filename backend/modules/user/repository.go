@@ -9,6 +9,7 @@ type Repository interface {
 	FindByPhone(phone string) (*User, error)
 	FindByID(id string) (*User, error)
 	Update(user *User) error
+	GetSystemStats() (int64, int64, int64, float64, error)
 }
 
 type repository struct {
@@ -43,4 +44,24 @@ func (r *repository) FindByID(id string) (*User, error) {
 
 func (r *repository) Update(user *User) error {
 	return r.db.Save(user).Error
+}
+
+func (r *repository) GetSystemStats() (int64, int64, int64, float64, error) {
+	var totalUsers int64
+	var totalPayments int64
+	var totalReferrals int64
+	var totalAmount float64
+
+	err := r.db.Model(&User{}).Count(&totalUsers).Error
+	if err != nil {
+		return 0, 0, 0, 0, err
+	}
+
+	row := r.db.Model(&User{}).Select("COALESCE(SUM(total_payments), 0) as total_payments, COALESCE(SUM(total_referrals), 0) as total_referrals, COALESCE(SUM(total_amount), 0) as total_amount").Row()
+	err = row.Scan(&totalPayments, &totalReferrals, &totalAmount)
+	if err != nil {
+		return 0, 0, 0, 0, err
+	}
+
+	return totalUsers, totalPayments, totalReferrals, totalAmount, nil
 }

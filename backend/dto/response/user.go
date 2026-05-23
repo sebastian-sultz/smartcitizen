@@ -12,10 +12,12 @@ type User struct {
 	Phone                string    `json:"phone"`
 	ProfilePhoto         *string   `json:"profile_photo"`
 	UserType             string    `json:"user_type"`
-	TotalPayments        int       `json:"total_payments"`
+	TotalPayments        int64     `json:"total_payments"`
 	TotalAmount          float64   `json:"total_amount"`
-	ReferralPaymentCount int       `json:"referral_payment_count"`
+	ReferralPaymentCount int64     `json:"referral_payment_count"`
+	TotalReferrals       int64     `json:"total_referrals"`
 	ReferralID           *string   `json:"referral_id"`
+	ReferralName         *string   `json:"referral_name,omitempty"`
 	CreatedAt            time.Time `json:"created_at"`
 	UpdatedAt            time.Time `json:"updated_at"`
 }

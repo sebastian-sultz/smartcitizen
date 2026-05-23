@@ -1,7 +1,6 @@
 package user
 
 import (
-	"fmt"
 	"net/http"
 	"os"
 
@@ -34,10 +33,11 @@ func (h *Handler) RegisterRoutes(router *gin.RouterGroup) {
 		protected.Use(middleware.AuthMiddleware())
 		protected.PUT("/profile-photo/:id", h.UpdateProfilePhoto)
 		protected.GET("/profile/:id", h.GetProfile)
+		protected.GET("/stats", h.GetStats)
 	}
 }
 
-func mapToResponse(u *User) response.User {
+func mapToResponse(u *User, refName *string) response.User {
 	return response.User{
 		ID:                   u.ID,
 		Name:                 u.Name,
@@ -47,7 +47,9 @@ func mapToResponse(u *User) response.User {
 		TotalPayments:        u.TotalPayments,
 		TotalAmount:          u.TotalAmount,
 		ReferralPaymentCount: u.ReferralPaymentCount,
+		TotalReferrals:       u.TotalReferrals,
 		ReferralID:           u.ReferralID,
+		ReferralName:         refName,
 		CreatedAt:            u.CreatedAt,
 		UpdatedAt:            u.UpdatedAt,
 	}
@@ -79,7 +81,7 @@ func (h *Handler) Register(c *gin.Context) {
 	c.SetCookie("access_token", accessToken, 15*60, "/", "", false, true)
 	c.SetCookie("refresh_token", refreshToken, 7*24*60*60, "/", "", false, true)
 
-	c.JSON(http.StatusCreated, gin.H{"message": "registered successfully", "user": mapToResponse(user)})
+	c.JSON(http.StatusCreated, gin.H{"message": "registered successfully", "user": mapToResponse(user, nil)})
 }
 
 func (h *Handler) Login(c *gin.Context) {
@@ -108,7 +110,7 @@ func (h *Handler) Login(c *gin.Context) {
 	c.SetCookie("access_token", accessToken, 15*60, "/", "", false, true)
 	c.SetCookie("refresh_token", refreshToken, 7*24*60*60, "/", "", false, true)
 
-	c.JSON(http.StatusOK, gin.H{"message": "logged in successfully", "user": mapToResponse(user)})
+	c.JSON(http.StatusOK, gin.H{"message": "logged in successfully", "user": mapToResponse(user, nil)})
 }
 
 func (h *Handler) ForgetPassword(c *gin.Context) {
@@ -192,15 +194,9 @@ func (h *Handler) Refresh(c *gin.Context) {
 }
 
 func (h *Handler) GetProfile(c *gin.Context) {
-	userID, exists := c.Get("id")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-		return
-	}
-
-	idStr := fmt.Sprintf("%v", userID)
+	idStr := c.Param("id")
 	if idStr == "" {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid token claims"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user id is required"})
 		return
 	}
 
@@ -210,5 +206,34 @@ func (h *Handler) GetProfile(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"user": mapToResponse(user)})
+	var refName *string
+	if user.ReferralID != nil {
+		refUser, err := h.service.GetUser(*user.ReferralID)
+		if err == nil && refUser != nil {
+			refName = &refUser.Name
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{"user": mapToResponse(user, refName)})
+}
+
+func (h *Handler) GetStats(c *gin.Context) {
+	userType, exists := c.Get("userType")
+	if !exists || userType != string(Admin) {
+		c.JSON(http.StatusForbidden, gin.H{"error": "forbidden, admin access required"})
+		return
+	}
+
+	totalUsers, totalPayments, totalReferrals, totalAmount, err := h.service.GetSystemStats()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch stats"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"total_users":     totalUsers,
+		"total_payments":  totalPayments,
+		"total_amount":    totalAmount,
+		"total_referrals": totalReferrals,
+	})
 }
