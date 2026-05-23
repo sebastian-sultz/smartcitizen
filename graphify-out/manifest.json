@@ -10,8 +10,8 @@
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/next-env.d.ts": {
-    "mtime": 1779528727.583207,
-    "ast_hash": "d0f8375ae1199dc7acd3977fc33b78b8",
+    "mtime": 1779559935.458434,
+    "ast_hash": "2a74d3909800ca5467fa83b0ab4a4890",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/package.json": {
@@ -863,6 +863,11 @@
     "mtime": 1779186709.1165335,
     "ast_hash": "5581bbcdebd903e6c15c384abbb21c96",
     "semantic_hash": "5581bbcdebd903e6c15c384abbb21c96"
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/api_requirements.md": {
+    "mtime": 1779560150.7238057,
+    "ast_hash": "11cb6bfd60635ab685a6437d50ef85da",
+    "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/README.md": {
     "mtime": 1779190040.1595466,
