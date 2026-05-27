@@ -1,16 +1,16 @@
-# Graph Report - smartcitizen  (2026-05-23)
+# Graph Report - smartcitizen  (2026-05-27)
 
 ## Corpus Check
-- 182 files · ~2,450,445 words
+- 183 files · ~2,451,491 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 1136 nodes · 1608 edges · 128 communities (95 shown, 33 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 25 edges (avg confidence: 0.8)
+- 1143 nodes · 1672 edges · 130 communities (97 shown, 33 thin omitted)
+- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 26 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `5601fa31`
+- Built from commit: `f9e80bbf`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -42,7 +42,6 @@
 - [[_COMMUNITY_Community 24|Community 24]]
 - [[_COMMUNITY_Community 25|Community 25]]
 - [[_COMMUNITY_Community 26|Community 26]]
-- [[_COMMUNITY_Community 27|Community 27]]
 - [[_COMMUNITY_Community 28|Community 28]]
 - [[_COMMUNITY_Community 30|Community 30]]
 - [[_COMMUNITY_Community 31|Community 31]]
@@ -88,6 +87,7 @@
 - [[_COMMUNITY_Community 80|Community 80]]
 - [[_COMMUNITY_Community 81|Community 81]]
 - [[_COMMUNITY_Community 82|Community 82]]
+- [[_COMMUNITY_Community 84|Community 84]]
 - [[_COMMUNITY_Community 86|Community 86]]
 - [[_COMMUNITY_Community 87|Community 87]]
 - [[_COMMUNITY_Community 88|Community 88]]
@@ -103,6 +103,7 @@
 - [[_COMMUNITY_Community 99|Community 99]]
 - [[_COMMUNITY_Community 100|Community 100]]
 - [[_COMMUNITY_Community 101|Community 101]]
+- [[_COMMUNITY_Community 102|Community 102]]
 - [[_COMMUNITY_Community 103|Community 103]]
 - [[_COMMUNITY_Community 104|Community 104]]
 - [[_COMMUNITY_Community 105|Community 105]]
@@ -112,6 +113,7 @@
 - [[_COMMUNITY_Community 110|Community 110]]
 - [[_COMMUNITY_Community 113|Community 113]]
 - [[_COMMUNITY_Community 114|Community 114]]
+- [[_COMMUNITY_Community 115|Community 115]]
 - [[_COMMUNITY_Community 121|Community 121]]
 - [[_COMMUNITY_Community 122|Community 122]]
 - [[_COMMUNITY_Community 123|Community 123]]
@@ -125,11 +127,11 @@
 - [[_COMMUNITY_Community 176|Community 176]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `Button` - 38 edges
-2. `cn()` - 27 edges
+1. `cn()` - 72 edges
+2. `Button` - 39 edges
 3. `handleApiError()` - 22 edges
 4. `useAlert()` - 21 edges
-5. `Card` - 18 edges
+5. `Card` - 19 edges
 6. `CardContent` - 17 edges
 7. `compilerOptions` - 16 edges
 8. `CardHeader` - 16 edges
@@ -137,26 +139,26 @@
 10. `mapToResponse()` - 13 edges
 
 ## Surprising Connections (you probably didn't know these)
+- `JoinCTA()` --calls--> `useAuthStore`  [INFERRED]
+  JoinCTA.tsx → frontend/store/authStore.ts
 - `cn()` --calls--> `clsx`  [INFERRED]
   frontend/lib/utils.ts → frontend/package.json
-- `CitizenDashboard()` --calls--> `useAlert()`  [EXTRACTED]
-  frontend/features/citizen/components/CitizenDashboard.tsx → frontend/components/ui/AlertProvider.tsx
-- `main()` --calls--> `InitCloudinary()`  [INFERRED]
-  backend/main.go → backend/pkg/cloudinary/cloudinary.go
-- `main()` --calls--> `Connect()`  [INFERRED]
-  backend/main.go → backend/infrastructure/database/database.go
-- `main()` --calls--> `CORSMiddleware()`  [INFERRED]
-  backend/main.go → backend/infrastructure/middleware/cors.go
+- `CitizenLayout()` --calls--> `cn()`  [EXTRACTED]
+  frontend/app/citizen/layout.tsx → frontend/lib/utils.ts
+- `MissionVisionCard()` --calls--> `cn()`  [EXTRACTED]
+  frontend/features/mission/components/VisionMission.tsx → frontend/lib/utils.ts
+- `getEventById()` --calls--> `handleApiError()`  [EXTRACTED]
+  frontend/features/community/api.ts → frontend/lib/api-helpers.ts
 
-## Communities (128 total, 33 thin omitted)
+## Communities (130 total, 33 thin omitted)
 
 ### Community 0 - "Public Pages & Policies"
 Cohesion: 0.11
-Nodes (18): 15. Search & Discovery System, 24. Security Requirements, 26. SEO Requirements, 28. Scalability Requirements, 30. Future Scope, 31. Final Development Notes, 3. User Roles, 5. Core Functional Modules (+10 more)
+Nodes (18): 18. Notification System, 24. Security Requirements, 26. SEO Requirements, 28. Scalability Requirements, 30. Future Scope, 31. Final Development Notes, 3. User Roles, 5. Core Functional Modules (+10 more)
 
 ### Community 1 - "Forms & Citizen Dashboard"
 Cohesion: 0.11
-Nodes (18): 14. Search & Discovery System, 17. Recognition & Appreciation System, 18. Operational Support & Volunteer Assistance, 22. Notification System, 28. Conclusion, 4. Platform Positioning, 6. Platform Modules, Communication Channels (+10 more)
+Nodes (18): 17. Recognition & Appreciation System, 18. Operational Support & Volunteer Assistance, 22. Notification System, 23. Coordinator Responsibilities, 28. Conclusion, 4. Platform Positioning, 6. Platform Modules, Communication Channels (+10 more)
 
 ### Community 2 - "Home & Impact Sections"
 Cohesion: 0.06
@@ -194,6 +196,10 @@ Nodes (9): 6. Public Website Module, Awareness Section, Event Section, Hero Sect
 Cohesion: 0.22
 Nodes (9): 11. Volunteer Management System, Consent Fields, Eligibility Indicators, Media Upload, Personal Information, Professional Information, Volunteer Application, Volunteer Application Form (+1 more)
 
+### Community 11 - "Contact Info Components"
+Cohesion: 0.12
+Nodes (7): Pagination(), PaginationContent(), PaginationEllipsis(), PaginationLink(), PaginationLinkProps, PaginationNext(), PaginationPrevious()
+
 ### Community 12 - "Root Layout & Fonts"
 Cohesion: 0.25
 Nodes (8): 12. Need Help Module, Accessible By, Contact Methods, Purpose, Search Categories, Search Filters, Volunteer Public Profile, Volunteer Visibility Rules
@@ -211,8 +217,8 @@ Cohesion: 0.22
 Nodes (8): 1. Preferred UI Components, 2. Next.js Image Optimization, 3. Styling with Tailwind CSS, 4. General React & TypeScript Standards, 5. Mobile-First and Theme Responsive Design, 6. Next.js 16+ Routing and Proxy (No middleware.ts), code:tsx (import Image from "next/image";), Frontend Coding Rules
 
 ### Community 16 - "Citizen Settings Page"
-Cohesion: 0.05
-Nodes (38): forgetPassword(), getSystemStats(), loginUser(), registerUser(), updateProfilePhoto(), AuthResponse, ForgetPasswordPayload, ForgetPasswordResponse (+30 more)
+Cohesion: 0.24
+Nodes (5): getModerationColumns(), initialReports, ModerationReport, ModerationTable(), TableComponent()
 
 ### Community 17 - "Citizen Layout"
 Cohesion: 0.29
@@ -227,12 +233,12 @@ Cohesion: 0.29
 Nodes (7): 11. User Dashboard, Contribution History, Dashboard Purpose, Dashboard Sections, Notification Center, Participation Overview, Personal Profile
 
 ### Community 20 - "Next.js Configuration"
-Cohesion: 0.09
-Nodes (20): AwarenessFormProps, validationSchema, CreateEventModalProps, eventSchema, initialValues, activities, Activity, handleCancel() (+12 more)
+Cohesion: 0.05
+Nodes (36): figtree, metadata, sourceSans3, createEvent(), updateEventImage(), CreateEventModal(), CreateEventModalProps, eventSchema (+28 more)
 
 ### Community 21 - "Next.js Environment"
-Cohesion: 0.16
-Nodes (8): ContactFormProps, Input, InputProps, Select(), SelectContent(), SelectItem(), SelectTrigger(), SelectValue()
+Cohesion: 0.09
+Nodes (20): AwarenessFormProps, validationSchema, mockActivities, DashboardOverview(), categories, mockProfessionals, ProfessionalCard(), AwarenessActivity (+12 more)
 
 ### Community 22 - "Community 22"
 Cohesion: 0.33
@@ -315,8 +321,8 @@ Cohesion: 0.11
 Nodes (13): 1. Executive Summary of API Gaps, 2. Detail of Required Modules & Endpoints, 3. Database Schema Modifications Recap, 4. Next Steps for Implementation, A. Donation & Tax Benefit (80G) Module, API Gaps & Requirements: Frontend Dynamic Integration, B. Awareness Campaigns Module, C. Admin User & Role Management Module (+5 more)
 
 ### Community 46 - "Community 46"
-Cohesion: 0.17
-Nodes (4): amounts, Button, ButtonProps, buttonVariants
+Cohesion: 0.14
+Nodes (10): amounts, stats, NeedHelpHeader(), ProfessionalCardProps, Badge(), badgeVariants, Button, ButtonProps (+2 more)
 
 ### Community 47 - "Community 47"
 Cohesion: 0.4
@@ -327,60 +333,60 @@ Cohesion: 0.5
 Nodes (4): 13. Event Management System, Event Features, Event Fields, User Features
 
 ### Community 50 - "Community 50"
-Cohesion: 0.5
-Nodes (4): 16. Consent & Privacy Module, Consent Requirements, GDPR-style Compliance, Privacy Controls
+Cohesion: 0.1
+Nodes (10): deleteEvent(), getAllEvents(), getEventById(), updateEvent(), CreateEventPayload, EventResponse, UpdateEventPayload, getEventsColumns() (+2 more)
 
 ### Community 54 - "Community 54"
-Cohesion: 0.5
-Nodes (4): 17. Abuse & Moderation Module, Admin Features, Features, Spam Protection
-
-### Community 55 - "Community 55"
-Cohesion: 0.22
-Nodes (4): Header(), NavItem, navItems, Sidebar()
-
-### Community 57 - "Community 57"
-Cohesion: 0.21
-Nodes (7): categories, mockProfessionals, NeedHelpHeader(), ProfessionalCard(), ProfessionalCardProps, Badge(), badgeVariants
-
-### Community 58 - "Community 58"
-Cohesion: 0.19
-Nodes (7): AwarenessFeature(), metadata, AwarenessForm(), AwarenessList(), mockActivities, AwarenessActivity, AwarenessCategory
-
-### Community 62 - "Community 62"
-Cohesion: 0.18
-Nodes (9): ContactForm(), ContentGridProps, ContentItem, ContributionHistory(), DonationForm(), EventRegisterButton(), PrivacyControls(), VolunteerForm() (+1 more)
-
-### Community 64 - "Community 64"
-Cohesion: 0.25
-Nodes (4): Campaign, CampaignsTable(), initialCampaigns, TableComponent()
-
-### Community 65 - "Community 65"
-Cohesion: 0.5
-Nodes (4): 9. Authentication System, Authentication Flow, Forgot Password Functionality, Login Method
-
-### Community 66 - "Community 66"
-Cohesion: 0.27
-Nodes (7): getProfile(), CitizenDashboard(), mockDonations, Card, CardContent, CardHeader, CardTitle
-
-### Community 67 - "Community 67"
-Cohesion: 0.28
-Nodes (4): getUsersColumns(), initialUsers, User, UsersTable()
-
-### Community 68 - "Community 68"
-Cohesion: 0.06
-Nodes (30): figtree, metadata, RootLayout(), sourceSans3, config, parseJwt(), proxy(), aboutLinks (+22 more)
-
-### Community 69 - "Community 69"
 Cohesion: 0.28
 Nodes (4): getVolunteerAppsColumns(), initialApps, VolunteerApp, VolunteerAppsTable()
 
-### Community 70 - "Community 70"
+### Community 55 - "Community 55"
+Cohesion: 0.15
+Nodes (6): CitizenLayout(), Header(), NavItem, navItems, Sidebar(), performLogout()
+
+### Community 57 - "Community 57"
+Cohesion: 0.25
+Nodes (4): campaignsColumns, Campaign, CampaignsTable(), initialCampaigns
+
+### Community 58 - "Community 58"
+Cohesion: 0.29
+Nodes (4): AwarenessFeature(), metadata, AwarenessForm(), AwarenessList()
+
+### Community 62 - "Community 62"
+Cohesion: 0.33
+Nodes (3): ContentGridProps, ContentItem, EventRegisterButton()
+
+### Community 64 - "Community 64"
+Cohesion: 0.19
+Nodes (15): CitizenDashboard(), ContactForm(), ContactFormProps, ContributionHistory(), mockDonations, DonationForm(), PrivacyControls(), VolunteerForm() (+7 more)
+
+### Community 65 - "Community 65"
+Cohesion: 0.28
+Nodes (4): getUsersColumns(), initialUsers, User, UsersTable()
+
+### Community 66 - "Community 66"
+Cohesion: 0.05
+Nodes (38): forgetPassword(), getProfile(), getSystemStats(), loginUser(), registerUser(), updateProfilePhoto(), AuthResponse, ForgetPasswordPayload (+30 more)
+
+### Community 67 - "Community 67"
+Cohesion: 0.39
+Nodes (6): RootLayout(), config, parseJwt(), proxy(), parseJwt(), proxy()
+
+### Community 68 - "Community 68"
 Cohesion: 0.5
 Nodes (4): 20. Coordinator System, Coordinator Responsibilities, Coordinator Roles, Internal Participation Metrics
+
+### Community 69 - "Community 69"
+Cohesion: 0.22
+Nodes (8): cn(), Separator(), Switch(), Tabs(), TabsContent(), TabsList(), tabsListVariants, TabsTrigger()
 
 ### Community 74 - "Community 74"
 Cohesion: 0.5
 Nodes (4): 25. Frontend UI Requirements, Component Requirements, Styling, UI Guidelines
+
+### Community 77 - "Community 77"
+Cohesion: 0.67
+Nodes (3): 15. Search & Discovery System, Backend Search Optimization, Search Engine Requirements
 
 ### Community 81 - "Community 81"
 Cohesion: 0.5
@@ -390,21 +396,21 @@ Nodes (4): 27. Deployment Requirements, Backend Deployment, CI/CD, Frontend Depl
 Cohesion: 0.5
 Nodes (4): 8. Smart Citizen Module, code:txt (GSC000523), Smart Citizen Features, Smart Citizen ID Generation
 
+### Community 88 - "Community 88"
+Cohesion: 0.5
+Nodes (4): 16. Consent & Privacy Module, Consent Requirements, GDPR-style Compliance, Privacy Controls
+
 ### Community 89 - "Community 89"
 Cohesion: 0.5
 Nodes (4): 12. Awareness Participation System, Community Participation System, Important Compliance Note, Purpose
-
-### Community 91 - "Community 91"
-Cohesion: 0.13
-Nodes (5): documents, MissionVisionCardProps, cn(), Separator(), Switch()
 
 ### Community 92 - "Community 92"
 Cohesion: 0.5
 Nodes (4): 19. Consent & Privacy Management, Compliance Standards, Consent Management, Privacy Controls
 
 ### Community 93 - "Community 93"
-Cohesion: 0.12
-Nodes (13): campaignsColumns, getModerationColumns(), initialReports, ModerationReport, ModerationTable(), Table(), TableBody(), TableCell() (+5 more)
+Cohesion: 0.2
+Nodes (10): Spinner(), Table(), TableBody(), TableCaption(), TableCell(), TableFooter(), TableHead(), TableHeader() (+2 more)
 
 ### Community 95 - "Community 95"
 Cohesion: 0.5
@@ -420,23 +426,23 @@ Nodes (4): 2. Foundation Overview, Core Vision, Mission, Organization Name
 
 ### Community 98 - "Community 98"
 Cohesion: 0.5
-Nodes (4): 1. Project Overview, Objective, Project Name, Project Type
+Nodes (4): 9. Authentication System, Authentication Flow, Forgot Password Functionality, Login Method
 
-### Community 99 - "Community 99"
+### Community 100 - "Community 100"
+Cohesion: 0.5
+Nodes (4): 17. Abuse & Moderation Module, Admin Features, Features, Spam Protection
+
+### Community 101 - "Community 101"
 Cohesion: 0.67
 Nodes (3): 29. Logging & Monitoring, Logging, Monitoring Tools
 
-### Community 100 - "Community 100"
-Cohesion: 0.67
-Nodes (3): 18. Notification System, Channels, Notification Types
-
-### Community 101 - "Community 101"
+### Community 102 - "Community 102"
 Cohesion: 0.67
 Nodes (3): 24. Security Requirements, Payment Gateway Support, Security Features
 
 ### Community 103 - "Community 103"
-Cohesion: 0.67
-Nodes (3): 23. Coordinator Responsibilities, Coordinator Functions, Internal Participation Thresholds (Administrative Reference)
+Cohesion: 0.5
+Nodes (4): 1. Project Overview, Objective, Project Name, Project Type
 
 ### Community 107 - "Community 107"
 Cohesion: 0.67
@@ -450,22 +456,26 @@ Nodes (3): 3. Platform Objectives, Primary Objectives, Secondary Objectives
 Cohesion: 0.5
 Nodes (4): 19. Role & Permission System, Admin Access, RBAC (Role-Based Access Control), Volunteer Access
 
+### Community 115 - "Community 115"
+Cohesion: 0.67
+Nodes (3): 14. Search & Discovery System, Search Filters, Search Result Information
+
 ## Knowledge Gaps
-- **387 isolated node(s):** `config`, `name`, `version`, `private`, `dev` (+382 more)
+- **390 isolated node(s):** `benefits`, `config`, `name`, `version`, `private` (+385 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **33 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `cn()` connect `Community 91` to `Community 66`, `Community 68`, `Contact Info Components`, `Community 77`, `Community 46`, `Community 61`, `Next.js Configuration`, `Next.js Environment`, `Community 87`, `Community 55`, `Community 57`, `Community 58`, `Community 28`, `Community 93`?**
-  _High betweenness centrality (0.049) - this node is a cross-community bridge._
-- **Why does `Button` connect `Community 46` to `Community 64`, `Community 66`, `Community 35`, `Community 68`, `Contact Info Components`, `Community 77`, `Citizen Settings Page`, `Next.js Configuration`, `Next.js Environment`, `Community 93`, `Community 55`, `Community 57`, `Community 58`, `Community 91`, `Community 61`, `Community 62`?**
-  _High betweenness centrality (0.027) - this node is a cross-community bridge._
-- **Why does `clsx` connect `Community 28` to `Community 91`?**
-  _High betweenness centrality (0.018) - this node is a cross-community bridge._
-- **What connects `config`, `name`, `version` to the rest of the system?**
-  _387 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `cn()` connect `Community 69` to `Community 64`, `Community 66`, `Community 99`, `Contact Info Components`, `Community 46`, `Next.js Configuration`, `Next.js Environment`, `Community 93`, `Community 55`, `Community 90`, `Community 91`, `Community 28`, `Community 61`?**
+  _High betweenness centrality (0.067) - this node is a cross-community bridge._
+- **Why does `Button` connect `Community 46` to `Community 64`, `Community 66`, `Community 35`, `Community 99`, `Contact Info Components`, `Community 50`, `Next.js Configuration`, `Next.js Environment`, `Community 55`, `Community 57`, `Community 58`, `Community 61`, `Community 62`?**
+  _High betweenness centrality (0.022) - this node is a cross-community bridge._
+- **Why does `clsx` connect `Community 28` to `Community 69`?**
+  _High betweenness centrality (0.019) - this node is a cross-community bridge._
+- **What connects `benefits`, `config`, `name` to the rest of the system?**
+  _390 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Public Pages & Policies` be split into smaller, more focused modules?**
   _Cohesion score 0.11 - nodes in this community are weakly interconnected._
 - **Should `Forms & Citizen Dashboard` be split into smaller, more focused modules?**

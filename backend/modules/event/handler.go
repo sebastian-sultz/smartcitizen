@@ -22,14 +22,18 @@ func NewHandler(service Service) *Handler {
 
 func (h *Handler) RegisterRoutes(router *gin.RouterGroup) {
 	events := router.Group("/events")
-	events.Use(middleware.AuthMiddleware())
 	{
-		events.POST("", h.CreateEvent)
 		events.GET("", h.GetAllEvents)
 		events.GET("/:id", h.GetEvent)
-		events.PUT("/:id", h.UpdateEvent)
-		events.PUT("/:id/image", h.UpdateEventImage)
-		events.DELETE("/:id", h.DeleteEvent)
+
+		protected := events.Group("")
+		protected.Use(middleware.AuthMiddleware())
+		{
+			protected.POST("", h.CreateEvent)
+			protected.PUT("/:id", h.UpdateEvent)
+			protected.PUT("/:id/image", h.UpdateEventImage)
+			protected.DELETE("/:id", h.DeleteEvent)
+		}
 	}
 }
 
