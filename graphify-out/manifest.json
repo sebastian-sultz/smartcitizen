@@ -4,11 +4,6 @@
     "ast_hash": "2a74d3909800ca5467fa83b0ab4a4890",
     "semantic_hash": ""
   },
-  "/Users/sebastian/Desktop/c1/Code/smartcitizen/JoinCTA.tsx": {
-    "mtime": 1779899596.0310278,
-    "ast_hash": "7b72c160d5d79e3e5ac878c289f8d376",
-    "semantic_hash": ""
-  },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/postcss.config.mjs": {
     "mtime": 1779190040.2333581,
     "ast_hash": "239f3ebf717465dc636818a1a619398d",
@@ -20,13 +15,13 @@
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/package.json": {
-    "mtime": 1779526230.5530345,
-    "ast_hash": "e5e7a992d5db1341f1105cc0a5529fef",
+    "mtime": 1779920598.0968192,
+    "ast_hash": "746e82940767de86b1f58f12545ce3c2",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/proxy.ts": {
-    "mtime": 1779888949.3322215,
-    "ast_hash": "a7718562623206b29922b4915c2691a1",
+    "mtime": 1779917390.9755683,
+    "ast_hash": "4a89a875f67126c1cd43f47d62ed929d",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/components.json": {
@@ -50,8 +45,8 @@
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/layout.tsx": {
-    "mtime": 1779558316.1057599,
-    "ast_hash": "8084ddc9b1c11876f80f0dbd863db2aa",
+    "mtime": 1779921823.2757833,
+    "ast_hash": "52907a46a76235b24e084d6cd123ac3b",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/donation/page.tsx": {
@@ -130,18 +125,43 @@
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/citizen/layout.tsx": {
-    "mtime": 1779480258.7604108,
-    "ast_hash": "5489bd7724be0822c8c775b3047339e8",
+    "mtime": 1779921828.069898,
+    "ast_hash": "40e7341a1f8a3869f7ec46ad53b6385a",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/citizen/page.tsx": {
-    "mtime": 1779527417.3776302,
-    "ast_hash": "3e75c11e7e4d53310e7d09d14250e7f5",
+    "mtime": 1779920720.2225714,
+    "ast_hash": "1a0942be1f9dc944d76ffc440ed47690",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/citizen/settings/page.tsx": {
     "mtime": 1779190040.1645007,
     "ast_hash": "21d1b6e9efeff4a5aa9c3fe4efb67cb3",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/citizen/donations/page.tsx": {
+    "mtime": 1779920920.1233816,
+    "ast_hash": "40c80e086d58e78aad2df870c9d12b2a",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/citizen/referrals/page.tsx": {
+    "mtime": 1779920932.9364722,
+    "ast_hash": "2bbe8a809f7be1954496118e901ddce3",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/citizen/profile/page.tsx": {
+    "mtime": 1779920915.7835782,
+    "ast_hash": "7a08d28d3ac6852fbd2355a71d6838ea",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/citizen/support/page.tsx": {
+    "mtime": 1779920928.6288056,
+    "ast_hash": "68159d2ccdb56ad21334780d69fa20cd",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/citizen/volunteer/page.tsx": {
+    "mtime": 1779920924.5326636,
+    "ast_hash": "6e8134e6a65a85401563aafb98835a75",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/app/mission/page.tsx": {
@@ -434,19 +454,194 @@
     "ast_hash": "3981438594742fa7e356451978acc584",
     "semantic_hash": ""
   },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/api.ts": {
+    "mtime": 1779920622.50917,
+    "ast_hash": "1c1dff7fbedfef0deffeafa92deb170c",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/types.ts": {
+    "mtime": 1779920604.979181,
+    "ast_hash": "5be449d8c09398749c15cbfa4b32e163",
+    "semantic_hash": ""
+  },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/index.ts": {
-    "mtime": 1779190040.2241328,
-    "ast_hash": "53a565413de7b746b11f2c8877c2c9bb",
+    "mtime": 1779920910.934882,
+    "ast_hash": "0af90afa7f5acd032a6b8072b7a4b7d9",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/mock-data.ts": {
+    "mtime": 1779920616.4760728,
+    "ast_hash": "065e38f7b36281f3f7562e9c33886bd7",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/ContributionHistory.tsx": {
-    "mtime": 1779478772.144997,
-    "ast_hash": "54cc754749f9007243549786cd2cc995",
+    "mtime": 1779920799.7576027,
+    "ast_hash": "0320f6d0a7dbd5da6f40e06df0c3d4ac",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/CitizenDashboard.tsx": {
-    "mtime": 1779527930.1931434,
-    "ast_hash": "b2e61431d22fc2de22d96d1b13e198fc",
+    "mtime": 1779920715.4804602,
+    "ast_hash": "93ae0261bdfe84a2ce30a6e05030bd7a",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/donations/DonationStats.tsx": {
+    "mtime": 1779920764.3556008,
+    "ast_hash": "89dcd69c84af8564a1f5c270710be05c",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/donations/RecurringDonations.tsx": {
+    "mtime": 1779920780.2865217,
+    "ast_hash": "6104c2db3383974f1bd61ad855ebbdd0",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/donations/DonationDetailModal.tsx": {
+    "mtime": 1779920769.592808,
+    "ast_hash": "1b47d7e38dccda4908cb8aceed1fceab",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/donations/DonationDashboard.tsx": {
+    "mtime": 1779920790.6197622,
+    "ast_hash": "2f8a10e08bc4a4937dde922995706ac2",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/donations/DonationHistory.tsx": {
+    "mtime": 1779921358.1044245,
+    "ast_hash": "0eb2607b80a68acfb62e549e2ab69cee",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/donations/TaxCertificates.tsx": {
+    "mtime": 1779920785.126732,
+    "ast_hash": "c6d0032bd221ef98ebbf5047ee5369b8",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/referrals/ReferralDashboard.tsx": {
+    "mtime": 1779920862.9119918,
+    "ast_hash": "3d66922e229a3ae0216716f51548af77",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/referrals/ShareReferral.tsx": {
+    "mtime": 1779920848.629977,
+    "ast_hash": "57828f96729fa8cfa44a63948e2fae7b",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/referrals/ReferralStats.tsx": {
+    "mtime": 1779920842.8046205,
+    "ast_hash": "22aa9bf3371dcd8afbd57d6cd3439f99",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/referrals/ReferralProgress.tsx": {
+    "mtime": 1779920858.7377412,
+    "ast_hash": "f4559c45aeab45d6d76288a3036e3bcd",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/referrals/ReferredMembersTable.tsx": {
+    "mtime": 1779921373.1240897,
+    "ast_hash": "1ebf7d6164b85087f2d0f6a4958d2305",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/dashboard/ReferralSummaryWidget.tsx": {
+    "mtime": 1779921404.6057465,
+    "ast_hash": "9a55f209f75133dd4a81686c070fd1f9",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/dashboard/StatsGrid.tsx": {
+    "mtime": 1779921559.3104942,
+    "ast_hash": "1d11495e9af36161e7406462e0272cbf",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/dashboard/RecentActivity.tsx": {
+    "mtime": 1779920692.3004405,
+    "ast_hash": "5156c9b44c1cf21600d697d5ed494595",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/dashboard/WelcomeHero.tsx": {
+    "mtime": 1779921434.0010917,
+    "ast_hash": "82b32f5a37b3ad39913f486246a54ddf",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/dashboard/MemberCard.tsx": {
+    "mtime": 1779921397.3919795,
+    "ast_hash": "b0461edf95be4553c0e70a4fd2f2c394",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/dashboard/QuickActions.tsx": {
+    "mtime": 1779921579.7087164,
+    "ast_hash": "4eec91954dfba4130d4d7cb66fa1b9a4",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/dashboard/UpcomingEvents.tsx": {
+    "mtime": 1779921573.4282448,
+    "ast_hash": "6aa0060af1bb581a297a891b680b28a3",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/dashboard/DonationSummaryWidget.tsx": {
+    "mtime": 1779921385.7967181,
+    "ast_hash": "9d09e385fa360a6f4859a80f0f927253",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/profile/ProfileView.tsx": {
+    "mtime": 1779921548.1262677,
+    "ast_hash": "bf10cb4159090ff954a0f6567f623e99",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/profile/SocialLinks.tsx": {
+    "mtime": 1779921842.3236496,
+    "ast_hash": "35189815c36fdd1b2bf5dfe124bd0c38",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/profile/VolunteerPreferences.tsx": {
+    "mtime": 1779920735.1709204,
+    "ast_hash": "37f8f7508d897038372d03371ba9f40a",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/profile/ProfileEditForm.tsx": {
+    "mtime": 1779920740.436813,
+    "ast_hash": "47f47acb52230a4dfe43f267e9fedb5b",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/support/TicketList.tsx": {
+    "mtime": 1779921379.6388023,
+    "ast_hash": "223a41062d9a3140f52f3be89d4ca621",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/support/SupportDashboard.tsx": {
+    "mtime": 1779920897.1118977,
+    "ast_hash": "983d03c82fc9f3e43dce0bfc480b057d",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/support/CreateTicketForm.tsx": {
+    "mtime": 1779920879.884084,
+    "ast_hash": "f614d5e090bb7270a180b024077eecd8",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/support/FAQSection.tsx": {
+    "mtime": 1779921365.0471776,
+    "ast_hash": "48049e3039a1e765667c350f7393dd89",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/support/TicketDetail.tsx": {
+    "mtime": 1779921565.579137,
+    "ast_hash": "1be119b91e3617ad1987fcca367d118c",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/volunteer/VolunteerApplicationForm.tsx": {
+    "mtime": 1779921412.1292877,
+    "ast_hash": "91ba84ce42fecc7479d026c6425e3772",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/volunteer/VolunteerHub.tsx": {
+    "mtime": 1779920831.62787,
+    "ast_hash": "07fbb8d014345fe961f8c2d53fad1e18",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/volunteer/EligibilityTracker.tsx": {
+    "mtime": 1779920811.5389206,
+    "ast_hash": "1effa40d43e375894ce6d11b04e7f841",
+    "semantic_hash": ""
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/citizen/components/volunteer/ApplicationStatus.tsx": {
+    "mtime": 1779920827.6766229,
+    "ast_hash": "8542dca12d015c1c7c5d53cc23f0183e",
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/features/mission/index.ts": {
@@ -690,7 +885,7 @@
     "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/components/layout/PageHero.tsx": {
-    "mtime": 1779484307.4845164,
+    "mtime": 1779919521.020195,
     "ast_hash": "2cd62b59954f03e691ad0f0266b7d6fb",
     "semantic_hash": ""
   },
@@ -868,6 +1063,11 @@
     "mtime": 1779186709.1165335,
     "ast_hash": "5581bbcdebd903e6c15c384abbb21c96",
     "semantic_hash": "5581bbcdebd903e6c15c384abbb21c96"
+  },
+  "/Users/sebastian/Desktop/c1/Code/smartcitizen/api_requirements_dashboard.md": {
+    "mtime": 1779920369.0678973,
+    "ast_hash": "a5bb66292f9504fe365130c3bc0b00d7",
+    "semantic_hash": ""
   },
   "/Users/sebastian/Desktop/c1/Code/smartcitizen/api_requirements.md": {
     "mtime": 1779560150.7238057,

@@ -1,73 +1,134 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Download, Receipt } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import EmptyState from "@/components/ui/EmptyState";
-
 import { useAlert } from "@/components/ui/AlertProvider";
-
-const mockDonations = [
-  {
-    id: "TRX-829310",
-    date: "15 May 2026",
-    amount: "₹500",
-    purpose: "General Fund",
-    status: "Success",
-  }
-];
+import { TableComponent, Header } from "@/components/ui/TableComponent";
+import { DonationRecord } from "../types";
+import { getDonationHistory } from "../api";
+import { Badge } from "@/components/ui/Badge";
 
 export const ContributionHistory = () => {
   const { showAlert } = useAlert();
+  const [donations, setDonations] = useState<DonationRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        setLoading(true);
+        const data = await getDonationHistory();
+        // Just show successful ones for simple history
+        setDonations(data.filter((d) => d.status === "success"));
+      } catch (err) {
+        console.error("Failed to load contribution summary:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchHistory();
+  }, []);
+
+  const tableHeaders: Header<DonationRecord>[] = [
+    {
+      label: "Date",
+      render: (row) => (
+        <span className="text-xs font-semibold text-text">
+          {new Date(row.date).toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          })}
+        </span>
+      ),
+    },
+    {
+      label: "Transaction ID",
+      render: (row) => (
+        <span className="font-mono text-xs text-text-muted font-bold">
+          {row.transactionId}
+        </span>
+      ),
+    },
+    {
+      label: "Amount",
+      render: (row) => (
+        <span className="text-xs font-black text-text">
+          ₹{row.amount.toLocaleString("en-IN")}
+        </span>
+      ),
+    },
+    {
+      label: "Purpose",
+      render: (row) => (
+        <span className="text-xs font-semibold text-text-muted">
+          {row.purpose}
+        </span>
+      ),
+    },
+    {
+      label: "Status",
+      render: (row) => (
+        <Badge variant="success" className="font-bold text-[9px] uppercase tracking-wider">
+          {row.status}
+        </Badge>
+      ),
+    },
+    {
+      label: "Receipt",
+      render: (row) => (
+        <div className="text-right">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() =>
+              showAlert({
+                title: "Generating Receipt",
+                message: `Downloading receipt for ${row.transactionId}...`,
+                type: "success",
+              })
+            }
+            className="rounded-xl px-3 py-1.5 h-auto text-xs"
+          >
+            <Download size={12} className="mr-1.5 inline" />
+            PDF
+          </Button>
+        </div>
+      ),
+    },
+  ];
+
   return (
-    <Card>
+    <Card className="rounded-[40px] border-primary/5 shadow-sm">
       <CardHeader>
-        <CardTitle className="text-xl">Contribution History</CardTitle>
+        <CardTitle className="font-display text-lg font-bold text-text">
+          Contribution History
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        {mockDonations.length > 0 ? (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="border-b border-border">
-                  <th className="pb-3 text-[13px] font-bold text-text-muted uppercase tracking-wider">Date</th>
-                  <th className="pb-3 text-[13px] font-bold text-text-muted uppercase tracking-wider">Transaction ID</th>
-                  <th className="pb-3 text-[13px] font-bold text-text-muted uppercase tracking-wider">Amount</th>
-                  <th className="pb-3 text-[13px] font-bold text-text-muted uppercase tracking-wider">Purpose</th>
-                  <th className="pb-3 text-[13px] font-bold text-text-muted uppercase tracking-wider">Status</th>
-                  <th className="pb-3 text-[13px] font-bold text-text-muted uppercase tracking-wider text-right">Receipt</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {mockDonations.map((donation) => (
-                  <tr key={donation.id} className="hover:bg-bg/50 transition-colors">
-                    <td className="py-4 text-[14px] text-text font-medium">{donation.date}</td>
-                    <td className="py-4 text-[14px] text-text-muted font-mono">{donation.id}</td>
-                    <td className="py-4 text-[14px] text-text font-bold">{donation.amount}</td>
-                    <td className="py-4 text-[14px] text-text-muted">{donation.purpose}</td>
-                    <td className="py-4">
-                      <span className="px-2.5 py-1 bg-green-100 text-green-700 text-[12px] font-bold uppercase rounded-full tracking-wider">
-                        {donation.status}
-                      </span>
-                    </td>
-                    <td className="py-4 text-right">
-                      <Button variant="outline" size="sm" onClick={() => showAlert("Downloading receipt...")}>
-                        <Download size={14} className="mr-2" />
-                        PDF
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {loading ? (
+          <div className="py-8 text-center text-text-muted font-semibold text-xs uppercase tracking-wider">
+            Loading history...
+          </div>
+        ) : donations.length > 0 ? (
+          <div className="border border-border/80 rounded-2xl overflow-hidden bg-white">
+            <TableComponent
+              headers={tableHeaders}
+              data={donations.slice(0, 5)} // Show top 5 recent contributions
+              loading={loading}
+              emptyMessage="No successful contributions found."
+            />
           </div>
         ) : (
-          <EmptyState 
+          <EmptyState
             icon={Receipt}
             title="No contributions yet"
             description="When you support the foundation, your donation receipts will appear here."
             ctaText="Make a Donation"
-            ctaHref="/donation"
+            ctaHref="/citizen/donations"
           />
         )}
       </CardContent>
