@@ -1,5 +1,5 @@
 import PageHero from "@/components/layout/PageHero";
-import { OurStory, Priorities, CareerSection, TeamSection } from "@/features/about";
+import { OurStory, Priorities, CareerSection, TeamSection } from "@/features/public/website/about";
 
 export default function AboutPage() {
   return (

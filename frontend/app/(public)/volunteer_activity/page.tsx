@@ -1,5 +1,5 @@
 import PageHero from "@/components/layout/PageHero";
-import { CommunityActivities } from "@/features/community";
+import { CommunityActivities } from "@/features/citizen/community";
 
 export default function CommunityActivitiesPage() {
   return (

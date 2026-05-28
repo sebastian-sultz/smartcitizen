@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { loginUser } from "@/features/auth";
+import { loginUser } from "@/features/shared/auth";
 import { toast } from "sonner";
 
 const loginSchema = Yup.object().shape({

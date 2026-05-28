@@ -1,6 +1,6 @@
 import PageHero from "@/components/layout/PageHero";
 import { CheckCircle2 } from "lucide-react";
-import { RegisterForm } from "@/features/auth/components/RegisterForm";
+import { RegisterForm } from "@/features/shared/auth/components/RegisterForm";
 
 export default function JoinUsPage() {
   return (

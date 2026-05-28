@@ -1,4 +1,4 @@
-import { PrivacyControls } from "@/features/settings";
+import { PrivacyControls } from "@/features/citizen/profile/PrivacyControls";
 
 export default function CitizenSettingsPage() {
   return (

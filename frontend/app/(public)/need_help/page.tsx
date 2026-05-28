@@ -1,5 +1,5 @@
 import PageHero from "@/components/layout/PageHero";
-import { NeedHelpDirectory } from "@/features/need-help";
+import { NeedHelpDirectory } from "@/features/public/need-help";
 
 export default function NeedHelpPage() {
   return (

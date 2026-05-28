@@ -1,5 +1,5 @@
 import PageHero from "@/components/layout/PageHero";
-import { DonationForm, PaymentInfo } from "@/features/donation";
+import { DonationForm, PaymentInfo } from "@/features/public/donation";
 
 export default function DonationPage() {
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getAllEvents, deleteEvent as apiDeleteEvent } from "@/features/community/api";
+import { getAllEvents, deleteEvent as apiDeleteEvent } from "@/features/citizen/community/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Plus } from "lucide-react";
@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { CreateEventModal } from "./CreateEventModal";
 import { useAlert } from "@/components/ui/AlertProvider";
 
-import { EventResponse } from "@/features/community/types";
+import { EventResponse } from "@/features/citizen/community/types";
 
 export const EventsTable = () => {
   const { showConfirm } = useAlert();

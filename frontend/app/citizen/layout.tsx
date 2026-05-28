@@ -20,8 +20,8 @@ import {
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { performLogout } from "@/lib/api-helpers";
-import { getProfile } from "@/features/auth/api";
-import { UserResponse } from "@/features/auth/types";
+import { getProfile } from "@/features/shared/auth/api";
+import { UserResponse } from "@/features/shared/auth/types";
 import Image from "next/image";
 
 export default function CitizenLayout({ children }: { children: ReactNode }) {

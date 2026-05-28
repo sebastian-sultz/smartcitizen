@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LoginForm } from "@/features/auth";
+import { LoginForm } from "@/features/shared/auth";
 
 export default function LoginPage() {
   return (

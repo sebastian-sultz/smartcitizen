@@ -3,7 +3,7 @@ import { Header } from "@/components/ui/TableComponent";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { XCircle } from "lucide-react";
-import { VolunteerResponse } from "@/features/volunteer/types";
+import { VolunteerResponse } from "@/features/public/volunteer/types";
 import { formatDate } from "@/lib/utils";
 
 export const getVolunteerAppsColumns = (

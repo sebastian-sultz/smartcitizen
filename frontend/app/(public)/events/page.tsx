@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import PageHero from "@/components/layout/PageHero";
 import { Info } from "lucide-react";
-import { ContentGrid, getAllEvents, EventResponse } from "@/features/community";
+import { ContentGrid, getAllEvents, EventResponse } from "@/features/citizen/community";
 
 const EventSkeleton = () => (
   <div className="border border-border/60 rounded-3xl p-6 bg-white space-y-4 animate-pulse">

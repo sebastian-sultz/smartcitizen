@@ -1,16 +1,16 @@
-import { Hero, MediaPresence } from "@/features/home";
+import { Hero, MediaPresence } from "@/features/public/website/home";
 import {
   PartnerMarquee,
   AboutIntro,
   CoreFocus,
   WhyChooseUs,
-} from "@/features/about";
+} from "@/features/public/website/about";
 import {
   ProgramSection,
   UpcomingEvents,
   LatestActivities,
-} from "@/features/community";
-import { DonationCTA } from "@/features/donation";
+} from "@/features/citizen/community";
+import { DonationCTA } from "@/features/public/donation";
 
 export default function Home() {
   return (

@@ -1,6 +1,6 @@
 import PageHero from "@/components/layout/PageHero";
 import { BookOpen, Briefcase, UserCheck, Heart, Scale, Users } from "lucide-react";
-import { ContactForm, ContactInfo } from "@/features/contact";
+import { ContactForm, ContactInfo } from "@/features/public/website/contact";
 
 const helpAreas = [
   { icon: BookOpen, title: "Education & Career Guidance", desc: "Helping students and job seekers make the right choices." },

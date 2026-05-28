@@ -1,0 +1,74 @@
+"use client";
+
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
+import { DonationStats } from "../types";
+import { Heart, Calendar, ArrowUpRight } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { useRouter } from "next/navigation";
+
+interface DonationSummaryWidgetProps {
+  stats: DonationStats | null;
+}
+
+export default function DonationSummaryWidget({ stats }: DonationSummaryWidgetProps) {
+  const router = useRouter();
+
+  if (!stats) return null;
+
+  return (
+    <Card className="rounded-[40px] border-primary/5 shadow-sm">
+      <CardHeader className="pb-3">
+        <CardTitle className="font-display text-base font-bold text-text flex items-center gap-2">
+          <Heart size={18} className="text-rose-500" fill="currentColor" />
+          Donation Ledger
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-3">
+          <div className="flex justify-between items-center p-3 bg-rose-50/30 border border-rose-100/30 rounded-2xl">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 bg-rose-50 rounded-xl text-rose-500">
+                <Heart size={14} fill="currentColor" />
+              </div>
+              <div>
+                <p className="text-[11px] text-text-muted font-medium">Lifetime Donated</p>
+                <p className="text-base font-display font-black text-rose-900">
+                  ₹{stats.lifetimeDonated.toLocaleString("en-IN")}
+                </p>
+              </div>
+            </div>
+            <div className="text-right">
+              <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 bg-rose-100 text-rose-700 rounded-full">
+                {stats.donorLevel} Donor
+              </span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div className="p-3 bg-slate-50/50 border border-border/50 rounded-2xl">
+              <p className="text-[10px] text-text-muted font-medium">This Fiscal Year</p>
+              <p className="text-sm font-display font-bold text-text mt-0.5">
+                ₹{stats.donatedThisYear.toLocaleString("en-IN")}
+              </p>
+            </div>
+            <div className="p-3 bg-slate-50/50 border border-border/50 rounded-2xl">
+              <p className="text-[10px] text-text-muted font-medium">Avg. Donation</p>
+              <p className="text-sm font-display font-bold text-text mt-0.5">
+                ₹{stats.averageAmount.toLocaleString("en-IN")}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <Button 
+          onClick={() => router.push("/citizen/donations")}
+          variant="outline" 
+          className="w-full text-xs font-bold py-2.5 h-auto rounded-xl gap-2 border-primary/20 hover:bg-primary/5 text-primary"
+        >
+          View Donation History
+          <ArrowUpRight size={14} />
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}

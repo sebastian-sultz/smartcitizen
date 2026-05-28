@@ -1,6 +1,6 @@
 import PageHero from "@/components/layout/PageHero";
 import { BookOpen } from "lucide-react";
-import { ContentGrid } from "@/features/community";
+import { ContentGrid } from "@/features/citizen/community";
 
 export default function BlogsPage() {
   return (

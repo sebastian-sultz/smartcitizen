@@ -1,5 +1,5 @@
 import PageHero from "@/components/layout/PageHero";
-import { LeaderboardHighlights } from "@/features/leaderboard";
+import { LeaderboardHighlights } from "@/features/citizen/community";
 
 export default function LeaderboardPage() {
   return (

@@ -1,5 +1,5 @@
 import PageHero from "@/components/layout/PageHero";
-import { LegalViewer } from "@/features/legal";
+import { LegalViewer } from "@/features/public/website/legal";
 import { ShieldCheck, Info, FileCheck } from "lucide-react";
 
 export default function LegalDocsPage() {

@@ -3,7 +3,7 @@ import { Header } from "@/components/ui/TableComponent";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Trash2 } from "lucide-react";
-import { EventResponse } from "@/features/community/types";
+import { EventResponse } from "@/features/citizen/community/types";
 import { formatDate } from "@/lib/utils";
 import { ConfirmOptions } from "@/components/ui/AlertProvider";
 

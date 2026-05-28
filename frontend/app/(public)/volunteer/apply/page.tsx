@@ -1,5 +1,5 @@
 import PageHero from "@/components/layout/PageHero";
-import { VolunteerForm } from "@/features/volunteer";
+import { VolunteerForm } from "@/features/public/volunteer";
 
 export default function VolunteerApplyPage() {
   return (

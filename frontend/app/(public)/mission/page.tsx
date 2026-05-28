@@ -1,5 +1,5 @@
 import PageHero from "@/components/layout/PageHero";
-import { MissionVision } from "@/features/mission";
+import { MissionVision } from "@/features/public/website/mission";
 
 export default function MissionPage() {
   return (
