@@ -20,7 +20,7 @@ export default function CommunityActivitiesPage() {
             icon={Users}
             title="Activities Coming Soon"
             description="We are currently organizing new community activities. Be the first to join our next event!"
-            ctaText="Join as a Volunteer"
+            ctaText="Join as a Smart Citizen"
             ctaHref="/join_us"
           />
         </div>

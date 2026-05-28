@@ -56,7 +56,7 @@ export default async function RootLayout({
     : null;
 
   return (
-    <html lang="en" className={`${sourceSans3.variable} ${figtree.variable} scroll-smooth`} data-scroll-behavior="smooth">
+    <html lang="en" className={`${sourceSans3.variable} ${figtree.variable}`}>
       <body className="min-h-screen bg-bg text-text font-body selection:bg-primary selection:text-white flex flex-col">
         <AuthInitializer session={initialSession} />
         <TooltipProvider>

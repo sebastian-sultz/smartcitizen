@@ -100,7 +100,7 @@ export function UpcomingEvents() {
             <EmptyState
               icon={Info}
               title="No Upcoming Events Scheduled"
-              description="We are currently organizing our upcoming workshops, drives, and sports activities. Please check back later or register to join as a volunteer."
+              description="We are currently organizing our upcoming workshops, drives, and sports activities. Please check back later or register to join as a Smart Citizen."
               ctaText="Join as Volunteer"
               ctaHref="/join_us"
             />

@@ -5,7 +5,6 @@ import {
   CoreFocus,
   WhyChooseUs,
 } from "@/features/about";
-import { ImpactCounter } from "@/features/impact";
 import {
   ProgramSection,
   UpcomingEvents,
@@ -21,7 +20,6 @@ export default function Home() {
       <AboutIntro />
       <CoreFocus />
       <ProgramSection />
-      <ImpactCounter />
       <LatestActivities />
       <UpcomingEvents />
       <WhyChooseUs />

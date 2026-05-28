@@ -32,9 +32,9 @@ export function WhyChooseUs() {
           {/* Left - Image */}
           <div className="flex-1">
             <div className="relative rounded-2xl overflow-hidden shadow-2xl h-full min-h-[400px]">
-              <Image 
-                src="/assets/a9.png" 
-                alt="Foundation Seminar" 
+              <Image
+                src="/assets/a9.png"
+                alt="Foundation Seminar"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
                 className="object-cover"
@@ -45,8 +45,12 @@ export function WhyChooseUs() {
           {/* Right - Text Content */}
           <div className="flex-1 space-y-8">
             <div className="space-y-4">
-              <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-accent">WHY CHOOSE US</span>
-              <h2 className="font-display text-4xl md:text-5xl font-bold text-text">Our Promise to Every Community</h2>
+              <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-accent">
+                OUR COMMITMENT
+              </span>
+              <h2 className="font-display text-4xl md:text-5xl font-bold text-text">
+                Our Promise to Every Community
+              </h2>
             </div>
 
             <div className="space-y-8">
@@ -56,8 +60,12 @@ export function WhyChooseUs() {
                     <Check size={14} strokeWidth={3} />
                   </div>
                   <div>
-                    <h4 className="font-body font-bold text-lg text-text mb-1">{reason.title}</h4>
-                    <p className="text-text-muted text-[15px] leading-relaxed">{reason.desc}</p>
+                    <h4 className="font-body font-bold text-lg text-text mb-1">
+                      {reason.title}
+                    </h4>
+                    <p className="text-text-muted text-[15px] leading-relaxed">
+                      {reason.desc}
+                    </p>
                   </div>
                 </div>
               ))}

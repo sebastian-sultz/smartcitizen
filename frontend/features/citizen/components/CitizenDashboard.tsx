@@ -1,211 +1,208 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { User, Activity, Share2, Heart, Award, Bell, Shield, Camera } from "lucide-react";
-import Image from "next/image";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { Button } from "@/components/ui/Button";
 import { useAlert } from "@/components/ui/AlertProvider";
-import { getProfile, updateProfilePhoto } from "@/features/auth/api";
+import { getProfile } from "@/features/auth/api";
 import { UserResponse } from "@/features/auth/types";
 import { Spinner } from "@/components/ui/spinner";
+import { 
+  getDashboardStats, 
+  getActivityTimeline, 
+  getReferralStats, 
+  getDonationStats 
+} from "../api";
+import { DashboardStats, ActivityItem, ReferralStats, DonationStats } from "../types";
 
-export const CitizenDashboard = () => {
+// Widgets
+import WelcomeHero from "./dashboard/WelcomeHero";
+import MemberCard from "./dashboard/MemberCard";
+import StatsGrid from "./dashboard/StatsGrid";
+import QuickActions from "./dashboard/QuickActions";
+import RecentActivity from "./dashboard/RecentActivity";
+import UpcomingEvents from "./dashboard/UpcomingEvents";
+import ReferralSummaryWidget from "./dashboard/ReferralSummaryWidget";
+import DonationSummaryWidget from "./dashboard/DonationSummaryWidget";
+
+// Modal & Share Imports
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Share2, Copy, Send, Mail } from "lucide-react";
+
+export function CitizenDashboard() {
   const { showAlert } = useAlert();
   const [profile, setProfile] = useState<UserResponse | null>(null);
+  const [dbStats, setDbStats] = useState<DashboardStats | null>(null);
+  const [activities, setActivities] = useState<ActivityItem[]>([]);
+  const [refStats, setRefStats] = useState<ReferralStats | null>(null);
+  const [donStats, setDonStats] = useState<DonationStats | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isShareOpen, setIsShareOpen] = useState(false);
 
-  const fetchProfile = async () => {
+  const loadDashboardData = async () => {
     try {
       setLoading(true);
-      const u = await getProfile();
-      if (u) {
-        setProfile(u);
-      }
+      const [u, stats, timeline, referrals, donations] = await Promise.all([
+        getProfile(),
+        getDashboardStats(),
+        getActivityTimeline(),
+        getReferralStats(),
+        getDonationStats(),
+      ]);
+
+      if (u) setProfile(u);
+      setDbStats(stats);
+      setActivities(timeline);
+      setRefStats(referrals);
+      setDonStats(donations);
     } catch (err) {
-      console.error("Failed to fetch profile:", err);
+      console.error("Failed to load dashboard dataset:", err);
+      showAlert({
+        title: "Load Failure",
+        message: "Unable to retrieve dashboard metrics. Please refresh the page.",
+        type: "error",
+      });
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchProfile();
+    loadDashboardData();
   }, []);
-
-  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !profile) return;
-    try {
-      const imageUrl = await updateProfilePhoto(profile.id, file);
-      setProfile((prev) => (prev ? { ...prev, profile_photo: imageUrl } : null));
-      showAlert({
-        title: "Photo Updated",
-        message: "Your profile photo has been successfully updated!",
-        type: "success",
-      });
-    } catch (err) {
-      console.error("Failed to upload photo:", err);
-    }
-  };
 
   const handleCopyLink = () => {
     const refCode = profile?.referral_id || `GSC-${profile?.id?.substring(0, 6).toUpperCase()}`;
-    navigator.clipboard.writeText(`https://gscf.org/join?ref=${refCode}`);
+    const referralLink = `https://gscf.org/join?ref=${refCode}`;
+    navigator.clipboard.writeText(referralLink);
     showAlert({
-      title: "Link Copied",
-      message: "Your invitation link has been copied to your clipboard!",
+      title: "Copied!",
+      message: "Referral URL copied to clipboard.",
       type: "success",
     });
   };
 
+  const handleWhatsAppShare = () => {
+    const refCode = profile?.referral_id || `GSC-${profile?.id?.substring(0, 6).toUpperCase()}`;
+    const text = `Join me at the GlobalSmart Citizens Foundation! Sign up using my referral link and let's work together to empower communities: https://gscf.org/join?ref=${refCode}`;
+    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
+  };
+
+  const handleEmailShare = () => {
+    const refCode = profile?.referral_id || `GSC-${profile?.id?.substring(0, 6).toUpperCase()}`;
+    const subject = "Invitation to Join GlobalSmart Citizens Foundation";
+    const body = `Hi,\n\nI invite you to join me in supporting the GlobalSmart Citizens Foundation. Let's work together for clean environment, education, and legal rights.\n\nSign up using my link: https://gscf.org/join?ref=${refCode}\n\nBest,`;
+    window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
+  };
+
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-24">
-        <Spinner className="size-8 text-primary" />
+      <div className="flex justify-center items-center py-32">
+        <Spinner className="size-10 text-primary" />
       </div>
     );
   }
 
-  const referralCode = profile?.referral_id || `GSC-${profile?.id?.substring(0, 6).toUpperCase()}`;
+  const refCode = profile?.referral_id || `GSC-${profile?.id?.substring(0, 6).toUpperCase()}`;
+  const referralLink = `https://gscf.org/join?ref=${refCode}`;
 
   return (
     <div className="space-y-8">
-      
-      {/* Profile & Stats Header */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* Welcome Section */}
+      <WelcomeHero profile={profile} onInviteClick={() => setIsShareOpen(true)} />
+
+      {/* Main Grid: Left Column for Actions/Timeline/Stats, Right Column for Info/Status widgets */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        {/* Profile Card */}
-        <Card className="lg:col-span-1 shadow-card border-primary/10 overflow-hidden relative">
-          <div className="absolute top-0 inset-x-0 h-24 bg-primary/10" />
-          <CardContent className="pt-12 text-center relative z-10">
-            <div className="relative w-24 h-24 rounded-full bg-white border-4 border-white shadow-lg mx-auto mb-4 overflow-hidden group">
-              {profile?.profile_photo ? (
-                <Image 
-                  src={profile.profile_photo} 
-                  alt={profile.name} 
-                  fill
-                  sizes="96px"
-                  className="object-cover" 
-                />
-              ) : (
-                <div className="w-full h-full bg-primary/5 flex items-center justify-center text-primary">
-                  <User size={40} className="opacity-25" />
-                </div>
-              )}
-              <label className="absolute inset-0 bg-black/40 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                <Camera size={20} />
-                <input 
-                  type="file" 
-                  accept="image/*" 
-                  className="sr-only" 
-                  onChange={handlePhotoUpload} 
-                />
-              </label>
-            </div>
-            <h2 className="font-display text-2xl font-bold text-text">{profile?.name || "Citizen"}</h2>
-            <p className="text-primary font-bold tracking-widest mt-1">{referralCode}</p>
-            <div className="mt-4 flex items-center justify-center gap-2">
-              <span className="px-3 py-1 bg-green-100 text-green-700 text-[12px] font-bold uppercase rounded-full tracking-wider">Active</span>
-              <span className="px-3 py-1 bg-blue-100 text-blue-700 text-[12px] font-bold uppercase rounded-full tracking-wider">
-                {profile?.user_type === "admin" ? "Admin" : "Smart Citizen"}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Left Column (Main Panel) */}
+        <div className="lg:col-span-2 space-y-8">
+          
+          <div className="space-y-4">
+            <h3 className="font-display text-lg font-bold text-text">Overview Metrics</h3>
+            <StatsGrid stats={dbStats} />
+          </div>
 
-        {/* Stats */}
-        <div className="lg:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 border-none shadow-sm flex flex-col justify-center items-center p-6 text-center">
-            <Share2 className="text-blue-500 mb-2" size={24} />
-            <span className="text-3xl font-display font-bold text-blue-900">
-              {profile?.referral_payment_count ?? 0}
-            </span>
-            <span className="text-[12px] text-blue-700/80 font-bold uppercase tracking-wider mt-1">Invites Sent</span>
-          </Card>
-          <Card className="bg-gradient-to-br from-green-50 to-green-100/50 border-none shadow-sm flex flex-col justify-center items-center p-6 text-center">
-            <Activity className="text-green-500 mb-2" size={24} />
-            <span className="text-3xl font-display font-bold text-green-900">
-              {profile?.total_payments ?? 0}
-            </span>
-            <span className="text-[12px] text-green-700/80 font-bold uppercase tracking-wider mt-1">Campaigns</span>
-          </Card>
-          <Card className="bg-gradient-to-br from-purple-50 to-purple-100/50 border-none shadow-sm flex flex-col justify-center items-center p-6 text-center">
-            <Award className="text-purple-500 mb-2" size={24} />
-            <span className="text-3xl font-display font-bold text-purple-900">
-              {(profile?.total_payments ?? 0) > 5 ? "Lvl 3" : (profile?.total_payments ?? 0) > 1 ? "Lvl 2" : "Lvl 1"}
-            </span>
-            <span className="text-[12px] text-purple-700/80 font-bold uppercase tracking-wider mt-1">Badge</span>
-          </Card>
-          <Card className="bg-gradient-to-br from-orange-50 to-orange-100/50 border-none shadow-sm flex flex-col justify-center items-center p-6 text-center">
-            <Heart className="text-orange-500 mb-2" size={24} />
-            <span className="text-3xl font-display font-bold text-orange-900">
-              ₹{profile?.total_amount ?? 0}
-            </span>
-            <span className="text-[12px] text-orange-700/80 font-bold uppercase tracking-wider mt-1">Donated</span>
-          </Card>
+          <QuickActions onInviteClick={() => setIsShareOpen(true)} />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <RecentActivity activities={activities} />
+            <UpcomingEvents />
+          </div>
+
         </div>
+
+        {/* Right Column (Sidebar Panels) */}
+        <div className="space-y-8">
+          <MemberCard profile={profile} />
+          
+          <ReferralSummaryWidget stats={refStats} onInviteClick={() => setIsShareOpen(true)} />
+          
+          <DonationSummaryWidget stats={donStats} />
+        </div>
+
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Invite Link System */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-xl">
-              <Share2 className="text-primary" size={20} />
-              Spread the Word
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-[14px] text-text-muted mb-4">
-              Invite friends, family, and neighbors to join the Global Smart Citizens Foundation. Share your invitation link to help grow our community.
+      {/* Share / Invite Friends Modal */}
+      <Dialog open={isShareOpen} onOpenChange={setIsShareOpen}>
+        <DialogContent className="max-w-md rounded-[32px] p-6">
+          <DialogHeader>
+            <DialogTitle className="font-display font-bold text-xl text-text flex items-center gap-2">
+              <Share2 size={20} className="text-primary" />
+              Invite Your Friends
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 pt-4">
+            <p className="text-sm text-text-muted leading-relaxed font-medium">
+              Share your custom referral code or link with friends. When they register and make a donation, you progress toward unlocking volunteer status.
             </p>
-            <div className="flex gap-2">
-              <div className="flex-1 bg-bg p-3 rounded-xl border border-border text-[14px] font-mono text-text-muted truncate">
-                https://gscf.org/join?ref={referralCode}
-              </div>
-              <Button onClick={handleCopyLink}>Copy Link</Button>
-            </div>
-            
-            <div className="mt-6 bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-3">
-              <Shield className="text-blue-500 shrink-0" size={20} />
-              <div className="text-[13px] text-blue-900/80">
-                <span className="font-bold">Volunteer & Coordinator Roles:</span> Active community participation and outreach qualify you to apply for verified Volunteer and District Coordinator roles.
-              </div>
-            </div>
-          </CardContent>
-        </Card>
 
-        {/* Recent Notifications */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-xl">
-              <Bell className="text-primary" size={20} />
-              Recent Updates
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex gap-3 pb-4 border-b border-border">
-              <div className="w-2 h-2 rounded-full bg-primary mt-2 shrink-0" />
-              <div>
-                <p className="text-[14px] text-text font-medium">Welcome to Global Smart Citizen Foundation!</p>
-                <p className="text-[12px] text-text-muted mt-1">2 days ago</p>
+            <div className="space-y-2">
+              <span className="text-xs font-bold text-text-muted">Your Referral Code</span>
+              <div className="p-3 bg-bg border border-border rounded-2xl font-mono text-center font-bold text-primary tracking-widest text-lg">
+                {refCode}
               </div>
             </div>
-            <div className="flex gap-3 pb-4 border-b border-border">
-              <div className="w-2 h-2 rounded-full bg-border mt-2 shrink-0" />
-              <div>
-                <p className="text-[14px] text-text font-medium">New Awareness Campaign in your city.</p>
-                <p className="text-[12px] text-text-muted mt-1">1 week ago</p>
-              </div>
-            </div>
-            <Button variant="outline" className="w-full text-text-muted border-dashed mt-2">
-              View All Notifications
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
 
+            <div className="space-y-2">
+              <span className="text-xs font-bold text-text-muted">Invitation Link</span>
+              <div className="flex gap-2">
+                <div className="flex-1 bg-bg p-3 rounded-2xl border border-border text-sm font-mono text-text-muted truncate">
+                  {referralLink}
+                </div>
+                <Button 
+                  onClick={handleCopyLink} 
+                  variant="secondary"
+                  className="bg-primary/10 text-primary border-none hover:bg-primary/20 p-3 h-auto rounded-2xl shrink-0"
+                  title="Copy link"
+                >
+                  <Copy size={16} />
+                </Button>
+              </div>
+            </div>
+
+            <div className="w-full border-t border-border" />
+
+            <div className="grid grid-cols-2 gap-3">
+              <Button 
+                onClick={handleWhatsAppShare}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2 py-3 rounded-2xl border-none"
+              >
+                <Send size={15} />
+                WhatsApp
+              </Button>
+              <Button 
+                onClick={handleEmailShare}
+                variant="outline"
+                className="border-border hover:bg-bg text-text font-bold gap-2 py-3 rounded-2xl"
+              >
+                <Mail size={15} />
+                Email
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
-};
+}
