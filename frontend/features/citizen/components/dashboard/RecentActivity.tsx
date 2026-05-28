@@ -11,6 +11,7 @@ import {
   ArrowRight 
 } from "lucide-react";
 import Link from "next/link";
+import { formatDate } from "@/lib/utils";
 
 interface RecentActivityProps {
   activities: ActivityItem[];
@@ -33,15 +34,7 @@ export default function RecentActivity({ activities }: RecentActivityProps) {
     }
   };
 
-  const formatActivityDate = (dateStr: string) => {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
+
 
   return (
     <Card className="rounded-[40px] border-primary/5 shadow-sm h-full flex flex-col justify-between">
@@ -83,7 +76,7 @@ export default function RecentActivity({ activities }: RecentActivityProps) {
                       {act.description}
                     </p>
                     <p className="text-[10px] text-text-muted/70 font-bold font-mono">
-                      {formatActivityDate(act.date)}
+                      {formatDate(act.date, "short-time")}
                     </p>
                   </div>
                 </div>

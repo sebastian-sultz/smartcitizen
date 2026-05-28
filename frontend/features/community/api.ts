@@ -2,9 +2,10 @@ import api from "@/lib/axios";
 import { handleApiError } from "@/lib/api-helpers";
 import { EventResponse, CreateEventPayload, UpdateEventPayload } from "./types";
 
-export const getAllEvents = async (): Promise<EventResponse[]> => {
+export const getAllEvents = async (eventType?: string): Promise<EventResponse[]> => {
   try {
-    const response = await api.get<{ events: EventResponse[] }>('/events');
+    const url = eventType ? `/events?event_type=${eventType}` : '/events';
+    const response = await api.get<{ events: EventResponse[] }>(url);
     const data = response.data;
     return data.events || [];
   } catch (error: any) {

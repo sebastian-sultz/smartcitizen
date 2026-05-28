@@ -59,7 +59,7 @@ export const RegisterForm = () => {
           setGeneratedId(displayId);
           setStep("success");
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Registration failed:", err);
       } finally {
         setSubmitting(false);
@@ -126,13 +126,15 @@ export const RegisterForm = () => {
               <>
                 <div className="bg-blue-50 border border-blue-100 text-blue-800 p-3 rounded-lg text-sm text-center flex flex-col items-center gap-1.5">
                   <span>OTP sent to <strong>{formik.values.mobileNumber}</strong></span>
-                  <button 
+                  <Button 
                     type="button" 
+                    variant="link"
+                    size="xs"
                     onClick={() => setStep("details")}
-                    className="text-primary font-bold hover:underline text-xs"
+                    className="p-0 h-auto font-bold"
                   >
                     Change mobile number
-                  </button>
+                  </Button>
                 </div>
                 <Input
                   label="Enter OTP"

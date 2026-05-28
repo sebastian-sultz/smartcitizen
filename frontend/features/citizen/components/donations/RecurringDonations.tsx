@@ -9,6 +9,7 @@ import { Calendar, CreditCard, Heart, AlertTriangle } from "lucide-react";
 import EmptyState from "@/components/ui/EmptyState";
 import { useAlert } from "@/components/ui/AlertProvider";
 import { toast } from "sonner";
+import { formatDate } from "@/lib/utils";
 
 interface RecurringDonationsProps {
   plans: RecurringDonation[];
@@ -78,7 +79,7 @@ export default function RecurringDonations({ plans, onCancelPlan }: RecurringDon
               <div className="space-y-2 text-xs font-medium text-text-muted">
                 <div className="flex items-center gap-2">
                   <Calendar size={14} className="text-primary/70 shrink-0" />
-                  <span>Next Charge: {new Date(plan.nextBillingDate).toLocaleDateString("en-IN", { dateStyle: "medium" })}</span>
+                  <span>Next Charge: {formatDate(plan.nextBillingDate, "medium")}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <CreditCard size={14} className="text-primary/70 shrink-0" />

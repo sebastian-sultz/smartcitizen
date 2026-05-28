@@ -16,6 +16,8 @@ import {
   Edit3, 
   Building 
 } from "lucide-react";
+import Image from "next/image";
+import { formatDate } from "@/lib/utils";
 
 import ProfileEditForm from "./ProfileEditForm";
 import SocialLinks from "./SocialLinks";
@@ -78,19 +80,11 @@ export default function ProfileView() {
     : "SC";
 
   const formattedDOB = profile.dob
-    ? new Date(profile.dob).toLocaleDateString("en-IN", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
+    ? formatDate(profile.dob, "long-in")
     : "Not Configured";
 
   const formattedJoinDate = profile.joinDate
-    ? new Date(profile.joinDate).toLocaleDateString("en-IN", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
+    ? formatDate(profile.joinDate, "long-in")
     : "";
 
   return (
@@ -100,12 +94,14 @@ export default function ProfileView() {
         <div className="absolute top-0 inset-x-0 h-36 bg-gradient-to-r from-primary/15 to-primary/5" />
         
         <CardContent className="pt-20 pb-8 px-6 sm:px-10 relative z-10 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6">
-          <div className="w-24 h-24 rounded-full bg-white border-4 border-white shadow-lg overflow-hidden flex items-center justify-center font-bold text-3xl text-primary shrink-0 font-display">
+          <div className="w-24 h-24 rounded-full bg-white border-4 border-white shadow-lg overflow-hidden flex items-center justify-center font-bold text-3xl text-primary shrink-0 font-display relative">
             {profile.profilePhoto ? (
-              <img 
+              <Image 
                 src={profile.profilePhoto} 
                 alt={profile.name} 
-                className="object-cover w-full h-full" 
+                fill
+                className="object-cover" 
+                sizes="96px"
               />
             ) : (
               userInitials
@@ -157,9 +153,9 @@ export default function ProfileView() {
                   <Button
                     onClick={() => setIsEditing(true)}
                     variant="outline"
-                    className="text-xs font-bold py-2 px-4 h-auto rounded-xl gap-1.5 border-primary/20 text-primary hover:bg-primary/5"
+                    size="sm"
+                    startIcon={<Edit3 size={13} />}
                   >
-                    <Edit3 size={13} />
                     Edit Details
                   </Button>
                 </div>

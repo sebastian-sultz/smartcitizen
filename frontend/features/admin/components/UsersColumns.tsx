@@ -5,10 +5,18 @@ import { Button } from "@/components/ui/Button";
 import { Ban, CheckCircle2 } from "lucide-react";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 
+export interface UserRow {
+  id: string;
+  name: string;
+  mobile: string;
+  role: string;
+  status: string;
+}
+
 export const getUsersColumns = (
-  updateUserRole: (id: string, role: any) => void,
-  updateUserStatus: (id: string, status: any) => void
-): Header<any>[] => [
+  updateUserRole: (id: string, role: "Smart Citizen" | "Volunteer" | "Coordinator") => void,
+  updateUserStatus: (id: string, status: "Active" | "Suspended") => void
+): Header<UserRow>[] => [
   {
     label: "GSC ID",
     render: (user) => <span className="text-[14px] font-mono text-text-muted">{user.id}</span>,
@@ -26,7 +34,7 @@ export const getUsersColumns = (
     render: (user) => (
       <Select 
         value={user.role} 
-        onValueChange={(val) => updateUserRole(user.id, val as any)}
+        onValueChange={(val) => updateUserRole(user.id, val as "Smart Citizen" | "Volunteer" | "Coordinator")}
       >
         <SelectTrigger className="w-36 h-8 py-1 px-2 text-[13px]">
           <SelectValue />

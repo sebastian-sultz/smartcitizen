@@ -82,7 +82,7 @@ export const VolunteerForm = () => {
           }
         });
         resetForm();
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Volunteer submit failed:", err);
       } finally {
         setSubmitting(false);

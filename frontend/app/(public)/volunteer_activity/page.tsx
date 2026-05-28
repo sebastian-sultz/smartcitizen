@@ -1,6 +1,5 @@
 import PageHero from "@/components/layout/PageHero";
-import EmptyState from "@/components/ui/EmptyState";
-import { Users } from "lucide-react";
+import { CommunityActivities } from "@/features/community";
 
 export default function CommunityActivitiesPage() {
   return (
@@ -16,13 +15,7 @@ export default function CommunityActivitiesPage() {
               and positive local impact.
             </p>
           </div>
-          <EmptyState 
-            icon={Users}
-            title="Activities Coming Soon"
-            description="We are currently organizing new community activities. Be the first to join our next event!"
-            ctaText="Join as a Smart Citizen"
-            ctaHref="/join_us"
-          />
+          <CommunityActivities />
         </div>
       </section>
     </main>

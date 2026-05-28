@@ -5,6 +5,7 @@ import { UserResponse } from "@/features/auth/types";
 import { Button } from "@/components/ui/Button";
 import { Heart, UserPlus, FileText, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { formatDate } from "@/lib/utils";
 
 interface WelcomeHeroProps {
   profile: UserResponse | null;
@@ -27,11 +28,7 @@ export default function WelcomeHero({ profile, onInviteClick }: WelcomeHeroProps
   }, []);
 
   const formattedDate = profile?.created_at
-    ? new Date(profile.created_at).toLocaleDateString("en-IN", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
+    ? formatDate(profile.created_at, "long-in")
     : "";
 
   return (

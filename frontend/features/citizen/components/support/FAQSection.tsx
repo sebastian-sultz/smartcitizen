@@ -62,9 +62,9 @@ export default function FAQSection({ faqs }: FAQSectionProps) {
             <Button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              variant={activeCategory === cat.id ? "primary" : "outline"}
-              className="text-xs font-bold py-1.5 px-3 h-auto rounded-xl border-border/80 text-text hover:bg-bg/40 data-[active=true]:bg-primary data-[active=true]:text-white"
-              data-active={activeCategory === cat.id}
+              variant={activeCategory === cat.id ? "primary" : "secondary"}
+              size="xs"
+              noShadow
             >
               {cat.label}
             </Button>
@@ -89,9 +89,12 @@ export default function FAQSection({ faqs }: FAQSectionProps) {
                   isExpanded ? "border-primary/20 bg-primary/[0.01]" : "border-border/80 bg-white hover:bg-bg/30"
                 )}
               >
-                <button
+                <Button
+                  variant="ghost"
+                  fullWidth
+                  alignLeft
                   onClick={() => toggleExpand(faq.id)}
-                  className="w-full text-left p-5 flex items-center justify-between gap-4 font-bold text-sm text-text outline-none"
+                  className="p-5 flex items-center justify-between gap-4 font-bold text-sm text-text hover:bg-transparent active:scale-[0.99] rounded-none"
                 >
                   <span className="flex items-center gap-2.5">
                     <HelpCircle size={16} className={cn("shrink-0", isExpanded ? "text-primary" : "text-text-muted")} />
@@ -102,7 +105,7 @@ export default function FAQSection({ faqs }: FAQSectionProps) {
                   ) : (
                     <ChevronDown size={16} className="text-text-muted shrink-0" />
                   )}
-                </button>
+                </Button>
                 
                 {isExpanded && (
                   <div className="px-5 pb-5 pt-1 text-xs text-text-muted font-medium leading-relaxed border-t border-border/30">

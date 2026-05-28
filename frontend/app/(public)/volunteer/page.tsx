@@ -20,19 +20,19 @@ export default function VolunteerProgramsPage() {
             icon={UserCheck}
             title="Volunteer Spotlight Coming Soon"
             description="We are currently profiling our incredible team of volunteers. Want to be featured here?"
-            ctaText="Apply as a Volunteer"
-            ctaHref="/volunteer/apply"
+            ctaText="Join as a Smart Citizen"
+            ctaHref="/join_us"
           />
 
           <div className="mt-24 bg-primary text-white rounded-[40px] p-12 text-center space-y-8">
             <h3 className="font-display text-3xl font-bold">Want to Make a Difference?</h3>
             <p className="text-white/70 max-w-xl mx-auto">
-              Become a part of our growing family of volunteers and help us
+              Become a part of our growing family of active citizens and help us
               create lasting impact in communities across India.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-               <Link href="/volunteer/apply" className="bg-accent hover:bg-accent-light text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-accent/20">
-                  Apply as a Volunteer
+               <Link href="/join_us" className="bg-accent hover:bg-accent-light text-white px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-accent/20">
+                  Join as a Smart Citizen
                </Link>
                <Link href="/term" className="border border-white/20 hover:bg-white/10 text-white px-8 py-3 rounded-xl font-bold transition-all">
                   View Terms & Guidelines

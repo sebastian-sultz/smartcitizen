@@ -47,12 +47,11 @@ export function DonationCTA() {
                     noShadow
                     normalCase
                     onClick={() => setSelectedAmount(amount)}
-                    className="text-base px-6 py-3"
                   >
                     ₹{amount}
                   </Button>
                 ))}
-                <Button variant="secondary" shape="pill" noShadow normalCase className="text-base px-6 py-3">
+                <Button variant="secondary" shape="pill" noShadow normalCase>
                   Other Amount
                 </Button>
               </div>

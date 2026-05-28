@@ -5,6 +5,7 @@ import { Shield, EyeOff, Trash2, Smartphone, Eye } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useAlert } from "@/components/ui/AlertProvider";
+import { Switch } from "@/components/ui/switch";
 
 export const PrivacyControls = () => {
   const { showAlert, showConfirm } = useAlert();
@@ -32,15 +33,9 @@ export const PrivacyControls = () => {
                 Allow citizens to see your phone number in the Need Help directory. If disabled, they can only contact you via in-app requests.
               </p>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer mt-2 shrink-0">
-              <input 
-                type="checkbox" 
-                className="sr-only peer" 
-                checked={showPhone}
-                onChange={() => setShowPhone(!showPhone)}
-              />
-              <div className="w-11 h-6 bg-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-            </label>
+            <div className="mt-2 shrink-0">
+              <Switch checked={showPhone} onCheckedChange={setShowPhone} />
+            </div>
           </div>
 
           <div className="flex items-start justify-between gap-4 p-4 rounded-xl border border-border bg-bg/50">
@@ -53,15 +48,9 @@ export const PrivacyControls = () => {
                 List your profile in the public Need Help directory. Disabling this will hide your profile from all public searches.
               </p>
             </div>
-            <label className="relative inline-flex items-center cursor-pointer mt-2 shrink-0">
-              <input 
-                type="checkbox" 
-                className="sr-only peer" 
-                checked={inDirectory}
-                onChange={() => setInDirectory(!inDirectory)}
-              />
-              <div className="w-11 h-6 bg-border peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-            </label>
+            <div className="mt-2 shrink-0">
+              <Switch checked={inDirectory} onCheckedChange={setInDirectory} />
+            </div>
           </div>
 
         </CardContent>

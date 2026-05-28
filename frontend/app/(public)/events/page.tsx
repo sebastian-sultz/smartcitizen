@@ -22,7 +22,7 @@ const EventSkeleton = () => (
 );
 
 export default function EventsPage() {
-  const [events, setEvents] = useState<any[]>([]);
+  const [events, setEvents] = useState<EventResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,19 +30,7 @@ export default function EventsPage() {
       try {
         const fetched = await getAllEvents();
         if (fetched && fetched.length > 0) {
-          const mapped = fetched.map((e: EventResponse) => ({
-            id: e.id,
-            title: e.event_name,
-            desc: e.description,
-            date: new Date(e.event_date).toLocaleDateString("en-US", {
-              month: "long",
-              day: "numeric",
-              year: "numeric"
-            }),
-            location: e.event_address,
-            image: e.image || "/assets/a1.png"
-          }));
-          setEvents(mapped);
+          setEvents(fetched);
         } else {
           setEvents([]);
         }

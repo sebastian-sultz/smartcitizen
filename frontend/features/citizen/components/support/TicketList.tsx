@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { MessageSquare, Eye, ShieldAlert } from "lucide-react";
 import EmptyState from "@/components/ui/EmptyState";
+import { formatDate } from "@/lib/utils";
 
 interface TicketListProps {
   tickets: SupportTicket[];
@@ -45,11 +46,7 @@ export default function TicketList({ tickets, onSelectTicket, onCreateTrigger, l
       label: "Date",
       render: (row) => (
         <span className="font-semibold text-text">
-          {new Date(row.createdAt).toLocaleDateString("en-IN", {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-          })}
+          {formatDate(row.createdAt, "short")}
         </span>
       ),
     },

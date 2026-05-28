@@ -201,7 +201,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
               />
               <Input
                 label="CTA Text"
-                placeholder="e.g. Register Now, Join as Volunteer"
+                placeholder="e.g. Register Now, Join as Smart Citizen"
                 disabled={formik.isSubmitting}
                 name="cta_text"
                 value={formik.values.cta_text}

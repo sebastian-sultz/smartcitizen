@@ -13,6 +13,8 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Search, Filter, User } from "lucide-react";
+import Image from "next/image";
+import { formatDate } from "@/lib/utils";
 
 interface ReferredMembersTableProps {
   members: ReferralMember[];
@@ -52,9 +54,9 @@ export default function ReferredMembersTable({ members, loading = false }: Refer
       label: "Name",
       render: (row) => (
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-xs text-primary shrink-0">
+          <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-xs text-primary shrink-0 relative overflow-hidden">
             {row.avatarUrl ? (
-              <img src={row.avatarUrl} alt={row.name} className="w-full h-full object-cover rounded-full" />
+              <Image src={row.avatarUrl} alt={row.name} fill className="object-cover" sizes="32px" />
             ) : (
               row.name.charAt(0).toUpperCase()
             )}
@@ -83,11 +85,7 @@ export default function ReferredMembersTable({ members, loading = false }: Refer
       label: "Registration Date",
       render: (row) => (
         <span className="text-[12px] text-text-muted font-medium">
-          {new Date(row.registrationDate).toLocaleDateString("en-IN", {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-          })}
+          {formatDate(row.registrationDate, "short")}
         </span>
       ),
     },

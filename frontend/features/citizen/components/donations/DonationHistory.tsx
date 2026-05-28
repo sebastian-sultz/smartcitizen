@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Search, Eye, Filter, ArrowUpDown } from "lucide-react";
 import DonationDetailModal from "./DonationDetailModal";
+import { formatDate } from "@/lib/utils";
 
 interface DonationHistoryProps {
   donations: DonationRecord[];
@@ -56,11 +57,7 @@ export default function DonationHistory({ donations, loading = false }: Donation
       label: "Date",
       render: (row) => (
         <span className="font-semibold text-text">
-          {new Date(row.date).toLocaleDateString("en-IN", {
-            day: "numeric",
-            month: "short",
-            year: "numeric",
-          })}
+          {formatDate(row.date, "short")}
         </span>
       ),
     },

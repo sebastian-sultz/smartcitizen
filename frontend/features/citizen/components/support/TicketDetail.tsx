@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { ArrowLeft, Send, User, MessageSquare, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
+import Image from "next/image";
 
 interface TicketDetailProps {
   ticket: SupportTicket;
@@ -65,9 +66,7 @@ export default function TicketDetail({ ticket, onBack, onUpdateTicket }: TicketD
     }
   };
 
-  const formattedDate = new Date(ticket.createdAt).toLocaleDateString("en-IN", {
-    dateStyle: "medium",
-  });
+  const formattedDate = formatDate(ticket.createdAt, "medium");
 
   return (
     <Card className="rounded-[40px] border-primary/5 shadow-sm overflow-hidden flex flex-col h-[600px]">
@@ -78,8 +77,9 @@ export default function TicketDetail({ ticket, onBack, onUpdateTicket }: TicketD
           <Button
             onClick={onBack}
             variant="ghost-muted"
-            size="icon"
-            className="rounded-full w-8 h-8 flex items-center justify-center p-0 shrink-0"
+            size="icon-sm"
+            shape="circle"
+            title="Back to Tickets"
           >
             <ArrowLeft size={16} />
           </Button>
@@ -114,9 +114,9 @@ export default function TicketDetail({ ticket, onBack, onUpdateTicket }: TicketD
                 isUser ? "ml-auto flex-row-reverse" : "mr-auto"
               )}
             >
-              <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-xs text-primary shrink-0">
+              <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-xs text-primary shrink-0 relative overflow-hidden">
                 {msg.avatarUrl ? (
-                  <img src={msg.avatarUrl} alt={msg.senderName} className="w-full h-full object-cover rounded-full" />
+                  <Image src={msg.avatarUrl} alt={msg.senderName} fill className="object-cover" sizes="32px" />
                 ) : (
                   msg.senderName.charAt(0).toUpperCase()
                 )}
@@ -167,9 +167,9 @@ export default function TicketDetail({ ticket, onBack, onUpdateTicket }: TicketD
             type="submit"
             disabled={!replyText.trim() || submitting}
             isLoading={submitting}
-            className="rounded-2xl px-5 py-3 h-auto font-bold gap-2 shadow-sm shrink-0"
+            startIcon={<Send size={14} />}
+            className="shrink-0"
           >
-            <Send size={14} />
             Send
           </Button>
         </form>

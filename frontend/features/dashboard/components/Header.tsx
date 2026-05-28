@@ -4,6 +4,7 @@ import React from "react";
 import { Bell, Search, User } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 
 export function Header() {
   const pathname = usePathname();
@@ -29,12 +30,12 @@ export function Header() {
 
       <div className="flex items-center space-x-4">
         {/* Search Bar */}
-        <div className="hidden md:flex items-center bg-bg px-3 py-1.5 rounded-full border border-border">
-          <Search size={18} className="text-text-muted mr-2" />
-          <input 
+        <div className="hidden md:block w-56">
+          <Input 
             type="text" 
             placeholder="Search activities..." 
-            className="bg-transparent border-none outline-none text-sm w-48 placeholder:text-text-light"
+            icon={<Search size={18} />}
+            className="py-1.5 h-9 text-sm rounded-full bg-bg pl-10"
           />
         </div>
 

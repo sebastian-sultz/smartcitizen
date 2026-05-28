@@ -69,7 +69,7 @@ export const ProfessionalCard = ({
       </div>
 
       <div className="mt-6 flex items-center gap-3 pt-6 border-t border-border">
-        <Button className="flex-1 bg-[#25D366] hover:bg-[#128C7E] text-white">
+        <Button variant="success" className="flex-1">
           <MessageCircle size={18} className="mr-2" />
           WhatsApp
         </Button>

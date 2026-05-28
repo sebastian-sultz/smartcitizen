@@ -45,7 +45,12 @@ export default function SupportDashboard() {
     setViewState("detail");
   };
 
-  const handleCreateTicket = async (values: any) => {
+  const handleCreateTicket = async (values: {
+    category: "account" | "donation" | "volunteer" | "technical" | "other";
+    subject: string;
+    description: string;
+    priority: "low" | "medium" | "high";
+  }) => {
     try {
       const newTkt = await createSupportTicket(values);
       setTickets([newTkt, ...tickets]);

@@ -4,8 +4,9 @@ import React, { useState, useEffect } from "react";
 import { MoreHorizontal, Edit, Trash2, Plus, Search } from "lucide-react";
 import { motion } from "framer-motion";
 import { AwarenessActivity } from "../types";
-import { cn } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -61,12 +62,12 @@ export function AwarenessList() {
 
       <div className="bg-surface rounded-2xl shadow-card border border-border overflow-hidden">
         <div className="p-4 border-b border-border flex flex-col md:flex-row gap-4 items-center justify-between">
-          <div className="relative w-full md:w-96">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-text-light" size={18} />
-            <input 
+          <div className="w-full md:w-96">
+            <Input 
               type="text" 
               placeholder="Search by title or category..." 
-              className="w-full pl-10 pr-4 py-2 bg-bg border border-border rounded-xl text-sm outline-none focus:ring-2 focus:ring-primary/20"
+              icon={<Search size={18} />}
+              className="py-2 h-10 text-sm"
             />
           </div>
           <div className="flex items-center gap-3">
@@ -138,7 +139,7 @@ export function AwarenessList() {
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm text-text-muted">
-                      {new Date(activity.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      {formatDate(activity.date, "short")}
                     </td>
                     <td className="px-6 py-4">
                       <span className={cn(

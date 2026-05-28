@@ -9,6 +9,7 @@ import { User, Phone, Calendar, Award, QrCode } from "lucide-react";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/Button";
+import { formatDate } from "@/lib/utils";
 
 interface MemberCardProps {
   profile: UserResponse | null;
@@ -21,12 +22,8 @@ export default function MemberCard({ profile }: MemberCardProps) {
   const memberId = `SC-${profile?.id?.substring(0, 8).toUpperCase() || "MEMBER"}`;
   
   const formattedDate = profile?.created_at
-    ? new Date(profile.created_at).toLocaleDateString("en-IN", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      })
-    : "Jan 2026";
+    ? formatDate(profile.created_at, "short")
+    : "";
 
   const qrValue = JSON.stringify({
     name: profile?.name,

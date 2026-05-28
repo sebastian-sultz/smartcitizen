@@ -12,7 +12,7 @@ export function Hero() {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
   return (
-    <section className="relative min-h-screen flex items-center bg-[#F9F8F6] overflow-hidden pt-24 pb-20 lg:pt-27 lg:pb-12">
+    <section className="relative min-h-screen flex items-center bg-bg overflow-hidden pt-24 pb-20 lg:pt-27 lg:pb-12">
       {/* Unique Abstract Background */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         {/* Static Mesh Gradients - High Performance (No continuously running filters) */}

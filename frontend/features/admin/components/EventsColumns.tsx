@@ -4,10 +4,12 @@ import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Trash2 } from "lucide-react";
 import { EventResponse } from "@/features/community/types";
+import { formatDate } from "@/lib/utils";
+import { ConfirmOptions } from "@/components/ui/AlertProvider";
 
 export const getEventsColumns = (
   deleteEvent: (id: string) => void,
-  showConfirm: (options: any) => void
+  showConfirm: (options: ConfirmOptions) => void
 ): Header<EventResponse>[] => [
   {
     label: "Event ID",
@@ -21,11 +23,7 @@ export const getEventsColumns = (
     label: "Date",
     render: (event) => (
       <span className="text-[14px] text-text-muted">
-        {new Date(event.event_date).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-        })}
+        {formatDate(event.event_date, "short")}
       </span>
     ),
   },

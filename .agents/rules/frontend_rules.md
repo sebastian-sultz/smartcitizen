@@ -56,3 +56,8 @@ Do not use raw HTML tags if a corresponding custom UI component is available in 
 * **Never** create or rename files to `middleware.ts` or `middleware.js` in the frontend directory. Next.js 16+ has deprecated `middleware.ts` in favor of `proxy.ts` (or `proxy.js`).
 * The exported function must be named `proxy`, not `middleware`.
 * All route protection, redirection, header modification, and silent token refreshes must be defined inside [frontend/proxy.ts](file:///Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/proxy.ts). Next.js natively calls this file.
+
+### 7. Consistent API Variable Naming (No Backend-to-Frontend Property Mapping)
+* **Never** map or rename property keys returned by the backend APIs to different frontend names (e.g. do NOT map `event_name` to `title`, `description` to `desc`, `event_date` to `date`, or `event_address` to `location`).
+* **Always** use the exact variable/property names sent by the backend APIs directly in the frontend types/interfaces, states, components, and props. Keep names consistent throughout the entire stack.
+

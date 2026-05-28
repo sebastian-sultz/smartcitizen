@@ -60,7 +60,7 @@ export const LoginForm = () => {
           toast.success("Password reset successfully. Please log in.");
           setView("login");
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Login/Auth action failed:", err);
       } finally {
         setSubmitting(false);

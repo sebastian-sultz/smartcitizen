@@ -8,6 +8,7 @@ import { getAllEvents } from "../api";
 import { EventResponse } from "../types";
 import EmptyState from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
+import { formatDate } from "@/lib/utils";
 
 const EventSkeleton = () => (
   <div className="border border-border/60 rounded-2xl p-6 bg-white space-y-4 animate-pulse">
@@ -46,18 +47,7 @@ export function UpcomingEvents() {
     fetchEvents();
   }, []);
 
-  const formatDate = (dateStr: string) => {
-    try {
-      const date = new Date(dateStr);
-      return date.toLocaleDateString("en-US", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      }).toUpperCase();
-    } catch (e) {
-      return dateStr;
-    }
-  };
+
 
   return (
     <section className="py-12 md:py-16 bg-bg border-t border-border/50">
@@ -101,7 +91,7 @@ export function UpcomingEvents() {
               icon={Info}
               title="No Upcoming Events Scheduled"
               description="We are currently organizing our upcoming workshops, drives, and sports activities. Please check back later or register to join as a Smart Citizen."
-              ctaText="Join as Volunteer"
+              ctaText="Join as a Smart Citizen"
               ctaHref="/join_us"
             />
           </div>
@@ -129,7 +119,7 @@ export function UpcomingEvents() {
                     <div className="flex flex-wrap gap-4 text-[13px] text-text-muted">
                       <div className="flex items-center gap-1.5 font-medium">
                         <Calendar size={14} className="text-primary" />
-                        {formatDate(event.event_date)}
+                        {formatDate(event.event_date, "short").toUpperCase()}
                       </div>
                       <div className="flex items-center gap-1.5 font-medium line-clamp-1 max-w-[200px]">
                         <MapPin size={14} className="text-primary shrink-0" />
