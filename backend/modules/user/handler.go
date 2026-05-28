@@ -32,6 +32,7 @@ func (h *Handler) RegisterRoutes(router *gin.RouterGroup) {
 
 		protected := auth.Group("")
 		protected.Use(middleware.AuthMiddleware())
+		protected.GET("/me", h.Me)
 		protected.PUT("/profile-photo/:id", h.UpdateProfilePhoto)
 		protected.GET("/profile/:id", h.GetProfile)
 		protected.GET("/stats", h.GetStats)
@@ -246,4 +247,29 @@ func (h *Handler) GetStats(c *gin.Context) {
 		"total_amount":    totalAmount,
 		"total_referrals": totalReferrals,
 	})
+}
+
+func (h *Handler) Me(c *gin.Context) {
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	idStr := fmt.Sprintf("%v", userID)
+	user, err := h.service.GetUser(idStr)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		return
+	}
+
+	var refName *string
+	if user.ReferralID != nil {
+		refUser, err := h.service.GetUser(*user.ReferralID)
+		if err == nil && refUser != nil {
+			refName = &refUser.Name
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{"user": mapToResponse(user, refName)})
 }

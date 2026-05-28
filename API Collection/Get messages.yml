@@ -1,0 +1,19 @@
+info:
+  name: Get messages
+  type: http
+  seq: 6
+
+http:
+  method: GET
+  url: "{{base_url}}/reports/:id/messages"
+  params:
+    - name: id
+      value: ecd1a11a-feb2-41ac-9204-3b20f09d29c2
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

@@ -1,0 +1,22 @@
+info:
+  name: Create Report
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{base_url}}/reports"
+  body:
+    type: json
+    data: |-
+      {
+        "reported_user_id":"f77c5419-01ca-4e62-b3f0-b0351ac654e8",
+        "reason":"got 99 problems"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

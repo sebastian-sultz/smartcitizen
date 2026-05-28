@@ -1,0 +1,25 @@
+info:
+  name: admin reply to report
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{base_url}}/reports/:id/messages"
+  params:
+    - name: id
+      value: ecd1a11a-feb2-41ac-9204-3b20f09d29c2
+      type: path
+  body:
+    type: json
+    data: |-
+      {
+        "message":"we got your problme baby"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

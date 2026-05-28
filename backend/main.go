@@ -8,6 +8,7 @@ import (
 	"backend/infrastructure/database"
 	"backend/infrastructure/middleware"
 	"backend/modules/event"
+	"backend/modules/report"
 	"backend/modules/user"
 	"backend/modules/volunteer"
 	"backend/pkg/cloudinary"
@@ -33,7 +34,7 @@ func main() {
 	db := database.Connect(dsn)
 
 	// In Postgres, to use gen_random_uuid(), pgcrypto extension is often needed, but from PG 13 it is built-in.
-	err := db.AutoMigrate(&user.User{}, &event.Event{}, &volunteer.Volunteer{})
+	err := db.AutoMigrate(&user.User{}, &event.Event{}, &volunteer.Volunteer{}, &report.AbuseReport{}, &report.ReportMessage{})
 	if err != nil {
 		log.Fatalf("Failed to auto migrate: %v", err)
 	}
@@ -132,6 +133,11 @@ func main() {
 	volunteerService := volunteer.NewService(volunteerRepo, userService)
 	volunteerHandler := volunteer.NewHandler(volunteerService)
 	volunteerHandler.RegisterRoutes(api)
+
+	reportRepo := report.NewRepository(db)
+	reportService := report.NewService(reportRepo)
+	reportHandler := report.NewHandler(reportService)
+	reportHandler.RegisterRoutes(api)
 
 	port := os.Getenv("PORT")
 	if port == "" {
