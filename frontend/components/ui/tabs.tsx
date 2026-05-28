@@ -6,26 +6,41 @@ import { Tabs as TabsPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
+const TabsContext = React.createContext<{
+  orientation: "horizontal" | "vertical"
+}>({
+  orientation: "horizontal",
+})
+
+const TabsListContext = React.createContext<{
+  variant: "default" | "line"
+}>({
+  variant: "default",
+})
+
 function Tabs({
   className,
   orientation = "horizontal",
   ...props
 }: React.ComponentProps<typeof TabsPrimitive.Root>) {
   return (
-    <TabsPrimitive.Root
-      data-slot="tabs"
-      data-orientation={orientation}
-      className={cn(
-        "group/tabs flex gap-2 data-horizontal:flex-col",
-        className
-      )}
-      {...props}
-    />
+    <TabsContext.Provider value={{ orientation }}>
+      <TabsPrimitive.Root
+        data-slot="tabs"
+        orientation={orientation}
+        className={cn(
+          "flex gap-2 w-full",
+          orientation === "horizontal" ? "flex-col" : "flex-row",
+          className
+        )}
+        {...props}
+      />
+    </TabsContext.Provider>
   )
 }
 
 const tabsListVariants = cva(
-  "group/tabs-list inline-flex w-fit items-center justify-center rounded-xl bg-bg p-1.5 text-text-muted group-data-horizontal/tabs:h-12 group-data-vertical/tabs:h-fit group-data-vertical/tabs:flex-col data-[variant=line]:rounded-none",
+  "inline-flex w-fit items-center justify-center rounded-xl p-1.5 text-text-muted transition-all",
   {
     variants: {
       variant: {
@@ -45,13 +60,20 @@ function TabsList({
   ...props
 }: React.ComponentProps<typeof TabsPrimitive.List> &
   VariantProps<typeof tabsListVariants>) {
+  const { orientation } = React.useContext(TabsContext)
+
   return (
-    <TabsPrimitive.List
-      data-slot="tabs-list"
-      data-variant={variant}
-      className={cn(tabsListVariants({ variant }), className)}
-      {...props}
-    />
+    <TabsListContext.Provider value={{ variant: variant ?? "default" }}>
+      <TabsPrimitive.List
+        data-slot="tabs-list"
+        className={cn(
+          tabsListVariants({ variant }),
+          orientation === "horizontal" ? "h-12" : "h-fit flex-col w-full",
+          className
+        )}
+        {...props}
+      />
+    </TabsListContext.Provider>
   )
 }
 
@@ -59,13 +81,21 @@ function TabsTrigger({
   className,
   ...props
 }: React.ComponentProps<typeof TabsPrimitive.Trigger>) {
+  const { orientation } = React.useContext(TabsContext)
+  const { variant } = React.useContext(TabsListContext)
+
   return (
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "relative inline-flex h-full flex-1 items-center justify-center gap-2 rounded-lg border border-transparent px-4 py-2 text-base font-bold whitespace-nowrap text-text-muted transition-all group-data-vertical/tabs:w-full group-data-vertical/tabs:justify-start hover:text-text focus-visible:ring-2 focus-visible:ring-primary/20 disabled:pointer-events-none disabled:opacity-50 data-active:bg-surface data-active:text-primary data-active:shadow-md [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
-        "group-data-[variant=line]/tabs-list:bg-transparent group-data-[variant=line]/tabs-list:data-active:bg-transparent",
-        "after:absolute after:bg-primary after:opacity-0 after:transition-opacity group-data-horizontal/tabs:after:inset-x-0 group-data-horizontal/tabs:after:bottom-[-5px] group-data-horizontal/tabs:after:h-1 group-data-vertical/tabs:after:inset-y-0 group-data-vertical/tabs:after:-right-1 group-data-vertical/tabs:after:w-1 group-data-[variant=line]/tabs-list:data-active:after:opacity-100",
+        "relative inline-flex h-full flex-1 items-center justify-center gap-2 rounded-lg border border-transparent px-4 py-2 text-base font-bold whitespace-nowrap text-text-muted transition-all hover:text-text focus-visible:ring-2 focus-visible:ring-primary/20 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-surface data-[state=active]:text-primary data-[state=active]:shadow-md [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-5",
+        orientation === "vertical" && "w-full justify-start",
+        variant === "line" && "bg-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:text-primary",
+        "after:absolute after:bg-primary after:opacity-0 after:transition-opacity",
+        orientation === "horizontal"
+          ? "after:inset-x-0 after:bottom-[-6px] after:h-1"
+          : "after:inset-y-0 after:-right-[6px] after:w-1",
+        variant === "line" && "data-[state=active]:after:opacity-100",
         className
       )}
       {...props}
@@ -80,7 +110,7 @@ function TabsContent({
   return (
     <TabsPrimitive.Content
       data-slot="tabs-content"
-      className={cn("flex-1 text-sm outline-none", className)}
+      className={cn("flex-1 text-sm outline-none w-full", className)}
       {...props}
     />
   )
