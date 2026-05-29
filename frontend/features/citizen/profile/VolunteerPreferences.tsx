@@ -33,7 +33,7 @@ export default function VolunteerPreferences({ profile, volunteerStatus }: Volun
               <div>
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-sm text-emerald-950">Verified Coordinator Status</span>
-                  <Badge variant="success" className="text-[9px] px-2 uppercase tracking-wider font-bold">
+                  <Badge variant="success" size="sm">
                     Approved
                   </Badge>
                 </div>

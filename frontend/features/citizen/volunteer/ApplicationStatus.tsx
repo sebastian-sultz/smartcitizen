@@ -54,7 +54,7 @@ export default function ApplicationStatus({ status }: ApplicationStatusProps) {
           Volunteer Application Status
         </CardTitle>
         <div className="mt-2 flex justify-center">
-          <Badge variant={config.badge as any} className="font-bold text-[10px] uppercase tracking-wider px-3 py-0.5">
+          <Badge variant={config.badge as any} size="md" className="px-3">
             {status}
           </Badge>
         </div>

@@ -84,11 +84,11 @@ export default function EligibilityTracker({ eligibility }: EligibilityTrackerPr
                     {step.current} / {step.target}
                   </span>
                   {step.isDone ? (
-                    <Badge variant="success" className="text-[9px] px-1.5 font-bold uppercase tracking-wider">
+                    <Badge variant="success" size="xs">
                       Done
                     </Badge>
                   ) : (
-                    <Badge variant="secondary" className="bg-slate-100 text-slate-500 border-none text-[9px] px-1.5 font-bold uppercase tracking-wider">
+                    <Badge variant="neutral" size="xs">
                       Pending
                     </Badge>
                   )}

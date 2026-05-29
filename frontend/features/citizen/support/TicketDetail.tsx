@@ -25,24 +25,24 @@ export default function TicketDetail({ ticket, onBack, onUpdateTicket }: TicketD
   const getPriorityBadge = (prio: SupportTicket["priority"]) => {
     switch (prio) {
       case "high":
-        return <Badge variant="danger" className="text-[9px] uppercase font-bold">High</Badge>;
+        return <Badge variant="danger" size="sm">High</Badge>;
       case "medium":
-        return <Badge variant="warning" className="text-[9px] uppercase font-bold">Medium</Badge>;
+        return <Badge variant="warning" size="sm">Medium</Badge>;
       default:
-        return <Badge variant="secondary" className="bg-slate-100 text-slate-500 border-none text-[9px] uppercase font-bold">Low</Badge>;
+        return <Badge variant="neutral" size="sm">Low</Badge>;
     }
   };
 
   const getStatusBadge = (status: SupportTicket["status"]) => {
     switch (status) {
       case "open":
-        return <Badge variant="default" className="text-[9px] uppercase font-bold">Open</Badge>;
+        return <Badge variant="default" size="sm">Open</Badge>;
       case "in_progress":
-        return <Badge variant="warning" className="text-[9px] uppercase font-bold font-bold">In Progress</Badge>;
+        return <Badge variant="warning" size="sm">In Progress</Badge>;
       case "resolved":
-        return <Badge variant="success" className="text-[9px] uppercase font-bold">Resolved</Badge>;
+        return <Badge variant="success" size="sm">Resolved</Badge>;
       default:
-        return <Badge variant="secondary" className="bg-slate-100 text-slate-500 border-none text-[9px] uppercase font-bold">Closed</Badge>;
+        return <Badge variant="neutral" size="sm">Closed</Badge>;
     }
   };
 

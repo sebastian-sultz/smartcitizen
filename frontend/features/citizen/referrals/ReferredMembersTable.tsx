@@ -34,19 +34,19 @@ export default function ReferredMembersTable({ members, loading = false }: Refer
   const getStatusBadge = (status: ReferralMember["status"]) => {
     switch (status) {
       case "active":
-        return <Badge variant="success" className="font-bold text-[9px] uppercase tracking-wide px-2 py-0.5">Active</Badge>;
+        return <Badge variant="success" size="sm">Active</Badge>;
       case "registered":
-        return <Badge variant="secondary" className="bg-primary/10 text-primary border-none font-bold text-[9px] uppercase tracking-wide px-2 py-0.5">Registered</Badge>;
+        return <Badge variant="primary-light" size="sm">Registered</Badge>;
       default:
-        return <Badge variant="secondary" className="bg-slate-100 text-slate-500 border-none font-bold text-[9px] uppercase tracking-wide px-2 py-0.5">Invited</Badge>;
+        return <Badge variant="neutral" size="sm">Invited</Badge>;
     }
   };
 
   const getDonationBadge = (donationStatus: ReferralMember["donationStatus"]) => {
     if (donationStatus === "donated") {
-      return <Badge variant="success" className="font-bold text-[9px] uppercase tracking-wide px-2 py-0.5">Donated</Badge>;
+      return <Badge variant="success" size="sm">Donated</Badge>;
     }
-    return <Badge variant="secondary" className="bg-slate-100 text-slate-500 border-none font-bold text-[9px] uppercase tracking-wide px-2 py-0.5">None</Badge>;
+    return <Badge variant="neutral" size="sm">None</Badge>;
   };
 
   const headers: Header<ReferralMember>[] = [

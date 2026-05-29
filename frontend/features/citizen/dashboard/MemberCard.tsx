@@ -64,10 +64,10 @@ export default function MemberCard({ profile }: MemberCardProps) {
           </p>
 
           <div className="flex gap-2 mb-6">
-            <Badge variant="success" className="font-bold text-[10px] px-2.5 py-0.5 uppercase tracking-wide">
+            <Badge variant="success" size="md">
               Active Member
             </Badge>
-            <Badge variant="secondary" className="bg-primary/10 text-primary border-none font-bold text-[10px] px-2.5 py-0.5 uppercase tracking-wide">
+            <Badge variant="primary-light" size="md">
               {profile?.user_type === "admin" ? "Admin" : "Smart Citizen"}
             </Badge>
           </div>

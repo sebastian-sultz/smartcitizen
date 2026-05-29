@@ -42,7 +42,7 @@ export const ProfessionalCard = ({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <h3 className="font-display text-xl font-bold text-text truncate">{name}</h3>
-            <Badge variant="success" className="h-4.5 text-[9px] px-1.5 py-0 shrink-0">Verified</Badge>
+            <Badge variant="success" size="xs" className="shrink-0">Verified</Badge>
           </div>
           <div className="flex items-center gap-2 text-accent text-[12px] font-bold uppercase tracking-widest mt-1">
             <Briefcase size={14} />

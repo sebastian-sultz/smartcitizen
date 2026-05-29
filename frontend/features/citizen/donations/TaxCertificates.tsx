@@ -34,7 +34,7 @@ export default function TaxCertificates({ certificates }: TaxCertificatesProps) 
                 <div className="p-2.5 bg-primary/5 rounded-2xl text-primary">
                   <FileText size={20} />
                 </div>
-                <Badge variant={cert.status === "generated" ? "success" : "warning"} className="font-bold text-[9px] uppercase px-2 py-0.5">
+                <Badge variant={cert.status === "generated" ? "success" : "warning"} size="sm">
                   {cert.status}
                 </Badge>
               </div>

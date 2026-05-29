@@ -76,7 +76,7 @@ export default function DonationHistory({ donations, loading = false }: Donation
     {
       label: "Status",
       render: (row) => (
-        <Badge variant={getStatusColor(row.status)} className="font-bold text-[9px] uppercase px-2 py-0.5 tracking-wider">
+        <Badge variant={getStatusColor(row.status)} size="sm">
           {row.status}
         </Badge>
       ),

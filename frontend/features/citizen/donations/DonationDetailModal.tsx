@@ -56,7 +56,7 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
               ₹{donation.amount.toLocaleString("en-IN")}
             </h3>
             <div className="inline-block">
-              <Badge variant={getStatusColor(donation.status)} className="font-bold text-[9px] uppercase tracking-wide px-2.5 py-0.5">
+              <Badge variant={getStatusColor(donation.status)} size="sm">
                 {donation.status === "success" ? "Success (Verified)" : donation.status}
               </Badge>
             </div>

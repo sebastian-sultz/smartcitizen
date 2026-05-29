@@ -6,5 +6,11 @@ export * from "./components/LatestActivities";
 export * from "./components/CommunityActivities";
 export * from "./components/LeaderboardHighlights";
 export * from "./components/AwarenessFeature";
+export * from "./components/events-main";
+export * from "./components/our-activity-main";
+export * from "./components/our-work-main";
+export * from "./components/leaderboard-main";
+export * from "./components/volunteer-activity-main";
 export * from "./api";
 export * from "./types";
+

@@ -114,10 +114,10 @@ export default function ProfileView() {
                 {profile.name}
               </h2>
               <div className="flex gap-1.5 justify-center sm:justify-start">
-                <Badge variant="success" className="font-bold text-[9px] uppercase tracking-wide px-2">
+                <Badge variant="success" size="sm">
                   Active
                 </Badge>
-                <Badge variant="secondary" className="bg-primary/10 text-primary border-none font-bold text-[9px] uppercase tracking-wide px-2">
+                <Badge variant="primary-light" size="sm">
                   {profile.userType === "admin" ? "Coordinator Admin" : "Smart Citizen"}
                 </Badge>
               </div>
