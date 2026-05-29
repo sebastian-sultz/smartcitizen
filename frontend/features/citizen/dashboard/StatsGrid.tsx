@@ -19,7 +19,7 @@ interface StatsGridProps {
 export default function StatsGrid({ stats }: StatsGridProps) {
   if (!stats) return null;
 
-  const getVolunteerStatusLabel = (status: DashboardStats["volunteerStatus"]) => {
+  const getVolunteerStatusLabel = (status: DashboardStats["volunteer_status"]) => {
     switch (status) {
       case "approved": return "Approved Volunteer";
       case "pending": return "Review Pending";
@@ -28,7 +28,7 @@ export default function StatsGrid({ stats }: StatsGridProps) {
     }
   };
 
-  const getVolunteerStatusColor = (status: DashboardStats["volunteerStatus"]) => {
+  const getVolunteerStatusColor = (status: DashboardStats["volunteer_status"]) => {
     switch (status) {
       case "approved": return "from-emerald-50 to-emerald-100/50 border-emerald-100 text-emerald-600";
       case "pending": return "from-amber-50 to-amber-100/50 border-amber-100 text-amber-600";
@@ -40,7 +40,7 @@ export default function StatsGrid({ stats }: StatsGridProps) {
   const statCards = [
     {
       title: "Total Donated",
-      value: `₹${stats.totalDonated.toLocaleString("en-IN")}`,
+      value: `₹${stats.total_amount.toLocaleString("en-IN")}`,
       icon: Heart,
       colorClass: "from-rose-50 to-rose-100/50 border-rose-100 text-rose-600",
       valueClass: "text-rose-900",
@@ -48,7 +48,7 @@ export default function StatsGrid({ stats }: StatsGridProps) {
     },
     {
       title: "Referred Network",
-      value: stats.totalReferrals.toString(),
+      value: stats.total_referrals.toString(),
       icon: Users,
       colorClass: "from-blue-50 to-blue-100/50 border-blue-100 text-blue-600",
       valueClass: "text-blue-900",
@@ -56,7 +56,7 @@ export default function StatsGrid({ stats }: StatsGridProps) {
     },
     {
       title: "Campaigns Joined",
-      value: stats.campaignsJoined.toString(),
+      value: stats.campaigns_joined.toString(),
       icon: Flag,
       colorClass: "from-emerald-50 to-emerald-100/50 border-emerald-100 text-emerald-600",
       valueClass: "text-emerald-900",
@@ -64,7 +64,7 @@ export default function StatsGrid({ stats }: StatsGridProps) {
     },
     {
       title: "Badge Level",
-      value: stats.badgeLevel,
+      value: stats.badge_level,
       icon: Award,
       colorClass: "from-purple-50 to-purple-100/50 border-purple-100 text-purple-600",
       valueClass: "text-purple-900",
@@ -72,7 +72,7 @@ export default function StatsGrid({ stats }: StatsGridProps) {
     },
     {
       title: "Events Attended",
-      value: stats.eventsAttended.toString(),
+      value: stats.events_attended.toString(),
       icon: Calendar,
       colorClass: "from-indigo-50 to-indigo-100/50 border-indigo-100 text-indigo-600",
       valueClass: "text-indigo-900",
@@ -80,13 +80,13 @@ export default function StatsGrid({ stats }: StatsGridProps) {
     },
     {
       title: "Volunteer Status",
-      value: getVolunteerStatusLabel(stats.volunteerStatus),
+      value: getVolunteerStatusLabel(stats.volunteer_status),
       icon: ShieldCheck,
-      colorClass: getVolunteerStatusColor(stats.volunteerStatus),
+      colorClass: getVolunteerStatusColor(stats.volunteer_status),
       valueClass: `text-sm font-bold tracking-tight py-2.5 ${
-        stats.volunteerStatus === 'approved' ? 'text-emerald-900' :
-        stats.volunteerStatus === 'pending' ? 'text-amber-900' :
-        stats.volunteerStatus === 'rejected' ? 'text-rose-900' : 'text-slate-900'
+        stats.volunteer_status === 'approved' ? 'text-emerald-900' :
+        stats.volunteer_status === 'pending' ? 'text-amber-900' :
+        stats.volunteer_status === 'rejected' ? 'text-rose-900' : 'text-slate-900'
       }`,
       label: "Special operations eligibility",
       isVolunteerField: true

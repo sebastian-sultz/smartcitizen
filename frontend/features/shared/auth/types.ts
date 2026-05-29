@@ -7,6 +7,7 @@ export interface UserResponse {
   total_payments: number;
   total_amount: number;
   referral_payment_count: number;
+  total_referrals: number;
   referral_id: string | null;
   created_at: string;
   updated_at: string;

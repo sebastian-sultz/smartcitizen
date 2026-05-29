@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import { SupportTicket } from "../types";
-import { replyToTicket } from "../api";
+import { addReportMessage, getReport } from "../api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { ArrowLeft, Send, User, MessageSquare, AlertCircle } from "lucide-react";
+import { ArrowLeft, Send, AlertCircle } from "lucide-react";
+import { getTicketStatusBadge } from "./ticket-utils";
 import { toast } from "sonner";
 import { cn, formatDate } from "@/lib/utils";
-import Image from "next/image";
+import { useAuthStore } from "@/store/authStore";
 
 interface TicketDetailProps {
   ticket: SupportTicket;
@@ -21,30 +21,9 @@ interface TicketDetailProps {
 export default function TicketDetail({ ticket, onBack, onUpdateTicket }: TicketDetailProps) {
   const [replyText, setReplyText] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const { session } = useAuthStore();
+  const currentUserId = session?.userId;
 
-  const getPriorityBadge = (prio: SupportTicket["priority"]) => {
-    switch (prio) {
-      case "high":
-        return <Badge variant="danger" size="sm">High</Badge>;
-      case "medium":
-        return <Badge variant="warning" size="sm">Medium</Badge>;
-      default:
-        return <Badge variant="neutral" size="sm">Low</Badge>;
-    }
-  };
-
-  const getStatusBadge = (status: SupportTicket["status"]) => {
-    switch (status) {
-      case "open":
-        return <Badge variant="default" size="sm">Open</Badge>;
-      case "in_progress":
-        return <Badge variant="warning" size="sm">In Progress</Badge>;
-      case "resolved":
-        return <Badge variant="success" size="sm">Resolved</Badge>;
-      default:
-        return <Badge variant="neutral" size="sm">Closed</Badge>;
-    }
-  };
 
   const handleSendReply = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,12 +31,11 @@ export default function TicketDetail({ ticket, onBack, onUpdateTicket }: TicketD
 
     setSubmitting(true);
     try {
-      const updated = await replyToTicket(ticket.id, replyText);
-      if (updated) {
-        onUpdateTicket(updated);
-        setReplyText("");
-        toast.success("Reply posted successfully!");
-      }
+      await addReportMessage(ticket.id, { message: replyText });
+      const res = await getReport(ticket.id);
+      onUpdateTicket(res.report);
+      setReplyText("");
+      toast.success("Reply posted successfully!");
     } catch (err) {
       console.error("Failed to post reply:", err);
       toast.error("Failed to post message.");
@@ -66,7 +44,11 @@ export default function TicketDetail({ ticket, onBack, onUpdateTicket }: TicketD
     }
   };
 
-  const formattedDate = formatDate(ticket.createdAt, "medium");
+  const formattedDate = formatDate(ticket.created_at, "medium");
+  const match = ticket.reason.match(/^\[([A-Z]+)\]/);
+  const category = match ? match[1].toLowerCase() : "general";
+  const cleanReason = ticket.reason.replace(/^\[[A-Z]+\]\s*/, "");
+  const subject = cleanReason.split(":")[0] || cleanReason;
 
   return (
     <Card className="rounded-[40px] border-primary/5 shadow-sm overflow-hidden flex flex-col h-[600px]">
@@ -85,27 +67,27 @@ export default function TicketDetail({ ticket, onBack, onUpdateTicket }: TicketD
           </Button>
           <div>
             <div className="flex items-center flex-wrap gap-2">
-              <span className="font-mono text-xs font-bold text-text-muted">{ticket.ticketId}</span>
+              <span className="font-mono text-xs font-bold text-text-muted">SC-{ticket.id.substring(0, 5).toUpperCase()}</span>
               <h3 className="font-display font-black text-text text-sm sm:text-base truncate max-w-[150px] sm:max-w-xs">
-                {ticket.subject}
+                {subject}
               </h3>
             </div>
             <p className="text-[10px] text-text-muted mt-0.5 font-medium">
-              Lodged on {formattedDate} &bull; Category: <span className="capitalize">{ticket.category}</span>
+              Lodged on {formattedDate} &bull; Category: <span className="capitalize">{category}</span>
             </p>
           </div>
         </div>
 
         <div className="flex gap-1.5 shrink-0">
-          {getPriorityBadge(ticket.priority)}
-          {getStatusBadge(ticket.status)}
+          {getTicketStatusBadge(ticket.status)}
         </div>
       </CardHeader>
 
       {/* Conversation Thread */}
       <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-bg/20">
-        {ticket.messages.map((msg) => {
-          const isUser = msg.sender === "user";
+        {ticket.messages?.map((msg) => {
+          const isUser = msg.sender_id === currentUserId;
+          const senderLabel = isUser ? "You" : "Coordinator";
           return (
             <div 
               key={msg.id}
@@ -115,11 +97,7 @@ export default function TicketDetail({ ticket, onBack, onUpdateTicket }: TicketD
               )}
             >
               <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-xs text-primary shrink-0 relative overflow-hidden">
-                {msg.avatarUrl ? (
-                  <Image src={msg.avatarUrl} alt={msg.senderName} fill className="object-cover" sizes="32px" />
-                ) : (
-                  msg.senderName.charAt(0).toUpperCase()
-                )}
+                {senderLabel.charAt(0)}
               </div>
               
               <div className="space-y-1">
@@ -127,13 +105,13 @@ export default function TicketDetail({ ticket, onBack, onUpdateTicket }: TicketD
                   "p-4 rounded-3xl text-sm font-medium leading-relaxed shadow-sm",
                   isUser ? "bg-primary text-white rounded-tr-none" : "bg-white text-text border border-border/60 rounded-tl-none"
                 )}>
-                  <p>{msg.content}</p>
+                  <p>{msg.message}</p>
                 </div>
                 <p className={cn(
                   "text-[9px] text-text-muted/70 font-mono font-bold px-1.5",
                   isUser ? "text-right" : "text-left"
                 )}>
-                  {new Date(msg.timestamp).toLocaleTimeString("en-IN", {
+                  {new Date(msg.created_at).toLocaleTimeString("en-IN", {
                     hour: "2-digit",
                     minute: "2-digit"
                   })}
@@ -146,10 +124,10 @@ export default function TicketDetail({ ticket, onBack, onUpdateTicket }: TicketD
 
       {/* Text reply box input */}
       <CardContent className="border-t border-border/80 p-4 bg-white shrink-0">
-        {ticket.status === "closed" || ticket.status === "resolved" ? (
+        {ticket.status === "Closed" || ticket.status === "Resolved" ? (
           <div className="flex items-center gap-2 p-3 bg-slate-50 border border-slate-200 text-slate-600 rounded-2xl text-xs font-bold justify-center">
             <AlertCircle size={15} />
-            This ticket is marked as {ticket.status}. Reopen it by sending a message.
+            This ticket is marked as {ticket.status.toLowerCase()}. Reopen it by sending a message.
           </div>
         ) : null}
 

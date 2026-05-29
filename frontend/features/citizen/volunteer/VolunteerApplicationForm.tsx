@@ -13,14 +13,17 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Heart, FileText, Check } from "lucide-react";
+import { Heart, Mail, Phone, MapPin, Building, Hash } from "lucide-react";
 import { toast } from "sonner";
+import { createVolunteer } from "../api";
+import { UserResponse } from "@/features/shared/auth/types";
 
 interface VolunteerApplicationFormProps {
+  user: UserResponse;
   onSubmitSuccess: () => void;
 }
 
-export default function VolunteerApplicationForm({ onSubmitSuccess }: VolunteerApplicationFormProps) {
+export default function VolunteerApplicationForm({ user, onSubmitSuccess }: VolunteerApplicationFormProps) {
   const formik = useFormik({
     initialValues: {
       profession: "",
@@ -30,6 +33,12 @@ export default function VolunteerApplicationForm({ onSubmitSuccess }: VolunteerA
       workType: "field",
       motivation: "",
       consent: false,
+      email: "",
+      alternate_phone: "",
+      address: "",
+      city: "",
+      district: "",
+      pincode: "",
     },
     validationSchema: Yup.object().shape({
       profession: Yup.string().required("Profession or student status is required"),
@@ -39,17 +48,45 @@ export default function VolunteerApplicationForm({ onSubmitSuccess }: VolunteerA
       workType: Yup.string().required("Preferred work location is required"),
       motivation: Yup.string().required("Please explain your motivation").min(20, "Please explain in at least 20 characters"),
       consent: Yup.boolean().oneOf([true], "You must consent to NGO terms & guidelines"),
+      email: Yup.string().email("Enter a valid email address").required("Email is required"),
+      alternate_phone: Yup.string().nullable(),
+      address: Yup.string().required("Address is required"),
+      city: Yup.string().required("City is required"),
+      district: Yup.string().required("District is required"),
+      pincode: Yup.string()
+        .matches(/^[0-9]{6}$/, "Enter a valid 6-digit Pincode")
+        .required("Pincode is required"),
     }),
     onSubmit: async (values, { setSubmitting }) => {
       setSubmitting(true);
       try {
-        // Simulating API call to submit volunteer request
-        await new Promise((resolve) => setTimeout(resolve, 800));
-        toast.success("Volunteer Application Submitted Successfully!");
-        onSubmitSuccess();
-      } catch (err) {
+        const res = await createVolunteer({
+          user_id: user.id,
+          name: user.name,
+          phone: user.phone,
+          email: values.email,
+          alternate_phone: values.alternate_phone || "",
+          address: values.address,
+          city: values.city,
+          district: values.district,
+          pincode: values.pincode,
+          profession: values.profession,
+          experience: values.experience,
+        });
+        if (res.volunteer) {
+          toast.success("Volunteer Application Submitted Successfully!");
+          onSubmitSuccess();
+        } else {
+          toast.error("Failure submitting application.");
+        }
+      } catch (err: unknown) {
         console.error("Failed to submit volunteer details:", err);
-        toast.error("Failure submitting application.");
+        let errMsg = "Failure submitting application.";
+        if (err instanceof Error && "response" in err) {
+          const axiosErr = err as { response?: { data?: { error?: string } } };
+          errMsg = axiosErr.response?.data?.error || errMsg;
+        }
+        toast.error(errMsg);
       } finally {
         setSubmitting(false);
       }
@@ -76,6 +113,73 @@ export default function VolunteerApplicationForm({ onSubmitSuccess }: VolunteerA
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={formik.touched.profession ? formik.errors.profession : undefined}
+            />
+
+            <Input
+              label="Email Address"
+              type="email"
+              placeholder="yourname@example.com"
+              icon={<Mail size={16} />}
+              name="email"
+              value={formik.values.email}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.email ? formik.errors.email : undefined}
+            />
+
+            <Input
+              label="Alternate Phone (Optional)"
+              placeholder="e.g. +919876543210"
+              icon={<Phone size={16} />}
+              name="alternate_phone"
+              value={formik.values.alternate_phone}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.alternate_phone ? formik.errors.alternate_phone : undefined}
+            />
+
+            <Input
+              label="Pincode"
+              placeholder="6-digit pincode"
+              icon={<Hash size={16} />}
+              name="pincode"
+              value={formik.values.pincode}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.pincode ? formik.errors.pincode : undefined}
+            />
+
+            <Input
+              label="Address Line"
+              placeholder="House/Flat No, Street, Area"
+              icon={<MapPin size={16} />}
+              name="address"
+              value={formik.values.address}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.address ? formik.errors.address : undefined}
+            />
+
+            <Input
+              label="City"
+              placeholder="e.g. Mumbai"
+              icon={<Building size={16} />}
+              name="city"
+              value={formik.values.city}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.city ? formik.errors.city : undefined}
+            />
+
+            <Input
+              label="District"
+              placeholder="e.g. Mumbai Suburban"
+              icon={<Building size={16} />}
+              name="district"
+              value={formik.values.district}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.district ? formik.errors.district : undefined}
             />
 
             <div className="space-y-2">

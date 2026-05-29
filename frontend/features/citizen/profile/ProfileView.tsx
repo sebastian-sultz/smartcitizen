@@ -1,20 +1,23 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MemberProfile, DashboardStats } from "../types";
-import { getMemberProfile, updateMemberProfile, getDashboardStats } from "../api";
+import { UpdateVolunteerPayload } from "../types";
+import {
+  useCitizenStore,
+  selectVolunteerStatus,
+} from "@/store/citizenStore";
+import { updateVolunteer } from "../api";
 import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  Calendar, 
-  MapPin, 
-  Edit3, 
-  Building 
+import {
+  Mail,
+  Phone,
+  Calendar,
+  MapPin,
+  Edit3,
+  Building,
 } from "lucide-react";
 import Image from "next/image";
 import { formatDate } from "@/lib/utils";
@@ -24,35 +27,29 @@ import SocialLinks from "./SocialLinks";
 import VolunteerPreferences from "./VolunteerPreferences";
 
 export default function ProfileView() {
-  const [profile, setProfile] = useState<MemberProfile | null>(null);
-  const [dbStats, setDbStats] = useState<DashboardStats | null>(null);
-  const [loading, setLoading] = useState(true);
+  const {
+    user: profile,
+    volunteer,
+    loading: storeLoading,
+    fetchProfile,
+    refreshProfile,
+    setVolunteer,
+  } = useCitizenStore();
+  const volunteerStatus = useCitizenStore(selectVolunteerStatus);
+
   const [isEditing, setIsEditing] = useState(false);
 
-  const loadData = async () => {
-    try {
-      setLoading(true);
-      const [profData, stats] = await Promise.all([
-        getMemberProfile(),
-        getDashboardStats()
-      ]);
-      setProfile(profData);
-      setDbStats(stats);
-    } catch (err) {
-      console.error("Failed to load profile context:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    loadData();
+    fetchProfile();
   }, []);
 
-  const handleProfileSave = async (updatedFields: Partial<MemberProfile>) => {
+  const handleProfileSave = async (updatedFields: UpdateVolunteerPayload) => {
     try {
-      const updated = await updateMemberProfile(updatedFields);
-      setProfile(updated);
+      if (volunteer) {
+        const res = await updateVolunteer(volunteer.id, updatedFields);
+        setVolunteer(res.volunteer);
+      }
+      await refreshProfile();
       setIsEditing(false);
     } catch (err) {
       console.error("Failed to save profile modifications:", err);
@@ -60,7 +57,7 @@ export default function ProfileView() {
     }
   };
 
-  if (loading) {
+  if (storeLoading) {
     return (
       <div className="flex justify-center items-center py-24">
         <Spinner className="size-10 text-primary" />
@@ -79,12 +76,10 @@ export default function ProfileView() {
         .substring(0, 2)
     : "SC";
 
-  const formattedDOB = profile.dob
-    ? formatDate(profile.dob, "long-in")
-    : "Not Configured";
+  const formattedDOB = "Not Configured";
 
-  const formattedJoinDate = profile.joinDate
-    ? formatDate(profile.joinDate, "long-in")
+  const formattedJoinDate = profile.created_at
+    ? formatDate(profile.created_at, "long-in")
     : "";
 
   return (
@@ -92,22 +87,22 @@ export default function ProfileView() {
       {/* Top Banner Profile Summary */}
       <Card className="rounded-[40px] border-primary/5 shadow-sm overflow-hidden relative">
         <div className="absolute top-0 inset-x-0 h-36 bg-gradient-to-r from-primary/15 to-primary/5" />
-        
+
         <CardContent className="pt-20 pb-8 px-6 sm:px-10 relative z-10 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6">
           <div className="w-24 h-24 rounded-full bg-white border-4 border-white shadow-lg overflow-hidden flex items-center justify-center font-bold text-3xl text-primary shrink-0 font-display relative">
-            {profile.profilePhoto ? (
-              <Image 
-                src={profile.profilePhoto} 
-                alt={profile.name} 
+            {profile.profile_photo ? (
+              <Image
+                src={profile.profile_photo}
+                alt={profile.name}
                 fill
-                className="object-cover" 
+                className="object-cover"
                 sizes="96px"
               />
             ) : (
               userInitials
             )}
           </div>
-          
+
           <div className="flex-1 min-w-0 space-y-2 mt-2">
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
               <h2 className="font-display text-2xl font-black text-text truncate">
@@ -118,16 +113,21 @@ export default function ProfileView() {
                   Active
                 </Badge>
                 <Badge variant="primary-light" size="sm">
-                  {profile.userType === "admin" ? "Coordinator Admin" : "Smart Citizen"}
+                  {profile.user_type === "admin"
+                    ? "Coordinator Admin"
+                    : "Smart Citizen"}
                 </Badge>
               </div>
             </div>
-            
-            <p className="text-sm font-mono text-primary font-bold">{profile.memberId}</p>
-            
+
+            <p className="text-sm font-mono text-primary font-bold">
+              SC-{profile.id.substring(0, 5).toUpperCase()}
+            </p>
+
             {formattedJoinDate && (
               <p className="text-text-muted text-xs font-medium">
-                Registered on <span className="font-bold">{formattedJoinDate}</span>
+                Registered on{" "}
+                <span className="font-bold">{formattedJoinDate}</span>
               </p>
             )}
           </div>
@@ -136,28 +136,32 @@ export default function ProfileView() {
 
       {/* Main Grid split */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
         {/* Left/Center Column */}
         <div className="lg:col-span-2 space-y-8">
           {isEditing ? (
-            <ProfileEditForm 
-              profile={profile} 
-              onSave={handleProfileSave} 
-              onCancel={() => setIsEditing(false)} 
+            <ProfileEditForm
+              profile={profile}
+              volunteer={volunteer}
+              onSave={handleProfileSave}
+              onCancel={() => setIsEditing(false)}
             />
           ) : (
             <Card className="rounded-[40px] border-primary/5 shadow-sm">
               <CardContent className="p-8 space-y-6">
                 <div className="flex justify-between items-center pb-4 border-b border-border">
-                  <h3 className="font-display text-lg font-bold text-text">Personal Details</h3>
-                  <Button
-                    onClick={() => setIsEditing(true)}
-                    variant="outline"
-                    size="sm"
-                    startIcon={<Edit3 size={13} />}
-                  >
-                    Edit Details
-                  </Button>
+                  <h3 className="font-display text-lg font-bold text-text">
+                    Personal Details
+                  </h3>
+                  {volunteer && (
+                    <Button
+                      onClick={() => setIsEditing(true)}
+                      variant="outline"
+                      size="sm"
+                      startIcon={<Edit3 size={13} />}
+                    >
+                      Edit Details
+                    </Button>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6 text-sm">
@@ -166,7 +170,9 @@ export default function ProfileView() {
                       <Mail size={14} className="text-primary/70" />
                       Email Address
                     </span>
-                    <p className="font-semibold text-text">{profile.email}</p>
+                    <p className="font-semibold text-text">
+                      {volunteer?.email || "Not Applied as Volunteer"}
+                    </p>
                   </div>
 
                   <div className="space-y-1">
@@ -191,7 +197,7 @@ export default function ProfileView() {
                       Residential Address
                     </span>
                     <p className="font-semibold text-text leading-relaxed">
-                      {profile.address || "Not Set"}
+                      {volunteer?.address || "Not Set"}
                     </p>
                   </div>
 
@@ -201,17 +207,19 @@ export default function ProfileView() {
                       City & Pincode
                     </span>
                     <p className="font-semibold text-text">
-                      {profile.city ? `${profile.city} - ${profile.pincode}` : "Not Set"}
+                      {volunteer?.city
+                        ? `${volunteer.city} - ${volunteer.pincode}`
+                        : "Not Set"}
                     </p>
                   </div>
 
                   <div className="space-y-1">
                     <span className="flex items-center gap-1.5 text-text-muted font-bold text-xs uppercase tracking-wider">
                       <Building size={14} className="text-primary/70" />
-                      District / State
+                      District
                     </span>
                     <p className="font-semibold text-text">
-                      {profile.district ? `${profile.district}, ${profile.state}` : "Not Set"}
+                      {volunteer?.district || "Not Set"}
                     </p>
                   </div>
                 </div>
@@ -219,17 +227,17 @@ export default function ProfileView() {
             </Card>
           )}
 
-          <VolunteerPreferences 
-            profile={profile} 
-            volunteerStatus={dbStats?.volunteerStatus || "not_applied"} 
+          <VolunteerPreferences
+            profile={profile}
+            volunteerStatus={volunteerStatus}
           />
         </div>
 
         {/* Right Column (Social Profiles) */}
         <div className="space-y-8">
-          <SocialLinks profile={profile} onSave={handleProfileSave} />
+          {/* TODO: Wire SocialLinks save to a real backend endpoint when available */}
+          <SocialLinks profile={profile} onSave={async () => {}} />
         </div>
-
       </div>
     </div>
   );

@@ -2,40 +2,40 @@
 
 import { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
-import { getVolunteerEligibility, getDashboardStats } from "../api";
-import { VolunteerEligibility, DashboardStats } from "../types";
+import {
+  useCitizenStore,
+  selectIsVolunteer,
+} from "@/store/citizenStore";
+import { VolunteerEligibility } from "../types";
 
 import EligibilityTracker from "./EligibilityTracker";
 import VolunteerApplicationForm from "./VolunteerApplicationForm";
 import ApplicationStatus from "./ApplicationStatus";
 
 export default function VolunteerHub() {
-  const [eligibility, setEligibility] = useState<VolunteerEligibility | null>(null);
-  const [dbStats, setDbStats] = useState<DashboardStats | null>(null);
-  const [loading, setLoading] = useState(true);
+  const {
+    user,
+    volunteer,
+    loading: storeLoading,
+    fetchProfile,
+    refreshProfile,
+  } = useCitizenStore();
+  const isVolunteer = useCitizenStore(selectIsVolunteer);
+
   const [applicationSubmitted, setApplicationSubmitted] = useState(false);
 
-  const loadVolunteerContext = async () => {
-    try {
-      setLoading(true);
-      const [elData, stats] = await Promise.all([
-        getVolunteerEligibility(),
-        getDashboardStats()
-      ]);
-      setEligibility(elData);
-      setDbStats(stats);
-    } catch (err) {
-      console.error("Failed to load volunteer gating checklist:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    loadVolunteerContext();
+    fetchProfile();
+  }, []);
+
+  // Re-fetch after application submission to get updated volunteer record
+  useEffect(() => {
+    if (applicationSubmitted) {
+      refreshProfile();
+    }
   }, [applicationSubmitted]);
 
-  if (loading) {
+  if (storeLoading) {
     return (
       <div className="flex justify-center items-center py-24">
         <Spinner className="size-10 text-primary" />
@@ -43,10 +43,22 @@ export default function VolunteerHub() {
     );
   }
 
-  if (!eligibility || !dbStats) return null;
+  if (!user) return null;
 
-  // Let's check status: if user already submitted application, or is pending/approved/rejected
-  const currentStatus = applicationSubmitted ? "pending" : dbStats.volunteerStatus;
+  // Compute eligibility from store data
+  const isEligible =
+    user.total_referrals >= 10 && user.referral_payment_count >= 10;
+  const eligibility: VolunteerEligibility = {
+    total_referrals: user.total_referrals,
+    referral_payment_count: user.referral_payment_count,
+    is_eligible: isEligible || isVolunteer,
+    required_referrals: 10,
+    required_payments: 10,
+  };
+
+  // Determine current status
+  const volunteerStatus = isVolunteer ? "approved" : "not_applied";
+  const currentStatus = applicationSubmitted ? "pending" : volunteerStatus;
 
   if (currentStatus !== "not_applied") {
     return <ApplicationStatus status={currentStatus} />;
@@ -56,9 +68,12 @@ export default function VolunteerHub() {
   return (
     <div className="space-y-6">
       <EligibilityTracker eligibility={eligibility} />
-      
-      {eligibility.isEligible && (
-        <VolunteerApplicationForm onSubmitSuccess={() => setApplicationSubmitted(true)} />
+
+      {eligibility.is_eligible && (
+        <VolunteerApplicationForm
+          user={user}
+          onSubmitSuccess={() => setApplicationSubmitted(true)}
+        />
       )}
     </div>
   );

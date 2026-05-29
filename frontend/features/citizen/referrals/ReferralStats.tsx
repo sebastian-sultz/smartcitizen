@@ -1,8 +1,8 @@
 "use client";
 
 import { ReferralStats as ReferralStatsType } from "../types";
-import { Card, CardContent } from "@/components/ui/Card";
-import { Users, UserCheck, ShieldCheck, Heart } from "lucide-react";
+import { Card } from "@/components/ui/Card";
+import { Users, ShieldCheck, Heart } from "lucide-react";
 
 interface ReferralStatsProps {
   stats: ReferralStatsType | null;
@@ -13,24 +13,16 @@ export default function ReferralStats({ stats }: ReferralStatsProps) {
 
   const cards = [
     {
-      title: "Invitations Sent",
-      value: stats.totalInvited,
-      icon: Users,
-      color: "from-blue-50 to-blue-100/50 border-blue-100 text-blue-500",
-      textColor: "text-blue-900",
-      description: "Invitations dispatch tracking"
-    },
-    {
       title: "Successfully Joined",
-      value: stats.joinedCount,
-      icon: UserCheck,
+      value: stats.total_referrals,
+      icon: Users,
       color: "from-purple-50 to-purple-100/50 border-purple-100 text-purple-500",
       textColor: "text-purple-900",
       description: "Verified account sign ups"
     },
     {
-      title: "Active Donors",
-      value: stats.activeDonorsCount,
+      title: "Referred Payments",
+      value: stats.referral_payment_count,
       icon: ShieldCheck,
       color: "from-emerald-50 to-emerald-100/50 border-emerald-100 text-emerald-500",
       textColor: "text-emerald-950",
@@ -38,7 +30,7 @@ export default function ReferralStats({ stats }: ReferralStatsProps) {
     },
     {
       title: "Impact Contribution",
-      value: `₹${stats.totalContributionGenerated.toLocaleString("en-IN")}`,
+      value: `₹${stats.total_contribution_generated.toLocaleString("en-IN")}`,
       icon: Heart,
       color: "from-rose-50 to-rose-100/50 border-rose-100 text-rose-500",
       textColor: "text-rose-900",
@@ -47,7 +39,7 @@ export default function ReferralStats({ stats }: ReferralStatsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       {cards.map((card, idx) => {
         const Icon = card.icon;
         return (

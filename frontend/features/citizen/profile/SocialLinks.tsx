@@ -2,7 +2,8 @@
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { MemberProfile } from "../types";
+import { UserResponse } from "@/features/shared/auth/types";
+import { SocialLinksPayload } from "../types";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
@@ -10,21 +11,21 @@ import { toast } from "sonner";
 import { Share2 } from "lucide-react";
 
 interface SocialLinksProps {
-  profile: MemberProfile;
-  onSave: (updated: Partial<MemberProfile>) => Promise<void>;
+  profile: UserResponse;
+  onSave: (updated: SocialLinksPayload) => Promise<void>;
 }
 
 export default function SocialLinks({ profile, onSave }: SocialLinksProps) {
   const formik = useFormik({
     initialValues: {
-      linkedinUrl: profile.linkedinUrl || "",
-      twitterUrl: profile.twitterUrl || "",
-      facebookUrl: profile.facebookUrl || "",
+      linkedin_url: "",
+      twitter_url: "",
+      facebook_url: "",
     },
     validationSchema: Yup.object().shape({
-      linkedinUrl: Yup.string().url("Enter a valid URL").nullable(),
-      twitterUrl: Yup.string().url("Enter a valid URL").nullable(),
-      facebookUrl: Yup.string().url("Enter a valid URL").nullable(),
+      linkedin_url: Yup.string().url("Enter a valid URL").nullable(),
+      twitter_url: Yup.string().url("Enter a valid URL").nullable(),
+      facebook_url: Yup.string().url("Enter a valid URL").nullable(),
     }),
     onSubmit: async (values, { setSubmitting }) => {
       setSubmitting(true);
@@ -76,33 +77,33 @@ export default function SocialLinks({ profile, onSave }: SocialLinksProps) {
               label="LinkedIn Profile"
               placeholder="https://linkedin.com/in/username"
               icon={LinkedInIcon}
-              name="linkedinUrl"
-              value={formik.values.linkedinUrl}
+              name="linkedin_url"
+              value={formik.values.linkedin_url}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={formik.touched.linkedinUrl ? formik.errors.linkedinUrl : undefined}
+              error={formik.touched.linkedin_url ? formik.errors.linkedin_url : undefined}
             />
 
             <Input
               label="Twitter / X Profile"
               placeholder="https://x.com/username"
               icon={TwitterIcon}
-              name="twitterUrl"
-              value={formik.values.twitterUrl}
+              name="twitter_url"
+              value={formik.values.twitter_url}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={formik.touched.twitterUrl ? formik.errors.twitterUrl : undefined}
+              error={formik.touched.twitter_url ? formik.errors.twitter_url : undefined}
             />
 
             <Input
               label="Facebook Profile"
               placeholder="https://facebook.com/username"
               icon={FacebookIcon}
-              name="facebookUrl"
-              value={formik.values.facebookUrl}
+              name="facebook_url"
+              value={formik.values.facebook_url}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={formik.touched.facebookUrl ? formik.errors.facebookUrl : undefined}
+              error={formik.touched.facebook_url ? formik.errors.facebook_url : undefined}
             />
           </div>
 

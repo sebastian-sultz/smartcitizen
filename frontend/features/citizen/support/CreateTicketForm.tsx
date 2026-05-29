@@ -14,19 +14,15 @@ import {
 } from "@/components/ui/select";
 import { MessageSquare, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import { CreateSupportTicketPayload } from "../types";
 
 interface CreateTicketFormProps {
-  onSubmit: (values: {
-    category: 'account' | 'donation' | 'volunteer' | 'technical' | 'other';
-    priority: 'low' | 'medium' | 'high';
-    subject: string;
-    description: string;
-  }) => Promise<void>;
+  onSubmit: (values: CreateSupportTicketPayload) => Promise<void>;
   onCancel: () => void;
 }
 
 export default function CreateTicketForm({ onSubmit, onCancel }: CreateTicketFormProps) {
-  const formik = useFormik({
+  const formik = useFormik<CreateSupportTicketPayload>({
     initialValues: {
       category: "donation",
       priority: "low",
@@ -42,7 +38,7 @@ export default function CreateTicketForm({ onSubmit, onCancel }: CreateTicketFor
     onSubmit: async (values, { setSubmitting }) => {
       setSubmitting(true);
       try {
-        await onSubmit(values as any);
+        await onSubmit(values);
         toast.success("Support ticket successfully lodged!");
       } catch (err) {
         console.error("Lodge ticket failed:", err);

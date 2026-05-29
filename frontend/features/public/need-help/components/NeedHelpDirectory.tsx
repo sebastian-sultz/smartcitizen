@@ -9,6 +9,7 @@ import { NeedHelpHeader } from "./NeedHelpHeader";
 import EmptyState from "@/components/ui/EmptyState";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import api from "@/lib/axios";
 
 const mockProfessionals = [
   {
@@ -61,24 +62,54 @@ const mockProfessionals = [
 const categories = ["All", "Lawyer", "Doctor", "Counselor", "Financial Advisor", "IT Professional", "Teacher", "Social Worker"];
 
 export const NeedHelpDirectory = () => {
+  const [professionals, setProfessionals] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedLocation, setSelectedLocation] = useState("all");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setIsLoading(false), 800);
-    return () => clearTimeout(timer);
+    const fetchVolunteers = async () => {
+      try {
+        const response = await api.get<{ volunteers: any[] }>("/volunteers");
+        const list = response.data.volunteers || [];
+        if (list.length > 0) {
+          const mapped = list.map((vol: any) => ({
+            id: vol.id,
+            name: vol.name,
+            profession: vol.profession || "Volunteer Coordinator",
+            expertise: vol.experience ? (vol.experience.length > 60 ? vol.experience.substring(0, 60) + "..." : vol.experience) : "Community Support",
+            description: vol.experience || "Smart Citizen Coordinator assisting with community projects and guidance.",
+            location: [vol.city, vol.district].filter(Boolean).join(", ") || vol.address || "India",
+            photoUrl: vol.image || undefined,
+            showPhone: true,
+          }));
+          setProfessionals(mapped);
+        } else {
+          setProfessionals(mockProfessionals);
+        }
+      } catch (error) {
+        console.error("Failed to load live volunteers, falling back to mock data:", error);
+        setProfessionals(mockProfessionals);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchVolunteers();
   }, []);
 
-  const filteredProfessionals = mockProfessionals.filter((prof) => {
+  const filteredProfessionals = professionals.filter((prof) => {
     const matchesSearch = 
       prof.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
       prof.expertise.toLowerCase().includes(searchTerm.toLowerCase()) ||
       prof.location.toLowerCase().includes(searchTerm.toLowerCase());
       
-    const matchesCategory = selectedCategory === "All" || prof.profession === selectedCategory;
+    const matchesCategory = selectedCategory === "All" || prof.profession.toLowerCase() === selectedCategory.toLowerCase();
 
-    return matchesSearch && matchesCategory;
+    const matchesLocation = selectedLocation === "all" || prof.location.toLowerCase().includes(selectedLocation.toLowerCase());
+
+    return matchesSearch && matchesCategory && matchesLocation;
   });
 
   return (
@@ -103,7 +134,7 @@ export const NeedHelpDirectory = () => {
             <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-text-light z-10">
               <MapPin size={20} />
             </div>
-            <Select defaultValue="all">
+            <Select value={selectedLocation} onValueChange={setSelectedLocation}>
               <SelectTrigger className="w-full h-14 pl-12 text-[15px]">
                 <SelectValue placeholder="All Locations" />
               </SelectTrigger>

@@ -14,27 +14,27 @@ export default function EligibilityTracker({ eligibility }: EligibilityTrackerPr
     {
       title: "Invite 10+ Neighbors",
       description: "Send invitation links to friends to register.",
-      current: eligibility.invitedCount,
-      target: eligibility.requiredInvited,
-      isDone: eligibility.invitedCount >= eligibility.requiredInvited,
+      current: eligibility.total_referrals,
+      target: eligibility.required_referrals,
+      isDone: eligibility.total_referrals >= eligibility.required_referrals,
       icon: Share2,
       color: "text-blue-500 bg-blue-50 border-blue-100"
     },
     {
       title: "10+ Successfully Joined",
       description: "Invited friends complete sign up as Smart Citizens.",
-      current: eligibility.joinedCount,
-      target: eligibility.requiredJoined,
-      isDone: eligibility.joinedCount >= eligibility.requiredJoined,
+      current: eligibility.total_referrals,
+      target: eligibility.required_referrals,
+      isDone: eligibility.total_referrals >= eligibility.required_referrals,
       icon: Users,
       color: "text-purple-500 bg-purple-50 border-purple-100"
     },
     {
-      title: "Referred Donation Completed",
-      description: "At least one referred friend completes a direct impact support payment.",
-      current: eligibility.donatedCount,
-      target: eligibility.requiredDonated,
-      isDone: eligibility.donatedCount >= eligibility.requiredDonated,
+      title: `${eligibility.required_payments}+ Referred Donations Completed`,
+      description: `Referred friends complete at least ${eligibility.required_payments} direct impact support payments.`,
+      current: eligibility.referral_payment_count,
+      target: eligibility.required_payments,
+      isDone: eligibility.referral_payment_count >= eligibility.required_payments,
       icon: Award,
       color: "text-amber-500 bg-amber-50 border-amber-100"
     }
@@ -99,7 +99,7 @@ export default function EligibilityTracker({ eligibility }: EligibilityTrackerPr
         </div>
 
         <div className="p-4 bg-primary/5 rounded-3xl border border-primary/10 text-center text-xs font-bold text-primary">
-          Checklist status: {eligibility.isEligible ? "🔓 Gating Unlocked! Please fill out the application below." : "🔒 Complete the checklist above to unlock the volunteer coordinator form."}
+          Checklist status: {eligibility.is_eligible ? "🔓 Gating Unlocked! Please fill out the application below." : "🔒 Complete the checklist above to unlock the volunteer coordinator form."}
         </div>
       </CardContent>
     </Card>

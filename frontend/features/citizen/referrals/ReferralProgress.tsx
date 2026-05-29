@@ -2,7 +2,7 @@
 
 import { ReferralStats } from "../types";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { Award, ShieldCheck, Trophy, Sparkles } from "lucide-react";
+import { Award, ShieldCheck, Trophy } from "lucide-react";
 
 interface ReferralProgressProps {
   stats: ReferralStats | null;
@@ -11,7 +11,7 @@ interface ReferralProgressProps {
 export default function ReferralProgress({ stats }: ReferralProgressProps) {
   if (!stats) return null;
 
-  const current = stats.joinedCount;
+  const current = stats.total_referrals;
   
   // Ranks configuration
   const ranks = [

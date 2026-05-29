@@ -2,11 +2,11 @@
 
 import { SupportTicket } from "../types";
 import { TableComponent, Header } from "@/components/ui/TableComponent";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { MessageSquare, Eye, ShieldAlert } from "lucide-react";
+import { MessageSquare, Eye } from "lucide-react";
 import EmptyState from "@/components/ui/EmptyState";
 import { formatDate } from "@/lib/utils";
+import { getTicketStatusBadge } from "./ticket-utils";
 
 interface TicketListProps {
   tickets: SupportTicket[];
@@ -17,58 +17,43 @@ interface TicketListProps {
 
 export default function TicketList({ tickets, onSelectTicket, onCreateTrigger, loading = false }: TicketListProps) {
   
-  const getPriorityBadge = (prio: SupportTicket["priority"]) => {
-    switch (prio) {
-      case "high":
-        return <Badge variant="danger" size="sm">High</Badge>;
-      case "medium":
-        return <Badge variant="warning" size="sm">Medium</Badge>;
-      default:
-        return <Badge variant="neutral" size="sm">Low</Badge>;
-    }
-  };
-
-  const getStatusBadge = (status: SupportTicket["status"]) => {
-    switch (status) {
-      case "open":
-        return <Badge variant="default" size="sm">Open</Badge>;
-      case "in_progress":
-        return <Badge variant="warning" size="sm">In Progress</Badge>;
-      case "resolved":
-        return <Badge variant="success" size="sm">Resolved</Badge>;
-      default:
-        return <Badge variant="neutral" size="sm">Closed</Badge>;
-    }
-  };
 
   const headers: Header<SupportTicket>[] = [
     {
       label: "Date",
       render: (row) => (
         <span className="font-semibold text-text">
-          {formatDate(row.createdAt, "short")}
+          {formatDate(row.created_at, "short")}
         </span>
       ),
     },
     {
       label: "Ticket ID",
-      render: (row) => <span className="font-mono text-xs font-bold text-text-muted">{row.ticketId}</span>,
+      render: (row) => <span className="font-mono text-xs font-bold text-text-muted">SC-{row.id.substring(0, 5).toUpperCase()}</span>,
     },
     {
       label: "Subject",
-      render: (row) => <span className="font-bold text-text text-sm truncate max-w-[120px] sm:max-w-[200px] block">{row.subject}</span>,
+      render: (row) => {
+        const cleanReason = row.reason.replace(/^\[[A-Z]+\]\s*/, "");
+        const subject = cleanReason.split(":")[0] || cleanReason;
+        return (
+          <span className="font-bold text-text text-sm truncate max-w-[120px] sm:max-w-[200px] block">
+            {subject}
+          </span>
+        );
+      },
     },
     {
       label: "Category",
-      render: (row) => <span className="font-medium text-text-muted text-xs capitalize">{row.category}</span>,
-    },
-    {
-      label: "Priority",
-      render: (row) => getPriorityBadge(row.priority),
+      render: (row) => {
+        const match = row.reason.match(/^\[([A-Z]+)\]/);
+        const category = match ? match[1].toLowerCase() : "general";
+        return <span className="font-medium text-text-muted text-xs capitalize">{category}</span>;
+      },
     },
     {
       label: "Status",
-      render: (row) => getStatusBadge(row.status),
+      render: (row) => getTicketStatusBadge(row.status),
     },
     {
       label: "Action",

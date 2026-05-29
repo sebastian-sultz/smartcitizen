@@ -15,7 +15,7 @@ export default function ReferralSummaryWidget({ stats, onInviteClick }: Referral
 
   // Let's assume a goal of 10 referred members to unlock Volunteer status
   const target = 10;
-  const current = stats.joinedCount;
+  const current = stats.total_referrals;
   const percentage = Math.min(100, Math.round((current / target) * 100));
 
   return (
@@ -54,12 +54,12 @@ export default function ReferralSummaryWidget({ stats, onInviteClick }: Referral
 
         <div className="grid grid-cols-2 gap-3 text-center">
           <div className="p-3 bg-blue-50/40 border border-blue-100/50 rounded-2xl">
-            <p className="text-xl font-display font-black text-blue-900">{stats.totalInvited}</p>
-            <p className="text-[10px] text-blue-700/80 font-bold uppercase tracking-wider mt-0.5">Invited</p>
+            <p className="text-xl font-display font-black text-blue-900">{stats.total_referrals}</p>
+            <p className="text-[10px] text-blue-700/80 font-bold uppercase tracking-wider mt-0.5">Joined</p>
           </div>
           <div className="p-3 bg-emerald-50/40 border border-emerald-100/50 rounded-2xl">
-            <p className="text-xl font-display font-black text-emerald-900">{stats.joinedCount}</p>
-            <p className="text-[10px] text-emerald-700/80 font-bold uppercase tracking-wider mt-0.5">Joined</p>
+            <p className="text-xl font-display font-black text-emerald-900">{stats.referral_payment_count}</p>
+            <p className="text-[10px] text-emerald-700/80 font-bold uppercase tracking-wider mt-0.5">Payments</p>
           </div>
         </div>
 

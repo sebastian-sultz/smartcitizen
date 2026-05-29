@@ -4,10 +4,8 @@ import { useState } from "react";
 import { ReferralStats } from "../types";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
 import { QRCodeSVG } from "qrcode.react";
 import { Share2, Copy, Send, Mail, QrCode } from "lucide-react";
-import { useAlert } from "@/components/ui/AlertProvider";
 import { toast } from "sonner";
 
 interface ShareReferralProps {
@@ -15,26 +13,25 @@ interface ShareReferralProps {
 }
 
 export default function ShareReferral({ stats }: ShareReferralProps) {
-  const { showAlert } = useAlert();
   const [copiedLink, setCopiedLink] = useState(false);
 
   if (!stats) return null;
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(stats.referralLink);
+    navigator.clipboard.writeText(stats.referral_link);
     setCopiedLink(true);
     toast.success("Referral link copied to clipboard.");
     setTimeout(() => setCopiedLink(false), 2000);
   };
 
   const handleWhatsAppShare = () => {
-    const text = `Join me at the GlobalSmart Citizens Foundation! Sign up using my referral link and let's work together to empower communities: ${stats.referralLink}`;
+    const text = `Join me at the GlobalSmart Citizens Foundation! Sign up using my referral link and let's work together to empower communities: ${stats.referral_link}`;
     window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
   };
 
   const handleEmailShare = () => {
     const subject = "Invitation to Join GlobalSmart Citizens Foundation";
-    const body = `Hi,\n\nI invite you to join me in supporting the GlobalSmart Citizens Foundation. Let's work together for clean environment, education, and legal rights.\n\nSign up using my link: ${stats.referralLink}\n\nBest,`;
+    const body = `Hi,\n\nI invite you to join me in supporting the GlobalSmart Citizens Foundation. Let's work together for clean environment, education, and legal rights.\n\nSign up using my link: ${stats.referral_link}\n\nBest,`;
     window.open(`mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`);
   };
 
@@ -57,7 +54,7 @@ export default function ShareReferral({ stats }: ShareReferralProps) {
           <span className="text-xs font-bold text-text-muted">Invitation Link</span>
           <div className="flex gap-2">
             <div className="flex-1 bg-bg p-3.5 rounded-2xl border border-border text-sm font-mono text-text-muted truncate">
-              {stats.referralLink}
+              {stats.referral_link}
             </div>
             <Button 
               onClick={handleCopyLink}
@@ -77,7 +74,7 @@ export default function ShareReferral({ stats }: ShareReferralProps) {
           <div className="p-5 bg-bg/40 border border-border/80 rounded-3xl flex flex-col items-center justify-center text-center space-y-3.5">
             <div className="bg-white p-3.5 rounded-2xl border border-border shadow-sm">
               <QRCodeSVG 
-                value={stats.referralLink} 
+                value={stats.referral_link} 
                 size={110} 
                 level="Q" 
                 fgColor="#0A5C52"

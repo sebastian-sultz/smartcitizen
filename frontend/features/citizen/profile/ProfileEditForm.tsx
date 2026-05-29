@@ -2,39 +2,37 @@
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { MemberProfile } from "../types";
+import { UserResponse } from "@/features/shared/auth/types";
+import { Volunteer, UpdateVolunteerPayload } from "../types";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { User, Mail, Calendar, MapPin, Building, Hash } from "lucide-react";
+import { User, Mail, MapPin, Building, Hash } from "lucide-react";
 import { toast } from "sonner";
 
 interface ProfileEditFormProps {
-  profile: MemberProfile;
-  onSave: (updated: Partial<MemberProfile>) => Promise<void>;
+  profile: UserResponse;
+  volunteer: Volunteer | null;
+  onSave: (updated: UpdateVolunteerPayload) => Promise<void>;
   onCancel: () => void;
 }
 
-export default function ProfileEditForm({ profile, onSave, onCancel }: ProfileEditFormProps) {
+export default function ProfileEditForm({ profile, volunteer, onSave, onCancel }: ProfileEditFormProps) {
   const formik = useFormik({
     initialValues: {
       name: profile.name || "",
-      email: profile.email || "",
-      dob: profile.dob || "",
-      address: profile.address || "",
-      city: profile.city || "",
-      district: profile.district || "",
-      state: profile.state || "",
-      pincode: profile.pincode || "",
+      email: volunteer?.email || "",
+      address: volunteer?.address || "",
+      city: volunteer?.city || "",
+      district: volunteer?.district || "",
+      pincode: volunteer?.pincode || "",
     },
     validationSchema: Yup.object().shape({
       name: Yup.string().required("Full name is required").min(3, "Name must be at least 3 characters"),
       email: Yup.string().email("Enter a valid email address").required("Email is required"),
-      dob: Yup.string().nullable(),
       address: Yup.string().required("Address is required"),
       city: Yup.string().required("City is required"),
       district: Yup.string().required("District is required"),
-      state: Yup.string().required("State is required"),
       pincode: Yup.string()
         .matches(/^[0-9]{6}$/, "Enter a valid 6-digit Pincode")
         .required("Pincode is required"),
@@ -85,17 +83,6 @@ export default function ProfileEditForm({ profile, onSave, onCancel }: ProfileEd
             />
 
             <Input
-              label="Date of Birth"
-              type="date"
-              icon={<Calendar size={18} className="text-text-muted" />}
-              name="dob"
-              value={formik.values.dob}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.dob ? formik.errors.dob : undefined}
-            />
-
-            <Input
               label="Address Line"
               placeholder="House, Street, Area"
               icon={<MapPin size={18} className="text-text-muted" />}
@@ -126,17 +113,6 @@ export default function ProfileEditForm({ profile, onSave, onCancel }: ProfileEd
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={formik.touched.district ? formik.errors.district : undefined}
-            />
-
-            <Input
-              label="State"
-              placeholder="State name"
-              icon={<Building size={18} className="text-text-muted" />}
-              name="state"
-              value={formik.values.state}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={formik.touched.state ? formik.errors.state : undefined}
             />
 
             <Input

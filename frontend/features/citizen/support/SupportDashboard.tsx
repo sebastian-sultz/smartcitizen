@@ -3,7 +3,13 @@
 import { useEffect, useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { getSupportTickets, getFAQs, createSupportTicket } from "../api";
+import { useCitizenStore } from "@/store/citizenStore";
+import {
+  getReport,
+  createReport,
+  addReportMessage,
+  getFAQs,
+} from "../api";
 import { SupportTicket, FAQItem } from "../types";
 
 import FAQSection from "./FAQSection";
@@ -12,23 +18,53 @@ import CreateTicketForm from "./CreateTicketForm";
 import TicketDetail from "./TicketDetail";
 
 export default function SupportDashboard() {
+  const { user, fetchProfile } = useCitizenStore();
+
   const [faqs, setFaqs] = useState<FAQItem[]>([]);
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   const [activeTab, setActiveTab] = useState("faq");
-  const [viewState, setViewState] = useState<"list" | "create" | "detail">("list");
-  const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
+  const [viewState, setViewState] = useState<"list" | "create" | "detail">(
+    "list"
+  );
+  const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(
+    null
+  );
 
   const loadSupportData = async () => {
     try {
       setLoading(true);
-      const [faqsData, ticketsData] = await Promise.all([
+
+      // Ensure profile is loaded in store
+      await fetchProfile();
+      const currentUser = useCitizenStore.getState().user;
+      if (!currentUser) return;
+
+      // TODO: Replace localStorage pattern with backend GET /reports?reporter_id=<userId> endpoint when available
+      const storageKey = `smartcitizen_reports_${currentUser.id}`;
+      const reportIds: string[] =
+        typeof window !== "undefined"
+          ? JSON.parse(localStorage.getItem(storageKey) || "[]")
+          : [];
+
+      // Fetch FAQs and reports in parallel
+      const [faqsData, fetchedReports] = await Promise.all([
         getFAQs(),
-        getSupportTickets()
+        Promise.all(
+          reportIds.map(async (id) => {
+            try {
+              const res = await getReport(id);
+              return res.report;
+            } catch {
+              return null;
+            }
+          })
+        ),
       ]);
+
       setFaqs(faqsData);
-      setTickets(ticketsData);
+      setTickets(fetchedReports.filter(Boolean) as SupportTicket[]);
     } catch (err) {
       console.error("Failed to load help desk datasets:", err);
     } finally {
@@ -52,8 +88,33 @@ export default function SupportDashboard() {
     priority: "low" | "medium" | "high";
   }) => {
     try {
-      const newTkt = await createSupportTicket(values);
-      setTickets([newTkt, ...tickets]);
+      const currentUser = useCitizenStore.getState().user;
+      if (!currentUser) throw new Error("User not loaded");
+
+      // 1. Create the support ticket report
+      const reportRes = await createReport({
+        reported_user_id: currentUser.id,
+        reason: `[${values.category.toUpperCase()}] ${values.subject}: ${values.description}`,
+      });
+      const report = reportRes.report;
+
+      // 2. Save ID to client-side localStorage
+      const storageKey = `smartcitizen_reports_${currentUser.id}`;
+      const reportIds: string[] =
+        typeof window !== "undefined"
+          ? JSON.parse(localStorage.getItem(storageKey) || "[]")
+          : [];
+      reportIds.push(report.id);
+      if (typeof window !== "undefined") {
+        localStorage.setItem(storageKey, JSON.stringify(reportIds));
+      }
+
+      // 3. Post first message
+      await addReportMessage(report.id, { message: values.description });
+
+      // 4. Fetch updated report details
+      const refreshedRes = await getReport(report.id);
+      setTickets([refreshedRes.report, ...tickets]);
       setViewState("list");
     } catch (err) {
       console.error("Failed to create ticket:", err);
@@ -62,7 +123,7 @@ export default function SupportDashboard() {
   };
 
   const handleUpdateTicket = (updated: SupportTicket) => {
-    setTickets(tickets.map((t) => t.id === updated.id ? updated : t));
+    setTickets(tickets.map((t) => (t.id === updated.id ? updated : t)));
     setSelectedTicket(updated);
   };
 
@@ -88,20 +149,20 @@ export default function SupportDashboard() {
 
         <TabsContent value="support">
           {viewState === "create" ? (
-            <CreateTicketForm 
-              onSubmit={handleCreateTicket} 
-              onCancel={() => setViewState("list")} 
+            <CreateTicketForm
+              onSubmit={handleCreateTicket}
+              onCancel={() => setViewState("list")}
             />
           ) : viewState === "detail" && selectedTicket ? (
-            <TicketDetail 
-              ticket={selectedTicket} 
-              onBack={() => setViewState("list")} 
+            <TicketDetail
+              ticket={selectedTicket}
+              onBack={() => setViewState("list")}
               onUpdateTicket={handleUpdateTicket}
             />
           ) : (
-            <TicketList 
-              tickets={tickets} 
-              onSelectTicket={handleSelectTicket} 
+            <TicketList
+              tickets={tickets}
+              onSelectTicket={handleSelectTicket}
               onCreateTrigger={() => setViewState("create")}
             />
           )}

@@ -14,22 +14,22 @@ export const PrivacyControls = () => {
 
   return (
     <div className="space-y-6">
-      <Card>
+      <Card className="rounded-[40px] border-primary/5 shadow-sm">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-xl">
+          <CardTitle className="flex items-center gap-2 text-xl font-display font-bold text-text">
             <Shield className="text-primary" size={20} />
             Privacy Settings
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           
-          <div className="flex items-start justify-between gap-4 p-4 rounded-xl border border-border bg-bg/50">
+          <div className="flex items-start justify-between gap-4 p-5 rounded-[24px] border border-border bg-bg/50">
             <div>
               <h4 className="font-bold text-text flex items-center gap-2">
-                <Smartphone size={16} />
+                <Smartphone size={16} className="text-primary" />
                 Public Phone Number
               </h4>
-              <p className="text-[13px] text-text-muted mt-1">
+              <p className="text-[13px] text-text-muted mt-1 leading-relaxed font-medium">
                 Allow citizens to see your phone number in the Need Help directory. If disabled, they can only contact you via in-app requests.
               </p>
             </div>
@@ -38,13 +38,13 @@ export const PrivacyControls = () => {
             </div>
           </div>
 
-          <div className="flex items-start justify-between gap-4 p-4 rounded-xl border border-border bg-bg/50">
+          <div className="flex items-start justify-between gap-4 p-5 rounded-[24px] border border-border bg-bg/50">
             <div>
               <h4 className="font-bold text-text flex items-center gap-2">
-                {inDirectory ? <Eye size={16} /> : <EyeOff size={16} />}
+                {inDirectory ? <Eye size={16} className="text-primary" /> : <EyeOff size={16} className="text-primary" />}
                 Directory Visibility
               </h4>
-              <p className="text-[13px] text-text-muted mt-1">
+              <p className="text-[13px] text-text-muted mt-1 leading-relaxed font-medium">
                 List your profile in the public Need Help directory. Disabling this will hide your profile from all public searches.
               </p>
             </div>
@@ -56,20 +56,20 @@ export const PrivacyControls = () => {
         </CardContent>
       </Card>
 
-      <Card className="border-red-100 shadow-sm">
+      <Card className="rounded-[40px] border-red-100 shadow-sm">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-xl text-red-600">
+          <CardTitle className="flex items-center gap-2 text-xl font-display font-bold text-red-600">
             <Trash2 size={20} />
             Data Deletion
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-[14px] text-text-muted mb-4">
+          <p className="text-[14px] text-text-muted mb-6 leading-relaxed font-medium">
             Under data protection guidelines, you have the right to request the deletion of all your personal data from the Global Smart Citizen Foundation systems.
           </p>
           <Button 
             variant="outline" 
-            className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300"
+            className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 rounded-2xl px-6 py-2.5 h-auto font-bold"
             onClick={() => {
               showConfirm({
                 title: "Delete Profile",

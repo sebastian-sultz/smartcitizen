@@ -1,6 +1,6 @@
 "use client";
 
-import { MemberProfile } from "../types";
+import { UserResponse } from "@/features/shared/auth/types";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { ShieldCheck, Award, ArrowRight, Sparkles, Heart } from "lucide-react";
@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { useRouter } from "next/navigation";
 
 interface VolunteerPreferencesProps {
-  profile: MemberProfile;
+  profile: UserResponse | null;
   volunteerStatus: 'not_applied' | 'pending' | 'approved' | 'rejected';
 }
 
