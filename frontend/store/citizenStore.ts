@@ -31,8 +31,9 @@ export const useCitizenStore = create<CitizenState>((set, get) => ({
         getVolunteers(),
       ]);
       const user = profRes.user;
+      const volunteers = volListRes?.volunteers || [];
       const volunteer =
-        volListRes.volunteers.find((v) => v.user_id === user.id) || null;
+        volunteers.find((v) => v.user_id === user.id) || null;
 
       set({ user, volunteer, hasFetched: true });
     } catch (err) {
@@ -50,8 +51,9 @@ export const useCitizenStore = create<CitizenState>((set, get) => ({
         getVolunteers(),
       ]);
       const user = profRes.user;
+      const volunteers = volListRes?.volunteers || [];
       const volunteer =
-        volListRes.volunteers.find((v) => v.user_id === user.id) || null;
+        volunteers.find((v) => v.user_id === user.id) || null;
 
       set({ user, volunteer, hasFetched: true });
     } catch (err) {

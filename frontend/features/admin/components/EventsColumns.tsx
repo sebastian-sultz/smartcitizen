@@ -2,19 +2,16 @@ import React from "react";
 import { Header } from "@/components/ui/TableComponent";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Trash2 } from "lucide-react";
+import { Trash2, Users } from "lucide-react";
 import { EventResponse } from "@/features/citizen/community/types";
 import { formatDate } from "@/lib/utils";
 import { ConfirmOptions } from "@/components/ui/AlertProvider";
 
 export const getEventsColumns = (
   deleteEvent: (id: string) => void,
-  showConfirm: (options: ConfirmOptions) => void
+  showConfirm: (options: ConfirmOptions) => void,
+  viewParticipants: (id: string, name: string) => void
 ): Header<EventResponse>[] => [
-  {
-    label: "Event ID",
-    render: (event) => <span className="text-[14px] font-mono text-text-muted">{event.id}</span>,
-  },
   {
     label: "Title",
     render: (event) => <span className="text-[14px] font-bold text-text">{event.event_name}</span>,
@@ -46,6 +43,15 @@ export const getEventsColumns = (
     label: "Actions",
     render: (event) => (
       <div className="flex items-center justify-end gap-2">
+        <Button 
+          variant="ghost-primary"
+          size="icon"
+          shape="square"
+          onClick={() => viewParticipants(event.id, event.event_name)}
+          title="View Participants"
+        >
+          <Users size={16} />
+        </Button>
         <Button 
           variant="ghost-danger"
           size="icon"

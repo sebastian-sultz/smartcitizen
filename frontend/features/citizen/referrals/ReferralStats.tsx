@@ -28,14 +28,7 @@ export default function ReferralStats({ stats }: ReferralStatsProps) {
       textColor: "text-emerald-950",
       description: "Direct impact contributors"
     },
-    {
-      title: "Impact Contribution",
-      value: `₹${stats.total_contribution_generated.toLocaleString("en-IN")}`,
-      icon: Heart,
-      color: "from-rose-50 to-rose-100/50 border-rose-100 text-rose-500",
-      textColor: "text-rose-900",
-      description: "NGO funding raised via you"
-    }
+    
   ];
 
   return (

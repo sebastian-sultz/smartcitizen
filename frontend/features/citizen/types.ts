@@ -53,10 +53,8 @@ export interface UpdateVolunteerPayload {
 }
 
 export interface CreateSupportTicketPayload {
-  category: 'account' | 'donation' | 'volunteer' | 'technical' | 'other';
   subject: string;
   description: string;
-  priority: 'low' | 'medium' | 'high';
 }
 
 export interface SocialLinksPayload {
@@ -93,14 +91,17 @@ export interface TicketMessage {
 
 export interface SupportTicket {
   id: string;
-  reporter_user_id: string;
-  reported_user_id: string;
-  reason: string;
+  user_id: string;
+  admin_id?: string | null;
+  title: string;
+  description: string;
   status: 'Open' | 'Resolved' | 'Closed';
   action_taken?: string | null;
   resolved_at?: string | null;
   created_at: string;
   messages?: TicketMessage[];
+  user?: UserResponse;
+  admin?: UserResponse;
 }
 
 export interface FAQItem {
@@ -194,6 +195,4 @@ export interface ReferralMember {
   lastActivityDate: string;
   membershipStatus: 'active' | 'inactive';
 }
-
-
 

@@ -15,7 +15,7 @@ import {
   FileText
 } from "lucide-react";
 import Image from "next/image";
-import { createEvent, updateEventImage } from "@/features/citizen/community/api";
+import { createEvent } from "@/features/citizen/community/api";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/utils";
@@ -101,12 +101,9 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
         const newEvent = await createEvent({
           ...values,
           event_date: isoDate,
-        });
+        }, selectedImage);
 
         if (newEvent && newEvent.id) {
-          if (selectedImage) {
-            await updateEventImage(newEvent.id, selectedImage);
-          }
           toast.success("Event created successfully");
           resetForm();
           handleRemoveImage();

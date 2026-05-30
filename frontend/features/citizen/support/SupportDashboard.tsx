@@ -64,21 +64,14 @@ export default function SupportDashboard() {
   };
 
   const handleCreateTicket = async (values: {
-    category: "account" | "donation" | "volunteer" | "technical" | "other";
     subject: string;
     description: string;
-    priority: "low" | "medium" | "high";
   }) => {
     try {
-      const currentUserId = useCitizenStore.getState().user?.id || useAuthStore.getState().session?.userId;
-      if (!currentUserId) {
-        throw new Error("User session not found. Please log in again.");
-      }
-
       // 1. Create the support ticket report
       const reportRes = await createReport({
-        reported_user_id: currentUserId,
-        reason: `[${values.category.toUpperCase()}] ${values.subject}: ${values.description}`,
+        title: values.subject,
+        description: values.description,
       });
       
       if (!reportRes || !reportRes.report) {
@@ -87,7 +80,7 @@ export default function SupportDashboard() {
       
       const report = reportRes.report;
 
-      // 2. Post first message
+      // 2. Post first message containing description
       await addReportMessage(report.id, { message: values.description });
 
       // 3. Refresh list from backend directly

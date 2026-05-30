@@ -91,15 +91,6 @@ export default function MemberCard({ profile }: MemberCardProps) {
               <span className="font-semibold text-text">{formattedDate}</span>
             </div>
 
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-2">
-                <Award size={15} className="text-primary/70" />
-                <span>Impact Level</span>
-              </span>
-              <span className="font-semibold text-text text-primary">
-                {(profile?.total_payments ?? 0) > 5 ? "Level 3 (Elite)" : (profile?.total_payments ?? 0) > 1 ? "Level 2 (Regular)" : "Level 1 (Novice)"}
-              </span>
-            </div>
           </div>
 
           <div className="w-full border-t border-dashed border-border my-4" />

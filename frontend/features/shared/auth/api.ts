@@ -34,7 +34,7 @@ export const forgetPassword = async (payload: ForgetPasswordPayload): Promise<Fo
 
 export const getProfile = async (): Promise<UserResponse> => {
   try {
-    const response = await api.get<{ user: UserResponse }>('/auth/profile/me');
+    const response = await api.get<{ user: UserResponse }>('/auth/me');
     return response.data.user;
   } catch (error: unknown) {
     handleApiError(error, "Failed to load user profile");

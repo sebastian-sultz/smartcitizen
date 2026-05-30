@@ -1,23 +1,31 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getAllEvents, deleteEvent as apiDeleteEvent } from "@/features/citizen/community/api";
+import { getAllEvents, deleteEvent as apiDeleteEvent, getUsersByEventId } from "@/features/citizen/community/api";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Plus } from "lucide-react";
-import { TableComponent } from "@/components/ui/TableComponent";
+import { TableComponent, Header } from "@/components/ui/TableComponent";
 import { getEventsColumns } from "./EventsColumns";
 import { toast } from "sonner";
 import { CreateEventModal } from "./CreateEventModal";
 import { useAlert } from "@/components/ui/AlertProvider";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { formatDate } from "@/lib/utils";
 
-import { EventResponse } from "@/features/citizen/community/types";
+import { EventResponse, EventRegistration } from "@/features/citizen/community";
 
 export const EventsTable = () => {
   const { showConfirm } = useAlert();
   const [events, setEvents] = useState<EventResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
+
+  // Participants states
+  const [participants, setParticipants] = useState<EventRegistration[]>([]);
+  const [participantsLoading, setParticipantsLoading] = useState(false);
+  const [selectedEventName, setSelectedEventName] = useState<string>("");
+  const [participantsOpen, setParticipantsOpen] = useState(false);
 
   const fetchEvents = async () => {
     try {
@@ -50,8 +58,41 @@ export const EventsTable = () => {
     }
   };
 
+  const handleViewParticipants = async (id: string, name: string) => {
+    setSelectedEventName(name);
+    setParticipantsOpen(true);
+    setParticipantsLoading(true);
+    try {
+      const data = await getUsersByEventId(id);
+      setParticipants(data);
+    } catch (err) {
+      console.error("Failed to load participants:", err);
+      toast.error("Failed to load event participants");
+    } finally {
+      setParticipantsLoading(false);
+    }
+  };
 
-  const columns = getEventsColumns(deleteEvent, showConfirm);
+  const columns = getEventsColumns(deleteEvent, showConfirm, handleViewParticipants);
+
+  const participantColumns: Header<EventRegistration>[] = [
+    {
+      label: "Name",
+      render: (reg) => <span className="text-[14px] font-bold text-text">{reg.user?.name || "N/A"}</span>,
+    },
+    {
+      label: "Phone",
+      render: (reg) => <span className="text-[14px] text-text-muted">{reg.user?.phone || "N/A"}</span>,
+    },
+    {
+      label: "Registered At",
+      render: (reg) => (
+        <span className="text-[14px] text-text-muted">
+          {formatDate(reg.created_at, "default")}
+        </span>
+      ),
+    },
+  ];
 
   return (
     <Card className="w-full">
@@ -77,6 +118,31 @@ export const EventsTable = () => {
           className="shadow-none border-0" 
         />
       </CardContent>
+
+      {/* View Participants Dialog */}
+      <Dialog open={participantsOpen} onOpenChange={setParticipantsOpen}>
+        <DialogContent className="sm:max-w-2xl max-h-[80vh] flex flex-col p-6">
+          <DialogHeader className="border-b border-border/80 pb-3 shrink-0">
+            <DialogTitle className="font-display font-bold text-text text-base sm:text-lg">
+              Event Participants
+            </DialogTitle>
+            <DialogDescription className="text-xs text-text-muted mt-1 font-medium">
+              Registered users for: <span className="font-bold text-text">{selectedEventName}</span>
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex-1 overflow-y-auto min-h-0 pt-4">
+            <TableComponent
+              headers={participantColumns}
+              data={participants}
+              loading={participantsLoading}
+              emptyMessage="No participants registered for this event yet."
+              className="shadow-none border border-border/40 rounded-xl"
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };
+

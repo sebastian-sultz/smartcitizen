@@ -120,10 +120,6 @@ export default function ProfileView() {
               </div>
             </div>
 
-            <p className="text-sm font-mono text-primary font-bold">
-              SC-{profile.id.substring(0, 5).toUpperCase()}
-            </p>
-
             {formattedJoinDate && (
               <p className="text-text-muted text-xs font-medium">
                 Registered on{" "}
@@ -233,11 +229,6 @@ export default function ProfileView() {
           />
         </div>
 
-        {/* Right Column (Social Profiles) */}
-        <div className="space-y-8">
-          {/* TODO: Wire SocialLinks save to a real backend endpoint when available */}
-          <SocialLinks profile={profile} onSave={async () => {}} />
-        </div>
       </div>
     </div>
   );

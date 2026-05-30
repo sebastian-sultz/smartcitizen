@@ -55,16 +55,12 @@ export default function TicketList({
           tickets.map((ticket) => {
             const isActive = !isCreating && selectedTicketId === ticket.id;
             
-            // Clean up subject & category
-            const match = ticket.reason.match(/^\[([A-Z]+)\]/);
-            const category = match ? match[1].toLowerCase() : "general";
-            const cleanReason = ticket.reason.replace(/^\[[A-Z]+\]\s*/, "");
-            const subject = cleanReason.split(":")[0] || cleanReason;
+            const subject = ticket.title;
 
-            // Get last message snippet
+            // Get last message snippet (falls back to issue description if no reply messages exist)
             const lastMessage = ticket.messages && ticket.messages.length > 0
               ? ticket.messages[ticket.messages.length - 1].message
-              : "";
+              : ticket.description;
 
             return (
               <button
@@ -77,25 +73,19 @@ export default function TicketList({
                     : "bg-white border-border/80 hover:border-primary/20 hover:bg-bg/40"
                 )}
               >
-                {/* Header row: Short ID and Date */}
-                <div className="flex justify-between items-center w-full">
-                  <span className="font-mono text-[9px] font-bold text-text-muted group-hover:text-text transition-colors">
-                    SC-{ticket.id.substring(0, 5).toUpperCase()}
-                  </span>
+                {/* Header row: Date */}
+                <div className="flex justify-end items-center w-full">
                   <span className="text-[9px] text-text-muted/80 font-semibold">
                     {formatDate(ticket.created_at, "short")}
                   </span>
                 </div>
 
-                {/* Subject and Category */}
+                {/* Subject and Status */}
                 <div>
                   <h4 className="font-bold text-sm text-text truncate pr-2">
                     {subject}
                   </h4>
                   <div className="flex items-center gap-2 mt-1.5">
-                    <Badge variant="neutral" size="xs" className="capitalize text-[8px] px-1 py-0 h-3.5 font-bold">
-                      {category}
-                    </Badge>
                     {getTicketStatusBadge(ticket.status)}
                   </div>
                 </div>

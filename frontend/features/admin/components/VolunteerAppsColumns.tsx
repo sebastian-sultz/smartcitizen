@@ -2,17 +2,14 @@ import React from "react";
 import { Header } from "@/components/ui/TableComponent";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { XCircle } from "lucide-react";
+import { XCircle, Eye } from "lucide-react";
 import { VolunteerResponse } from "@/features/public/volunteer/types";
 import { formatDate } from "@/lib/utils";
 
 export const getVolunteerAppsColumns = (
-  updateVolunteerAppStatus: (id: string, status: "Approved" | "Rejected") => void | Promise<void>
+  updateVolunteerAppStatus: (id: string, status: "Approved" | "Rejected") => void | Promise<void>,
+  viewDetails: (volunteer: VolunteerResponse) => void
 ): Header<VolunteerResponse>[] => [
-  {
-    label: "App ID",
-    render: (app) => <span className="text-[14px] font-mono text-text-muted">{app.id}</span>,
-  },
   {
     label: "Applicant",
     render: (app) => <span className="text-[14px] font-bold text-text">{app.name}</span>,
@@ -45,6 +42,15 @@ export const getVolunteerAppsColumns = (
     label: "Actions",
     render: (app) => (
       <div className="flex items-center justify-end gap-2">
+        <Button 
+          variant="ghost-primary"
+          size="icon"
+          shape="square"
+          onClick={() => viewDetails(app)}
+          title="View Details"
+        >
+          <Eye size={18} />
+        </Button>
         <Button 
           variant="ghost-danger"
           size="icon"

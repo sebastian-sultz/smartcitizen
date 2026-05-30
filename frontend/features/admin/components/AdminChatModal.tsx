@@ -97,10 +97,7 @@ export default function AdminChatModal({
 
   if (!ticket) return null;
 
-  const match = ticket.reason.match(/^\[([A-Z]+)\]/);
-  const category = match ? match[1].toLowerCase() : "general";
-  const cleanReason = ticket.reason.replace(/^\[[A-Z]+\]\s*/, "");
-  const subject = cleanReason.split(":")[0] || cleanReason;
+  const subject = ticket.title;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -109,15 +106,11 @@ export default function AdminChatModal({
         <DialogHeader className="border-b border-border/80 pb-3 shrink-0">
           <div className="flex justify-between items-start gap-4">
             <div>
-              <DialogTitle className="font-display font-bold text-text text-base sm:text-lg flex items-center gap-2">
-                <span className="font-mono text-xs font-bold text-text-muted">
-                  SC-{ticket.id.substring(0, 5).toUpperCase()}
-                </span>
+              <DialogTitle className="font-display font-bold text-text text-base sm:text-lg">
                 {subject}
               </DialogTitle>
               <DialogDescription className="text-xs text-text-muted mt-1 font-medium">
-                Reporter ID: {ticket.reporter_user_id} &bull; Category:{" "}
-                <span className="capitalize">{category}</span>
+                Submitted by: {ticket.user?.name || "Anonymous User"}
               </DialogDescription>
             </div>
             <div className="shrink-0">{getTicketStatusBadge(ticket.status)}</div>
@@ -130,59 +123,57 @@ export default function AdminChatModal({
             <div className="h-full flex items-center justify-center">
               <Spinner className="size-6 text-primary" />
             </div>
-          ) : messages.length === 0 ? (
-            <div className="h-full flex items-center justify-center text-center text-xs font-semibold text-text-muted">
-              No message logs found for this ticket.
-            </div>
           ) : (
-            messages.map((msg) => {
-              const isSelf = msg.sender_id === currentUserId;
-              const senderLabel = isSelf ? "Admin (You)" : "User";
-              return (
-                <div
-                  key={msg.id}
-                  className={cn(
-                    "flex gap-2.5 max-w-[85%]",
-                    isSelf ? "ml-auto flex-row-reverse" : "mr-auto"
-                  )}
-                >
+            <>
+              {messages.map((msg) => {
+                const isSelf = msg.sender_id === currentUserId;
+                const senderLabel = isSelf ? "Admin (You)" : "User";
+                return (
                   <div
+                    key={msg.id}
                     className={cn(
-                      "w-7 h-7 rounded-full flex items-center justify-center font-bold text-[9px] shrink-0 border",
-                      isSelf
-                        ? "bg-primary/10 border-primary/20 text-primary"
-                        : "bg-surface border-border text-text-muted"
+                      "flex gap-2.5 max-w-[85%]",
+                      isSelf ? "ml-auto flex-row-reverse" : "mr-auto"
                     )}
                   >
-                    {isSelf ? "A" : "U"}
-                  </div>
-
-                  <div className="space-y-1">
                     <div
                       className={cn(
-                        "p-3 rounded-2xl text-xs sm:text-sm leading-relaxed shadow-sm font-medium",
+                        "w-7 h-7 rounded-full flex items-center justify-center font-bold text-[9px] shrink-0 border",
                         isSelf
-                          ? "bg-primary text-white rounded-tr-none"
-                          : "bg-white text-text border border-border/60 rounded-tl-none"
+                          ? "bg-primary/10 border-primary/20 text-primary"
+                          : "bg-surface border-border text-text-muted"
                       )}
                     >
-                      <p className="whitespace-pre-wrap break-words">{msg.message}</p>
+                      {isSelf ? "A" : "U"}
                     </div>
-                    <p
-                      className={cn(
-                        "text-[8px] text-text-muted/70 font-mono font-bold px-1.5",
-                        isSelf ? "text-right" : "text-left"
-                      )}
-                    >
-                      {new Date(msg.created_at).toLocaleTimeString("en-IN", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
+
+                    <div className="space-y-1">
+                      <div
+                        className={cn(
+                          "p-3 rounded-2xl text-xs sm:text-sm leading-relaxed shadow-sm font-medium",
+                          isSelf
+                            ? "bg-primary text-white rounded-tr-none"
+                            : "bg-white text-text border border-border/60 rounded-tl-none"
+                        )}
+                      >
+                        <p className="whitespace-pre-wrap break-words">{msg.message}</p>
+                      </div>
+                      <p
+                        className={cn(
+                          "text-[8px] text-text-muted/70 font-mono font-bold px-1.5",
+                          isSelf ? "text-right" : "text-left"
+                        )}
+                      >
+                        {new Date(msg.created_at).toLocaleTimeString("en-IN", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              );
-            })
+                );
+              })}
+            </>
           )}
           <div ref={messagesEndRef} />
         </div>

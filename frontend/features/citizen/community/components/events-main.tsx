@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import PageHero from "@/components/layout/PageHero";
 import { Info } from "lucide-react";
 import { ContentGrid } from "./ContentGrid";
-import { getAllEvents } from "../api";
+import { getAllEvents, getEventsByUserId } from "../api";
 import { EventResponse } from "../types";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useAuthStore } from "@/store/authStore";
 
 const EventSkeleton = () => (
   <div className="border border-border/60 rounded-3xl p-6 bg-white space-y-4">
@@ -27,9 +28,25 @@ const EventSkeleton = () => (
 export function EventsMain() {
   const [events, setEvents] = useState<EventResponse[]>([]);
   const [loading, setLoading] = useState(true);
+  const [registeredEvents, setRegisteredEvents] = useState<string[]>([]);
+  const { session } = useAuthStore();
+
+  const fetchRegistrations = async () => {
+    if (session) {
+      try {
+        const regs = await getEventsByUserId("me");
+        if (regs) {
+          setRegisteredEvents(regs.map((r) => r.event_id));
+        }
+      } catch (err) {
+        console.error("Failed to fetch user registered events:", err);
+      }
+    }
+  };
 
   useEffect(() => {
-    const fetchEvents = async () => {
+    const loadData = async () => {
+      setLoading(true);
       try {
         const fetched = await getAllEvents();
         if (fetched && fetched.length > 0) {
@@ -37,16 +54,17 @@ export function EventsMain() {
         } else {
           setEvents([]);
         }
+        await fetchRegistrations();
       } catch (err) {
-        console.error("Failed to fetch events:", err);
+        console.error("Failed to fetch community events page data:", err);
         setEvents([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchEvents();
-  }, []);
+    loadData();
+  }, [session]);
 
   return (
     <main className="min-h-screen">
@@ -74,6 +92,8 @@ export function EventsMain() {
               emptyIcon={Info}
               emptyTitle="No Upcoming Events"
               emptyDesc="We are currently planning our next set of awareness workshops. Check back soon!"
+              registeredEventIds={registeredEvents}
+              onRegisterSuccess={fetchRegistrations}
             />
           )}
         </div>
@@ -81,3 +101,4 @@ export function EventsMain() {
     </main>
   );
 }
+

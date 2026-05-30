@@ -37,14 +37,14 @@ export default function DonationSummaryWidget({ stats }: DonationSummaryWidgetPr
                 </p>
               </div>
             </div>
-            <div className="text-right">
+            {/* <div className="text-right">
               <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 bg-rose-100 text-rose-700 rounded-full">
                 {stats.donorLevel} Donor
               </span>
-            </div>
+            </div> */}
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          {/* <div className="grid grid-cols-2 gap-3">
             <div className="p-3 bg-slate-50/50 border border-border/50 rounded-2xl">
               <p className="text-[10px] text-text-muted font-medium">This Fiscal Year</p>
               <p className="text-sm font-display font-bold text-text mt-0.5">
@@ -57,7 +57,7 @@ export default function DonationSummaryWidget({ stats }: DonationSummaryWidgetPr
                 ₹{stats.averageAmount.toLocaleString("en-IN")}
               </p>
             </div>
-          </div>
+          </div> */}
         </div>
 
         <Button 

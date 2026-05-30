@@ -38,7 +38,7 @@ func (r *repository) GetReports(status string) ([]AbuseReport, error) {
 
 func (r *repository) GetReportsByReporterID(reporterID string, status string) ([]AbuseReport, error) {
 	var reports []AbuseReport
-	q := r.db.Model(&AbuseReport{}).Preload("Messages").Where("reporter_user_id = ?", reporterID)
+	q := r.db.Model(&AbuseReport{}).Preload("Messages").Where("user_id = ?", reporterID)
 	if status != "" {
 		q = q.Where("status = ?", status)
 	}
