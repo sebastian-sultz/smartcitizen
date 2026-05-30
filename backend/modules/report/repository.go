@@ -31,13 +31,13 @@ func (r *repository) GetReports(status string) ([]AbuseReport, error) {
 	if status != "" {
 		q = q.Where("status = ?", status)
 	}
-	err := q.Order("created_at desc").Find(&reports).Error
+	err := q.Preload("User").Preload("Admin").Order("created_at desc").Find(&reports).Error
 	return reports, err
 }
 
 func (r *repository) GetReportByID(id string) (*AbuseReport, error) {
 	var report AbuseReport
-	err := r.db.Preload("Messages").First(&report, "id = ?", id).Error
+	err := r.db.Preload("Messages").Preload("User").Preload("Admin").First(&report, "id = ?", id).Error
 	if err != nil {
 		return nil, err
 	}

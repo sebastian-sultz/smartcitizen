@@ -1,7 +1,6 @@
 package request
 
 type CreateReportReq struct {
-	ReportedUserID string `json:"reported_user_id" binding:"required"`
 	Reason         string `json:"reason" binding:"required"`
 }
 

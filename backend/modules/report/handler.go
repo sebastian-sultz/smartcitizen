@@ -37,7 +37,7 @@ func (h *Handler) CreateReport(c *gin.Context) {
 		return
 	}
 
-	report, err := h.service.CreateReport(userID, req.ReportedUserID, req.Reason)
+	report, err := h.service.CreateReport(userID, req.Reason)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -84,7 +84,18 @@ func (h *Handler) ResolveReport(c *gin.Context) {
 		return
 	}
 
-	report, err := h.service.ResolveReport(id, req.ActionTaken)
+	userIDRaw, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	adminID, ok := userIDRaw.(uuid.UUID)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid user ID type in context"})
+		return
+	}
+
+	report, err := h.service.ResolveReport(id, req.ActionTaken, adminID)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

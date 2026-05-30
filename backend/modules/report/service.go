@@ -8,9 +8,9 @@ import (
 )
 
 type Service interface {
-	CreateReport(reporterID uuid.UUID, reportedIDStr, reason string) (*AbuseReport, error)
+	CreateReport(userID uuid.UUID, reason string) (*AbuseReport, error)
 	GetReports(status string) ([]AbuseReport, error)
-	ResolveReport(id, actionTaken string) (*AbuseReport, error)
+	ResolveReport(id, actionTaken string, adminID uuid.UUID) (*AbuseReport, error)
 	AddMessage(reportID string, senderID uuid.UUID, message string, isAdmin bool) (*ReportMessage, error)
 	GetMessages(reportID string, userID uuid.UUID, isAdmin bool) ([]ReportMessage, error)
 	GetReportByID(id string, userID uuid.UUID, isAdmin bool) (*AbuseReport, error)
@@ -24,17 +24,11 @@ func NewService(repo Repository) Service {
 	return &service{repo: repo}
 }
 
-func (s *service) CreateReport(reporterID uuid.UUID, reportedIDStr, reason string) (*AbuseReport, error) {
-	reportedUUID, err := uuid.Parse(reportedIDStr)
-	if err != nil {
-		return nil, errors.New("invalid reported user ID format")
-	}
-
+func (s *service) CreateReport(userID uuid.UUID, reason string) (*AbuseReport, error) {
 	report := &AbuseReport{
-		ReporterUserID: reporterID,
-		ReportedUserID: reportedUUID,
-		Reason:         reason,
-		Status:         StatusOpen,
+		UserID: userID,
+		Reason: reason,
+		Status: StatusOpen,
 	}
 
 	if err := s.repo.CreateReport(report); err != nil {
@@ -52,13 +46,13 @@ func (s *service) GetReportByID(id string, userID uuid.UUID, isAdmin bool) (*Abu
 	if err != nil {
 		return nil, errors.New("report not found")
 	}
-	if !isAdmin && report.ReporterUserID != userID {
+	if !isAdmin && report.UserID != userID {
 		return nil, errors.New("forbidden: you do not have access to this report")
 	}
 	return report, nil
 }
 
-func (s *service) ResolveReport(id, actionTaken string) (*AbuseReport, error) {
+func (s *service) ResolveReport(id, actionTaken string, adminID uuid.UUID) (*AbuseReport, error) {
 	report, err := s.repo.GetReportByID(id)
 	if err != nil {
 		return nil, errors.New("report not found")
@@ -72,6 +66,7 @@ func (s *service) ResolveReport(id, actionTaken string) (*AbuseReport, error) {
 	report.Status = StatusResolved
 	report.ActionTaken = &actionTaken
 	report.ResolvedAt = &now
+	report.AdminID = &adminID
 
 	if err := s.repo.UpdateReport(report); err != nil {
 		return nil, err
@@ -86,7 +81,7 @@ func (s *service) AddMessage(reportID string, senderID uuid.UUID, message string
 		return nil, errors.New("report not found")
 	}
 
-	if !isAdmin && report.ReporterUserID != senderID {
+	if !isAdmin && report.UserID != senderID {
 		return nil, errors.New("forbidden: you can only message on your own reports")
 	}
 
@@ -114,7 +109,7 @@ func (s *service) GetMessages(reportID string, userID uuid.UUID, isAdmin bool) (
 		return nil, errors.New("report not found")
 	}
 
-	if !isAdmin && report.ReporterUserID != userID {
+	if !isAdmin && report.UserID != userID {
 		return nil, errors.New("forbidden: you do not have access to this report's messages")
 	}
 
