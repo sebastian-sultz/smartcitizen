@@ -1,112 +1,115 @@
 "use client";
 
 import { SupportTicket } from "../types";
-import { TableComponent, Header } from "@/components/ui/TableComponent";
 import { Button } from "@/components/ui/Button";
-import { MessageSquare, Eye } from "lucide-react";
-import EmptyState from "@/components/ui/EmptyState";
-import { formatDate } from "@/lib/utils";
+import { Badge } from "@/components/ui/Badge";
+import { Plus, MessageSquare } from "lucide-react";
+import { formatDate, cn } from "@/lib/utils";
 import { getTicketStatusBadge } from "./ticket-utils";
 
 interface TicketListProps {
   tickets: SupportTicket[];
+  selectedTicketId: string | null;
   onSelectTicket: (ticket: SupportTicket) => void;
   onCreateTrigger: () => void;
-  loading?: boolean;
+  isCreating: boolean;
 }
 
-export default function TicketList({ tickets, onSelectTicket, onCreateTrigger, loading = false }: TicketListProps) {
-  
-
-  const headers: Header<SupportTicket>[] = [
-    {
-      label: "Date",
-      render: (row) => (
-        <span className="font-semibold text-text">
-          {formatDate(row.created_at, "short")}
-        </span>
-      ),
-    },
-    {
-      label: "Ticket ID",
-      render: (row) => <span className="font-mono text-xs font-bold text-text-muted">SC-{row.id.substring(0, 5).toUpperCase()}</span>,
-    },
-    {
-      label: "Subject",
-      render: (row) => {
-        const cleanReason = row.reason.replace(/^\[[A-Z]+\]\s*/, "");
-        const subject = cleanReason.split(":")[0] || cleanReason;
-        return (
-          <span className="font-bold text-text text-sm truncate max-w-[120px] sm:max-w-[200px] block">
-            {subject}
-          </span>
-        );
-      },
-    },
-    {
-      label: "Category",
-      render: (row) => {
-        const match = row.reason.match(/^\[([A-Z]+)\]/);
-        const category = match ? match[1].toLowerCase() : "general";
-        return <span className="font-medium text-text-muted text-xs capitalize">{category}</span>;
-      },
-    },
-    {
-      label: "Status",
-      render: (row) => getTicketStatusBadge(row.status),
-    },
-    {
-      label: "Action",
-      render: (row) => (
-        <Button
-          onClick={() => onSelectTicket(row)}
-          variant="outline"
-          size="sm"
-          className="text-xs font-bold py-1.5 h-auto rounded-xl gap-1 border-primary/20 text-primary hover:bg-primary/5"
-        >
-          <Eye size={12} />
-          Open Chat
-        </Button>
-      ),
-    },
-  ];
-
-  if (tickets.length === 0 && !loading) {
-    return (
-      <div className="bg-white border border-border/80 rounded-3xl p-8">
-        <EmptyState
-          icon={MessageSquare}
-          title="No support tickets logged"
-          description="Have questions about donation certificates, district cleanups, or volunteer status? Lodge a support ticket."
-          ctaText="Submit Support Ticket"
-          onClick={onCreateTrigger}
-        />
-      </div>
-    );
-  }
-
+export default function TicketList({
+  tickets,
+  selectedTicketId,
+  onSelectTicket,
+  onCreateTrigger,
+  isCreating,
+}: TicketListProps) {
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
+    <div className="flex flex-col h-full space-y-4">
+      {/* Header and Create Button */}
+      <div className="flex justify-between items-center shrink-0">
         <div>
-          <h3 className="font-display text-lg font-bold text-text">Lodge Records</h3>
-          <p className="text-text-muted text-xs mt-0.5 font-medium">History of communication logs with the NGO coordination desk.</p>
+          <h3 className="font-display text-base font-bold text-text">Support Inbox</h3>
+          <p className="text-text-muted text-[11px] font-medium">History of your support reports</p>
         </div>
         <Button
           onClick={onCreateTrigger}
-          className="text-xs font-bold py-2.5 px-4 h-auto rounded-xl shadow-sm"
+          size="sm"
+          variant={isCreating ? "outline" : "primary"}
+          className="text-xs font-bold py-2 px-3 h-auto rounded-xl flex items-center gap-1 border-primary/20"
         >
-          Lodge Ticket
+          <Plus size={14} />
+          New Issue
         </Button>
       </div>
 
-      <div className="bg-white rounded-3xl border border-border/80 overflow-hidden shadow-sm">
-        <TableComponent
-          headers={headers}
-          data={tickets}
-          loading={loading}
-          emptyMessage="No logged support tickets found."
-        />
+      {/* Ticket Cards Stack */}
+      <div className="flex-1 overflow-y-auto space-y-2.5 pr-1.5 min-h-0">
+        {tickets.length === 0 ? (
+          <div className="h-full flex flex-col items-center justify-center text-center p-6 bg-bg/10 rounded-3xl border border-dashed border-border/60">
+            <MessageSquare className="size-8 text-text-muted opacity-40 mb-2" />
+            <p className="text-xs font-bold text-text-muted">No support records</p>
+            <p className="text-[10px] text-text-muted/80 mt-1 max-w-[180px]">
+              Lodge a support ticket to get help from our team.
+            </p>
+          </div>
+        ) : (
+          tickets.map((ticket) => {
+            const isActive = !isCreating && selectedTicketId === ticket.id;
+            
+            // Clean up subject & category
+            const match = ticket.reason.match(/^\[([A-Z]+)\]/);
+            const category = match ? match[1].toLowerCase() : "general";
+            const cleanReason = ticket.reason.replace(/^\[[A-Z]+\]\s*/, "");
+            const subject = cleanReason.split(":")[0] || cleanReason;
+
+            // Get last message snippet
+            const lastMessage = ticket.messages && ticket.messages.length > 0
+              ? ticket.messages[ticket.messages.length - 1].message
+              : "";
+
+            return (
+              <button
+                key={ticket.id}
+                onClick={() => onSelectTicket(ticket)}
+                className={cn(
+                  "w-full text-left p-3.5 rounded-2xl border transition-all flex flex-col gap-2 relative group focus:outline-none",
+                  isActive
+                    ? "bg-primary/5 border-primary/30 shadow-sm ring-1 ring-primary/10"
+                    : "bg-white border-border/80 hover:border-primary/20 hover:bg-bg/40"
+                )}
+              >
+                {/* Header row: Short ID and Date */}
+                <div className="flex justify-between items-center w-full">
+                  <span className="font-mono text-[9px] font-bold text-text-muted group-hover:text-text transition-colors">
+                    SC-{ticket.id.substring(0, 5).toUpperCase()}
+                  </span>
+                  <span className="text-[9px] text-text-muted/80 font-semibold">
+                    {formatDate(ticket.created_at, "short")}
+                  </span>
+                </div>
+
+                {/* Subject and Category */}
+                <div>
+                  <h4 className="font-bold text-sm text-text truncate pr-2">
+                    {subject}
+                  </h4>
+                  <div className="flex items-center gap-2 mt-1.5">
+                    <Badge variant="neutral" size="xs" className="capitalize text-[8px] px-1 py-0 h-3.5 font-bold">
+                      {category}
+                    </Badge>
+                    {getTicketStatusBadge(ticket.status)}
+                  </div>
+                </div>
+
+                {/* Latest message snippet */}
+                {lastMessage && (
+                  <p className="text-[11px] text-text-muted truncate mt-0.5 max-w-full font-medium italic">
+                    "{lastMessage}"
+                  </p>
+                )}
+              </button>
+            );
+          })
+        )}
       </div>
     </div>
   );

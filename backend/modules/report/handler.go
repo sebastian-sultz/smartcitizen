@@ -158,3 +158,26 @@ func (h *Handler) GetMessages(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"messages": messages})
 }
+
+func (h *Handler) GetUserReports(c *gin.Context) {
+	userIDRaw, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	userID, ok := userIDRaw.(uuid.UUID)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid user ID type in context"})
+		return
+	}
+
+	status := c.Query("status")
+	reports, err := h.service.GetReportsByReporterID(userID, status)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch reports"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"reports": reports})
+}

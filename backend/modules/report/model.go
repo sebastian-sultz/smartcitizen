@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type ReportStatus string
@@ -33,3 +34,18 @@ type ReportMessage struct {
 	Message   string    `gorm:"type:text;not null" json:"message"`
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
 }
+
+func (r *AbuseReport) BeforeCreate(tx *gorm.DB) error {
+	if r.ID == uuid.Nil {
+		r.ID = uuid.New()
+	}
+	return nil
+}
+
+func (m *ReportMessage) BeforeCreate(tx *gorm.DB) error {
+	if m.ID == uuid.Nil {
+		m.ID = uuid.New()
+	}
+	return nil
+}
+

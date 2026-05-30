@@ -63,7 +63,7 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
     { href: "/citizen/donations", label: "My Donations", icon: Heart },
     { href: "/citizen/referrals", label: "My Referrals", icon: Share2 },
     { href: "/citizen/volunteer", label: "Volunteer Application", icon: Award },
-    { href: "/citizen/support", label: "Support Tickets", icon: MessageSquare },
+    { href: "/citizen/support", label: "Help & Support", icon: MessageSquare },
     { href: "/citizen/settings", label: "Privacy & Settings", icon: Settings },
   ];
 

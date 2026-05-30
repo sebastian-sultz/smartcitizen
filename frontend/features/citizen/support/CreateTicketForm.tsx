@@ -4,7 +4,6 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { 
   Select, 
   SelectContent, 
@@ -12,6 +11,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
+import { Card } from "@/components/ui/Card";
 import { MessageSquare, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { CreateSupportTicketPayload } from "../types";
@@ -40,9 +40,10 @@ export default function CreateTicketForm({ onSubmit, onCancel }: CreateTicketFor
       try {
         await onSubmit(values);
         toast.success("Support ticket successfully lodged!");
-      } catch (err) {
+      } catch (err: any) {
         console.error("Lodge ticket failed:", err);
-        toast.error("Failed to lodge support ticket.");
+        const errMsg = err?.message || (typeof err === "string" ? err : "Unknown error");
+        toast.error(`Failed to lodge support ticket: ${errMsg}`);
       } finally {
         setSubmitting(false);
       }
@@ -50,110 +51,111 @@ export default function CreateTicketForm({ onSubmit, onCancel }: CreateTicketFor
   });
 
   return (
-    <Card className="rounded-[40px] border-primary/5 shadow-sm max-w-xl mx-auto">
-      <CardHeader className="flex flex-row items-center gap-3 pb-4">
+    <Card className="p-5 md:p-6 flex flex-col h-full rounded-[30px] shadow-none bg-white">
+      <div className="flex items-center gap-3 pb-4 border-b border-border/60 shrink-0">
         <Button
           type="button"
           onClick={onCancel}
           variant="ghost-muted"
-          size="icon"
-          className="rounded-full w-8 h-8 flex items-center justify-center p-0"
+          size="icon-sm"
+          shape="circle"
+          className="w-7 h-7 flex items-center justify-center p-0"
+          title="Cancel"
         >
-          <ArrowLeft size={16} />
+          <ArrowLeft size={15} />
         </Button>
-        <CardTitle className="font-display text-lg font-bold text-text flex items-center gap-2">
-          <MessageSquare size={18} className="text-primary" />
+        <h3 className="font-display text-base font-bold text-text flex items-center gap-2">
+          <MessageSquare size={16} className="text-primary" />
           Lodge Support Ticket
-        </CardTitle>
-      </CardHeader>
+        </h3>
+      </div>
       
-      <CardContent>
-        <form onSubmit={formik.handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <label className="text-[14px] font-bold text-text">Category</label>
-              <Select 
-                value={formik.values.category} 
-                onValueChange={(val) => formik.setFieldValue("category", val)}
-              >
-                <SelectTrigger className="px-6 py-4 rounded-xl border border-border h-auto">
-                  <SelectValue placeholder="Select Category" />
-                </SelectTrigger>
-                <SelectContent position="popper">
-                  <SelectItem value="donation">Donation & Tax receipt</SelectItem>
-                  <SelectItem value="volunteer">Volunteer coordinator application</SelectItem>
-                  <SelectItem value="account">Account & credentials</SelectItem>
-                  <SelectItem value="technical">Technical bug / Website issue</SelectItem>
-                  <SelectItem value="other">General inquiry / Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-[14px] font-bold text-text">Priority</label>
-              <Select 
-                value={formik.values.priority} 
-                onValueChange={(val) => formik.setFieldValue("priority", val)}
-              >
-                <SelectTrigger className="px-6 py-4 rounded-xl border border-border h-auto">
-                  <SelectValue placeholder="Select Priority" />
-                </SelectTrigger>
-                <SelectContent position="popper">
-                  <SelectItem value="low">Low (General queries)</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="high">High (Billing issues)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+      <form onSubmit={formik.handleSubmit} className="flex-1 overflow-y-auto py-4 space-y-4 pr-1 min-h-0">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <label className="text-[12px] font-bold text-text ml-1 block">Category</label>
+            <Select 
+              value={formik.values.category} 
+              onValueChange={(val) => formik.setFieldValue("category", val)}
+            >
+              <SelectTrigger className="px-4 py-2.5 rounded-xl border border-border h-auto text-sm">
+                <SelectValue placeholder="Select Category" />
+              </SelectTrigger>
+              <SelectContent position="popper">
+                <SelectItem value="donation">Donation & Tax receipt</SelectItem>
+                <SelectItem value="volunteer">Volunteer coordinator application</SelectItem>
+                <SelectItem value="account">Account & credentials</SelectItem>
+                <SelectItem value="technical">Technical bug / Website issue</SelectItem>
+                <SelectItem value="other">General inquiry / Other</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          <Input
-            label="Subject"
-            placeholder="e.g. 80G Tax receipt missing for FY 2025"
-            name="subject"
-            value={formik.values.subject}
+          <div className="space-y-1.5">
+            <label className="text-[12px] font-bold text-text ml-1 block">Priority</label>
+            <Select 
+              value={formik.values.priority} 
+              onValueChange={(val) => formik.setFieldValue("priority", val)}
+            >
+              <SelectTrigger className="px-4 py-2.5 rounded-xl border border-border h-auto text-sm">
+                <SelectValue placeholder="Select Priority" />
+              </SelectTrigger>
+              <SelectContent position="popper">
+                <SelectItem value="low">Low (General queries)</SelectItem>
+                <SelectItem value="medium">Medium</SelectItem>
+                <SelectItem value="high">High (Billing issues)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <Input
+          label="Subject"
+          placeholder="e.g. 80G Tax receipt missing for FY 2025"
+          name="subject"
+          value={formik.values.subject}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          error={formik.touched.subject ? formik.errors.subject : undefined}
+          className="py-2.5 px-4 text-sm"
+        />
+
+        <div className="space-y-1.5">
+          <label className="text-[12px] font-bold text-text ml-1 block">Description</label>
+          <textarea
+            name="description"
+            rows={5}
+            value={formik.values.description}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={formik.touched.subject ? formik.errors.subject : undefined}
+            placeholder="Explain your problem in detail. Include transaction IDs, dates, or error contexts."
+            className={`w-full rounded-xl border border-border bg-bg p-3.5 text-sm transition-all outline-none focus:border-primary placeholder:text-text-muted ${
+              formik.touched.description && formik.errors.description ? "border-red-500" : ""
+            }`}
           />
+          {formik.touched.description && formik.errors.description && (
+            <p className="text-red-500 text-[11px] font-semibold ml-1">{formik.errors.description}</p>
+          )}
+        </div>
 
-          <div className="space-y-2">
-            <label className="text-[14px] font-bold text-text">Description</label>
-            <textarea
-              name="description"
-              rows={5}
-              value={formik.values.description}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              placeholder="Explain your problem in detail. Include transaction IDs, dates, or error contexts."
-              className={`w-full rounded-xl border border-border bg-bg p-4 text-base transition-all outline-none focus:border-primary placeholder:text-text-muted ${
-                formik.touched.description && formik.errors.description ? "border-red-500" : ""
-              }`}
-            />
-            {formik.touched.description && formik.errors.description && (
-              <p className="text-red-500 text-xs font-semibold">{formik.errors.description}</p>
-            )}
-          </div>
-
-          <div className="flex justify-end gap-3 pt-4 border-t border-border">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onCancel}
-              className="rounded-2xl px-6 py-2.5 h-auto font-bold"
-            >
-              Cancel
-            </Button>
-            <Button
-              type="submit"
-              isLoading={formik.isSubmitting}
-              className="rounded-2xl px-6 py-2.5 h-auto font-bold"
-            >
-              Lodge Issue
-            </Button>
-          </div>
-        </form>
-      </CardContent>
+        <div className="flex justify-end gap-3 pt-4 border-t border-border/60 shrink-0">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            className="rounded-xl px-5 py-2 h-auto text-xs font-bold"
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            isLoading={formik.isSubmitting}
+            className="rounded-xl px-5 py-2 h-auto text-xs font-bold"
+          >
+            Lodge Issue
+          </Button>
+        </div>
+      </form>
     </Card>
   );
 }
