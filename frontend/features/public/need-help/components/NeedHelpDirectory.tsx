@@ -11,54 +11,6 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import api from "@/lib/axios";
 
-const mockProfessionals = [
-  {
-    id: 1,
-    name: "Dr. Anuj Singh",
-    profession: "Lawyer",
-    expertise: "Consumer Rights, Human Rights",
-    description: "I provide free preliminary legal guidance for consumer disputes and basic human rights awareness.",
-    location: "Delhi NCR",
-    showPhone: true,
-  },
-  {
-    id: 2,
-    name: "Mrs. Kavita Rai",
-    profession: "Counselor",
-    expertise: "Mental Health, Career Guidance",
-    description: "Offering counseling sessions to students and young adults dealing with career anxiety and stress.",
-    location: "Mumbai, Maharashtra",
-    showPhone: false,
-  },
-  {
-    id: 3,
-    name: "Mr. Manoj Jain",
-    profession: "Financial Advisor",
-    expertise: "Financial Literacy, Scam Prevention",
-    description: "Educating citizens on safe banking practices and how to identify and prevent financial frauds.",
-    location: "Jaipur, Rajasthan",
-    showPhone: true,
-  },
-  {
-    id: 4,
-    name: "Mr. Neeraj Kumar",
-    profession: "IT Professional",
-    expertise: "Digital Safety, Cybersecurity",
-    description: "Conducting workshops and providing 1-on-1 support for cyber fraud victims to secure their digital footprint.",
-    location: "Bangalore, Karnataka",
-    showPhone: false,
-  },
-  {
-    id: 5,
-    name: "Dr. Smita Patel",
-    profession: "Doctor",
-    expertise: "General Medicine, Public Health",
-    description: "Available for general health awareness consultations and guiding patients to appropriate medical facilities.",
-    location: "Ahmedabad, Gujarat",
-    showPhone: true,
-  }
-];
-
 const categories = ["All", "Lawyer", "Doctor", "Counselor", "Financial Advisor", "IT Professional", "Teacher", "Social Worker"];
 
 export const NeedHelpDirectory = () => {
@@ -73,24 +25,20 @@ export const NeedHelpDirectory = () => {
       try {
         const response = await api.get<{ volunteers: any[] }>("/volunteers");
         const list = response.data.volunteers || [];
-        if (list.length > 0) {
-          const mapped = list.map((vol: any) => ({
-            id: vol.id,
-            name: vol.name,
-            profession: vol.profession || "Volunteer Coordinator",
-            expertise: vol.experience ? (vol.experience.length > 60 ? vol.experience.substring(0, 60) + "..." : vol.experience) : "Community Support",
-            description: vol.experience || "Smart Citizen Coordinator assisting with community projects and guidance.",
-            location: [vol.city, vol.district].filter(Boolean).join(", ") || vol.address || "India",
-            photoUrl: vol.image || undefined,
-            showPhone: true,
-          }));
-          setProfessionals(mapped);
-        } else {
-          setProfessionals(mockProfessionals);
-        }
+        const mapped = list.map((vol: any) => ({
+          id: vol.id,
+          name: vol.name,
+          profession: vol.profession || "Volunteer Coordinator",
+          expertise: vol.experience ? (vol.experience.length > 60 ? vol.experience.substring(0, 60) + "..." : vol.experience) : "Community Support",
+          description: vol.experience || "Smart Citizen Coordinator assisting with community projects and guidance.",
+          location: [vol.city, vol.district].filter(Boolean).join(", ") || vol.address || "India",
+          photoUrl: vol.image || undefined,
+          showPhone: true,
+        }));
+        setProfessionals(mapped);
       } catch (error) {
-        console.error("Failed to load live volunteers, falling back to mock data:", error);
-        setProfessionals(mockProfessionals);
+        console.error("Failed to load live volunteers:", error);
+        setProfessionals([]);
       } finally {
         setIsLoading(false);
       }

@@ -7,6 +7,7 @@ import (
 type Repository interface {
 	CreateReport(report *AbuseReport) error
 	GetReports(status string) ([]AbuseReport, error)
+	GetReportsByReporterID(reporterID string, status string) ([]AbuseReport, error)
 	GetReportByID(id string) (*AbuseReport, error)
 	UpdateReport(report *AbuseReport) error
 	AddMessage(message *ReportMessage) error
@@ -32,6 +33,16 @@ func (r *repository) GetReports(status string) ([]AbuseReport, error) {
 		q = q.Where("status = ?", status)
 	}
 	err := q.Preload("User").Preload("Admin").Order("created_at desc").Find(&reports).Error
+	return reports, err
+}
+
+func (r *repository) GetReportsByReporterID(reporterID string, status string) ([]AbuseReport, error) {
+	var reports []AbuseReport
+	q := r.db.Model(&AbuseReport{}).Preload("Messages").Where("reporter_user_id = ?", reporterID)
+	if status != "" {
+		q = q.Where("status = ?", status)
+	}
+	err := q.Order("created_at desc").Find(&reports).Error
 	return reports, err
 }
 

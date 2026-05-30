@@ -97,6 +97,8 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 		protected := api.Group("")
 		protected.Use(middleware.AuthMiddleware())
 		
+		// Get user's own reports
+		protected.GET("/reports", reportHandler.GetUserReports)
 		// Create report (accessible to authenticated users)
 		protected.POST("/reports", reportHandler.CreateReport)
 		// Get specific report details

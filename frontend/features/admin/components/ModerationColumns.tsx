@@ -2,36 +2,42 @@ import React from "react";
 import { Header } from "@/components/ui/TableComponent";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, MessageSquare } from "lucide-react";
+import { SupportTicket } from "@/features/citizen/types";
+import { formatDate } from "@/lib/utils";
 
 export const getModerationColumns = (
-  resolveReport: (id: string) => void
-): Header<any>[] => [
+  resolveReport: (id: string) => void,
+  openChat: (ticket: SupportTicket) => void,
+): Header<SupportTicket>[] => [
   {
-    label: "Report ID",
-    render: (report) => <span className="text-[14px] font-mono text-text-muted">{report.id}</span>,
-  },
-  {
-    label: "Reported User",
+    label: "Name",
     render: (report) => (
-      <div>
-        <div className="text-[14px] font-bold text-text">{report.reportedUserName}</div>
-        <div className="text-[12px] text-text-muted font-normal font-mono mt-0.5">{report.reportedUserId}</div>
-      </div>
+      <span className="text-[14px] text-text-muted leading-relaxed">
+        {report.reason}
+      </span>
     ),
   },
   {
     label: "Reason",
-    render: (report) => <span className="text-[14px] text-text-muted">{report.reason}</span>,
+    render: (report) => (
+      <span className="text-[14px] text-text-muted leading-relaxed">
+        {report.reason}
+      </span>
+    ),
   },
   {
-    label: "Date",
-    render: (report) => <span className="text-[14px] text-text-muted">{report.date}</span>,
+    label: "Date Created",
+    render: (report) => (
+      <span className="text-[14px] text-text-muted">
+        {formatDate(report.created_at, "short")}
+      </span>
+    ),
   },
   {
     label: "Status",
     render: (report) => (
-      <Badge variant={report.status === 'Resolved' ? 'success' : 'warning'}>
+      <Badge variant={report.status === "Resolved" ? "success" : "warning"}>
         {report.status}
       </Badge>
     ),
@@ -40,8 +46,17 @@ export const getModerationColumns = (
     label: "Actions",
     render: (report) => (
       <div className="flex items-center gap-2">
-        {report.status === 'Open' && (
-          <Button 
+        <Button
+          variant="ghost-primary"
+          size="icon"
+          shape="square"
+          onClick={() => openChat(report)}
+          title="Open Chat with Reporter"
+        >
+          <MessageSquare size={18} />
+        </Button>
+        {report.status === "Open" && (
+          <Button
             variant="ghost-success"
             size="icon"
             shape="square"

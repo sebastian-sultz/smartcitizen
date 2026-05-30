@@ -10,6 +10,7 @@ import (
 type Service interface {
 	CreateReport(userID uuid.UUID, reason string) (*AbuseReport, error)
 	GetReports(status string) ([]AbuseReport, error)
+	GetReportsByReporterID(reporterID uuid.UUID, status string) ([]AbuseReport, error)
 	ResolveReport(id, actionTaken string, adminID uuid.UUID) (*AbuseReport, error)
 	AddMessage(reportID string, senderID uuid.UUID, message string, isAdmin bool) (*ReportMessage, error)
 	GetMessages(reportID string, userID uuid.UUID, isAdmin bool) ([]ReportMessage, error)
@@ -39,6 +40,10 @@ func (s *service) CreateReport(userID uuid.UUID, reason string) (*AbuseReport, e
 
 func (s *service) GetReports(status string) ([]AbuseReport, error) {
 	return s.repo.GetReports(status)
+}
+
+func (s *service) GetReportsByReporterID(reporterID uuid.UUID, status string) ([]AbuseReport, error) {
+	return s.repo.GetReportsByReporterID(reporterID.String(), status)
 }
 
 func (s *service) GetReportByID(id string, userID uuid.UUID, isAdmin bool) (*AbuseReport, error) {

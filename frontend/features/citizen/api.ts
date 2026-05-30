@@ -75,6 +75,16 @@ export const updateVolunteer = async (
   }
 };
 
+export const getUserReports = async (status?: string): Promise<SupportTicket[]> => {
+  try {
+    const url = status ? `/reports?status=${status}` : '/reports';
+    const response = await api.get<{ reports: SupportTicket[] }>(url);
+    return response.data.reports || [];
+  } catch (error: unknown) {
+    handleApiError(error, "Failed to load support tickets");
+  }
+};
+
 export const getReport = async (id: string): Promise<ReportResponse> => {
   try {
     const response = await api.get(`/reports/${id}`);
