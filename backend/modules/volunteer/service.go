@@ -36,8 +36,12 @@ func (s *service) CreateVolunteer(req *request.CreateVolunteer) (*Volunteer, err
 		return nil, errors.New("user not found")
 	}
 
-	if u.ReferralPaymentCount <= 10 {
-		return nil, errors.New("not eligible yet: referral payment count must be greater than 10")
+	if u.TotalReferrals < 10 {
+		return nil, errors.New("not eligible yet: total referrals must be at least 10")
+	}
+
+	if u.ReferralPaymentCount < 10 {
+		return nil, errors.New("not eligible yet: at least 10 referred payments are required")
 	}
 
 	userID, err := uuid.Parse(req.UserID)

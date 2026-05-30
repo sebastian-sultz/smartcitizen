@@ -1,12 +1,139 @@
+import { UserResponse } from "@/features/shared/auth/types";
+
 export interface DashboardStats {
-  totalDonated: number;
-  totalReferrals: number;
-  campaignsJoined: number;
-  badgeLevel: string;
-  eventsAttended: number;
-  volunteerStatus: 'not_applied' | 'pending' | 'approved' | 'rejected';
+  total_amount: number;
+  total_referrals: number;
+  campaigns_joined: number;
+  badge_level: string;
+  events_attended: number;
+  volunteer_status: 'not_applied' | 'pending' | 'approved' | 'rejected';
 }
 
+export interface ReferralStats {
+  total_referrals: number;
+  referral_payment_count: number;
+  total_contribution_generated: number;
+  referral_code: string;
+  referral_link: string;
+}
+
+export interface VolunteerEligibility {
+  total_referrals: number;
+  referral_payment_count: number;
+  is_eligible: boolean;
+  required_referrals: number;
+  required_payments: number;
+}
+
+export interface CreateVolunteerPayload {
+  user_id: string;
+  name: string;
+  email: string;
+  phone: string;
+  alternate_phone?: string;
+  address: string;
+  city: string;
+  district: string;
+  pincode: string;
+  profession: string;
+  experience: string;
+}
+
+export interface UpdateVolunteerPayload {
+  name?: string;
+  email?: string;
+  phone?: string;
+  alternate_phone?: string;
+  address?: string;
+  city?: string;
+  district?: string;
+  pincode?: string;
+  profession?: string;
+  experience?: string;
+}
+
+export interface CreateSupportTicketPayload {
+  category: 'account' | 'donation' | 'volunteer' | 'technical' | 'other';
+  subject: string;
+  description: string;
+  priority: 'low' | 'medium' | 'high';
+}
+
+export interface SocialLinksPayload {
+  linkedin_url: string;
+  twitter_url: string;
+  facebook_url: string;
+}
+
+export interface Volunteer {
+  id: string;
+  user_id: string;
+  name: string;
+  email: string;
+  phone: string;
+  alternate_phone: string;
+  address: string;
+  city: string;
+  district: string;
+  pincode: string;
+  profession: string;
+  experience: string;
+  image: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TicketMessage {
+  id: string;
+  report_id: string;
+  sender_id: string;
+  message: string;
+  created_at: string;
+}
+
+export interface SupportTicket {
+  id: string;
+  reporter_user_id: string;
+  reported_user_id: string;
+  reason: string;
+  status: 'Open' | 'Resolved' | 'Closed';
+  action_taken?: string | null;
+  resolved_at?: string | null;
+  created_at: string;
+  messages?: TicketMessage[];
+}
+
+export interface FAQItem {
+  id: string;
+  category: 'general' | 'donation' | 'volunteer' | 'account';
+  question: string;
+  answer: string;
+}
+
+// API Response interfaces
+export interface UserProfileResponse {
+  user: UserResponse;
+}
+
+export interface VolunteersListResponse {
+  volunteers: Volunteer[];
+}
+
+export interface VolunteerResponse {
+  volunteer: Volunteer;
+}
+
+export interface ReportResponse {
+  report: SupportTicket;
+}
+
+export interface ReportMessagesResponse {
+  messages: TicketMessage[];
+}
+
+export interface AddMessageResponse {
+  data: TicketMessage;
+}
 export interface ActivityItem {
   id: string;
   type: 'donation' | 'referral_join' | 'referral_donate' | 'event_register' | 'volunteer_apply' | 'ticket_update';
@@ -68,71 +195,5 @@ export interface ReferralMember {
   membershipStatus: 'active' | 'inactive';
 }
 
-export interface ReferralStats {
-  totalInvited: number;
-  joinedCount: number;
-  activeDonorsCount: number;
-  totalContributionGenerated: number;
-  referralCode: string;
-  referralLink: string;
-}
 
-export interface MemberProfile {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  dob?: string;
-  profilePhoto?: string;
-  userType: 'member' | 'admin';
-  memberId: string;
-  joinDate: string;
-  status: 'active' | 'inactive';
-  address?: string;
-  city?: string;
-  district?: string;
-  state?: string;
-  pincode?: string;
-  linkedinUrl?: string;
-  twitterUrl?: string;
-  facebookUrl?: string;
-}
 
-export interface TicketMessage {
-  id: string;
-  sender: 'user' | 'agent';
-  senderName: string;
-  content: string;
-  timestamp: string;
-  avatarUrl?: string;
-}
-
-export interface SupportTicket {
-  id: string;
-  ticketId: string;
-  category: 'account' | 'donation' | 'volunteer' | 'technical' | 'other';
-  subject: string;
-  description: string;
-  priority: 'low' | 'medium' | 'high';
-  status: 'open' | 'in_progress' | 'resolved' | 'closed';
-  createdAt: string;
-  updatedAt: string;
-  messages: TicketMessage[];
-}
-
-export interface FAQItem {
-  id: string;
-  category: 'general' | 'donation' | 'volunteer' | 'account';
-  question: string;
-  answer: string;
-}
-
-export interface VolunteerEligibility {
-  invitedCount: number;
-  joinedCount: number;
-  donatedCount: number;
-  isEligible: boolean;
-  requiredInvited: number;
-  requiredJoined: number;
-  requiredDonated: number;
-}

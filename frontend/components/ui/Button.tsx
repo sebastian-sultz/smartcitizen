@@ -39,7 +39,7 @@ const buttonVariants = cva(
         icon: "p-2 aspect-square flex items-center justify-center",
         "icon-xs": "p-1 aspect-square flex items-center justify-center",
         "icon-sm": "p-1.5 aspect-square flex items-center justify-center",
-        "icon-lg": "p-3 aspect:square flex items-center justify-center",
+        "icon-lg": "p-3 aspect-square flex items-center justify-center",
       },
       shape: {
         default: "rounded-xl",

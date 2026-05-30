@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { logoutUser } from "@/features/shared/auth/api";
+import { resetRedirectState } from "@/lib/axios";
 
 export interface Session {
   userId: string;
@@ -10,27 +12,32 @@ interface AuthState {
   isLoggedIn: boolean;
   userType: string | null;
   setSession: (session: Session | null) => void;
-  logout: () => Promise<void>;
+  logout: (onSuccess?: () => void) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
   session: null,
   isLoggedIn: false,
   userType: null,
-  setSession: (session) =>
+  setSession: (session) => {
+    resetRedirectState();
     set({
       session,
       isLoggedIn: !!session,
       userType: session?.userType || null,
-    }),
-  logout: async () => {
+    });
+  },
+  logout: async (onSuccess) => {
     try {
-      await fetch("/api/auth/logout", { method: "POST" });
+      await logoutUser();
     } catch (err) {
       console.error("Logout failed:", err);
     } finally {
       set({ session: null, isLoggedIn: false, userType: null });
-      if (typeof window !== "undefined") {
+      resetRedirectState();
+      if (onSuccess) {
+        onSuccess();
+      } else if (typeof window !== "undefined") {
         window.location.href = "/member_login";
       }
     }

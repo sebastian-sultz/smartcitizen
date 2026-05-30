@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Info, CheckCircle2, AlertTriangle, XCircle } from "lucide-react";
 
-interface AlertOptions {
+export interface AlertOptions {
   title?: string;
   message: string;
   buttonText?: string;
@@ -20,7 +20,7 @@ interface AlertOptions {
   onClose?: () => void;
 }
 
-interface ConfirmOptions {
+export interface ConfirmOptions {
   title?: string;
   message: string;
   confirmText?: string;

@@ -56,3 +56,18 @@ Do not use raw HTML tags if a corresponding custom UI component is available in 
 * **Never** create or rename files to `middleware.ts` or `middleware.js` in the frontend directory. Next.js 16+ has deprecated `middleware.ts` in favor of `proxy.ts` (or `proxy.js`).
 * The exported function must be named `proxy`, not `middleware`.
 * All route protection, redirection, header modification, and silent token refreshes must be defined inside [frontend/proxy.ts](file:///Users/sebastian/Desktop/c1/Code/smartcitizen/frontend/proxy.ts). Next.js natively calls this file.
+
+### 8. Zustand State Management
+* **Shared Data Caching**: Shared data (such as user profiles, volunteer records, or auth sessions) must be read from centralized Zustand stores rather than being fetched independently inside individual components.
+* **Flat Store Shape**: Store state should be kept simple and flat (primarily holding raw API responses and actions). Avoid storing derived or computed values in the store state; instead, use selectors to compute these values dynamically.
+* **No Unnecessary Middleware**: Do not use store middleware (like persist, devtools, etc.) unless explicitly approved.
+
+### 9. Type Safety & Avoiding 'any'
+* **No `as any` Casts**: Never use `as any` or `any` type annotations in form submissions, component properties, or API payloads. Properly type the form's `initialValues` and properties to match the expected payload/callback signatures.
+* **Catch Blocks**: Catch blocks must type errors as `unknown` rather than `any`. Perform explicit type-narrowing (using `instanceof Error` or Axios utilities like `isAxiosError`) before reading error properties.
+
+### 10. Code & Logic Deduplication
+* **Shared Utility/Selectors**: If the same derived computation (e.g., generating referral links, processing status badges, or formatting fields) is used in multiple components, extract it to a shared utility helper or a Zustand selector.
+* **Reusable UI Components**: If a complex UI pattern (like a sharing modal or dialog) is repeated in different features, extract it into a reusable component to avoid duplicating JSX and component logic.
+
+

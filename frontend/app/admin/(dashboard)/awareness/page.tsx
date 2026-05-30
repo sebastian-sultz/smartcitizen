@@ -1,4 +1,4 @@
-import { AwarenessFeature } from "@/features/awareness/AwarenessFeature";
+import { AwarenessFeature } from "@/features/citizen/community/components/AwarenessFeature";
 
 export const metadata = {
   title: "Awareness Activities | GSCF Admin",

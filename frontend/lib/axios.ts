@@ -5,11 +5,11 @@ import { toast } from "sonner";
 let isRedirecting = false;
 let isRefreshing = false;
 let failedQueue: Array<{
-  resolve: (value?: any) => void;
-  reject: (reason?: any) => void;
+  resolve: (value?: unknown) => void;
+  reject: (reason?: unknown) => void;
 }> = [];
 
-const processQueue = (error: any) => {
+const processQueue = (error: unknown) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
@@ -18,6 +18,10 @@ const processQueue = (error: any) => {
     }
   });
   failedQueue = [];
+};
+
+export const resetRedirectState = () => {
+  isRedirecting = false;
 };
 
 const api = axios.create({
@@ -86,20 +90,11 @@ api.interceptors.response.use(
 
               if (typeof window !== "undefined" && !isRedirecting) {
                 isRedirecting = true;
-                toast.error("Session expired. Redirecting to login...");
-
-                fetch("/api/auth/logout", { method: "POST" })
-                  .catch((logoutErr) =>
-                    console.error("Failed to log out cookie:", logoutErr),
-                  )
-                  .finally(() => {
-                    const path = window.location.pathname;
-                    if (path.startsWith("/admin")) {
-                      window.location.href = "/admin/login";
-                    } else {
-                      window.location.href = "/member_login";
-                    }
-                  });
+                window.dispatchEvent(
+                  new CustomEvent("auth-session-expired", {
+                    detail: { path: window.location.pathname },
+                  })
+                );
               }
               reject(err);
             })
@@ -121,22 +116,11 @@ api.interceptors.response.use(
           !isRedirecting
         ) {
           isRedirecting = true;
-          toast.error("Session expired. Redirecting to login...");
-
-          try {
-            await fetch("/api/auth/logout", { method: "POST" });
-          } catch (logoutErr) {
-            console.error(
-              "Failed to log out cookie via route handler:",
-              logoutErr,
-            );
-          }
-
-          if (path.startsWith("/admin")) {
-            window.location.href = "/admin/login";
-          } else {
-            window.location.href = "/member_login";
-          }
+          window.dispatchEvent(
+            new CustomEvent("auth-session-expired", {
+              detail: { path },
+            })
+          );
         }
       } else if (isTimeout) {
         toast.error("Request timed out. Please try again.");
@@ -145,7 +129,7 @@ api.interceptors.response.use(
           "Unable to connect to the server. Please check your connection.",
         );
       } else if (status >= 400) {
-        const skipGlobalErrorToast = (error.config as any)
+        const skipGlobalErrorToast = (error.config as { skipGlobalErrorToast?: boolean })
           ?.skipGlobalErrorToast;
         if (!skipGlobalErrorToast) {
           const message =

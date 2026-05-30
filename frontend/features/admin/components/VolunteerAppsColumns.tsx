@@ -3,10 +3,11 @@ import { Header } from "@/components/ui/TableComponent";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { XCircle } from "lucide-react";
-import { VolunteerResponse } from "@/features/volunteer/types";
+import { VolunteerResponse } from "@/features/public/volunteer/types";
+import { formatDate } from "@/lib/utils";
 
 export const getVolunteerAppsColumns = (
-  updateVolunteerAppStatus: (id: string, status: any) => void
+  updateVolunteerAppStatus: (id: string, status: "Approved" | "Rejected") => void | Promise<void>
 ): Header<VolunteerResponse>[] => [
   {
     label: "App ID",
@@ -28,7 +29,7 @@ export const getVolunteerAppsColumns = (
     label: "Date",
     render: (app) => (
       <span className="text-[14px] text-text-muted">
-        {new Date(app.created_at).toLocaleDateString()}
+        {formatDate(app.created_at, "default")}
       </span>
     ),
   },

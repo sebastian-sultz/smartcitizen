@@ -1,16 +1,16 @@
 "use client";
 
 import React from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 import { LogIn, ShieldCheck, Phone, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { loginUser } from "@/features/auth";
+import { loginUser } from "@/features/shared/auth";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
 
 const loginSchema = Yup.object().shape({
   phone: Yup.string()
@@ -23,6 +23,26 @@ const loginSchema = Yup.object().shape({
 
 export default function LoginPage() {
   const router = useRouter();
+
+  const formik = useFormik({
+    initialValues: { phone: "", password: "" },
+    validationSchema: loginSchema,
+    onSubmit: async (values, { setSubmitting }) => {
+      setSubmitting(true);
+      try {
+        const res = await loginUser({
+          phone: values.phone,
+          password: values.password,
+        });
+        toast.success(res.message || "Logged in successfully!");
+        router.push("/admin");
+      } catch (err: unknown) {
+        console.error("Admin login failed:", err);
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
 
   return (
     <div className="min-h-screen bg-bg flex items-center justify-center p-4">
@@ -47,117 +67,63 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <Formik
-            initialValues={{ phone: "", password: "" }}
-            validationSchema={loginSchema}
-            onSubmit={async (values, { setSubmitting }) => {
-              setSubmitting(true);
-              try {
-                const res = await loginUser({
-                  phone: values.phone,
-                  password: values.password,
-                });
-                toast.success(res.message || "Logged in successfully!");
-                router.push("/admin");
-              } catch (err: any) {
-                console.error("Admin login failed:", err);
-              } finally {
-                setSubmitting(false);
+          <form onSubmit={formik.handleSubmit} className="space-y-6">
+            <div className="space-y-4">
+              <Input
+                label="Mobile Number"
+                name="phone"
+                type="tel"
+                placeholder="10-digit mobile number"
+                icon={<Phone size={18} />}
+                value={formik.values.phone}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.phone && formik.errors.phone ? (formik.errors.phone as string) : undefined}
+              />
+
+              <Input
+                label="Password"
+                name="password"
+                type="password"
+                placeholder="••••••••"
+                icon={<Lock size={18} />}
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.password && formik.errors.password ? (formik.errors.password as string) : undefined}
+              />
+            </div>
+
+            <div className="flex items-center justify-between text-xs">
+              <label className="flex items-center cursor-pointer text-text-muted gap-2">
+                <Checkbox />
+                Remember me
+              </label>
+              <a
+                href="#"
+                className="text-primary font-bold hover:underline"
+              >
+                Forgot password?
+              </a>
+            </div>
+
+            <Button
+              type="submit"
+              variant="primary"
+              loading={formik.isSubmitting}
+              startIcon={
+                !formik.isSubmitting && (
+                  <LogIn
+                    size={20}
+                    className="group-hover:translate-x-1 transition-transform"
+                  />
+                )
               }
-            }}
-          >
-            {({ isSubmitting, errors, touched }) => (
-              <Form className="space-y-6">
-                <div className="space-y-4">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold uppercase text-text-light tracking-widest ml-1">
-                      Mobile Number
-                    </label>
-                    <div className="relative">
-                      <Phone
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-text-light"
-                        size={18}
-                      />
-                      <Field
-                        name="phone"
-                        type="tel"
-                        placeholder="10-digit mobile number"
-                        className={cn(
-                          "w-full pl-12 pr-4 py-3 bg-bg border rounded-2xl outline-none transition-all focus:ring-2 focus:ring-primary/20",
-                          errors.phone && touched.phone
-                            ? "border-red-500"
-                            : "border-border",
-                        )}
-                      />
-                    </div>
-                    <ErrorMessage
-                      name="phone"
-                      component="p"
-                      className="text-xs text-red-500 mt-1 ml-1"
-                    />
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-bold uppercase text-text-light tracking-widest ml-1">
-                      Password
-                    </label>
-                    <div className="relative">
-                      <Lock
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-text-light"
-                        size={18}
-                      />
-                      <Field
-                        name="password"
-                        type="password"
-                        placeholder="••••••••"
-                        className={cn(
-                          "w-full pl-12 pr-4 py-3 bg-bg border rounded-2xl outline-none transition-all focus:ring-2 focus:ring-primary/20",
-                          errors.password && touched.password
-                            ? "border-red-500"
-                            : "border-border",
-                        )}
-                      />
-                    </div>
-                    <ErrorMessage
-                      name="password"
-                      component="p"
-                      className="text-xs text-red-500 mt-1 ml-1"
-                    />
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between text-xs">
-                  <label className="flex items-center cursor-pointer text-text-muted gap-2">
-                    <Checkbox />
-                    Remember me
-                  </label>
-                  <a
-                    href="#"
-                    className="text-primary font-bold hover:underline"
-                  >
-                    Forgot password?
-                  </a>
-                </div>
-
-                <Button
-                  type="submit"
-                  variant="primary"
-                  loading={isSubmitting}
-                  startIcon={
-                    !isSubmitting && (
-                      <LogIn
-                        size={20}
-                        className="group-hover:translate-x-1 transition-transform"
-                      />
-                    )
-                  }
-                  className="w-full py-4 text-base group"
-                >
-                  Sign In
-                </Button>
-              </Form>
-            )}
-          </Formik>
+              className="w-full py-4 text-base group"
+            >
+              Sign In
+            </Button>
+          </form>
         </div>
 
         <p className="text-center mt-8 text-xs text-text-light">

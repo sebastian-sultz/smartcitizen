@@ -15,7 +15,7 @@ import {
   FileText
 } from "lucide-react";
 import Image from "next/image";
-import { createEvent, updateEventImage } from "@/features/community/api";
+import { createEvent, updateEventImage } from "@/features/citizen/community/api";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/utils";
@@ -201,7 +201,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
               />
               <Input
                 label="CTA Text"
-                placeholder="e.g. Register Now, Join as Volunteer"
+                placeholder="e.g. Register Now, Join as Smart Citizen"
                 disabled={formik.isSubmitting}
                 name="cta_text"
                 value={formik.values.cta_text}

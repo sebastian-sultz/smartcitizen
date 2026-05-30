@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { TableComponent } from "@/components/ui/TableComponent";
 import { Spinner } from "@/components/ui/spinner";
 import { getVolunteerAppsColumns } from "./VolunteerAppsColumns";
-import { getAllVolunteers, deleteVolunteer, VolunteerResponse } from "@/features/volunteer";
+import { getAllVolunteers, deleteVolunteer, VolunteerResponse } from "@/features/public/volunteer";
 
 export const VolunteerAppsTable = () => {
   const [volunteers, setVolunteers] = useState<VolunteerResponse[]>([]);
