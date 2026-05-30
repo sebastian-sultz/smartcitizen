@@ -20,6 +20,9 @@ export const EventsTable = () => {
   const [events, setEvents] = useState<EventResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalRows, setTotalRows] = useState(0);
 
   // Participants states
   const [participants, setParticipants] = useState<EventRegistration[]>([]);
@@ -29,8 +32,13 @@ export const EventsTable = () => {
 
   const fetchEvents = async () => {
     try {
-      const fetched = await getAllEvents();
-      setEvents(fetched);
+      const res = await getAllEvents(undefined, page, limit);
+      if (res && res.events) {
+        setEvents(res.events);
+        if (res.pagination) {
+          setTotalRows(res.pagination.total_rows);
+        }
+      }
     } catch (err) {
       console.error("Failed to fetch events:", err);
     }
@@ -46,7 +54,7 @@ export const EventsTable = () => {
       }
     };
     load();
-  }, []);
+  }, [page, limit]);
 
   const deleteEvent = async (id: string) => {
     try {
@@ -116,6 +124,15 @@ export const EventsTable = () => {
           loading={loading}
           emptyMessage="No events found" 
           className="shadow-none border-0" 
+          pagination={{
+            page,
+            limit,
+            total: totalRows,
+            onChange: (p, l) => {
+              setPage(p);
+              setLimit(l);
+            }
+          }}
         />
       </CardContent>
 

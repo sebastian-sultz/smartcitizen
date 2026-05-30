@@ -27,9 +27,21 @@ export const resolveAdminReport = async (
   }
 };
 
-export const getNonAdminUsers = async (): Promise<{ users: UserResponse[] }> => {
+export interface PaginationInfo {
+  limit: number;
+  page: number;
+  total_rows: number;
+  total_pages: number;
+}
+
+export const getNonAdminUsers = async (
+  page?: number,
+  limit?: number
+): Promise<{ users: UserResponse[]; pagination?: PaginationInfo }> => {
   try {
-    const response = await api.get<{ users: UserResponse[] }>("/users");
+    const response = await api.get<{ users: UserResponse[]; pagination?: PaginationInfo }>("/users", {
+      params: { page, limit },
+    });
     return response.data;
   } catch (error: unknown) {
     handleApiError(error, "Failed to load users list");

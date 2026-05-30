@@ -2,14 +2,24 @@ import api from "@/lib/axios";
 import { handleApiError } from "@/lib/api-helpers";
 import { EventResponse, CreateEventPayload, UpdateEventPayload, EventRegistration } from "./types";
 
-export const getAllEvents = async (eventType?: string): Promise<EventResponse[]> => {
+import { PaginationInfo } from "@/features/admin/api";
+
+export const getAllEvents = async (
+  eventType?: string,
+  page?: number,
+  limit?: number
+): Promise<{ events: EventResponse[]; pagination: PaginationInfo }> => {
   try {
-    const url = eventType ? `/events?event_type=${eventType}` : '/events';
-    const response = await api.get<{ events: EventResponse[] }>(url);
-    const data = response.data;
-    return data.events || [];
+    const params: Record<string, any> = {};
+    if (eventType) params.event_type = eventType;
+    if (page) params.page = page;
+    if (limit) params.limit = limit;
+
+    const response = await api.get<{ events: EventResponse[]; pagination: PaginationInfo }>('/events', { params });
+    return response.data;
   } catch (error: unknown) {
     handleApiError(error, "Failed to fetch events");
+    throw error;
   }
 };
 

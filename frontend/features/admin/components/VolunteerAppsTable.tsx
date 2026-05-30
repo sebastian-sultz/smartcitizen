@@ -13,6 +13,9 @@ import { Badge } from "@/components/ui/Badge";
 export const VolunteerAppsTable = () => {
   const [volunteers, setVolunteers] = useState<VolunteerResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalRows, setTotalRows] = useState(0);
 
   // Modal States
   const [selectedVolunteer, setSelectedVolunteer] = useState<VolunteerResponse | null>(null);
@@ -21,9 +24,12 @@ export const VolunteerAppsTable = () => {
   const fetchVolunteers = async () => {
     try {
       setIsLoading(true);
-      const res = await getAllVolunteers();
+      const res = await getAllVolunteers(undefined, page, limit);
       if (res && res.volunteers) {
         setVolunteers(res.volunteers);
+        if (res.pagination) {
+          setTotalRows(res.pagination.total_rows);
+        }
       }
     } catch (err) {
       console.error("Failed to load volunteers:", err);
@@ -34,7 +40,7 @@ export const VolunteerAppsTable = () => {
 
   useEffect(() => {
     fetchVolunteers();
-  }, []);
+  }, [page, limit]);
 
   const updateVolunteerAppStatus = async (id: string, status: 'Approved' | 'Rejected') => {
     try {
@@ -60,18 +66,22 @@ export const VolunteerAppsTable = () => {
         <CardTitle>Volunteer Applications</CardTitle>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
-          <div className="flex justify-center items-center py-12">
-            <Spinner className="size-8 text-primary" />
-          </div>
-        ) : (
-          <TableComponent 
-            headers={columns} 
-            data={volunteers} 
-            emptyMessage="No volunteer applications found" 
-            className="shadow-none border-0" 
-          />
-        )}
+        <TableComponent 
+          headers={columns} 
+          data={volunteers} 
+          loading={isLoading}
+          emptyMessage="No volunteer applications found" 
+          className="shadow-none border-0" 
+          pagination={{
+            page,
+            limit,
+            total: totalRows,
+            onChange: (p, l) => {
+              setPage(p);
+              setLimit(l);
+            }
+          }}
+        />
       </CardContent>
 
       {/* Volunteer Application Details Modal */}

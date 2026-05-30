@@ -33,9 +33,9 @@ export function UpcomingEvents() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const fetched = await getAllEvents();
-        if (fetched) {
-          setEvents(fetched);
+        const res = await getAllEvents();
+        if (res && res.events) {
+          setEvents(res.events);
         }
       } catch (err) {
         console.error("Failed to fetch events:", err);

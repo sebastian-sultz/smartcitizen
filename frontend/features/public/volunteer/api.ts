@@ -22,10 +22,20 @@ export const getVolunteerById = async (id: string): Promise<VolunteerResponse> =
   }
 };
 
-export const getAllVolunteers = async (search?: string): Promise<{ volunteers: VolunteerResponse[] }> => {
+import { PaginationInfo } from "@/features/admin/api";
+
+export const getAllVolunteers = async (
+  search?: string,
+  page?: number,
+  limit?: number
+): Promise<{ volunteers: VolunteerResponse[]; pagination?: PaginationInfo }> => {
   try {
-    const params = search ? { q: search } : {};
-    const response = await api.get<{ volunteers: VolunteerResponse[] }>('/volunteers', { params });
+    const params: Record<string, any> = {};
+    if (search) params.q = search;
+    if (page) params.page = page;
+    if (limit) params.limit = limit;
+    
+    const response = await api.get<{ volunteers: VolunteerResponse[]; pagination?: PaginationInfo }>('/volunteers', { params });
     return response.data;
   } catch (error: unknown) {
     handleApiError(error, "Failed to load volunteers list");

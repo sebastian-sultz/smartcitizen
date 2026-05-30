@@ -29,9 +29,9 @@ export function CommunityActivities() {
   useEffect(() => {
     const fetchActivities = async () => {
       try {
-        const fetched = await getAllEvents("Activity");
-        if (fetched && fetched.length > 0) {
-          setActivities(fetched);
+        const res = await getAllEvents("Activity");
+        if (res && res.events && res.events.length > 0) {
+          setActivities(res.events);
         } else {
           setActivities([]);
         }

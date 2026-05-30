@@ -12,6 +12,9 @@ import { UserDetailModal } from "./UserDetailModal";
 export const UsersTable = () => {
   const [users, setUsers] = useState<UserResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalRows, setTotalRows] = useState(0);
 
   // Modal States
   const [selectedUser, setSelectedUser] = useState<UserResponse | null>(null);
@@ -20,9 +23,12 @@ export const UsersTable = () => {
   const fetchUsers = async () => {
     try {
       setIsLoading(true);
-      const res = await getNonAdminUsers();
+      const res = await getNonAdminUsers(page, limit);
       if (res && res.users) {
         setUsers(res.users);
+        if (res.pagination) {
+          setTotalRows(res.pagination.total_rows);
+        }
       }
     } catch (err) {
       console.error("Failed to load users:", err);
@@ -33,7 +39,7 @@ export const UsersTable = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [page, limit]);
 
   const handleViewDetails = (user: UserResponse) => {
     setSelectedUser(user);
@@ -79,18 +85,22 @@ export const UsersTable = () => {
         <CardTitle>User Management</CardTitle>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
-          <div className="flex justify-center items-center py-12">
-            <Spinner className="size-8 text-primary" />
-          </div>
-        ) : (
-          <TableComponent 
-            headers={columns} 
-            data={users} 
-            emptyMessage="No users found" 
-            className="shadow-none border-0" 
-          />
-        )}
+        <TableComponent 
+          headers={columns} 
+          data={users} 
+          loading={isLoading}
+          emptyMessage="No users found" 
+          className="shadow-none border-0" 
+          pagination={{
+            page,
+            limit,
+            total: totalRows,
+            onChange: (p, l) => {
+              setPage(p);
+              setLimit(l);
+            }
+          }}
+        />
       </CardContent>
 
       <UserDetailModal 

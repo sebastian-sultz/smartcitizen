@@ -48,9 +48,9 @@ export function EventsMain() {
     const loadData = async () => {
       setLoading(true);
       try {
-        const fetched = await getAllEvents();
-        if (fetched && fetched.length > 0) {
-          setEvents(fetched);
+        const res = await getAllEvents();
+        if (res && res.events && res.events.length > 0) {
+          setEvents(res.events);
         } else {
           setEvents([]);
         }

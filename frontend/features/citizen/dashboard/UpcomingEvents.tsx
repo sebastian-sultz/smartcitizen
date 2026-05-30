@@ -25,10 +25,10 @@ export default function UpcomingEvents() {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const fetched = await getAllEvents();
-        if (fetched) {
+        const res = await getAllEvents();
+        if (res && res.events) {
           // Display top 3 events statically on the dashboard
-          setEvents(fetched.slice(0, 3));
+          setEvents(res.events.slice(0, 3));
         }
 
         if (session) {
