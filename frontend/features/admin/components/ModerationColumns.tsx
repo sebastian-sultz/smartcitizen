@@ -13,17 +13,18 @@ export const getModerationColumns = (
   {
     label: "Name",
     render: (report) => (
-      <span className="text-[14px] text-text-muted leading-relaxed">
-        {report.reason}
+      <span className="text-[14px] font-bold text-text leading-relaxed">
+        {report.user?.name || "Anonymous User"}
       </span>
     ),
   },
   {
-    label: "Reason",
+    label: "Issue",
     render: (report) => (
-      <span className="text-[14px] text-text-muted leading-relaxed">
-        {report.reason}
-      </span>
+      <div className="flex flex-col">
+        <span className="text-[14px] font-bold text-text leading-tight">{report.title}</span>
+        <span className="text-[12px] text-text-muted mt-1 line-clamp-2 leading-relaxed">{report.description}</span>
+      </div>
     ),
   },
   {

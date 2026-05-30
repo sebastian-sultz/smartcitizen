@@ -2,14 +2,7 @@
 
 import { DashboardStats } from "../types";
 import { Card } from "@/components/ui/Card";
-import { 
-  Heart, 
-  Users, 
-  Flag, 
-  Award, 
-  Calendar, 
-  ShieldCheck 
-} from "lucide-react";
+import { Heart, Users, Flag, Award, Calendar, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface StatsGridProps {
@@ -19,21 +12,33 @@ interface StatsGridProps {
 export default function StatsGrid({ stats }: StatsGridProps) {
   if (!stats) return null;
 
-  const getVolunteerStatusLabel = (status: DashboardStats["volunteer_status"]) => {
+  const getVolunteerStatusLabel = (
+    status: DashboardStats["volunteer_status"],
+  ) => {
     switch (status) {
-      case "approved": return "Approved Volunteer";
-      case "pending": return "Review Pending";
-      case "rejected": return "Not Eligible";
-      default: return "Apply to Volunteer";
+      case "approved":
+        return "Approved Volunteer";
+      case "pending":
+        return "Review Pending";
+      case "rejected":
+        return "Not Eligible";
+      default:
+        return "Apply to Volunteer";
     }
   };
 
-  const getVolunteerStatusColor = (status: DashboardStats["volunteer_status"]) => {
+  const getVolunteerStatusColor = (
+    status: DashboardStats["volunteer_status"],
+  ) => {
     switch (status) {
-      case "approved": return "from-emerald-50 to-emerald-100/50 border-emerald-100 text-emerald-600";
-      case "pending": return "from-amber-50 to-amber-100/50 border-amber-100 text-amber-600";
-      case "rejected": return "from-rose-50 to-rose-100/50 border-rose-100 text-rose-600";
-      default: return "from-slate-50 to-slate-100/50 border-slate-100 text-slate-600";
+      case "approved":
+        return "from-emerald-50 to-emerald-100/50 border-emerald-100 text-emerald-600";
+      case "pending":
+        return "from-amber-50 to-amber-100/50 border-amber-100 text-amber-600";
+      case "rejected":
+        return "from-rose-50 to-rose-100/50 border-rose-100 text-rose-600";
+      default:
+        return "from-slate-50 to-slate-100/50 border-slate-100 text-slate-600";
     }
   };
 
@@ -54,42 +59,15 @@ export default function StatsGrid({ stats }: StatsGridProps) {
       valueClass: "text-blue-900",
       label: "Citizens registered via you",
     },
-    {
-      title: "Campaigns Joined",
-      value: stats.campaigns_joined.toString(),
-      icon: Flag,
-      colorClass: "from-emerald-50 to-emerald-100/50 border-emerald-100 text-emerald-600",
-      valueClass: "text-emerald-900",
-      label: "Active citizen initiatives",
-    },
-    {
-      title: "Badge Level",
-      value: stats.badge_level,
-      icon: Award,
-      colorClass: "from-purple-50 to-purple-100/50 border-purple-100 text-purple-600",
-      valueClass: "text-purple-900",
-      label: "Earned citizen status",
-    },
+
     {
       title: "Events Attended",
       value: stats.events_attended.toString(),
       icon: Calendar,
-      colorClass: "from-indigo-50 to-indigo-100/50 border-indigo-100 text-indigo-600",
+      colorClass:
+        "from-indigo-50 to-indigo-100/50 border-indigo-100 text-indigo-600",
       valueClass: "text-indigo-900",
       label: "Field drives & assemblies",
-    },
-    {
-      title: "Volunteer Status",
-      value: getVolunteerStatusLabel(stats.volunteer_status),
-      icon: ShieldCheck,
-      colorClass: getVolunteerStatusColor(stats.volunteer_status),
-      valueClass: `text-sm font-bold tracking-tight py-2.5 ${
-        stats.volunteer_status === 'approved' ? 'text-emerald-900' :
-        stats.volunteer_status === 'pending' ? 'text-amber-900' :
-        stats.volunteer_status === 'rejected' ? 'text-rose-900' : 'text-slate-900'
-      }`,
-      label: "Special operations eligibility",
-      isVolunteerField: true
     },
   ];
 
@@ -98,11 +76,11 @@ export default function StatsGrid({ stats }: StatsGridProps) {
       {statCards.map((card, idx) => {
         const Icon = card.icon;
         return (
-          <Card 
-            key={idx} 
+          <Card
+            key={idx}
             className={cn(
               "bg-gradient-to-br border shadow-sm p-6 flex flex-col justify-between rounded-3xl",
-              card.colorClass
+              card.colorClass,
             )}
           >
             <div className="flex justify-between items-start">
@@ -111,17 +89,17 @@ export default function StatsGrid({ stats }: StatsGridProps) {
               </span>
               <Icon size={22} className="opacity-90 shrink-0" />
             </div>
-            
+
             <div className="mt-4">
-              {card.isVolunteerField ? (
-                <div className={cn("text-base font-bold", card.valueClass)}>
-                  {card.value}
-                </div>
-              ) : (
-                <div className={cn("text-2xl md:text-3xl font-display font-black leading-none", card.valueClass)}>
-                  {card.value}
-                </div>
-              )}
+              <div
+                className={cn(
+                  "text-2xl md:text-3xl font-display font-black leading-none",
+                  card.valueClass,
+                )}
+              >
+                {card.value}
+              </div>
+
               <p className="text-[11px] opacity-75 font-medium mt-1">
                 {card.label}
               </p>

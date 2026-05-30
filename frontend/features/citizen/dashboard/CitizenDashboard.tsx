@@ -22,7 +22,6 @@ import WelcomeHero from "./WelcomeHero";
 import MemberCard from "./MemberCard";
 import StatsGrid from "./StatsGrid";
 import QuickActions from "./QuickActions";
-import RecentActivity from "./RecentActivity";
 import UpcomingEvents from "./UpcomingEvents";
 import ReferralSummaryWidget from "./ReferralSummaryWidget";
 import DonationSummaryWidget from "./DonationSummaryWidget";
@@ -130,7 +129,7 @@ export function CitizenDashboard() {
           <QuickActions onInviteClick={() => setIsShareOpen(true)} />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <RecentActivity activities={activities} />
+
             <UpcomingEvents />
           </div>
         </div>
@@ -139,12 +138,7 @@ export function CitizenDashboard() {
         <div className="space-y-8">
           <MemberCard profile={user} />
 
-          <ReferralSummaryWidget
-            stats={refStats}
-            onInviteClick={() => setIsShareOpen(true)}
-          />
 
-          <DonationSummaryWidget stats={donStats} />
         </div>
       </div>
 

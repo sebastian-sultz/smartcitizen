@@ -68,10 +68,7 @@ export default function TicketDetail({ ticket, onBack, onUpdateTicket }: TicketD
   };
 
   const formattedDate = formatDate(ticket.created_at, "medium");
-  const match = ticket.reason.match(/^\[([A-Z]+)\]/);
-  const category = match ? match[1].toLowerCase() : "general";
-  const cleanReason = ticket.reason.replace(/^\[[A-Z]+\]\s*/, "");
-  const subject = cleanReason.split(":")[0] || cleanReason;
+  const subject = ticket.title;
 
   return (
     <Card className="flex flex-col h-full bg-bg/10 rounded-[30px] border border-border/80 shadow-none overflow-hidden">
@@ -91,13 +88,12 @@ export default function TicketDetail({ ticket, onBack, onUpdateTicket }: TicketD
           </Button>
           <div>
             <div className="flex items-center flex-wrap gap-2">
-              <span className="font-mono text-[10px] font-bold text-text-muted">SC-{ticket.id.substring(0, 5).toUpperCase()}</span>
               <h3 className="font-display font-bold text-text text-sm sm:text-base truncate max-w-[150px] sm:max-w-xs">
                 {subject}
               </h3>
             </div>
             <p className="text-[10px] text-text-muted mt-0.5 font-medium">
-              Lodged on {formattedDate} &bull; Category: <span className="capitalize">{category}</span>
+              Lodged on {formattedDate}
             </p>
           </div>
         </div>

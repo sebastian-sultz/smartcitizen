@@ -6,15 +6,21 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { MapPin, Clock, CheckCircle, Calendar, Info, MoveRight } from "lucide-react";
 import { useAlert } from "@/components/ui/AlertProvider";
-import { getAllEvents } from "../community/api";
+import {
+  getAllEvents,
+  registerForEvent,
+  getEventsByUserId,
+} from "../community/api";
 import { EventResponse } from "../community/types";
 import { Spinner } from "@/components/ui/spinner";
+import { useAuthStore } from "@/store/authStore";
 
 export default function UpcomingEvents() {
   const { showAlert } = useAlert();
   const [events, setEvents] = useState<EventResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [registeredEvents, setRegisteredEvents] = useState<string[]>([]);
+  const { session } = useAuthStore();
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -24,31 +30,46 @@ export default function UpcomingEvents() {
           // Display top 3 events statically on the dashboard
           setEvents(fetched.slice(0, 3));
         }
+
+        if (session) {
+          const registered = await getEventsByUserId("me");
+          if (registered) {
+            setRegisteredEvents(registered.map((r) => r.event_id));
+          }
+        }
       } catch (err) {
-        console.error("Failed to fetch events for dashboard:", err);
+        console.error(
+          "Failed to fetch events or registrations for dashboard:",
+          err,
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchEvents();
-  }, []);
+  }, [session]);
 
-  const handleRegister = (eventId: string, title: string) => {
-    if (registeredEvents.includes(eventId)) {
-      setRegisteredEvents(registeredEvents.filter((id) => id !== eventId));
+  const handleRegister = async (eventId: string, title: string) => {
+    if (!session) {
       showAlert({
-        title: "Registration Cancelled",
-        message: `Your registration for ${title} has been cancelled.`,
-        type: "info",
+        title: "Authentication Required",
+        message: "Please login to register for events.",
+        type: "warning",
       });
-    } else {
-      setRegisteredEvents([...registeredEvents, eventId]);
+      return;
+    }
+
+    try {
+      await registerForEvent(eventId);
+      setRegisteredEvents((prev) => [...prev, eventId]);
       showAlert({
         title: "Successfully Registered",
         message: `You are registered for ${title}! We have sent details to your registered number.`,
         type: "success",
       });
+    } catch (err) {
+      console.error("Failed to register for event:", err);
     }
   };
 
@@ -112,7 +133,7 @@ export default function UpcomingEvents() {
               : dateObj.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
 
             return (
-              <div 
+              <div
                 key={evt.id}
                 className="group p-4 bg-surface border border-border/40 rounded-[24px] flex flex-col gap-4 hover:border-primary/20 hover:shadow-sm transition-all duration-300"
               >
@@ -132,8 +153,11 @@ export default function UpcomingEvents() {
                     <span className="inline-block px-2 py-0.5 bg-primary/5 text-primary text-[9px] font-extrabold uppercase rounded-md tracking-wider">
                       {evt.category || "Community"}
                     </span>
-                    
-                    <h4 className="font-bold text-sm text-text leading-snug truncate group-hover:text-primary transition-colors duration-200" title={evt.event_name}>
+
+                    <h4
+                      className="font-bold text-sm text-text leading-snug truncate group-hover:text-primary transition-colors duration-200"
+                      title={evt.event_name}
+                    >
                       {evt.event_name}
                     </h4>
 
@@ -143,7 +167,10 @@ export default function UpcomingEvents() {
                         {timeStr}
                       </p>
                       <p className="flex items-center gap-1.5 truncate">
-                        <MapPin size={12} className="text-primary/65 shrink-0" />
+                        <MapPin
+                          size={12}
+                          className="text-primary/65 shrink-0"
+                        />
                         {evt.event_address}
                       </p>
                     </div>
@@ -155,16 +182,20 @@ export default function UpcomingEvents() {
                   <Button
                     variant={isRegistered ? "outline" : "primary"}
                     onClick={() => handleRegister(evt.id, evt.event_name)}
+                    disabled={isRegistered}
                     className={`w-full text-xs font-bold py-2 h-9 rounded-xl transition-all duration-200 ${
-                      isRegistered 
-                        ? "border-green-200 text-green-700 hover:bg-green-50 hover:text-green-800" 
+                      isRegistered
+                        ? "border-green-200 text-green-700 bg-green-50/50 hover:bg-green-50"
                         : ""
                     }`}
                   >
                     {isRegistered ? (
                       <span className="flex items-center justify-center gap-1.5">
-                        <CheckCircle size={14} className="text-green-600 shrink-0" />
-                        Going
+                        <CheckCircle
+                          size={14}
+                          className="text-green-600 shrink-0"
+                        />
+                        Registered
                       </span>
                     ) : (
                       "Register"

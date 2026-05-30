@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ChevronDown, Menu, X, Heart, LogIn } from "lucide-react";
+import { ChevronDown, Menu, X, Heart, LogIn, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { motion, AnimatePresence } from "framer-motion";
@@ -285,8 +285,11 @@ export default function Header() {
                     : "border-white/30 text-white hover:bg-white hover:text-primary",
                 )}
               >
-                <Link href={userType === "admin" ? "/admin" : "/citizen"} className="flex items-center gap-2">
-                  <LogIn size={16} />
+                <Link
+                  href={userType === "admin" ? "/admin" : "/citizen"}
+                  className="flex items-center gap-2"
+                >
+                  <LayoutDashboard size={16} />
                   Dashboard
                 </Link>
               </Button>
@@ -494,7 +497,7 @@ export default function Header() {
                           onClick={() => setMobileMenuOpen(false)}
                           className="flex items-center justify-center gap-2"
                         >
-                          <LogIn size={16} />
+                          <LayoutDashboard size={16} />
                           Dashboard
                         </Link>
                       </Button>

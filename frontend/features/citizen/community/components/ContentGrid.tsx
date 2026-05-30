@@ -27,9 +27,19 @@ interface ContentGridProps {
   emptyIcon: LucideIcon;
   emptyTitle: string;
   emptyDesc: string;
+  registeredEventIds?: string[];
+  onRegisterSuccess?: () => void;
 }
 
-export const ContentGrid = ({ items, type, emptyIcon, emptyTitle, emptyDesc }: ContentGridProps) => {
+export const ContentGrid = ({
+  items,
+  type,
+  emptyIcon,
+  emptyTitle,
+  emptyDesc,
+  registeredEventIds = [],
+  onRegisterSuccess
+}: ContentGridProps) => {
   if (items.length === 0) {
     return (
       <EmptyState 
@@ -92,7 +102,11 @@ export const ContentGrid = ({ items, type, emptyIcon, emptyTitle, emptyDesc }: C
             </CardHeader>
             <CardContent>
               {type === 'event' ? (
-                <EventRegisterButton />
+                <EventRegisterButton 
+                  eventId={item.id.toString()}
+                  isRegistered={registeredEventIds.includes(item.id.toString())}
+                  onRegisterSuccess={onRegisterSuccess}
+                />
               ) : (
                 <Link href={`/${type}s/${item.id}`} className="flex items-center gap-2 text-[14px] font-bold text-primary group-hover:gap-3 transition-all">
                   Read More

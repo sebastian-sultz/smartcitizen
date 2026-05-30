@@ -1,19 +1,77 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import React, { useState } from "react";
+import { ArrowRight, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useAlert } from "@/components/ui/AlertProvider";
+import { registerForEvent } from "../api";
+import { useAuthStore } from "@/store/authStore";
 
-export const EventRegisterButton = () => {
+interface EventRegisterButtonProps {
+  eventId: string;
+  isRegistered: boolean;
+  onRegisterSuccess?: () => void;
+}
+
+export const EventRegisterButton: React.FC<EventRegisterButtonProps> = ({
+  eventId,
+  isRegistered,
+  onRegisterSuccess,
+}) => {
   const { showAlert } = useAlert();
+  const { session } = useAuthStore();
+  const [loading, setLoading] = useState(false);
+
+  const handleRegister = async () => {
+    if (!session) {
+      showAlert({
+        title: "Authentication Required",
+        message: "Please login to register for events.",
+        type: "warning",
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      await registerForEvent(eventId);
+      showAlert({
+        title: "Successfully Registered",
+        message: "You have successfully registered for this event!",
+        type: "success",
+      });
+      if (onRegisterSuccess) {
+        onRegisterSuccess();
+      }
+    } catch (err) {
+      console.error("Failed to register for event:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <Button 
-      variant="primary"
-      endIcon={<ArrowRight size={16} />}
-      onClick={() => showAlert("Redirecting to event registration...")}
-      className="w-full"
+    <Button
+      variant={isRegistered ? "outline" : "primary"}
+      endIcon={isRegistered ? undefined : <ArrowRight size={16} />}
+      onClick={handleRegister}
+      disabled={isRegistered || loading}
+      isLoading={loading}
+      className={`w-full font-bold transition-all duration-200 ${
+        isRegistered
+          ? "border-green-200 text-green-700 bg-green-50/50 hover:bg-green-50"
+          : ""
+      }`}
     >
-      Register for Event
+      {isRegistered ? (
+        <span className="flex items-center justify-center gap-1.5">
+          <CheckCircle size={14} className="text-green-600 shrink-0" />
+          Registered
+        </span>
+      ) : (
+        "Register for Event"
+      )}
     </Button>
   );
 };
+

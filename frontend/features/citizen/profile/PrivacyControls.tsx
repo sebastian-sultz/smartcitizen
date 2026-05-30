@@ -22,37 +22,25 @@ export const PrivacyControls = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          
           <div className="flex items-start justify-between gap-4 p-5 rounded-[24px] border border-border bg-bg/50">
             <div>
               <h4 className="font-bold text-text flex items-center gap-2">
-                <Smartphone size={16} className="text-primary" />
-                Public Phone Number
-              </h4>
-              <p className="text-[13px] text-text-muted mt-1 leading-relaxed font-medium">
-                Allow citizens to see your phone number in the Need Help directory. If disabled, they can only contact you via in-app requests.
-              </p>
-            </div>
-            <div className="mt-2 shrink-0">
-              <Switch checked={showPhone} onCheckedChange={setShowPhone} />
-            </div>
-          </div>
-
-          <div className="flex items-start justify-between gap-4 p-5 rounded-[24px] border border-border bg-bg/50">
-            <div>
-              <h4 className="font-bold text-text flex items-center gap-2">
-                {inDirectory ? <Eye size={16} className="text-primary" /> : <EyeOff size={16} className="text-primary" />}
+                {inDirectory ? (
+                  <Eye size={16} className="text-primary" />
+                ) : (
+                  <EyeOff size={16} className="text-primary" />
+                )}
                 Directory Visibility
               </h4>
               <p className="text-[13px] text-text-muted mt-1 leading-relaxed font-medium">
-                List your profile in the public Need Help directory. Disabling this will hide your profile from all public searches.
+                List your profile in the public Need Help directory. Disabling
+                this will hide your profile from all public searches.
               </p>
             </div>
             <div className="mt-2 shrink-0">
               <Switch checked={inDirectory} onCheckedChange={setInDirectory} />
             </div>
           </div>
-
         </CardContent>
       </Card>
 
@@ -65,25 +53,29 @@ export const PrivacyControls = () => {
         </CardHeader>
         <CardContent>
           <p className="text-[14px] text-text-muted mb-6 leading-relaxed font-medium">
-            Under data protection guidelines, you have the right to request the deletion of all your personal data from the Global Smart Citizen Foundation systems.
+            Under data protection guidelines, you have the right to request the
+            deletion of all your personal data from the Global Smart Citizen
+            Foundation systems.
           </p>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 rounded-2xl px-6 py-2.5 h-auto font-bold"
             onClick={() => {
               showConfirm({
                 title: "Delete Profile",
-                message: "Are you sure you want to request data deletion? This action cannot be undone and you will lose access to the Smart Citizen network.",
+                message:
+                  "Are you sure you want to request data deletion? This action cannot be undone and you will lose access to the Smart Citizen network.",
                 confirmText: "Delete",
                 cancelText: "Cancel",
                 type: "error",
                 onConfirm: () => {
                   showAlert({
                     title: "Deletion Requested",
-                    message: "Data deletion request submitted to administrators.",
-                    type: "success"
+                    message:
+                      "Data deletion request submitted to administrators.",
+                    type: "success",
                   });
-                }
+                },
               });
             }}
           >

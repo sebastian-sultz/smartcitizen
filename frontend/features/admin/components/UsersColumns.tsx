@@ -18,10 +18,6 @@ export const getUsersColumns = (
   updateUserStatus: (id: string, status: "Active" | "Suspended") => void
 ): Header<UserRow>[] => [
   {
-    label: "GSC ID",
-    render: (user) => <span className="text-[14px] font-mono text-text-muted">{user.id}</span>,
-  },
-  {
     label: "Name",
     render: (user) => <span className="text-[14px] font-bold text-text">{user.name}</span>,
   },

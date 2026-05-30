@@ -4,10 +4,6 @@ import { Badge } from "@/components/ui/Badge";
 
 export const campaignsColumns: Header<any>[] = [
   {
-    label: "Campaign ID",
-    render: (campaign) => <span className="text-[14px] font-mono text-text-muted">{campaign.id}</span>,
-  },
-  {
     label: "Title",
     render: (campaign) => <span className="text-[14px] font-bold text-text">{campaign.title}</span>,
   },

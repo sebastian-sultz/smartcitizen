@@ -20,15 +20,6 @@ import {
   CreateVolunteerPayload,
   UpdateVolunteerPayload,
 } from './types';
-import {
-  mockActivityTimeline,
-  mockDonationRecords,
-  mockDonationStats,
-  mockRecurringDonations,
-  mockTaxCertificates,
-  mockReferralMembers,
-  mockFAQs,
-} from './mock-data';
 
 const delay = (ms: number = 400) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -36,7 +27,7 @@ const delay = (ms: number = 400) => new Promise((resolve) => setTimeout(resolve,
 
 export const getMemberProfile = async (): Promise<UserProfileResponse> => {
   try {
-    const response = await api.get('/auth/profile/me');
+    const response = await api.get('/auth/me');
     return response.data;
   } catch (error: unknown) {
     handleApiError(error, "Failed to load user profile");
@@ -95,8 +86,8 @@ export const getReport = async (id: string): Promise<ReportResponse> => {
 };
 
 export const createReport = async (payload: {
-  reported_user_id: string;
-  reason: string;
+  title: string;
+  description: string;
 }): Promise<ReportResponse> => {
   try {
     const response = await api.post('/reports', payload);
@@ -127,43 +118,46 @@ export const getReportMessages = async (reportId: string): Promise<ReportMessage
   }
 };
 
-// --- Mock-only Mappings ---
+// --- Mock-only Mappings (stubbed to return empty defaults since mock data is removed) ---
 
 export const getActivityTimeline = async (): Promise<ActivityItem[]> => {
   await delay();
-  return [...mockActivityTimeline];
+  return [];
 };
 
 export const getDonationHistory = async (): Promise<DonationRecord[]> => {
   await delay();
-  return [...mockDonationRecords];
+  return [];
 };
 
 export const getDonationStats = async (): Promise<DonationStats> => {
   await delay();
-  return { ...mockDonationStats };
+  return {
+    lifetimeDonated: 0,
+    donatedThisYear: 0,
+    donatedLastMonth: 0,
+    totalTransactions: 0,
+    averageAmount: 0,
+    donorLevel: 'Bronze',
+  };
 };
 
 export const getRecurringDonations = async (): Promise<RecurringDonation[]> => {
   await delay();
-  return [...mockRecurringDonations];
+  return [];
 };
 
 export const getTaxCertificates = async (): Promise<TaxCertificate[]> => {
   await delay();
-  return [...mockTaxCertificates];
+  return [];
 };
 
 export const getReferredMembers = async (): Promise<ReferralMember[]> => {
   await delay();
-  return [...mockReferralMembers];
+  return [];
 };
 
 export const getFAQs = async (category?: string): Promise<FAQItem[]> => {
   await delay();
-  let list = [...mockFAQs];
-  if (category && category !== 'all') {
-    list = list.filter((faq) => faq.category === category);
-  }
-  return list;
+  return [];
 };

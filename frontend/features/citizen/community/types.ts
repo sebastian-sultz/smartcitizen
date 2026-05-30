@@ -39,3 +39,16 @@ export interface UpdateEventPayload {
   cta_text?: string;
   image?: string;
 }
+
+import { UserResponse } from "@/features/shared/auth/types";
+
+export interface EventRegistration {
+  id: string;
+  event_id: string;
+  user_id: string;
+  event?: EventResponse;
+  user?: UserResponse;
+  created_at: string;
+  updated_at: string;
+}
+
