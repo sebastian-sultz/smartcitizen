@@ -33,6 +33,7 @@ func mapToResponse(v *Volunteer) response.Volunteer {
 		Pincode:        v.Pincode,
 		Profession:     v.Profession,
 		Experience:     v.Experience,
+		IsPublicConsent: v.IsPublicConsent,
 		Image:          v.Image,
 		CreatedAt:      v.CreatedAt,
 		UpdatedAt:      v.UpdatedAt,

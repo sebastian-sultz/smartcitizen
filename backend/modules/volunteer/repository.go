@@ -1,7 +1,9 @@
 package volunteer
 
 import (
+	"backend/modules/user"
 	"backend/pkg/utils"
+
 	"gorm.io/gorm"
 )
 
@@ -22,7 +24,15 @@ func NewRepository(db *gorm.DB) Repository {
 }
 
 func (r *repository) Create(volunteer *Volunteer) error {
-	return r.db.Create(volunteer).Error
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(volunteer).Error; err != nil {
+			return err
+		}
+		if err := tx.Model(&user.User{}).Where("id = ?", volunteer.UserID).Update("user_type", user.Volunteer).Error; err != nil {
+			return err
+		}
+		return nil
+	})
 }
 
 func (r *repository) FindByID(id string) (*Volunteer, error) {
@@ -40,7 +50,7 @@ func (r *repository) FindAll(search string, pagination *utils.Pagination) ([]Vol
 
 	if search != "" {
 		searchTerm := "%" + search + "%"
-		query = query.Where("name ILIKE ? OR profession ILIKE ? OR experience ILIKE ? OR city ILIKE ? OR district ILIKE ? OR address ILIKE ?", 
+		query = query.Where("name ILIKE ? OR profession ILIKE ? OR experience ILIKE ? OR city ILIKE ? OR district ILIKE ? OR address ILIKE ?",
 			searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm)
 	}
 

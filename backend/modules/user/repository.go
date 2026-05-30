@@ -21,7 +21,18 @@ func NewRepository(db *gorm.DB) Repository {
 }
 
 func (r *repository) Create(user *User) error {
-	return r.db.Create(user).Error
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(user).Error; err != nil {
+			return err
+		}
+		
+		if user.ReferralID != nil && *user.ReferralID != "" {
+			if err := tx.Model(&User{}).Where("id = ?", *user.ReferralID).UpdateColumn("total_referrals", gorm.Expr("total_referrals + ?", 1)).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
 
 func (r *repository) FindByPhone(phone string) (*User, error) {

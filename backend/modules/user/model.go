@@ -10,8 +10,9 @@ import (
 type UserType string
 
 const (
-	Admin  UserType = "admin"
-	Member UserType = "member"
+	Admin     UserType = "admin"
+	Member    UserType = "member"
+	Volunteer UserType = "volunteer"
 )
 
 // Base model using Google UUID
@@ -41,6 +42,7 @@ type User struct {
 	TotalAmount          float64  `gorm:"default:0.0" json:"total_amount"`
 	ReferralPaymentCount int64    `gorm:"default:0" json:"referral_payment_count"`
 	TotalReferrals       int64    `gorm:"default:0" json:"total_referrals"`
+	TotalEventsRegistered int64   `gorm:"default:0" json:"total_events_registered"`
 	ReferralID           *string  `json:"referral_id"`
 	IsPhoneVerified      bool     `gorm:"default:false" json:"is_phone_verified"` // For future OTP implementation
 }

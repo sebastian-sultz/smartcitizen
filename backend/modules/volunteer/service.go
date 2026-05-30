@@ -61,6 +61,7 @@ func (s *service) CreateVolunteer(req *request.CreateVolunteer) (*Volunteer, err
 		Pincode:        req.Pincode,
 		Profession:     req.Profession,
 		Experience:     req.Experience,
+		IsPublicConsent: req.IsPublicConsent,
 	}
 
 	if err := s.repo.Create(volunteer); err != nil {
@@ -113,6 +114,9 @@ func (s *service) UpdateVolunteer(id string, req *request.UpdateVolunteer) (*Vol
 	}
 	if req.Experience != nil {
 		volunteer.Experience = *req.Experience
+	}
+	if req.IsPublicConsent != nil {
+		volunteer.IsPublicConsent = *req.IsPublicConsent
 	}
 
 	if err := s.repo.Update(volunteer); err != nil {

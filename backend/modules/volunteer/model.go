@@ -24,6 +24,7 @@ type Volunteer struct {
 	State          string         `json:"state"`
 	Profession     string         `json:"profession"`
 	Experience     string         `json:"experience"`
+	IsPublicConsent bool          `gorm:"default:false" json:"ispublicconsent"`
 	Image          *string        `json:"image"`
 	ImagePublicID  *string        `json:"-"`
 	CreatedAt      time.Time      `json:"created_at"`

@@ -32,6 +32,7 @@ func mapToResponse(u *User, refName *string) response.User {
 		TotalAmount:          u.TotalAmount,
 		ReferralPaymentCount: u.ReferralPaymentCount,
 		TotalReferrals:       u.TotalReferrals,
+		TotalEventsRegistered: u.TotalEventsRegistered,
 		ReferralID:           u.ReferralID,
 		ReferralName:         refName,
 		CreatedAt:            u.CreatedAt,

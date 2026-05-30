@@ -12,6 +12,7 @@ type CreateVolunteer struct {
 	Pincode        string `json:"pincode"`
 	Profession     string `json:"profession"`
 	Experience     string `json:"experience"`
+	IsPublicConsent bool  `json:"ispublicconsent"`
 }
 
 type UpdateVolunteer struct {
@@ -25,4 +26,5 @@ type UpdateVolunteer struct {
 	Pincode        *string `json:"pincode"`
 	Profession     *string `json:"profession"`
 	Experience     *string `json:"experience"`
+	IsPublicConsent *bool  `json:"ispublicconsent"`
 }

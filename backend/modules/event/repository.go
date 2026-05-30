@@ -1,6 +1,7 @@
 package event
 
 import (
+	"backend/modules/user"
 	"backend/pkg/utils"
 	"gorm.io/gorm"
 )
@@ -64,7 +65,15 @@ func (r *repository) Delete(id string) error {
 }
 
 func (r *repository) CreateRegistration(reg *EventRegistration) error {
-	return r.db.Create(reg).Error
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(reg).Error; err != nil {
+			return err
+		}
+		if err := tx.Model(&user.User{}).Where("id = ?", reg.UserID).UpdateColumn("total_events_registered", gorm.Expr("total_events_registered + ?", 1)).Error; err != nil {
+			return err
+		}
+		return nil
+	})
 }
 
 func (r *repository) FindUsersByEventID(eventID string) ([]EventRegistration, error) {
