@@ -46,12 +46,20 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 		auth.POST("/forget-password", userHandler.ForgetPassword)
 		auth.POST("/refresh", userHandler.Refresh)
 
+		auth.GET("/stats", userHandler.GetStats)
+
 		protected := auth.Group("")
 		protected.Use(middleware.AuthMiddleware())
 		protected.GET("/me", userHandler.Me)
 		protected.PUT("/profile-photo/:id", userHandler.UpdateProfilePhoto)
 		protected.GET("/profile/:id", userHandler.GetProfile)
-		protected.GET("/stats", userHandler.GetStats)
+	}
+
+	// Users Routes
+	users := api.Group("/users")
+	users.Use(middleware.AuthMiddleware())
+	{
+		users.GET("/:id/events", eventHandler.GetEventsByUserID)
 	}
 
 	// Event Routes
@@ -65,8 +73,9 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 		{
 			protected.POST("", eventHandler.CreateEvent)
 			protected.PUT("/:id", eventHandler.UpdateEvent)
-			protected.PUT("/:id/image", eventHandler.UpdateEventImage)
 			protected.DELETE("/:id", eventHandler.DeleteEvent)
+			protected.POST("/:id/register", eventHandler.RegisterForEvent)
+			protected.GET("/:id/users", eventHandler.GetUsersByEventID)
 		}
 	}
 

@@ -11,6 +11,10 @@ type Repository interface {
 	FindAll(eventType string, pagination *utils.Pagination) ([]Event, error)
 	Update(event *Event) error
 	Delete(id string) error
+
+	CreateRegistration(reg *EventRegistration) error
+	FindUsersByEventID(eventID string) ([]EventRegistration, error)
+	FindEventsByUserID(userID string) ([]EventRegistration, error)
 }
 
 type repository struct {
@@ -57,4 +61,20 @@ func (r *repository) Update(event *Event) error {
 
 func (r *repository) Delete(id string) error {
 	return r.db.Where("id = ?", id).Delete(&Event{}).Error
+}
+
+func (r *repository) CreateRegistration(reg *EventRegistration) error {
+	return r.db.Create(reg).Error
+}
+
+func (r *repository) FindUsersByEventID(eventID string) ([]EventRegistration, error) {
+	var regs []EventRegistration
+	err := r.db.Where("event_id = ?", eventID).Preload("User").Find(&regs).Error
+	return regs, err
+}
+
+func (r *repository) FindEventsByUserID(userID string) ([]EventRegistration, error) {
+	var regs []EventRegistration
+	err := r.db.Where("user_id = ?", userID).Preload("Event").Find(&regs).Error
+	return regs, err
 }

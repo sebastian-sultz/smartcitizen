@@ -1,6 +1,7 @@
 package event
 
 import (
+	"fmt"
 	"net/http"
 
 	"backend/dto/request"
@@ -40,7 +41,7 @@ func mapToResponse(e *Event) response.Event {
 
 func (h *Handler) CreateEvent(c *gin.Context) {
 	var req request.CreateEvent
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := c.ShouldBind(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -49,6 +50,16 @@ func (h *Handler) CreateEvent(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
+	}
+
+	file, _, err := c.Request.FormFile("image")
+	if err == nil {
+		defer file.Close()
+		url, publicID, err := cloudinary.UploadImage(c.Request.Context(), file, "smartcitizen/events")
+		if err == nil {
+			_ = h.service.UpdateEventImage(c.Request.Context(), event.ID.String(), url, publicID)
+			event.Image = &url
+		}
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"message": "event created", "event": mapToResponse(event)})
@@ -103,37 +114,6 @@ func (h *Handler) UpdateEvent(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "event updated", "event": mapToResponse(event)})
 }
 
-func (h *Handler) UpdateEventImage(c *gin.Context) {
-	id := c.Param("id")
-	if id == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "event id is required"})
-		return
-	}
-
-	file, _, err := c.Request.FormFile("image")
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "image file is required"})
-		return
-	}
-	defer file.Close()
-
-	url, publicID, err := cloudinary.UploadImage(c.Request.Context(), file, "smartcitizen/events")
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to upload image"})
-		return
-	}
-
-	err = h.service.UpdateEventImage(c.Request.Context(), id, url, publicID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"message": "event image updated successfully",
-		"url": url,
-	})
-}
 
 func (h *Handler) DeleteEvent(c *gin.Context) {
 	id := c.Param("id")
@@ -145,4 +125,60 @@ func (h *Handler) DeleteEvent(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "event deleted successfully"})
+}
+
+func (h *Handler) RegisterForEvent(c *gin.Context) {
+	eventID := c.Param("id")
+	userIDRaw, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	userTypeRaw, typeExists := c.Get("userType")
+	if typeExists && fmt.Sprintf("%v", userTypeRaw) == "admin" {
+		c.JSON(http.StatusForbidden, gin.H{"error": "admins cannot register for events"})
+		return
+	}
+
+	userID := fmt.Sprintf("%v", userIDRaw)
+
+	err := h.service.RegisterForEvent(eventID, userID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{"message": "successfully registered for event"})
+}
+
+func (h *Handler) GetUsersByEventID(c *gin.Context) {
+	eventID := c.Param("id")
+	regs, err := h.service.GetUsersByEventID(eventID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"registrations": regs})
+}
+
+func (h *Handler) GetEventsByUserID(c *gin.Context) {
+	userID := c.Param("id")
+	if userID == "me" {
+		userIDRaw, exists := c.Get("userID")
+		if !exists {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+			return
+		}
+		userID = fmt.Sprintf("%v", userIDRaw)
+	}
+
+	regs, err := h.service.GetEventsByUserID(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"registrations": regs})
 }

@@ -7,6 +7,8 @@ import (
 	"backend/dto/request"
 	"backend/pkg/cloudinary"
 	"backend/pkg/utils"
+
+	"github.com/google/uuid"
 )
 
 type Service interface {
@@ -16,6 +18,10 @@ type Service interface {
 	UpdateEvent(id string, req *request.UpdateEvent) (*Event, error)
 	UpdateEventImage(ctx context.Context, id string, url string, publicID string) error
 	DeleteEvent(ctx context.Context, id string) error
+
+	RegisterForEvent(eventID, userID string) error
+	GetUsersByEventID(eventID string) ([]EventRegistration, error)
+	GetEventsByUserID(userID string) ([]EventRegistration, error)
 }
 
 type service struct {
@@ -140,4 +146,30 @@ func (s *service) DeleteEvent(ctx context.Context, id string) error {
 	}
 
 	return s.repo.Delete(id)
+}
+
+func (s *service) RegisterForEvent(eventID, userID string) error {
+	eID, err := uuid.Parse(eventID)
+	if err != nil {
+		return errors.New("invalid event ID")
+	}
+	uID, err := uuid.Parse(userID)
+	if err != nil {
+		return errors.New("invalid user ID")
+	}
+
+	reg := &EventRegistration{
+		EventID: eID,
+		UserID:  uID,
+	}
+
+	return s.repo.CreateRegistration(reg)
+}
+
+func (s *service) GetUsersByEventID(eventID string) ([]EventRegistration, error) {
+	return s.repo.FindUsersByEventID(eventID)
+}
+
+func (s *service) GetEventsByUserID(userID string) ([]EventRegistration, error) {
+	return s.repo.FindEventsByUserID(userID)
 }

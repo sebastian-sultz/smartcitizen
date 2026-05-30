@@ -211,11 +211,6 @@ func (h *Handler) GetProfile(c *gin.Context) {
 }
 
 func (h *Handler) GetStats(c *gin.Context) {
-	userType, exists := c.Get("userType")
-	if !exists || userType != string(Admin) {
-		c.JSON(http.StatusForbidden, gin.H{"error": "forbidden, admin access required"})
-		return
-	}
 
 	totalUsers, totalPayments, totalReferrals, totalAmount, err := h.service.GetSystemStats()
 	if err != nil {

@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"backend/modules/user"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -20,6 +21,7 @@ type Volunteer struct {
 	City           string         `json:"city"`
 	District       string         `json:"district"`
 	Pincode        string         `json:"pincode"`
+	State          string         `json:"state"`
 	Profession     string         `json:"profession"`
 	Experience     string         `json:"experience"`
 	Image          *string        `json:"image"`
