@@ -7,7 +7,6 @@ import (
 
 	"backend/dto/request"
 	"backend/dto/response"
-	"backend/infrastructure/middleware"
 	"backend/pkg/cloudinary"
 	"backend/pkg/jwt"
 
@@ -20,23 +19,6 @@ type Handler struct {
 
 func NewHandler(service Service) *Handler {
 	return &Handler{service: service}
-}
-
-func (h *Handler) RegisterRoutes(router *gin.RouterGroup) {
-	auth := router.Group("/auth")
-	{
-		auth.POST("/register", h.Register)
-		auth.POST("/login", h.Login)
-		auth.POST("/forget-password", h.ForgetPassword)
-		auth.POST("/refresh", h.Refresh)
-
-		protected := auth.Group("")
-		protected.Use(middleware.AuthMiddleware())
-		protected.GET("/me", h.Me)
-		protected.PUT("/profile-photo/:id", h.UpdateProfilePhoto)
-		protected.GET("/profile/:id", h.GetProfile)
-		protected.GET("/stats", h.GetStats)
-	}
 }
 
 func mapToResponse(u *User, refName *string) response.User {

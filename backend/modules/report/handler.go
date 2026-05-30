@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"backend/dto/request"
-	"backend/infrastructure/middleware"
 	"backend/modules/user"
 
 	"github.com/gin-gonic/gin"
@@ -17,26 +16,6 @@ type Handler struct {
 
 func NewHandler(service Service) *Handler {
 	return &Handler{service: service}
-}
-
-func (h *Handler) RegisterRoutes(router *gin.RouterGroup) {
-	// Authenticated routes
-	protected := router.Group("")
-	protected.Use(middleware.AuthMiddleware())
-	
-	// Create report (accessible to authenticated users)
-	protected.POST("/reports", h.CreateReport)
-	// Get specific report details
-	protected.GET("/reports/:id", h.GetReport)
-	// Messages sub-resource
-	protected.POST("/reports/:id/messages", h.AddMessage)
-	protected.GET("/reports/:id/messages", h.GetMessages)
-
-	// Admin routes
-	admin := router.Group("/admin")
-	admin.Use(middleware.AuthMiddleware())
-	admin.GET("/reports", h.GetReports)
-	admin.PUT("/reports/:id/resolve", h.ResolveReport)
 }
 
 func (h *Handler) CreateReport(c *gin.Context) {

@@ -5,7 +5,6 @@ import (
 
 	"backend/dto/request"
 	"backend/dto/response"
-	"backend/infrastructure/middleware"
 	"backend/pkg/cloudinary"
 	"backend/pkg/utils"
 
@@ -18,23 +17,6 @@ type Handler struct {
 
 func NewHandler(service Service) *Handler {
 	return &Handler{service: service}
-}
-
-func (h *Handler) RegisterRoutes(router *gin.RouterGroup) {
-	events := router.Group("/events")
-	{
-		events.GET("", h.GetAllEvents)
-		events.GET("/:id", h.GetEvent)
-
-		protected := events.Group("")
-		protected.Use(middleware.AuthMiddleware())
-		{
-			protected.POST("", h.CreateEvent)
-			protected.PUT("/:id", h.UpdateEvent)
-			protected.PUT("/:id/image", h.UpdateEventImage)
-			protected.DELETE("/:id", h.DeleteEvent)
-		}
-	}
 }
 
 func mapToResponse(e *Event) response.Event {

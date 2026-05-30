@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"backend/infrastructure/database"
-	"backend/infrastructure/middleware"
 	"backend/modules/event"
 	"backend/modules/report"
 	"backend/modules/user"
@@ -115,30 +114,7 @@ func main() {
 
 
 	r := gin.Default()
-	r.Use(middleware.CORSMiddleware())
-	api := r.Group("/api")
-
-	userRepo := user.NewRepository(db)
-	userService := user.NewService(userRepo)
-	userHandler := user.NewHandler(userService)
-
-	userHandler.RegisterRoutes(api)
-
-	eventRepo := event.NewRepository(db)
-	eventService := event.NewService(eventRepo)
-	eventHandler := event.NewHandler(eventService)
-	eventHandler.RegisterRoutes(api)
-
-	volunteerRepo := volunteer.NewRepository(db)
-	volunteerService := volunteer.NewService(volunteerRepo, userService)
-	volunteerHandler := volunteer.NewHandler(volunteerService)
-	volunteerHandler.RegisterRoutes(api)
-
-	reportRepo := report.NewRepository(db)
-	reportService := report.NewService(reportRepo)
-	reportHandler := report.NewHandler(reportService)
-	reportHandler.RegisterRoutes(api)
-
+	SetupRoutes(r, db)
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8090" // Using 8090 as an uncommon open port
