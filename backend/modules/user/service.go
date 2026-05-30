@@ -6,6 +6,7 @@ import (
 
 	"backend/dto/request"
 	"backend/pkg/cloudinary"
+	"backend/pkg/utils"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -17,6 +18,7 @@ type Service interface {
 	ForgetPassword(req *request.ForgetPassword) error
 	UpdateProfilePhoto(ctx context.Context, id string, url string, publicID string) error
 	GetSystemStats() (int64, int64, int64, float64, error)
+	GetNonAdminUsers(pagination *utils.Pagination) ([]User, error)
 }
 
 type service struct {
@@ -106,4 +108,8 @@ func (s *service) UpdateProfilePhoto(ctx context.Context, id string, url string,
 
 func (s *service) GetSystemStats() (int64, int64, int64, float64, error) {
 	return s.repo.GetSystemStats()
+}
+
+func (s *service) GetNonAdminUsers(pagination *utils.Pagination) ([]User, error) {
+	return s.repo.FindNonAdminUsers(pagination)
 }

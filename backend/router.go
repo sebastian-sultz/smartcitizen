@@ -59,6 +59,7 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 	users := api.Group("/users")
 	users.Use(middleware.AuthMiddleware())
 	{
+		users.GET("", userHandler.GetAllNonAdminUsers)
 		users.GET("/:id/events", eventHandler.GetEventsByUserID)
 	}
 

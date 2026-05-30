@@ -9,6 +9,7 @@ import (
 	"backend/dto/response"
 	"backend/pkg/cloudinary"
 	"backend/pkg/jwt"
+	"backend/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -250,4 +251,37 @@ func (h *Handler) Me(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"user": mapToResponse(user, refName)})
+}
+
+func (h *Handler) GetAllNonAdminUsers(c *gin.Context) {
+	// Check if user is admin
+	userType, exists := c.Get("userType")
+	if !exists || userType != string(Admin) {
+		c.JSON(http.StatusForbidden, gin.H{"error": "forbidden, admin access required"})
+		return
+	}
+
+	pagination := utils.GetPaginationFromContext(c)
+	usersList, err := h.service.GetNonAdminUsers(&pagination)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch users"})
+		return
+	}
+
+	var res []response.User
+	for _, u := range usersList {
+		var refName *string
+		if u.ReferralID != nil {
+			refUser, err := h.service.GetUser(*u.ReferralID)
+			if err == nil && refUser != nil {
+				refName = &refUser.Name
+			}
+		}
+		res = append(res, mapToResponse(&u, refName))
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"users":      res,
+		"pagination": pagination,
+	})
 }

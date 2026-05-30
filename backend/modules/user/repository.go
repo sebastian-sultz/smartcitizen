@@ -1,6 +1,7 @@
 package user
 
 import (
+	"backend/pkg/utils"
 	"gorm.io/gorm"
 )
 
@@ -10,6 +11,7 @@ type Repository interface {
 	FindByID(id string) (*User, error)
 	Update(user *User) error
 	GetSystemStats() (int64, int64, int64, float64, error)
+	FindNonAdminUsers(pagination *utils.Pagination) ([]User, error)
 }
 
 type repository struct {
@@ -75,4 +77,17 @@ func (r *repository) GetSystemStats() (int64, int64, int64, float64, error) {
 	}
 
 	return totalUsers, totalPayments, totalReferrals, totalAmount, nil
+}
+
+func (r *repository) FindNonAdminUsers(pagination *utils.Pagination) ([]User, error) {
+	var users []User
+	query := r.db.Model(&User{}).Where("user_type != ?", string(Admin))
+
+	if err := query.Count(&pagination.TotalRows).Error; err != nil {
+		return nil, err
+	}
+	pagination.Calculate()
+
+	err := query.Order("created_at desc").Limit(pagination.Limit).Offset(pagination.Offset).Find(&users).Error
+	return users, err
 }
