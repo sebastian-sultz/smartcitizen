@@ -1,7 +1,8 @@
 package request
 
 type CreateReportReq struct {
-	Reason         string `json:"reason" binding:"required"`
+	Title       string `json:"title" binding:"required"`
+	Description string `json:"description" binding:"required"`
 }
 
 type ResolveReportReq struct {

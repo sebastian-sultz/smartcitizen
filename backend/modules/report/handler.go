@@ -37,7 +37,7 @@ func (h *Handler) CreateReport(c *gin.Context) {
 		return
 	}
 
-	report, err := h.service.CreateReport(userID, req.Reason)
+	report, err := h.service.CreateReport(userID, req.Title, req.Description)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

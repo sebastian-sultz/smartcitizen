@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"backend/modules/user"
+
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -17,17 +18,18 @@ const (
 )
 
 type AbuseReport struct {
-	ID             uuid.UUID       `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
-	UserID         uuid.UUID       `gorm:"type:uuid;not null;index" json:"user_id"`
-	AdminID        *uuid.UUID      `gorm:"type:uuid;index" json:"admin_id"`
-	Reason         string          `gorm:"type:text;not null" json:"reason"`
-	Status         ReportStatus    `gorm:"type:varchar(20);default:'Open'" json:"status"`
-	ActionTaken    *string         `gorm:"type:varchar(100)" json:"action_taken"`
-	ResolvedAt     *time.Time      `json:"resolved_at"`
-	CreatedAt      time.Time       `gorm:"autoCreateTime" json:"created_at"`
-	Messages       []ReportMessage `gorm:"foreignKey:ReportID" json:"messages,omitempty"`
-	User           *user.User      `gorm:"foreignKey:UserID" json:"user,omitempty"`
-	Admin          *user.User      `gorm:"foreignKey:AdminID" json:"admin,omitempty"`
+	ID          uuid.UUID       `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
+	UserID      uuid.UUID       `gorm:"type:uuid;not null;index" json:"user_id"`
+	AdminID     *uuid.UUID      `gorm:"type:uuid;index" json:"admin_id"`
+	Title       string          `gorm:"type:varchar(255);not null" json:"title"`
+	Description string          `gorm:"type:text;not null" json:"description"`
+	Status      ReportStatus    `gorm:"type:varchar(20);default:'Open'" json:"status"`
+	ActionTaken *string         `gorm:"type:varchar(100)" json:"action_taken"`
+	ResolvedAt  *time.Time      `json:"resolved_at"`
+	CreatedAt   time.Time       `gorm:"autoCreateTime" json:"created_at"`
+	Messages    []ReportMessage `gorm:"foreignKey:ReportID" json:"messages,omitempty"`
+	User        *user.User      `gorm:"foreignKey:UserID" json:"user,omitempty"`
+	Admin       *user.User      `gorm:"foreignKey:AdminID" json:"admin,omitempty"`
 }
 
 type ReportMessage struct {
@@ -51,4 +53,3 @@ func (m *ReportMessage) BeforeCreate(tx *gorm.DB) error {
 	}
 	return nil
 }
-

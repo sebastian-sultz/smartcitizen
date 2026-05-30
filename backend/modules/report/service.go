@@ -8,7 +8,7 @@ import (
 )
 
 type Service interface {
-	CreateReport(userID uuid.UUID, reason string) (*AbuseReport, error)
+	CreateReport(userID uuid.UUID, title, description string) (*AbuseReport, error)
 	GetReports(status string) ([]AbuseReport, error)
 	GetReportsByReporterID(reporterID uuid.UUID, status string) ([]AbuseReport, error)
 	ResolveReport(id, actionTaken string, adminID uuid.UUID) (*AbuseReport, error)
@@ -25,11 +25,12 @@ func NewService(repo Repository) Service {
 	return &service{repo: repo}
 }
 
-func (s *service) CreateReport(userID uuid.UUID, reason string) (*AbuseReport, error) {
+func (s *service) CreateReport(userID uuid.UUID, title, description string) (*AbuseReport, error) {
 	report := &AbuseReport{
-		UserID: userID,
-		Reason: reason,
-		Status: StatusOpen,
+		UserID:      userID,
+		Title:       title,
+		Description: description,
+		Status:      StatusOpen,
 	}
 
 	if err := s.repo.CreateReport(report); err != nil {
