@@ -10,6 +10,7 @@ type Repository interface {
 	FindByPhone(phone string) (*User, error)
 	FindByID(id string) (*User, error)
 	Update(user *User) error
+	Delete(id string) error
 	GetSystemStats() (int64, int64, int64, float64, error)
 	FindNonAdminUsers(pagination *utils.Pagination) ([]User, error)
 }
@@ -90,4 +91,8 @@ func (r *repository) FindNonAdminUsers(pagination *utils.Pagination) ([]User, er
 
 	err := query.Order("created_at desc").Limit(pagination.Limit).Offset(pagination.Offset).Find(&users).Error
 	return users, err
+}
+
+func (r *repository) Delete(id string) error {
+	return r.db.Where("id = ?", id).Delete(&User{}).Error
 }

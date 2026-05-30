@@ -46,7 +46,7 @@ export const VolunteerForm = () => {
         .required("Mobile number is required"),
       email: Yup.string().email("Invalid email address").required("Email is required"),
       profession: Yup.string().required("Profession is required"),
-      consentGuidelines: Yup.boolean().oneOf([true], "You must accept the guidelines"),
+      consentGuidelines: Yup.boolean(),
     }),
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       if (!userId) {
@@ -71,6 +71,7 @@ export const VolunteerForm = () => {
           pincode: values.pincode,
           profession: values.profession,
           experience: values.experience,
+          ispublicconsent: values.consentGuidelines,
         });
 
         showAlert({
@@ -295,7 +296,11 @@ export const VolunteerForm = () => {
             <h3 className="font-bold text-lg text-text pb-2">Consent & Privacy</h3>
             <div className="space-y-6 bg-bg-alt p-6 rounded-xl border border-border">
               
-              <div className="space-y-1">
+              <div className={`space-y-1 p-4 rounded-2xl border transition-colors ${
+                formik.values.consentGuidelines
+                  ? "bg-emerald-50/10 border-emerald-500/30 text-emerald-950"
+                  : "bg-bg/50 border-border/80"
+              }`}>
                 <label className="flex items-start gap-4 cursor-pointer group">
                   <Checkbox 
                     checked={formik.values.consentGuidelines}

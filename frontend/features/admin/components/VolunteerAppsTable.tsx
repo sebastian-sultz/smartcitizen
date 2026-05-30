@@ -8,6 +8,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { getVolunteerAppsColumns } from "./VolunteerAppsColumns";
 import { getAllVolunteers, deleteVolunteer, VolunteerResponse } from "@/features/public/volunteer";
+import { Badge } from "@/components/ui/Badge";
 
 export const VolunteerAppsTable = () => {
   const [volunteers, setVolunteers] = useState<VolunteerResponse[]>([]);
@@ -140,6 +141,12 @@ export const VolunteerAppsTable = () => {
                   <div>
                     <span className="block text-xs font-semibold text-text-muted mb-1">District</span>
                     <span className="font-bold text-text">{selectedVolunteer.district || "N/A"}</span>
+                  </div>
+                  <div>
+                    <span className="block text-xs font-semibold text-text-muted mb-1">Public Consent</span>
+                    <Badge variant={selectedVolunteer.ispublicconsent ? "success" : "secondary"}>
+                      {selectedVolunteer.ispublicconsent ? "Accepted" : "Not Accepted"}
+                    </Badge>
                   </div>
                   <div className="sm:col-span-2">
                     <span className="block text-xs font-semibold text-text-muted mb-1">Address</span>

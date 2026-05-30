@@ -37,6 +37,7 @@ export interface CreateVolunteerPayload {
   pincode: string;
   profession: string;
   experience: string;
+  ispublicconsent?: boolean;
 }
 
 export interface UpdateVolunteerPayload {
@@ -50,6 +51,7 @@ export interface UpdateVolunteerPayload {
   pincode?: string;
   profession?: string;
   experience?: string;
+  ispublicconsent?: boolean;
 }
 
 export interface CreateSupportTicketPayload {
@@ -76,6 +78,7 @@ export interface Volunteer {
   pincode: string;
   profession: string;
   experience: string;
+  ispublicconsent: boolean;
   image: string | null;
   created_at: string;
   updated_at: string;

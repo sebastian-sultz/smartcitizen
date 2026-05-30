@@ -19,6 +19,7 @@ type User struct {
 	TotalEventsRegistered int64     `json:"total_events_registered"`
 	ReferralID           *string   `json:"referral_id"`
 	ReferralName         *string   `json:"referral_name,omitempty"`
+	IsSuspended          bool      `json:"is_suspended"`
 	CreatedAt            time.Time `json:"created_at"`
 	UpdatedAt            time.Time `json:"updated_at"`
 }

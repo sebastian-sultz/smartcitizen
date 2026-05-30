@@ -47,7 +47,7 @@ export default function VolunteerApplicationForm({ user, onSubmitSuccess }: Volu
       interest: Yup.string().required("Primary area of interest is required"),
       workType: Yup.string().required("Preferred work location is required"),
       motivation: Yup.string().required("Please explain your motivation").min(20, "Please explain in at least 20 characters"),
-      consent: Yup.boolean().oneOf([true], "You must consent to NGO terms & guidelines"),
+      consent: Yup.boolean(),
       email: Yup.string().email("Enter a valid email address").required("Email is required"),
       alternate_phone: Yup.string().nullable(),
       address: Yup.string().required("Address is required"),
@@ -72,6 +72,7 @@ export default function VolunteerApplicationForm({ user, onSubmitSuccess }: Volu
           pincode: values.pincode,
           profession: values.profession,
           experience: values.experience,
+          ispublicconsent: values.consent,
         });
         if (res.volunteer) {
           toast.success("Volunteer Application Submitted Successfully!");
@@ -266,7 +267,11 @@ export default function VolunteerApplicationForm({ user, onSubmitSuccess }: Volu
           </div>
 
           {/* Consent Checkbox */}
-          <div className="flex gap-3 items-start p-4 bg-bg/50 border border-border/80 rounded-2xl">
+          <div className={`flex gap-3 items-start p-4 rounded-2xl border transition-colors ${
+            formik.values.consent 
+              ? "bg-emerald-50/10 border-emerald-500/30 text-emerald-950" 
+              : "bg-bg/50 border-border/80"
+          }`}>
             <Checkbox 
               id="consent" 
               checked={formik.values.consent} 

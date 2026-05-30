@@ -9,6 +9,9 @@ export interface UserResponse {
   referral_payment_count: number;
   total_referrals: number;
   referral_id: string | null;
+  total_events_registered: number;
+  referral_name?: string | null;
+  is_suspended: boolean;
   created_at: string;
   updated_at: string;
 }

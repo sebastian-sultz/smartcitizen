@@ -70,4 +70,9 @@ Do not use raw HTML tags if a corresponding custom UI component is available in 
 * **Shared Utility/Selectors**: If the same derived computation (e.g., generating referral links, processing status badges, or formatting fields) is used in multiple components, extract it to a shared utility helper or a Zustand selector.
 * **Reusable UI Components**: If a complex UI pattern (like a sharing modal or dialog) is repeated in different features, extract it into a reusable component to avoid duplicating JSX and component logic.
 
+### 11. Flat Response Consumption
+* **No Mapped Responses**: The frontend must consume API responses directly in their raw, flat format as returned by the backend.
+* **No Local Mappings or Wrappers**: Do not use mapping functions, local wrapper adapter types, or "tricks" to reshape data. Add the exact response structure to the features' types file, and use those backend types directly to populate UI tables, components, and state.
+
+
 

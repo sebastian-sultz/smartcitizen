@@ -36,6 +36,7 @@ func mapToResponse(u *User, refName *string) response.User {
 		TotalEventsRegistered: u.TotalEventsRegistered,
 		ReferralID:           u.ReferralID,
 		ReferralName:         refName,
+		IsSuspended:          u.IsSuspended,
 		CreatedAt:            u.CreatedAt,
 		UpdatedAt:            u.UpdatedAt,
 	}
@@ -284,4 +285,56 @@ func (h *Handler) GetAllNonAdminUsers(c *gin.Context) {
 		"users":      res,
 		"pagination": pagination,
 	})
+}
+
+func (h *Handler) SuspendUser(c *gin.Context) {
+	// Check if requester is admin
+	userType, exists := c.Get("userType")
+	if !exists || userType != string(Admin) {
+		c.JSON(http.StatusForbidden, gin.H{"error": "forbidden, admin access required"})
+		return
+	}
+
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user id is required"})
+		return
+	}
+
+	var req struct {
+		IsSuspended bool `json:"is_suspended"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := h.service.SuspendUser(id, req.IsSuspended); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "user suspension status updated successfully"})
+}
+
+func (h *Handler) DeleteUser(c *gin.Context) {
+	// Check if requester is admin
+	userType, exists := c.Get("userType")
+	if !exists || userType != string(Admin) {
+		c.JSON(http.StatusForbidden, gin.H{"error": "forbidden, admin access required"})
+		return
+	}
+
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user id is required"})
+		return
+	}
+
+	if err := h.service.DeleteUser(id); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "user deleted successfully"})
 }

@@ -1,6 +1,7 @@
 import api from "@/lib/axios";
 import { handleApiError } from "@/lib/api-helpers";
 import { SupportTicket } from "@/features/citizen/types";
+import { UserResponse } from "@/features/shared/auth/types";
 
 export const getAdminReports = async (status?: string): Promise<SupportTicket[]> => {
   try {
@@ -23,5 +24,33 @@ export const resolveAdminReport = async (
     return response.data.report;
   } catch (error: unknown) {
     handleApiError(error, "Failed to resolve report");
+  }
+};
+
+export const getNonAdminUsers = async (): Promise<{ users: UserResponse[] }> => {
+  try {
+    const response = await api.get<{ users: UserResponse[] }>("/users");
+    return response.data;
+  } catch (error: unknown) {
+    handleApiError(error, "Failed to load users list");
+    throw error;
+  }
+};
+
+export const suspendUser = async (id: string, isSuspended: boolean): Promise<void> => {
+  try {
+    await api.put(`/users/${id}/suspend`, { is_suspended: isSuspended });
+  } catch (error: unknown) {
+    handleApiError(error, "Failed to update user suspension status");
+    throw error;
+  }
+};
+
+export const deleteUser = async (id: string): Promise<void> => {
+  try {
+    await api.delete(`/users/${id}`);
+  } catch (error: unknown) {
+    handleApiError(error, "Failed to delete user");
+    throw error;
   }
 };

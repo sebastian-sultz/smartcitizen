@@ -31,6 +31,14 @@ export const getVolunteerAppsColumns = (
     ),
   },
   {
+    label: "Public Consent",
+    render: (app) => (
+      <Badge variant={app.ispublicconsent ? "success" : "secondary"}>
+        {app.ispublicconsent ? "Accepted" : "Not Accepted"}
+      </Badge>
+    ),
+  },
+  {
     label: "Status",
     render: (app) => (
       <Badge variant="success">

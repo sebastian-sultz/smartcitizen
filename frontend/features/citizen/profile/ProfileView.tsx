@@ -23,8 +23,8 @@ import Image from "next/image";
 import { formatDate } from "@/lib/utils";
 
 import ProfileEditForm from "./ProfileEditForm";
-import SocialLinks from "./SocialLinks";
 import VolunteerPreferences from "./VolunteerPreferences";
+import { PrivacyControls } from "./PrivacyControls";
 
 export default function ProfileView() {
   const {
@@ -227,6 +227,11 @@ export default function ProfileView() {
             profile={profile}
             volunteerStatus={volunteerStatus}
           />
+          {profile.user_type === "volunteer" && (
+            <div className="mt-8">
+              <PrivacyControls />
+            </div>
+          )}
         </div>
 
       </div>

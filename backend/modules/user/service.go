@@ -19,6 +19,8 @@ type Service interface {
 	UpdateProfilePhoto(ctx context.Context, id string, url string, publicID string) error
 	GetSystemStats() (int64, int64, int64, float64, error)
 	GetNonAdminUsers(pagination *utils.Pagination) ([]User, error)
+	SuspendUser(id string, suspend bool) error
+	DeleteUser(id string) error
 }
 
 type service struct {
@@ -64,6 +66,10 @@ func (s *service) Login(req *request.LoginUser) (*User, error) {
 	user, err := s.repo.FindByPhone(req.Phone)
 	if err != nil {
 		return nil, errors.New("invalid credentials")
+	}
+
+	if user.IsSuspended {
+		return nil, errors.New("your account has been suspended")
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
@@ -112,4 +118,17 @@ func (s *service) GetSystemStats() (int64, int64, int64, float64, error) {
 
 func (s *service) GetNonAdminUsers(pagination *utils.Pagination) ([]User, error) {
 	return s.repo.FindNonAdminUsers(pagination)
+}
+
+func (s *service) SuspendUser(id string, suspend bool) error {
+	user, err := s.repo.FindByID(id)
+	if err != nil {
+		return errors.New("user not found")
+	}
+	user.IsSuspended = suspend
+	return s.repo.Update(user)
+}
+
+func (s *service) DeleteUser(id string) error {
+	return s.repo.Delete(id)
 }

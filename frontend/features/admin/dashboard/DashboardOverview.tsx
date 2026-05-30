@@ -2,16 +2,9 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Users, UserCheck, Heart, ArrowUpRight, TrendingUp, Activity } from "lucide-react";
+import { Users, UserCheck, Heart, ArrowUpRight, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/Button";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
+
 import { getSystemStats, SystemStatsResponse } from "@/features/shared/auth";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -109,14 +102,14 @@ export function DashboardOverview() {
       color: "bg-teal-600",
     },
     {
-      title: "Total Donations",
+      title: "Total Amount Donated",
       value: `₹ ${(statsData?.total_amount ?? 0).toLocaleString("en-IN")}`,
       change: "+18%",
       icon: <Heart className="w-6 h-6" />,
       color: "bg-accent",
     },
     {
-      title: "Total Contributions",
+      title: "Total Payments",
       value: (statsData?.total_payments ?? 0).toString(),
       change: "+2%",
       icon: <Activity className="w-6 h-6" />,
@@ -125,7 +118,6 @@ export function DashboardOverview() {
   ];
 
   return (
-
     <div className="space-y-8">
       <div>
         <h2 className="text-2xl font-bold text-text">Dashboard Overview</h2>
@@ -169,62 +161,9 @@ export function DashboardOverview() {
             <h3 className="text-text-muted text-sm font-medium">
               {stat.title}
             </h3>
-            <p className="text-2xl font-bold text-text mt-1">
-              {stat.value}
-            </p>
+            <p className="text-2xl font-bold text-text mt-1">{stat.value}</p>
           </motion.div>
         ))}
-      </div>
-
-      {/* Placeholder for Charts/Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-surface p-6 rounded-2xl shadow-card border border-border">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="font-bold text-lg flex items-center">
-              <TrendingUp className="mr-2 text-primary" size={20} />
-              Recent Engagement Trends
-            </h3>
-            <Select defaultValue="Last 7 Days">
-              <SelectTrigger className="w-36 h-9 py-1 px-3 text-xs">
-                <SelectValue placeholder="Last 7 Days" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Last 7 Days">Last 7 Days</SelectItem>
-                <SelectItem value="Last 30 Days">Last 30 Days</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="h-64 flex items-center justify-center border-2 border-dashed border-border rounded-xl text-text-light italic">
-            Visual analytics charts will be implemented here.
-          </div>
-        </div>
-
-        <div className="bg-surface p-6 rounded-2xl shadow-card border border-border">
-          <h3 className="font-bold text-lg mb-6">Recent Alerts</h3>
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="flex items-start space-x-3 p-3 rounded-lg hover:bg-bg transition-colors cursor-pointer"
-              >
-                <div className="w-2 h-2 mt-2 bg-accent rounded-full shrink-0" />
-                <div>
-                  <p className="text-sm font-medium text-text">
-                    New Volunteer Registration Pending
-                  </p>
-                  <p className="text-xs text-text-light">2 hours ago</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <Button
-            variant="text"
-            fullWidth
-            className="mt-6 text-sm font-semibold text-primary"
-          >
-            View All Notifications
-          </Button>
-        </div>
       </div>
     </div>
   );

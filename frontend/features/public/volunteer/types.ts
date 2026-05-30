@@ -11,6 +11,7 @@ export interface VolunteerResponse {
   pincode?: string;
   profession?: string;
   experience?: string;
+  ispublicconsent: boolean;
   image?: string;
   created_at: string;
   updated_at: string;
@@ -28,6 +29,7 @@ export interface CreateVolunteerPayload {
   pincode?: string;
   profession?: string;
   experience?: string;
+  ispublicconsent?: boolean;
 }
 
 export interface UpdateVolunteerPayload {
@@ -41,4 +43,5 @@ export interface UpdateVolunteerPayload {
   pincode?: string;
   profession?: string;
   experience?: string;
+  ispublicconsent?: boolean;
 }

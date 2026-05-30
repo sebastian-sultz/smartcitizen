@@ -45,4 +45,5 @@ type User struct {
 	TotalEventsRegistered int64   `gorm:"default:0" json:"total_events_registered"`
 	ReferralID           *string  `json:"referral_id"`
 	IsPhoneVerified      bool     `gorm:"default:false" json:"is_phone_verified"` // For future OTP implementation
+	IsSuspended          bool     `gorm:"default:false" json:"is_suspended"`
 }

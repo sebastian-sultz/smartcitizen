@@ -67,6 +67,14 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
     { href: "/citizen/settings", label: "Privacy & Settings", icon: Settings },
   ];
 
+  const isVolunteerOrAdmin = profile?.user_type === "volunteer" || profile?.user_type === "admin";
+  const filteredNavItems = navItems.filter((item) => {
+    if (item.href === "/citizen/profile" || item.href === "/citizen/settings") {
+      return isVolunteerOrAdmin;
+    }
+    return true;
+  });
+
   const userInitials = profile?.name
     ? profile.name
         .split(" ")
@@ -153,7 +161,7 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
 
         {/* Mobile Navigation links */}
         <nav className="p-4 space-y-1 overflow-y-auto flex-1">
-          {navItems.map((item) => {
+          {filteredNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
             return (
@@ -251,7 +259,7 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
         
         {/* Desktop nav links */}
         <nav className="p-4 space-y-1 flex-1 overflow-y-auto">
-          {navItems.map((item) => {
+          {filteredNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
             return (

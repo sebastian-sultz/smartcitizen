@@ -82,7 +82,7 @@ export function CitizenDashboard() {
           : user.total_amount > 2000
             ? "Silver"
             : "Bronze",
-      events_attended: 2, // TODO: Replace with real API data when backend supports event attendance
+      events_attended: user.total_events_registered || 0,
       volunteer_status: isVolunteer ? "approved" : "not_applied",
     });
 
