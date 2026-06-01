@@ -13,14 +13,13 @@ const aboutLinks = [
   { name: "About the Foundation", href: "/about" },
   { name: "Mission & Vision", href: "/mission" },
   { name: "Our Social Impact", href: "/impact" },
-  { name: "Participation Highlights", href: "/leaderboard" },
   { name: "Legal Documents", href: "/legal_documents" },
 ];
 
 const activityLinks = [
-  { name: "Community Activities", href: "/volunteer_activity" },
-  { name: "Upcoming Events", href: "/events" },
+  { name: "Our Initiatives", href: "/initiatives" },
   { name: "Our Programs", href: "/our_work" },
+  { name: "Upcoming Events", href: "/events" },
 ];
 
 export default function Header() {
