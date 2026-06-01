@@ -11,7 +11,6 @@ import {
   User, 
   Phone, 
   Tag, 
-  Link2,
   FileText
 } from "lucide-react";
 import Image from "next/image";
@@ -28,40 +27,47 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-interface CreateEventModalProps {
+interface CreateProgramModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess: () => void;
 }
 
-const eventSchema = Yup.object().shape({
-  event_name: Yup.string().required("Event name is required"),
-  event_date: Yup.string().required("Event date & time is required"),
-  event_address: Yup.string().required("Event location is required"),
+const programSchema = Yup.object().shape({
+  event_name: Yup.string().required("Program name is required"),
+  event_type: Yup.string().oneOf(["Event", "Initiative"]).required("Program type is required"),
+  event_date: Yup.string().required("Program date & time is required"),
+  event_address: Yup.string().required("Program location is required"),
   organizer_name: Yup.string().required("Organizer name is required"),
   organizer_phone: Yup.string()
     .matches(/^[0-9]{10}$/, "Enter a valid 10-digit mobile number")
     .required("Organizer phone is required"),
   description: Yup.string(),
   category: Yup.string(),
-  registration_link: Yup.string().url("Enter a valid URL"),
   cta_text: Yup.string(),
 });
 
 const initialValues = {
   event_name: "",
+  event_type: "Event" as "Event" | "Initiative",
   event_date: "",
   event_address: "",
   organizer_name: "",
   organizer_phone: "",
   description: "",
   category: "Community",
-  registration_link: "",
   cta_text: "Register Now",
 };
 
-export const CreateEventModal: React.FC<CreateEventModalProps> = ({
+export const CreateProgramModal: React.FC<CreateProgramModalProps> = ({
   open,
   onOpenChange,
   onSuccess,
@@ -94,24 +100,24 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
 
   const formik = useFormik({
     initialValues,
-    validationSchema: eventSchema,
+    validationSchema: programSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       try {
         const isoDate = new Date(values.event_date).toISOString();
-        const newEvent = await createEvent({
+        const newProgram = await createEvent({
           ...values,
           event_date: isoDate,
         }, selectedImage);
 
-        if (newEvent && newEvent.id) {
-          toast.success("Event created successfully");
+        if (newProgram && newProgram.id) {
+          toast.success("Program created successfully");
           resetForm();
           handleRemoveImage();
           onOpenChange(false);
           onSuccess();
         }
       } catch (err) {
-        console.error("Failed to create event:", err);
+        console.error("Failed to create program:", err);
       } finally {
         setSubmitting(false);
       }
@@ -132,10 +138,10 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
       <DialogContent className="sm:max-w-2xl max-h-[90vh] flex flex-col p-0 sm:p-0 overflow-hidden gap-0">
         <DialogHeader className="px-6 pt-6 pb-4 sm:px-8 sm:pt-8 border-b border-border bg-surface shrink-0">
           <DialogTitle className="text-2xl font-bold tracking-tight text-text">
-            Create New Event
+            Create New Program
           </DialogTitle>
           <DialogDescription className="text-[14px] text-text-light mt-1">
-            Fill in the details below to add a new event or workshop to the
+            Fill in the details below to add a new program, initiative, or workshop to the
             portal.
           </DialogDescription>
         </DialogHeader>
@@ -145,10 +151,10 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
           className="flex-1 flex flex-col overflow-hidden"
         >
           <div className="space-y-5 flex-1 overflow-y-auto px-6 py-6 sm:px-8">
-            {/* Row 1: Event Name & Category */}
+            {/* Row 1: Program Name & Category */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <Input
-                label="Event Name"
+                label="Program Name"
                 placeholder="Awareness & Guidance Program"
                 icon={<FileText size={18} />}
                 disabled={formik.isSubmitting}
@@ -182,7 +188,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
             {/* Row 2: Date & CTA Text */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <Input
-                label="Event Date & Time"
+                label="Program Date & Time"
                 type="datetime-local"
                 icon={<Calendar size={18} />}
                 disabled={formik.isSubmitting}
@@ -212,9 +218,9 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
               />
             </div>
 
-            {/* Row 3: Event Address */}
+            {/* Row 3: Program Address */}
             <Input
-              label="Event Address / Location"
+              label="Program Address / Location"
               placeholder="Community Hall, Sector 12, Dwarka, New Delhi"
               icon={<MapPin size={18} />}
               disabled={formik.isSubmitting}
@@ -264,22 +270,33 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
               />
             </div>
 
-            {/* Row 5: Registration Link */}
-            <Input
-              label="Registration Link (Optional)"
-              placeholder="https://..."
-              icon={<Link2 size={18} />}
-              disabled={formik.isSubmitting}
-              name="registration_link"
-              value={formik.values.registration_link}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={
-                formik.touched.registration_link
-                  ? (formik.errors.registration_link as string)
-                  : undefined
-              }
-            />
+            {/* Row 5: Program Type */}
+            <div className="space-y-2">
+              <label
+                htmlFor="event_type"
+                className="text-[14px] font-bold text-text ml-1 block"
+              >
+                Program Type
+              </label>
+              <Select
+                disabled={formik.isSubmitting}
+                value={formik.values.event_type}
+                onValueChange={(val) => formik.setFieldValue("event_type", val)}
+              >
+                <SelectTrigger id="event_type" className="w-full">
+                  <SelectValue placeholder="Select Program Type" />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  <SelectItem value="Event">Event / Workshop</SelectItem>
+                  <SelectItem value="Initiative">Initiative</SelectItem>
+                </SelectContent>
+              </Select>
+              {formik.touched.event_type && formik.errors.event_type && (
+                <p className="text-red-500 text-[12px] ml-1">
+                  {formik.errors.event_type as string}
+                </p>
+              )}
+            </div>
 
             {/* Row 6: Description */}
             <div className="space-y-2 w-full">
@@ -291,7 +308,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
               </label>
               <textarea
                 id="description"
-                placeholder="Write a clear description of the event details, agenda, and target audience..."
+                placeholder="Write a clear description of the program details, agenda, and target audience..."
                 rows={4}
                 disabled={formik.isSubmitting}
                 name="description"
@@ -312,17 +329,17 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
               )}
             </div>
 
-            {/* Row 7: Event Image (Optional) */}
+            {/* Row 7: Program Image (Optional) */}
             <div className="space-y-2">
               <label className="text-[14px] font-bold text-text ml-1 block">
-                Event Image (Optional)
+                Program Image (Optional)
               </label>
               {imagePreview ? (
                 <div className="relative group border border-border rounded-xl p-3 bg-bg flex items-center gap-4 transition-all hover:border-primary/30">
                   <div className="relative w-16 h-16 rounded-lg overflow-hidden border border-border shrink-0 bg-muted">
                     <Image
                       src={imagePreview}
-                      alt="Event banner preview"
+                      alt="Program banner preview"
                       fill
                       className="object-cover"
                     />
@@ -362,7 +379,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
                   </div>
                   <div className="space-y-1">
                     <p className="text-sm font-semibold text-text">
-                      Click to upload event banner
+                      Click to upload program banner
                     </p>
                     <p className="text-xs text-text-light">
                       Supports PNG, JPG, GIF up to 5MB
@@ -373,7 +390,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
             </div>
           </div>
 
-          {/* Dialog Footer with Reset Margins to Align Perfectly */}
+          {/* Dialog Footer */}
           <DialogFooter className="mx-0 mb-0 mt-0 px-6 py-4 sm:px-8 bg-bg-alt/50 border-t border-border flex flex-row items-center justify-end gap-3 shrink-0">
             <Button
               type="button"
@@ -388,7 +405,7 @@ export const CreateEventModal: React.FC<CreateEventModalProps> = ({
               variant="primary"
               loading={formik.isSubmitting}
             >
-              Create Event
+              Create Program
             </Button>
           </DialogFooter>
         </form>

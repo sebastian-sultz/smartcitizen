@@ -33,7 +33,7 @@ const navItems: NavItem[] = [
   { title: "Dashboard Overview", href: "/admin", icon: <Home className="w-5 h-5" /> },
   { title: "User Management", href: "/admin/users", icon: <Users className="w-5 h-5" /> },
   { title: "Volunteer Applications", href: "/admin/volunteers", icon: <HeartHandshake className="w-5 h-5" /> },
-  { title: "Event Management", href: "/admin/events", icon: <Activity className="w-5 h-5" /> },
+  { title: "Program Management", href: "/admin/events", icon: <Activity className="w-5 h-5" /> },
   { title: "Abuse & Moderation", href: "/admin/moderation", icon: <HelpCircle className="w-5 h-5" /> },
   // {
   //   title: "Organization Setup",

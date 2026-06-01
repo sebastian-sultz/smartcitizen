@@ -1,6 +1,7 @@
 export interface EventResponse {
   id: string;
   event_name: string;
+  event_type: "Event" | "Initiative";
   event_date: string;
   event_address: string;
   organizer_name: string;
@@ -16,26 +17,26 @@ export interface EventResponse {
 
 export interface CreateEventPayload {
   event_name: string;
+  event_type: "Event" | "Initiative";
   event_date: string;
   event_address: string;
   organizer_name: string;
   organizer_phone: string;
   description: string;
   category?: string;
-  registration_link?: string;
   cta_text?: string;
   image?: string;
 }
 
 export interface UpdateEventPayload {
   event_name?: string;
+  event_type?: "Event" | "Initiative";
   event_date?: string;
   event_address?: string;
   organizer_name?: string;
   organizer_phone?: string;
   description?: string;
   category?: string;
-  registration_link?: string;
   cta_text?: string;
   image?: string;
 }

@@ -6,18 +6,18 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Plus } from "lucide-react";
 import { TableComponent, Header } from "@/components/ui/TableComponent";
-import { getEventsColumns } from "./EventsColumns";
+import { getProgramsColumns } from "./ProgramsColumns";
 import { toast } from "sonner";
-import { CreateEventModal } from "./CreateEventModal";
+import { CreateProgramModal } from "./CreateProgramModal";
 import { useAlert } from "@/components/ui/AlertProvider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { formatDate } from "@/lib/utils";
 
 import { EventResponse, EventRegistration } from "@/features/citizen/community";
 
-export const EventsTable = () => {
+export const ProgramsTable = () => {
   const { showConfirm } = useAlert();
-  const [events, setEvents] = useState<EventResponse[]>([]);
+  const [programs, setPrograms] = useState<EventResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1);
@@ -27,20 +27,20 @@ export const EventsTable = () => {
   // Participants states
   const [participants, setParticipants] = useState<EventRegistration[]>([]);
   const [participantsLoading, setParticipantsLoading] = useState(false);
-  const [selectedEventName, setSelectedEventName] = useState<string>("");
+  const [selectedProgramName, setSelectedProgramName] = useState<string>("");
   const [participantsOpen, setParticipantsOpen] = useState(false);
 
-  const fetchEvents = async () => {
+  const fetchPrograms = async () => {
     try {
       const res = await getAllEvents(undefined, page, limit);
       if (res && res.events) {
-        setEvents(res.events);
+        setPrograms(res.events);
         if (res.pagination) {
           setTotalRows(res.pagination.total_rows);
         }
       }
     } catch (err) {
-      console.error("Failed to fetch events:", err);
+      console.error("Failed to fetch programs:", err);
     }
   };
 
@@ -48,7 +48,7 @@ export const EventsTable = () => {
     const load = async () => {
       setLoading(true);
       try {
-        await fetchEvents();
+        await fetchPrograms();
       } finally {
         setLoading(false);
       }
@@ -56,18 +56,18 @@ export const EventsTable = () => {
     load();
   }, [page, limit]);
 
-  const deleteEvent = async (id: string) => {
+  const deleteProgram = async (id: string) => {
     try {
       await apiDeleteEvent(id);
-      setEvents(prev => prev.filter(e => e.id !== id));
-      toast.success("Event deleted successfully");
+      setPrograms(prev => prev.filter(p => p.id !== id));
+      toast.success("Program deleted successfully");
     } catch (err) {
-      console.error("Failed to delete event:", err);
+      console.error("Failed to delete program:", err);
     }
   };
 
   const handleViewParticipants = async (id: string, name: string) => {
-    setSelectedEventName(name);
+    setSelectedProgramName(name);
     setParticipantsOpen(true);
     setParticipantsLoading(true);
     try {
@@ -75,13 +75,13 @@ export const EventsTable = () => {
       setParticipants(data);
     } catch (err) {
       console.error("Failed to load participants:", err);
-      toast.error("Failed to load event participants");
+      toast.error("Failed to load program participants");
     } finally {
       setParticipantsLoading(false);
     }
   };
 
-  const columns = getEventsColumns(deleteEvent, showConfirm, handleViewParticipants);
+  const columns = getProgramsColumns(deleteProgram, showConfirm, handleViewParticipants);
 
   const participantColumns: Header<EventRegistration>[] = [
     {
@@ -105,7 +105,7 @@ export const EventsTable = () => {
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <CardTitle>Event Management</CardTitle>
+        <CardTitle>Program Management</CardTitle>
         <Button 
           size="sm" 
           variant="primary" 
@@ -113,16 +113,16 @@ export const EventsTable = () => {
           onClick={() => setOpen(true)}
           className="w-full sm:w-auto"
         >
-          Create Event
+          Create Program
         </Button>
-        <CreateEventModal open={open} onOpenChange={setOpen} onSuccess={fetchEvents} />
+        <CreateProgramModal open={open} onOpenChange={setOpen} onSuccess={fetchPrograms} />
       </CardHeader>
       <CardContent>
         <TableComponent 
           headers={columns} 
-          data={events} 
+          data={programs} 
           loading={loading}
-          emptyMessage="No events found" 
+          emptyMessage="No programs found" 
           className="shadow-none border-0" 
           pagination={{
             page,
@@ -141,10 +141,10 @@ export const EventsTable = () => {
         <DialogContent className="sm:max-w-2xl max-h-[80vh] flex flex-col p-6">
           <DialogHeader className="border-b border-border/80 pb-3 shrink-0">
             <DialogTitle className="font-display font-bold text-text text-base sm:text-lg">
-              Event Participants
+              Program Participants
             </DialogTitle>
             <DialogDescription className="text-xs text-text-muted mt-1 font-medium">
-              Registered users for: <span className="font-bold text-text">{selectedEventName}</span>
+              Registered users for: <span className="font-bold text-text">{selectedProgramName}</span>
             </DialogDescription>
           </DialogHeader>
 
@@ -153,7 +153,7 @@ export const EventsTable = () => {
               headers={participantColumns}
               data={participants}
               loading={participantsLoading}
-              emptyMessage="No participants registered for this event yet."
+              emptyMessage="No participants registered for this program yet."
               className="shadow-none border border-border/40 rounded-xl"
             />
           </div>
@@ -162,4 +162,3 @@ export const EventsTable = () => {
     </Card>
   );
 };
-

@@ -7,31 +7,39 @@ import { EventResponse } from "@/features/citizen/community/types";
 import { formatDate } from "@/lib/utils";
 import { ConfirmOptions } from "@/components/ui/AlertProvider";
 
-export const getEventsColumns = (
-  deleteEvent: (id: string) => void,
+export const getProgramsColumns = (
+  deleteProgram: (id: string) => void,
   showConfirm: (options: ConfirmOptions) => void,
   viewParticipants: (id: string, name: string) => void
 ): Header<EventResponse>[] => [
   {
     label: "Title",
-    render: (event) => <span className="text-[14px] font-bold text-text">{event.event_name}</span>,
+    render: (program) => <span className="text-[14px] font-bold text-text">{program.event_name}</span>,
+  },
+  {
+    label: "Type",
+    render: (program) => (
+      <Badge variant={program.event_type === "Initiative" ? "success" : "info"}>
+        {program.event_type || "Event"}
+      </Badge>
+    ),
   },
   {
     label: "Date",
-    render: (event) => (
+    render: (program) => (
       <span className="text-[14px] text-text-muted">
-        {formatDate(event.event_date, "short")}
+        {formatDate(program.event_date, "short")}
       </span>
     ),
   },
   {
     label: "Location",
-    render: (event) => <span className="text-[14px] text-text-muted">{event.event_address}</span>,
+    render: (program) => <span className="text-[14px] text-text-muted">{program.event_address}</span>,
   },
   {
     label: "Status",
-    render: (event) => {
-      const isCompleted = new Date(event.event_date) < new Date();
+    render: (program) => {
+      const isCompleted = new Date(program.event_date) < new Date();
       return (
         <Badge variant={isCompleted ? "success" : "info"}>
           {isCompleted ? "Completed" : "Upcoming"}
@@ -41,13 +49,13 @@ export const getEventsColumns = (
   },
   {
     label: "Actions",
-    render: (event) => (
+    render: (program) => (
       <div className="flex items-center justify-end gap-2">
         <Button 
           variant="ghost-primary"
           size="icon"
           shape="square"
-          onClick={() => viewParticipants(event.id, event.event_name)}
+          onClick={() => viewParticipants(program.id, program.event_name)}
           title="View Participants"
         >
           <Users size={16} />
@@ -58,15 +66,15 @@ export const getEventsColumns = (
           shape="square"
           onClick={() => {
             showConfirm({
-              title: "Delete Event",
-              message: "Are you sure you want to delete this event? This action cannot be undone.",
+              title: "Delete Program",
+              message: "Are you sure you want to delete this program? This action cannot be undone.",
               confirmText: "Delete",
               cancelText: "Cancel",
               type: "error",
-              onConfirm: () => deleteEvent(event.id),
+              onConfirm: () => deleteProgram(program.id),
             });
           }}
-          title="Delete Event"
+          title="Delete Program"
         >
           <Trash2 size={16} />
         </Button>
@@ -74,4 +82,3 @@ export const getEventsColumns = (
     ),
   },
 ];
-

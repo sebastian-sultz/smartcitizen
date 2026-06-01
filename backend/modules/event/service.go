@@ -47,16 +47,15 @@ func (s *service) CreateEvent(req *request.CreateEvent) (*Event, error) {
 	}
 
 	event := &Event{
-		EventName:        req.EventName,
-		EventType:        EventType(eventType),
-		EventDate:        req.EventDate,
-		EventAddress:     req.EventAddress,
-		OrganizerName:    req.OrganizerName,
-		OrganizerPhone:   req.OrganizerPhone,
-		Description:      req.Description,
-		Category:         category,
-		RegistrationLink: req.RegistrationLink,
-		CtaText:          ctaText,
+		EventName:      req.EventName,
+		EventType:      EventType(eventType),
+		EventDate:      req.EventDate,
+		EventAddress:   req.EventAddress,
+		OrganizerName:  req.OrganizerName,
+		OrganizerPhone: req.OrganizerPhone,
+		Description:    req.Description,
+		Category:       category,
+		CtaText:        ctaText,
 	}
 
 	if err := s.repo.Create(event); err != nil {
@@ -103,9 +102,6 @@ func (s *service) UpdateEvent(id string, req *request.UpdateEvent) (*Event, erro
 	}
 	if req.Category != nil {
 		event.Category = *req.Category
-	}
-	if req.RegistrationLink != nil {
-		event.RegistrationLink = *req.RegistrationLink
 	}
 	if req.CtaText != nil {
 		event.CtaText = *req.CtaText
