@@ -118,10 +118,10 @@ export default function CreateTicketForm({
           </Button>
           <Button
             type="submit"
-            isLoading={formik.isSubmitting}
+            loading={formik.isSubmitting}
             className="rounded-xl px-5 py-2 h-auto text-xs font-bold"
           >
-            Lodge Issue
+            Report Issue
           </Button>
         </div>
       </form>

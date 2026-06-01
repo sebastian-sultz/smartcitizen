@@ -47,43 +47,45 @@ export default function ShareReferralDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md rounded-[32px] p-6">
+      <DialogContent className="max-w-md rounded-3xl p-6 sm:p-8">
         <DialogHeader>
-          <DialogTitle className="font-display font-bold text-xl text-text flex items-center gap-2">
+          <DialogTitle className="font-display text-xl font-bold text-text flex items-center gap-2">
             <Share2 size={20} className="text-primary" />
             Invite Your Friends
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6 pt-4">
-          <p className="text-sm text-text-muted leading-relaxed font-medium">
+        <div className="space-y-6 pt-4 min-w-0">
+          <p className="text-sm text-text-muted leading-relaxed font-medium break-normal whitespace-normal">
             Share your custom referral code or link with friends. When they
             register and make a donation, you progress toward unlocking
             volunteer status.
           </p>
 
           <div className="space-y-2">
-            <span className="text-xs font-bold text-text-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-text-muted">
               Your Referral Code
             </span>
-            <div className="p-3 bg-bg border border-border rounded-2xl font-mono text-center font-bold text-primary tracking-widest text-lg">
+            <div className="p-4 bg-bg border border-border rounded-2xl font-mono text-center font-bold text-primary tracking-widest text-xl">
               {referralCode}
             </div>
           </div>
 
           <div className="space-y-2">
-            <span className="text-xs font-bold text-text-muted">
+            <span className="text-xs font-bold uppercase tracking-wider text-text-muted">
               Invitation Link
             </span>
-            <div className="flex gap-2">
-              <div className="flex-1 bg-bg p-3 rounded-2xl border border-border text-sm font-mono text-text-muted truncate">
-                {referralLink}
+            <div className="flex gap-2 items-stretch w-full min-w-0">
+              <div className="flex-1 bg-bg px-4 py-3 rounded-xl border border-border text-sm font-mono text-text-muted overflow-hidden flex items-center min-w-0">
+                <span className="truncate w-full">
+                  {referralLink}
+                </span>
               </div>
               <Button
                 onClick={handleCopyLink}
                 variant="secondary"
-                className="bg-primary/10 text-primary border-none hover:bg-primary/20 p-3 h-auto rounded-2xl shrink-0"
-                title="Copy link"
+                className="px-4 rounded-xl shrink-0 border border-border hover:border-primary/20 hover:text-primary flex items-center justify-center"
+                title="Copy Link"
               >
                 <Copy size={16} />
               </Button>
@@ -95,15 +97,16 @@ export default function ShareReferralDialog({
           <div className="grid grid-cols-2 gap-3">
             <Button
               onClick={handleWhatsAppShare}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2 py-3 rounded-2xl border-none"
+              variant="success"
+              className="font-bold gap-2 py-3 rounded-xl w-full"
             >
               <Send size={15} />
               WhatsApp
             </Button>
             <Button
               onClick={handleEmailShare}
-              variant="outline"
-              className="border-border hover:bg-bg text-text font-bold gap-2 py-3 rounded-2xl"
+              variant="secondary"
+              className="font-bold gap-2 py-3 rounded-xl w-full"
             >
               <Mail size={15} />
               Email
