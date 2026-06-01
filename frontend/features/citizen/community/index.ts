@@ -4,7 +4,6 @@ export * from "./components/UpcomingEvents";
 export * from "./components/CommunitySports";
 export * from "./components/CommunityActivities";
 export * from "./components/LeaderboardHighlights";
-export * from "./components/AwarenessFeature";
 export * from "./components/events-main";
 export * from "./components/our-work-main";
 export * from "./components/leaderboard-main";
