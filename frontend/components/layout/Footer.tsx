@@ -53,7 +53,6 @@ export default function Footer() {
                 { name: "About the Foundation", href: "/about" },
                 { name: "Mission & Vision", href: "/mission" },
                 { name: "Our Programs", href: "/our_work" },
-                { name: "Our Activities", href: "/our_activity" },
                 { name: "Upcoming Events", href: "/events" },
                 { name: "Awareness Blogs", href: "/blogs" },
                 { name: "Join as Smart Citizen", href: "/join_us" },

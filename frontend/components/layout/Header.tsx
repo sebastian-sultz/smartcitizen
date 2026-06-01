@@ -21,7 +21,6 @@ const activityLinks = [
   { name: "Awareness Blogs", href: "/blogs" },
   { name: "Community Activities", href: "/volunteer_activity" },
   { name: "Our Programs", href: "/our_work" },
-  { name: "Our Activities", href: "/our_activity" },
   { name: "Upcoming Programs", href: "/events" },
   { name: "Volunteer Programs", href: "/volunteer" },
 ];
