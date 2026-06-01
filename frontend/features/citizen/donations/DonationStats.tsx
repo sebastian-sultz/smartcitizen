@@ -1,8 +1,8 @@
 "use client";
 
 import { DonationStats as DonationStatsType } from "../types";
-import { Card, CardContent } from "@/components/ui/Card";
-import { Heart, Calendar, CreditCard, Award, Sparkles } from "lucide-react";
+import { Card } from "@/components/ui/Card";
+import { Heart, Calendar, CreditCard } from "lucide-react";
 
 interface DonationStatsProps {
   stats: DonationStatsType | null;
@@ -16,32 +16,31 @@ export default function DonationStats({ stats }: DonationStatsProps) {
       title: "Lifetime Support",
       value: `₹${stats.lifetimeDonated.toLocaleString("en-IN")}`,
       icon: Heart,
-      color: "from-rose-50 to-rose-100/50 border-rose-100 text-rose-500",
-      textColor: "text-rose-900",
+      color: "from-accent/5 to-accent/15 border-accent/20 text-accent",
+      textColor: "text-text",
       description: "Total direct impact funded",
     },
     {
       title: "This Fiscal Year",
       value: `₹${stats.donatedThisYear.toLocaleString("en-IN")}`,
       icon: Calendar,
-      color: "from-blue-50 to-blue-100/50 border-blue-100 text-blue-500",
-      textColor: "text-blue-900",
+      color: "from-primary/5 to-primary/15 border-primary/20 text-primary",
+      textColor: "text-primary",
       description: "FY 2026-2027 contributions",
     },
     {
       title: "Total Contributions",
       value: stats.totalTransactions.toString(),
       icon: CreditCard,
-      color:
-        "from-emerald-50 to-emerald-100/50 border-emerald-100 text-emerald-500",
-      textColor: "text-emerald-900",
+      color: "from-success-bg to-success-bg/80 border-success/20 text-success",
+      textColor: "text-success",
       description: "Successfully processed payments",
     },
   ];
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {statsItems.map((item, idx) => {
           const Icon = item.icon;
           return (
@@ -62,7 +61,7 @@ export default function DonationStats({ stats }: DonationStatsProps) {
                 >
                   {item.value}
                 </div>
-                <p className="text-[11px] opacity-75 font-medium mt-1">
+                <p className="text-[11px] opacity-75 font-medium mt-1 text-text-muted">
                   {item.description}
                 </p>
               </div>

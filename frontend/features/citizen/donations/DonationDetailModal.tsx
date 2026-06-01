@@ -4,6 +4,7 @@ import { DonationRecord } from "../types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { getStatusColor } from "./helpers";
 import {
   Download,
   Calendar,
@@ -29,13 +30,7 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
     timeStyle: "short",
   });
 
-  const getStatusColor = (status: DonationRecord["status"]) => {
-    switch (status) {
-      case "success": return "success";
-      case "pending": return "warning";
-      default: return "danger";
-    }
-  };
+  // getStatusColor is imported from helpers.ts
 
   const handleDownloadReceipt = () => {
     toast.success("Receipt PDF compilation initiated.");

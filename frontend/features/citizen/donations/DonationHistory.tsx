@@ -17,6 +17,8 @@ import EmptyState from "@/components/ui/EmptyState";
 import { Search, Eye, Filter, Download, Heart } from "lucide-react";
 import DonationDetailModal from "./DonationDetailModal";
 import { cn, formatDate } from "@/lib/utils";
+import { getStatusColor } from "./helpers";
+import { toast } from "sonner";
 
 interface DonationHistoryProps {
   donations: DonationRecord[];
@@ -40,13 +42,7 @@ export default function DonationHistory({ donations, loading = false }: Donation
     return matchesSearch && matchesStatus;
   });
 
-  const getStatusColor = (status: DonationRecord["status"]) => {
-    switch (status) {
-      case "success": return "success";
-      case "pending": return "warning";
-      default: return "danger";
-    }
-  };
+  // getStatusColor is imported from helpers.ts
 
   const handleViewDetails = (donation: DonationRecord) => {
     setSelectedDonation(donation);
@@ -118,8 +114,8 @@ export default function DonationHistory({ donations, loading = false }: Donation
                 if (row.receiptUrl) {
                   window.open(row.receiptUrl, "_blank");
                 } else {
-                  alert(
-                    `Downloading receipt for transaction ${row.transactionId}`,
+                  toast.success(
+                    `Downloading receipt for transaction ${row.transactionId}`
                   );
                 }
               }}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { QRCodeSVG } from "qrcode.react";
@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Badge } from "@/components/ui/Badge";
 import { Spinner } from "@/components/ui/spinner";
 import {
   Shield,
@@ -21,11 +20,11 @@ import {
   Smartphone,
   QrCode,
   CheckCircle2,
-  AlertCircle,
   ArrowRight,
   Info,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatCardNumber, formatExpiryDate } from "./helpers";
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -51,6 +50,17 @@ export default function CheckoutModal({
   const [transactionId, setTransactionId] = useState("");
   const [selectedUpiApp, setSelectedUpiApp] = useState<string | null>(null);
 
+  // Keep track of timeouts so we can cancel them safely
+  const paymentTimeoutRef = useRef<NodeJS.Timeout[]>([]);
+  const lastUsedPaymentMethod = useRef<string>("");
+
+  useEffect(() => {
+    return () => {
+      // Clear any pending timeouts on unmount to prevent memory leaks
+      paymentTimeoutRef.current.forEach((t) => clearTimeout(t));
+    };
+  }, []);
+
   // Formik validation for Credit Card
   const cardFormik = useFormik({
     initialValues: {
@@ -61,6 +71,7 @@ export default function CheckoutModal({
     },
     validationSchema: Yup.object({
       cardNumber: Yup.string()
+        .transform((value) => (value ? value.replace(/\s+/g, "") : value))
         .matches(/^\d{16}$/, "Must be exactly 16 digits")
         .required("Card number is required"),
       expiry: Yup.string()
@@ -93,38 +104,54 @@ export default function CheckoutModal({
     },
   });
 
+  const completeSimulatedPayment = (paymentMethodUsed: string) => {
+    const generatedTxId = "TXN" + Math.floor(10000000 + Math.random() * 90000000);
+    setTransactionId(generatedTxId);
+    setStep("success");
+
+    // Deliver callback
+    onSuccess({
+      transactionId: generatedTxId,
+      paymentMethod: paymentMethodUsed,
+    });
+
+    // Auto close after success message
+    const t = setTimeout(() => {
+      handleClose();
+    }, 3000);
+    paymentTimeoutRef.current.push(t);
+  };
+
   const triggerPayment = (paymentMethodUsed: string) => {
+    lastUsedPaymentMethod.current = paymentMethodUsed;
     setStep("processing");
     setLoadingMessage("Securing payment connection...");
 
-    // Simulate payment sequence steps
-    setTimeout(() => {
-      setLoadingMessage("Authorizing amount with your bank...");
-    }, 1200);
+    // Clear any previous timeouts
+    paymentTimeoutRef.current.forEach((t) => clearTimeout(t));
+    paymentTimeoutRef.current = [];
 
-    setTimeout(() => {
+    // Simulate payment sequence steps with accelerated timing for better usability
+    const t1 = setTimeout(() => {
+      setLoadingMessage("Authorizing amount with your bank...");
+    }, 800);
+
+    const t2 = setTimeout(() => {
       setLoadingMessage("Finalizing transaction logs...");
+    }, 1600);
+
+    const t3 = setTimeout(() => {
+      completeSimulatedPayment(paymentMethodUsed);
     }, 2400);
 
-    setTimeout(() => {
-      const generatedTxId = "TXN" + Math.floor(10000000 + Math.random() * 90000000);
-      setTransactionId(generatedTxId);
-      setStep("success");
-
-      // Deliver callback
-      onSuccess({
-        transactionId: generatedTxId,
-        paymentMethod: paymentMethodUsed,
-      });
-
-      // Auto close after success message
-      setTimeout(() => {
-        handleClose();
-      }, 2500);
-    }, 3600);
+    paymentTimeoutRef.current.push(t1, t2, t3);
   };
 
   const handleClose = () => {
+    // Clear timeouts
+    paymentTimeoutRef.current.forEach((t) => clearTimeout(t));
+    paymentTimeoutRef.current = [];
+
     onOpenChange(false);
     // Reset state after animation finishes
     setTimeout(() => {
@@ -324,9 +351,12 @@ export default function CheckoutModal({
                 label="Card Number"
                 name="cardNumber"
                 placeholder="4111 2222 3333 4444"
-                maxLength={16}
+                maxLength={19}
                 value={cardFormik.values.cardNumber}
-                onChange={cardFormik.handleChange}
+                onChange={(e) => {
+                  const formatted = formatCardNumber(e.target.value);
+                  cardFormik.setFieldValue("cardNumber", formatted);
+                }}
                 onBlur={cardFormik.handleBlur}
                 error={
                   cardFormik.touched.cardNumber && cardFormik.errors.cardNumber
@@ -343,7 +373,10 @@ export default function CheckoutModal({
                   placeholder="12/28"
                   maxLength={5}
                   value={cardFormik.values.expiry}
-                  onChange={cardFormik.handleChange}
+                  onChange={(e) => {
+                    const formatted = formatExpiryDate(e.target.value);
+                    cardFormik.setFieldValue("expiry", formatted);
+                  }}
                   onBlur={cardFormik.handleBlur}
                   error={
                     cardFormik.touched.expiry && cardFormik.errors.expiry
@@ -359,7 +392,10 @@ export default function CheckoutModal({
                   placeholder="***"
                   maxLength={3}
                   value={cardFormik.values.cvv}
-                  onChange={cardFormik.handleChange}
+                  onChange={(e) => {
+                    const cleaned = e.target.value.replace(/\D/g, "").substring(0, 3);
+                    cardFormik.setFieldValue("cvv", cleaned);
+                  }}
                   onBlur={cardFormik.handleBlur}
                   error={
                     cardFormik.touched.cvv && cardFormik.errors.cvv
@@ -452,11 +488,11 @@ export default function CheckoutModal({
 
           {/* STEP: Processing gateway animation */}
           {step === "processing" && (
-            <div className="flex flex-col items-center justify-center space-y-6 py-12">
+            <div className="flex flex-col items-center justify-center space-y-6 py-6 animate-scale-in">
               <div className="relative flex items-center justify-center">
                 <Spinner className={cn("size-14", isPhonePe ? "text-indigo-600" : "text-blue-600")} />
               </div>
-              <div className="text-center space-y-1.5">
+              <div className="text-center space-y-1.5 w-full">
                 <h4 className="font-display font-black text-text text-base">Processing Transaction</h4>
                 <p className="text-xs text-text-muted font-medium animate-pulse-slow">
                   {loadingMessage}
@@ -465,13 +501,43 @@ export default function CheckoutModal({
                   Please do not reload page or click back
                 </p>
               </div>
+              
+              <div className="flex gap-2.5 w-full pt-4 border-t border-border/40">
+                <Button
+                  variant="outline"
+                  className="flex-1 text-xs font-bold py-2 h-auto rounded-xl border-primary/20 text-primary hover:bg-primary/5"
+                  onClick={() => {
+                    // Cancel transaction simulation
+                    paymentTimeoutRef.current.forEach((t) => clearTimeout(t));
+                    paymentTimeoutRef.current = [];
+                    setStep("method_select");
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="primary"
+                  className={cn(
+                    "flex-1 text-xs font-bold py-2 h-auto text-white",
+                    isPhonePe ? "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/10" : "bg-blue-600 hover:bg-blue-700 shadow-blue-600/10"
+                  )}
+                  onClick={() => {
+                    // Skip delay simulation
+                    paymentTimeoutRef.current.forEach((t) => clearTimeout(t));
+                    paymentTimeoutRef.current = [];
+                    completeSimulatedPayment(lastUsedPaymentMethod.current || "Simulator Bypass");
+                  }}
+                >
+                  Skip Delay
+                </Button>
+              </div>
             </div>
           )}
 
           {/* STEP: Success Screen */}
           {step === "success" && (
-            <div className="flex flex-col items-center justify-center space-y-5 py-10">
-              <div className="h-16 w-16 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center text-success animate-scale-in">
+            <div className="flex flex-col items-center justify-center space-y-5 py-6 animate-scale-in">
+              <div className="h-16 w-16 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center text-success">
                 <CheckCircle2 size={40} className="stroke-[2.5]" />
               </div>
               <div className="text-center space-y-1.5 max-w-xs">
@@ -488,6 +554,14 @@ export default function CheckoutModal({
                   {transactionId}
                 </span>
               </div>
+              
+              <Button
+                variant="outline"
+                className="w-full text-xs font-bold py-2.5 h-auto rounded-xl mt-2 border-primary/20 hover:bg-primary/5 text-primary"
+                onClick={handleClose}
+              >
+                Done
+              </Button>
             </div>
           )}
         </div>

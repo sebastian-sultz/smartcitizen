@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { Badge } from "@/components/ui/Badge";
 import {
   Select,
   SelectContent,
@@ -41,58 +41,43 @@ const PURPOSES = [
 ];
 
 export default function DonationHero({ onDonateInitiate }: DonationHeroProps) {
-  const [selectedAmount, setSelectedAmount] = useState<number>(1000);
-  const [customAmount, setCustomAmount] = useState<string>("");
-  const [selectedPurpose, setSelectedPurpose] = useState<string>("General Citizen Fund");
-  const [provider, setProvider] = useState<"phonepe" | "razorpay">("phonepe");
-  const [validationError, setValidationError] = useState<string | null>(null);
-
-  const handleAmountSelect = (amount: number) => {
-    setSelectedAmount(amount);
-    setCustomAmount("");
-    setValidationError(null);
-  };
+  const formik = useFormik({
+    initialValues: {
+      amount: 1000 as number | "",
+      purpose: "General Citizen Fund",
+      provider: "phonepe" as "phonepe" | "razorpay",
+    },
+    validationSchema: Yup.object({
+      amount: Yup.number()
+        .transform((value, originalValue) => (originalValue === "" ? undefined : value))
+        .required("Please select or enter a donation amount.")
+        .min(100, "Minimum contribution amount is ₹100.")
+        .max(10000000, "Maximum contribution amount is ₹10,000,000."),
+      purpose: Yup.string().required("Please select a support purpose."),
+      provider: Yup.string()
+        .oneOf(["phonepe", "razorpay"])
+        .required("Please select a payment provider."),
+    }),
+    onSubmit: (values) => {
+      onDonateInitiate({
+        amount: Number(values.amount),
+        purpose: values.purpose,
+        provider: values.provider,
+      });
+    },
+  });
 
   const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (value === "" || /^\d+$/.test(value)) {
-      setCustomAmount(value);
-      setSelectedAmount(0);
-      setValidationError(null);
+      formik.setFieldValue("amount", value === "" ? "" : parseInt(value, 10));
     }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    const finalAmount = customAmount ? parseInt(customAmount, 10) : selectedAmount;
-
-    if (!finalAmount || isNaN(finalAmount)) {
-      setValidationError("Please select or enter a donation amount.");
-      return;
-    }
-
-    if (finalAmount < 100) {
-      setValidationError("Minimum contribution amount is ₹100.");
-      return;
-    }
-
-    if (finalAmount > 1000000) {
-      setValidationError("Maximum contribution amount is ₹10,000,000.");
-      return;
-    }
-
-    setValidationError(null);
-    onDonateInitiate({
-      amount: finalAmount,
-      purpose: selectedPurpose,
-      provider,
-    });
   };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch animate-scale-in">
       {/* Left Column: Narrative/Information */}
-      <div className="lg:col-span-7 flex flex-col justify-between p-8 md:p-10 bg-gradient-to-br from-primary to-primary-light text-white rounded-[40px] relative overflow-hidden shadow-card">
+      <div className="lg:col-span-7 flex flex-col justify-between p-6 md:p-10 bg-gradient-to-br from-primary to-primary-light text-white rounded-3xl md:rounded-[40px] relative overflow-hidden shadow-card">
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 w-80 h-80 bg-white/5 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
         <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-white/5 rounded-full blur-2xl -mb-16 pointer-events-none" />
@@ -148,8 +133,8 @@ export default function DonationHero({ onDonateInitiate }: DonationHeroProps) {
 
       {/* Right Column: Quick Donation Form Widget */}
       <div className="lg:col-span-5 flex">
-        <Card className="w-full rounded-[40px] border border-border shadow-card flex flex-col justify-between overflow-hidden">
-          <div className="p-6 md:p-8 space-y-5 flex-1">
+        <Card className="w-full rounded-3xl md:rounded-[40px] border border-border shadow-card flex flex-col justify-between overflow-hidden">
+          <CardContent className="p-6 md:p-8 space-y-5 flex-1 pt-6 md:pt-8">
             <div className="space-y-1.5">
               <h2 className="text-xl font-display font-black text-text">Quick Contribution</h2>
               <p className="text-xs text-text-muted">
@@ -157,39 +142,52 @@ export default function DonationHero({ onDonateInitiate }: DonationHeroProps) {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={formik.handleSubmit} className="space-y-5">
               {/* Preset Amounts Grid */}
               <div className="space-y-2">
                 <label className="text-xs font-bold text-text-muted uppercase tracking-wider block">
                   Select Amount
                 </label>
                 <div className="grid grid-cols-4 gap-2">
-                  {PRESET_AMOUNTS.map((amount) => (
-                    <Button
-                      key={amount}
-                      type="button"
-                      variant={selectedAmount === amount ? "primary" : "secondary"}
-                      className={cn(
-                        "py-3 px-2 text-xs font-bold h-auto rounded-xl",
-                        selectedAmount === amount
-                          ? "bg-primary text-white"
-                          : "border-border/80 text-text hover:bg-bg"
-                      )}
-                      onClick={() => handleAmountSelect(amount)}
-                    >
-                      ₹{amount.toLocaleString("en-IN")}
-                    </Button>
-                  ))}
+                  {PRESET_AMOUNTS.map((amount) => {
+                    const isSelected = formik.values.amount === amount;
+                    return (
+                      <Button
+                        key={amount}
+                        type="button"
+                        variant={isSelected ? "primary" : "secondary"}
+                        className={cn(
+                          "py-3 px-2 text-xs font-bold h-auto rounded-xl",
+                          isSelected
+                            ? "bg-primary text-white"
+                            : "border-border/80 text-text hover:bg-bg"
+                        )}
+                        onClick={() => {
+                          formik.setFieldValue("amount", amount);
+                        }}
+                      >
+                        ₹{amount.toLocaleString("en-IN")}
+                      </Button>
+                    );
+                  })}
                 </div>
               </div>
 
               {/* Custom Amount Input */}
               <Input
                 placeholder="Or enter custom amount (₹)"
-                value={customAmount}
+                value={
+                  PRESET_AMOUNTS.includes(Number(formik.values.amount))
+                    ? ""
+                    : formik.values.amount
+                }
                 onChange={handleCustomAmountChange}
-                error={validationError || undefined}
-                className="py-3.5 px-4 text-sm"
+                error={
+                  formik.touched.amount && formik.errors.amount
+                    ? (formik.errors.amount as string)
+                    : undefined
+                }
+                className="py-3.5 pr-4 text-sm"
                 icon={<span className="font-bold text-text-light text-sm">₹</span>}
               />
 
@@ -198,7 +196,10 @@ export default function DonationHero({ onDonateInitiate }: DonationHeroProps) {
                 <label className="text-xs font-bold text-text-muted uppercase tracking-wider block">
                   Support Purpose
                 </label>
-                <Select value={selectedPurpose} onValueChange={setSelectedPurpose}>
+                <Select
+                  value={formik.values.purpose}
+                  onValueChange={(val) => formik.setFieldValue("purpose", val)}
+                >
                   <SelectTrigger className="px-4 py-3 text-xs rounded-xl h-auto border-border bg-bg/50">
                     <SelectValue placeholder="Select purpose" />
                   </SelectTrigger>
@@ -221,16 +222,16 @@ export default function DonationHero({ onDonateInitiate }: DonationHeroProps) {
                   <div
                     className={cn(
                       "flex items-center gap-2 p-3 rounded-2xl border-2 cursor-pointer transition-all hover:bg-bg/40 select-none",
-                      provider === "phonepe"
+                      formik.values.provider === "phonepe"
                         ? "border-indigo-600 bg-indigo-50/20"
                         : "border-border/80 bg-transparent"
                     )}
-                    onClick={() => setProvider("phonepe")}
+                    onClick={() => formik.setFieldValue("provider", "phonepe")}
                   >
                     <div
                       className={cn(
                         "p-1.5 rounded-lg shrink-0",
-                        provider === "phonepe"
+                        formik.values.provider === "phonepe"
                           ? "bg-indigo-600 text-white"
                           : "bg-bg text-text-muted"
                       )}
@@ -246,16 +247,16 @@ export default function DonationHero({ onDonateInitiate }: DonationHeroProps) {
                   <div
                     className={cn(
                       "flex items-center gap-2 p-3 rounded-2xl border-2 cursor-pointer transition-all hover:bg-bg/40 select-none",
-                      provider === "razorpay"
+                      formik.values.provider === "razorpay"
                         ? "border-blue-600 bg-blue-50/20"
                         : "border-border/80 bg-transparent"
                     )}
-                    onClick={() => setProvider("razorpay")}
+                    onClick={() => formik.setFieldValue("provider", "razorpay")}
                   >
                     <div
                       className={cn(
                         "p-1.5 rounded-lg shrink-0",
-                        provider === "razorpay"
+                        formik.values.provider === "razorpay"
                           ? "bg-blue-600 text-white"
                           : "bg-bg text-text-muted"
                       )}
@@ -279,7 +280,7 @@ export default function DonationHero({ onDonateInitiate }: DonationHeroProps) {
                 Proceed to Contribute
               </Button>
             </form>
-          </div>
+          </CardContent>
         </Card>
       </div>
     </div>

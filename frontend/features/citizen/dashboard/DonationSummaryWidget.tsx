@@ -19,47 +19,50 @@ export default function DonationSummaryWidget({ stats }: DonationSummaryWidgetPr
     <Card className="rounded-[40px] border-primary/5 shadow-sm">
       <CardHeader className="pb-3">
         <CardTitle className="font-display text-base font-bold text-text flex items-center gap-2">
-          <Heart size={18} className="text-rose-500" fill="currentColor" />
+          <Heart size={18} className="text-accent" fill="currentColor" />
           Donation Ledger
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-3">
-          <div className="flex justify-between items-center p-3 bg-rose-50/30 border border-rose-100/30 rounded-2xl">
+          {/* Lifetime Donated Summary Card */}
+          <div className="flex justify-between items-center p-3 bg-accent/5 border border-accent/10 rounded-2xl">
             <div className="flex items-center gap-2.5">
-              <div className="p-2 bg-rose-50 rounded-xl text-rose-500">
+              <div className="p-2 bg-accent/10 rounded-xl text-accent">
                 <Heart size={14} fill="currentColor" />
               </div>
               <div>
                 <p className="text-[11px] text-text-muted font-medium">Lifetime Donated</p>
-                <p className="text-base font-display font-black text-rose-900">
+                <p className="text-base font-display font-black text-text">
                   ₹{stats.lifetimeDonated.toLocaleString("en-IN")}
                 </p>
               </div>
             </div>
-            {/* <div className="text-right">
-              <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 bg-rose-100 text-rose-700 rounded-full">
-                {stats.donorLevel} Donor
+            <div className="text-right">
+              <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 bg-accent/15 text-accent rounded-full">
+                {stats.donorLevel}
               </span>
-            </div> */}
+            </div>
           </div>
 
-          {/* <div className="grid grid-cols-2 gap-3">
-            <div className="p-3 bg-slate-50/50 border border-border/50 rounded-2xl">
+          {/* Fiscal Year & Average Donation Grid */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="p-3 bg-bg/50 border border-border/50 rounded-2xl">
               <p className="text-[10px] text-text-muted font-medium">This Fiscal Year</p>
               <p className="text-sm font-display font-bold text-text mt-0.5">
                 ₹{stats.donatedThisYear.toLocaleString("en-IN")}
               </p>
             </div>
-            <div className="p-3 bg-slate-50/50 border border-border/50 rounded-2xl">
+            <div className="p-3 bg-bg/50 border border-border/50 rounded-2xl">
               <p className="text-[10px] text-text-muted font-medium">Avg. Donation</p>
               <p className="text-sm font-display font-bold text-text mt-0.5">
                 ₹{stats.averageAmount.toLocaleString("en-IN")}
               </p>
             </div>
-          </div> */}
+          </div>
         </div>
 
+        {/* View History CTA */}
         <Button 
           onClick={() => router.push("/citizen/donations")}
           variant="outline" 
