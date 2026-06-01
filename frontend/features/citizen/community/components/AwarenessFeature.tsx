@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import { AwarenessList } from "./AwarenessList";
 import { AwarenessForm } from "./AwarenessForm";
-import { AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 
 export function AwarenessFeature() {
@@ -28,11 +27,9 @@ export function AwarenessFeature() {
         +
       </Button>
 
-      <AnimatePresence>
-        {isFormOpen && (
-          <AwarenessForm onClose={() => setIsFormOpen(false)} />
-        )}
-      </AnimatePresence>
+      {isFormOpen && (
+        <AwarenessForm onClose={() => setIsFormOpen(false)} />
+      )}
     </div>
   );
 }

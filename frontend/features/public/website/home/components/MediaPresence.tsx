@@ -2,24 +2,60 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Play, Share2, ThumbsUp, MessageCircle, ExternalLink } from "lucide-react";
+import {
+  Play,
+  Share2,
+  ThumbsUp,
+  MessageCircle,
+  ExternalLink,
+} from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 const YoutubeIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" {...props}>
+  <svg
+    viewBox="0 0 24 24"
+    width="24"
+    height="24"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
     <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25 29 29 0 0 0-.46-5.33z" />
     <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" />
   </svg>
 );
 
 const FacebookIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" {...props}>
+  <svg
+    viewBox="0 0 24 24"
+    width="24"
+    height="24"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
     <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
   </svg>
 );
 
 const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
-  <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round" {...props}>
+  <svg
+    viewBox="0 0 24 24"
+    width="24"
+    height="24"
+    stroke="currentColor"
+    strokeWidth="2"
+    fill="none"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
     <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
@@ -47,24 +83,28 @@ export function MediaPresence() {
             Active Presence, Trusted Change
           </h2>
           <p className="text-text-muted text-[17px] leading-relaxed">
-            We believe transparency builds trust. Watch our legal guidance sessions, view environmental campaigns, and engage with our active community online.
+            We believe transparency builds trust. Watch our legal guidance
+            sessions, view environmental campaigns, and engage with our active
+            community online.
           </p>
         </div>
 
         {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          
           {/* YouTube Video Showcase - 7 Cols */}
           <div className="lg:col-span-7 flex flex-col bg-bg/50 rounded-3xl border border-border/45 overflow-hidden p-6 md:p-8 justify-between shadow-card">
             <div className="space-y-4 mb-6">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 border border-red-200 text-red-600 text-[11px] font-bold uppercase tracking-wider">
-                <YoutubeIcon className="w-3.5 h-3.5" fill="currentColor" /> Featured Video
+                <YoutubeIcon className="w-3.5 h-3.5" fill="currentColor" />{" "}
+                Featured Video
               </span>
               <h3 className="font-display text-2xl font-bold text-text">
                 GlobalSmart Citizens Awareness & Literacy Initiative
               </h3>
               <p className="text-[14px] text-text-muted">
-                Watch a summary of our grassroot campaigns, volunteer experiences, and local community guidance programs from across Delhi & NCR.
+                Watch a summary of our grassroot campaigns, volunteer
+                experiences, and local community guidance programs from across
+                Delhi & NCR.
               </p>
             </div>
 
@@ -128,7 +168,12 @@ export function MediaPresence() {
                   <div>
                     <h3 className="font-display font-bold text-text text-lg flex items-center gap-1.5">
                       GlobalSmart Citizens
-                      <span className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center text-white text-[9px] font-black" title="Verified Community">✓</span>
+                      <span
+                        className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center text-white text-[9px] font-black"
+                        title="Verified Community"
+                      >
+                        ✓
+                      </span>
                     </h3>
                     <p className="text-[12px] text-text-muted font-medium">
                       Facebook Community • 12K members
@@ -163,7 +208,10 @@ export function MediaPresence() {
                 </div>
 
                 <p className="text-[13px] leading-relaxed text-text">
-                  Yesterday, our volunteer team successfully organized a legal and digital literacy drive! Thank you to the 50+ local volunteers who joined us. Together we are bringing positive grassroots change to community clusters! 📚⚖️
+                  Yesterday, our volunteer team successfully organized a legal
+                  and digital literacy drive! Thank you to the 50+ local
+                  volunteers who joined us. Together we are bringing positive
+                  grassroots change to community clusters! 📚⚖️
                 </p>
 
                 {/* Mock Image Grid inside Facebook Post */}
@@ -224,50 +272,6 @@ export function MediaPresence() {
               </Button>
             </div>
           </div>
-        </div>
-
-        {/* Social Metrics Bar */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-8 md:mt-12 border-t border-border/30 pt-10">
-          {[
-            {
-              icon: <YoutubeIcon className="text-red-500 w-6 h-6" />,
-              label: "YouTube Subscribers",
-              count: "3,500+",
-              desc: "Awareness & video tutorials",
-            },
-            {
-              icon: <FacebookIcon className="text-blue-600 w-6 h-6" />,
-              label: "Facebook Members",
-              count: "12,000+",
-              desc: "Active group discussions",
-            },
-            {
-              icon: <InstagramIcon className="text-pink-500 w-6 h-6" />,
-              label: "Instagram Followers",
-              count: "5,200+",
-              desc: "Field photos & updates",
-            },
-          ].map((item, index) => (
-            <div
-              key={index}
-              className="flex items-center gap-4 p-5 rounded-2xl bg-bg/40 border border-border/25 hover:border-primary/20 transition-all duration-300"
-            >
-              <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-sm border border-border/10">
-                {item.icon}
-              </div>
-              <div>
-                <span className="block text-2xl font-black text-text leading-none mb-1">
-                  {item.count}
-                </span>
-                <span className="block text-[12px] font-bold text-text-light uppercase tracking-wider leading-none mb-1">
-                  {item.label}
-                </span>
-                <span className="block text-[11px] text-text-muted">
-                  {item.desc}
-                </span>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
     </section>

@@ -72,7 +72,7 @@ export default function QuickActions({ onInviteClick }: QuickActionsProps) {
           return (
             <Card 
               key={idx}
-              className="border-primary/5 hover:border-primary/20 hover:shadow-md cursor-pointer transition-all duration-300 rounded-3xl group"
+              className="h-full border-primary/5 hover:border-primary/20 hover:shadow-md hover:scale-[1.02] cursor-pointer transition-all duration-300 rounded-[32px] group"
               onClick={act.onClick}
             >
               <CardContent className="p-5 flex items-start gap-4">

@@ -127,14 +127,12 @@ export default function ReferredMembersTable({ members, loading = false }: Refer
       </div>
 
       {/* Referred Members Table */}
-      <div className="bg-white rounded-3xl border border-border/80 overflow-hidden shadow-sm">
-        <TableComponent
-          headers={headers}
-          data={filteredMembers}
-          loading={loading}
-          emptyMessage="No referred citizens match your filter criteria."
-        />
-      </div>
+      <TableComponent
+        headers={headers}
+        data={filteredMembers}
+        loading={loading}
+        emptyMessage="No referred citizens match your filter criteria."
+      />
     </div>
   );
 }

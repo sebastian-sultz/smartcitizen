@@ -1,6 +1,5 @@
 "use client";
 
-import { useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { HeartHandshake, MapPin, Users, BookOpen } from "lucide-react";
 
@@ -10,9 +9,31 @@ interface CounterProps {
 }
 
 function Counter({ end, suffix = "" }: CounterProps) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
+  const ref = useRef<HTMLSpanElement>(null);
+  const [isInView, setIsInView] = useState(false);
   const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          observer.unobserve(element); // behavior equivalent to once: true
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    observer.observe(element);
+    return () => {
+      if (element) {
+        observer.unobserve(element);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (isInView) {

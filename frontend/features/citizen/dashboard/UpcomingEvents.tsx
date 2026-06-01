@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
+import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { MapPin, Clock, CheckCircle, Calendar, Info, MoveRight } from "lucide-react";
+import { Calendar, MoveRight } from "lucide-react";
 import { useAlert } from "@/components/ui/AlertProvider";
 import {
   getAllEvents,
@@ -12,8 +12,9 @@ import {
   getEventsByUserId,
 } from "../community/api";
 import { EventResponse } from "../community/types";
-import { Spinner } from "@/components/ui/spinner";
 import { useAuthStore } from "@/store/authStore";
+import EmptyState from "@/components/ui/EmptyState";
+import EventCard from "./EventCard";
 
 export default function UpcomingEvents() {
   const { showAlert } = useAlert();
@@ -75,152 +76,83 @@ export default function UpcomingEvents() {
 
   if (loading) {
     return (
-      <Card id="upcoming-events" className="rounded-[40px] border-primary/5 shadow-sm h-full flex flex-col justify-between overflow-hidden">
-        <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
-            <CardTitle className="font-display text-lg font-bold text-text">
-              Upcoming Events
-            </CardTitle>
-            <Calendar size={18} className="text-primary/75" />
-          </div>
-        </CardHeader>
-        <CardContent className="flex-grow flex justify-center items-center py-12">
-          <Spinner className="size-8 text-primary" />
-        </CardContent>
-      </Card>
+      <div id="upcoming-events" className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="font-display text-lg font-bold text-text">
+            Upcoming Events
+          </h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="rounded-[32px] border-primary/5 shadow-sm animate-pulse h-[26rem] bg-card flex flex-col overflow-hidden">
+              {/* Image Skeleton */}
+              <div className="h-40 w-full bg-muted/50 shrink-0" />
+              <CardContent className="p-6 space-y-4 flex flex-col flex-grow justify-between">
+                <div className="space-y-4">
+                  <div className="h-6 w-3/4 bg-muted rounded-full" />
+                  <div className="space-y-2">
+                    <div className="h-4 w-1/2 bg-muted rounded" />
+                    <div className="h-4 w-2/3 bg-muted rounded" />
+                  </div>
+                  <div className="space-y-2 pt-2">
+                    <div className="h-3 w-full bg-muted rounded" />
+                    <div className="h-3 w-4/5 bg-muted rounded" />
+                  </div>
+                </div>
+                <div className="h-10 w-full bg-muted rounded-xl mt-4" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
     );
   }
 
   if (events.length === 0) {
     return (
-      <Card id="upcoming-events" className="rounded-[40px] border-primary/5 shadow-sm h-full flex flex-col justify-between overflow-hidden">
-        <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
-            <CardTitle className="font-display text-lg font-bold text-text">
-              Upcoming Events
-            </CardTitle>
-            <Calendar size={18} className="text-primary/75" />
-          </div>
-        </CardHeader>
-        <CardContent className="flex-grow flex flex-col items-center justify-center p-6 text-center">
-          <Info className="size-8 text-text-muted/65 mb-2" />
-          <p className="text-sm font-medium text-text-muted">No upcoming events scheduled.</p>
-        </CardContent>
-      </Card>
+      <div id="upcoming-events" className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="font-display text-lg font-bold text-text">
+            Upcoming Events
+          </h3>
+        </div>
+        <EmptyState
+          icon={Calendar}
+          title="No Upcoming Events"
+          description="There are currently no community field drives or assemblies scheduled. Check back soon!"
+        />
+      </div>
     );
   }
 
   return (
-    <Card id="upcoming-events" className="rounded-[40px] border-primary/5 shadow-sm h-full flex flex-col justify-between overflow-hidden">
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <CardTitle className="font-display text-lg font-bold text-text">
-            Upcoming Events
-          </CardTitle>
-          <Calendar size={18} className="text-primary/75" />
-        </div>
-      </CardHeader>
+    <div id="upcoming-events" className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="font-display text-lg font-bold text-text">
+          Upcoming Events
+        </h3>
+        <Button
+          asChild
+          variant="link"
+          className="text-primary font-bold text-xs p-0 gap-1 hover:text-primary/80 transition-colors"
+        >
+          <Link href="/events" className="flex items-center gap-1">
+            View All Events
+            <MoveRight size={14} />
+          </Link>
+        </Button>
+      </div>
 
-      <CardContent className="space-y-4 flex-grow flex flex-col justify-between">
-        <div className="space-y-4 flex-1">
-          {events.map((evt) => {
-            const isRegistered = registeredEvents.includes(evt.id);
-            const dateObj = new Date(evt.event_date);
-            const day = isNaN(dateObj.getTime()) ? "--" : dateObj.getDate().toString().padStart(2, "0");
-            const month = isNaN(dateObj.getTime()) ? "---" : dateObj.toLocaleString("en-US", { month: "short" }).toUpperCase();
-            const timeStr = isNaN(dateObj.getTime())
-              ? "TBA"
-              : dateObj.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
-
-            return (
-              <div
-                key={evt.id}
-                className="group p-4 bg-surface border border-border/40 rounded-[24px] flex flex-col gap-4 hover:border-primary/20 hover:shadow-sm transition-all duration-300"
-              >
-                <div className="flex gap-4 items-start">
-                  {/* Date Block */}
-                  <div className="flex flex-col items-center justify-center bg-bg-alt/40 rounded-2xl w-14 h-14 border border-border/20 shrink-0 select-none">
-                    <span className="text-[9px] uppercase font-black text-text-muted tracking-wider leading-none">
-                      {month}
-                    </span>
-                    <span className="text-xl font-display font-black text-primary mt-1 leading-none">
-                      {day}
-                    </span>
-                  </div>
-
-                  {/* Content Details */}
-                  <div className="flex-grow min-w-0 space-y-1.5">
-                    <span className="inline-block px-2 py-0.5 bg-primary/5 text-primary text-[9px] font-extrabold uppercase rounded-md tracking-wider">
-                      {evt.category || "Community"}
-                    </span>
-
-                    <h4
-                      className="font-bold text-sm text-text leading-snug truncate group-hover:text-primary transition-colors duration-200"
-                      title={evt.event_name}
-                    >
-                      {evt.event_name}
-                    </h4>
-
-                    <div className="space-y-1 text-[11px] text-text-muted font-medium">
-                      <p className="flex items-center gap-1.5 truncate">
-                        <Clock size={12} className="text-primary/65 shrink-0" />
-                        {timeStr}
-                      </p>
-                      <p className="flex items-center gap-1.5 truncate">
-                        <MapPin
-                          size={12}
-                          className="text-primary/65 shrink-0"
-                        />
-                        {evt.event_address}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Action Button */}
-                <div className="w-full">
-                  <Button
-                    variant={isRegistered ? "outline" : "primary"}
-                    onClick={() => handleRegister(evt.id, evt.event_name)}
-                    disabled={isRegistered}
-                    className={`w-full text-xs font-bold py-2 h-9 rounded-xl transition-all duration-200 ${
-                      isRegistered
-                        ? "border-green-200 text-green-700 bg-green-50/50 hover:bg-green-50"
-                        : ""
-                    }`}
-                  >
-                    {isRegistered ? (
-                      <span className="flex items-center justify-center gap-1.5">
-                        <CheckCircle
-                          size={14}
-                          className="text-green-600 shrink-0"
-                        />
-                        Registered
-                      </span>
-                    ) : (
-                      "Register"
-                    )}
-                  </Button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* View All Events Button */}
-        <div className="pt-4 border-t border-border/40 w-full mt-4">
-          <Button
-            asChild
-            variant="outline"
-            className="w-full rounded-xl py-2.5 h-auto text-xs font-bold border-border text-text hover:bg-bg"
-          >
-            <Link href="/events" className="flex items-center justify-center gap-1.5">
-              View All Events
-              <MoveRight size={14} />
-            </Link>
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {events.map((evt) => (
+          <EventCard
+            key={evt.id}
+            event={evt}
+            isRegistered={registeredEvents.includes(evt.id)}
+            onRegister={handleRegister}
+          />
+        ))}
+      </div>
+    </div>
   );
 }

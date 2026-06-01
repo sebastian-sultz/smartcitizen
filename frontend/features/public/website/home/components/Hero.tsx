@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { Heart, ArrowRight, CheckCircle2, ArrowUpRight } from "lucide-react";
@@ -32,25 +31,15 @@ export function Hero() {
         <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
           {/* Left Side - Content */}
           <div className="flex-1 space-y-8 text-center lg:text-left">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 border border-primary/10 text-primary text-[12px] font-black uppercase tracking-[0.2em]"
-            >
+            <div className="animate-fade-in-right inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 border border-primary/10 text-primary text-[12px] font-black uppercase tracking-[0.2em]">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
               </span>
               Empowering India's Future
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="space-y-6"
-            >
+            <div className="animate-fade-in-up-delay-1 space-y-6">
               <h1 className="font-display text-5xl md:text-7xl xl:text-[80px] font-black text-text leading-[1.05] tracking-tight">
                 Building a <span className="text-primary italic">Smarter</span>{" "}
                 & Safer Society.
@@ -60,14 +49,9 @@ export function Hero() {
                 working at the grassroots to create awareness, provide guidance,
                 and uplift every citizen through education and social ethics.
               </p>
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start"
-            >
+            <div className="animate-fade-in-up-delay-2 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
               <Button
                 asChild
                 variant="primary"
@@ -98,47 +82,14 @@ export function Hero() {
                   />
                 </Link>
               </Button>
-            </motion.div>
-
-            {/* Impact Highlights */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.6 }}
-              className="flex flex-wrap items-center justify-center lg:justify-start gap-8 pt-8 border-t border-border"
-            >
-              {[
-                { label: "Lives Impacted", val: "50,000+" },
-                { label: "Districts Reached", val: "12+" },
-                { label: "Active Volunteers", val: "5,000+" },
-              ].map((stat, i) => (
-                <div key={i} className="flex flex-col">
-                  <span className="text-2xl font-black text-text">
-                    {stat.val}
-                  </span>
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-text-light">
-                    {stat.label}
-                  </span>
-                </div>
-              ))}
-            </motion.div>
+            </div>
           </div>
 
           {/* Right Side - Visuals */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.8 }}
-            className="flex-1 relative w-full max-w-2xl"
-          >
+          <div className="animate-scale-in flex-1 relative w-full max-w-2xl">
             {/* Floating Become Smart Citizen Card - One-time entrance animation */}
             {!isLoggedIn && (
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-                className="absolute -top-12 -left-20 md:-left-32 lg:-left-40 z-20 max-w-[290px] hidden sm:block"
-              >
+              <div className="animate-fade-in-right-delay-1 absolute -top-12 -left-20 md:-left-32 lg:-left-40 z-20 max-w-[290px] hidden sm:block">
                 <Card className="bg-white/95 backdrop-blur-xl border border-white/50 shadow-2xl p-5 rounded-3xl relative overflow-hidden group hover:shadow-primary/20 hover:border-primary/20 transition-all duration-500">
                   <div className="absolute top-0 right-0 w-28 h-28 bg-gradient-to-br from-primary/10 to-primary-light/5 rounded-full blur-2xl -z-10 group-hover:scale-110 transition-transform duration-500" />
                   <div className="space-y-4">
@@ -218,16 +169,11 @@ export function Hero() {
                     </Button>
                   </div>
                 </Card>
-              </motion.div>
+              </div>
             )}
 
             {/* Floating Success Card - One-time entrance animation */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              className="absolute -bottom-6 -right-6 md:-right-12 z-20 max-w-[280px] hidden sm:block"
-            >
+            <div className="animate-fade-in-left-delay-2 absolute -bottom-6 -right-6 md:-right-12 z-20 max-w-[280px] hidden sm:block">
               <Card className="bg-white/95 backdrop-blur-xl border border-white/40 shadow-2xl p-5 rounded-3xl relative overflow-hidden group hover:shadow-accent/30 transition-all duration-300">
                 <div className="absolute top-0 left-0 w-24 h-24 bg-accent/10 rounded-full blur-2xl -z-10 group-hover:bg-accent/20 transition-all duration-500" />
                 <div className="flex items-center gap-4">
@@ -244,7 +190,7 @@ export function Hero() {
                   </div>
                 </div>
               </Card>
-            </motion.div>
+            </div>
 
             <div className="relative aspect-[4/5] md:aspect-square rounded-[40px] md:rounded-[80px] overflow-hidden shadow-[0_40px_80px_-15px_rgba(0,0,0,0.2)]">
               <Image
@@ -261,7 +207,7 @@ export function Hero() {
             {/* Decorative Geometric Elements */}
             <div className="absolute -top-8 -right-8 w-32 h-32 bg-accent rounded-full -z-10" />
             <div className="absolute -bottom-12 -left-12 w-48 h-48 border-8 border-primary/10 rounded-full -z-10" />
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

@@ -9,7 +9,6 @@ import {
 import {
   ProgramSection,
   UpcomingEvents,
-  LatestActivities,
 } from "@/features/citizen/community";
 import { DonationCTA } from "@/features/public/donation";
 
@@ -21,7 +20,6 @@ export function HomeMain() {
       <AboutIntro />
       <CoreFocus />
       <ProgramSection />
-      <LatestActivities />
       <UpcomingEvents />
       <WhyChooseUs />
       <DonationCTA />

@@ -6,7 +6,6 @@ import Image from "next/image";
 import { ChevronDown, Menu, X, Heart, LogIn, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
-import { motion, AnimatePresence } from "framer-motion";
 import { usePathname } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
 
@@ -158,15 +157,11 @@ export default function Header() {
                   )}
                 />
               </Button>
-              <AnimatePresence>
                 {activeDropdown === "about" && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  <div
                     role="menu"
                     aria-labelledby="about-nav-trigger"
-                    className="absolute top-full left-0 mt-2 w-72 bg-white rounded-3xl shadow-2xl py-4 text-text border border-primary/5 overflow-hidden"
+                    className="animate-dropdown absolute top-full left-0 mt-2 w-72 bg-white rounded-3xl shadow-2xl py-4 text-text border border-primary/5 overflow-hidden"
                   >
                     <div className="grid grid-cols-1 p-2 gap-1">
                       {aboutLinks.map((link) => (
@@ -185,9 +180,8 @@ export default function Header() {
                         </Link>
                       ))}
                     </div>
-                  </motion.div>
+                  </div>
                 )}
-              </AnimatePresence>
             </div>
 
             <div
@@ -226,15 +220,11 @@ export default function Header() {
                   )}
                 />
               </Button>
-              <AnimatePresence>
                 {activeDropdown === "activity" && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  <div
                     role="menu"
                     aria-labelledby="activity-nav-trigger"
-                    className="absolute top-full left-0 mt-2 w-72 bg-white rounded-3xl shadow-2xl py-4 text-text border border-primary/5 overflow-hidden"
+                    className="animate-dropdown absolute top-full left-0 mt-2 w-72 bg-white rounded-3xl shadow-2xl py-4 text-text border border-primary/5 overflow-hidden"
                   >
                     <div className="grid grid-cols-1 p-2 gap-1">
                       {activityLinks.map((link) => (
@@ -253,9 +243,8 @@ export default function Header() {
                         </Link>
                       ))}
                     </div>
-                  </motion.div>
+                  </div>
                 )}
-              </AnimatePresence>
             </div>
 
             <Link
@@ -342,23 +331,15 @@ export default function Header() {
       </div>
 
       {/* Mobile Drawer */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-dark/90 backdrop-blur-md z-50 lg:hidden"
-              onClick={() => setMobileMenuOpen(false)}
-            />
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed top-4 right-4 bottom-4 w-[320px] bg-white rounded-[40px] z-[60] lg:hidden overflow-hidden flex flex-col shadow-2xl shadow-black/50"
-            >
+      {mobileMenuOpen && (
+        <>
+          <div
+            className="animate-fade-in fixed inset-0 bg-dark/90 backdrop-blur-md z-50 lg:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <div
+            className="animate-slide-in-right fixed top-4 right-4 bottom-4 w-[320px] bg-white rounded-[40px] z-[60] lg:hidden overflow-hidden flex flex-col shadow-2xl shadow-black/50"
+          >
               <div className="p-8 flex items-center justify-between bg-bg border-b border-border">
                 <div className="flex flex-col">
                   <span className="font-display font-black text-2xl text-primary leading-none">
@@ -379,27 +360,10 @@ export default function Header() {
               </div>
 
               <div className="flex-1 p-6 md:p-8 overflow-y-auto">
-                <motion.nav
-                  initial="closed"
-                  animate="open"
-                  variants={{
-                    open: {
-                      transition: { staggerChildren: 0.05, delayChildren: 0.2 },
-                    },
-                    closed: {
-                      transition: {
-                        staggerChildren: 0.05,
-                        staggerDirection: -1,
-                      },
-                    },
-                  }}
-                  className="space-y-8"
-                >
-                  <motion.div
-                    variants={{
-                      open: { opacity: 1, x: 0 },
-                      closed: { opacity: 0, x: 20 },
-                    }}
+                <nav className="space-y-8">
+                  <div
+                    style={{ animationDelay: "100ms" }}
+                    className="animate-fade-in-right-fast"
                   >
                     <Link
                       href="/"
@@ -409,14 +373,11 @@ export default function Header() {
                       Home
                       <ChevronDown size={18} className="-rotate-90" />
                     </Link>
-                  </motion.div>
+                  </div>
 
-                  <motion.div
-                    variants={{
-                      open: { opacity: 1, x: 0 },
-                      closed: { opacity: 0, x: 20 },
-                    }}
-                    className="space-y-4"
+                  <div
+                    style={{ animationDelay: "150ms" }}
+                    className="animate-fade-in-right-fast space-y-4"
                   >
                     <span className="px-4 text-[11px] font-black uppercase tracking-[0.2em] text-accent">
                       About Us
@@ -437,14 +398,11 @@ export default function Header() {
                         </Link>
                       ))}
                     </div>
-                  </motion.div>
+                  </div>
 
-                  <motion.div
-                    variants={{
-                      open: { opacity: 1, x: 0 },
-                      closed: { opacity: 0, x: 20 },
-                    }}
-                    className="space-y-4"
+                  <div
+                    style={{ animationDelay: "200ms" }}
+                    className="animate-fade-in-right-fast space-y-4"
                   >
                     <span className="px-4 text-[11px] font-black uppercase tracking-[0.2em] text-accent">
                       Our Activities
@@ -465,8 +423,8 @@ export default function Header() {
                         </Link>
                       ))}
                     </div>
-                  </motion.div>
-                </motion.nav>
+                  </div>
+                </nav>
               </div>
 
               <div className="p-8 bg-bg border-t border-border space-y-4">
@@ -546,10 +504,9 @@ export default function Header() {
                   )}
                 </div>
               </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+          </div>
+        </>
+      )}
     </header>
   );
 }

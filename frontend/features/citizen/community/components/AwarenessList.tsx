@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { MoreHorizontal, Edit, Trash2, Plus, Search } from "lucide-react";
-import { motion } from "framer-motion";
 import { AwarenessActivity } from "../types/awareness";
 import { cn, formatDate } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
@@ -122,12 +121,10 @@ export function AwarenessList() {
                 ))
               ) : (
                 mockActivities.map((activity, index) => (
-                  <motion.tr 
+                  <tr 
                     key={activity.id}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    className="hover:bg-bg/40 transition-colors group"
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                    className="animate-fade-in-right-fast hover:bg-bg/40 transition-colors group"
                   >
                     <td className="px-6 py-4">
                       <div className="font-semibold text-text">{activity.title}</div>
@@ -162,7 +159,7 @@ export function AwarenessList() {
                         </Button>
                       </div>
                     </td>
-                  </motion.tr>
+                  </tr>
                 ))
               )}
             </tbody>

@@ -45,13 +45,16 @@ export const RegisterForm = () => {
           // Transition to OTP step (mocked OTP)
           setStep("otp");
         } else if (step === "otp") {
+          const referralId = sessionStorage.getItem("gsc_referral_id") || undefined;
           const res = await registerUser({
             name: values.fullName,
             phone: values.mobileNumber,
             password: values.password,
+            referral_id: referralId,
           });
           
           toast.success(res.message || "Registration successful!");
+          sessionStorage.removeItem("gsc_referral_id");
           // Use the first 8 characters of UUID for display ID
           const displayId = res.user?.id 
             ? `GSC-${res.user.id.substring(0, 8).toUpperCase()}` 

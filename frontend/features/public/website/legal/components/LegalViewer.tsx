@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { FileText, ExternalLink, Download, ChevronRight, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
@@ -89,52 +88,47 @@ export default function LegalViewer() {
 
       {/* Main Content - Iframe Viewer */}
       <div className="flex-1 w-full space-y-6">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={activeDoc.id}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="space-y-6"
-          >
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-bg p-6 rounded-3xl border border-border">
-              <div>
-                <h3 className="font-display text-2xl font-black text-text">{activeDoc.title}</h3>
-                <p className="text-text-muted text-sm mt-1">{activeDoc.description}</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <a 
-                  href={activeDoc.file} 
-                  download 
-                  className="p-3 rounded-full bg-white border border-border text-text-light hover:text-primary hover:border-primary transition-all shadow-sm"
-                  title="Download PDF"
-                >
-                  <Download size={20} />
-                </a>
-                <a 
-                  href={activeDoc.file} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-white font-bold text-sm shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
-                >
-                  <ExternalLink size={18} />
-                  Open Full File
-                </a>
-              </div>
+        <div
+          key={activeDoc.id}
+          className="animate-fade-in-right space-y-6"
+        >
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-bg p-6 rounded-3xl border border-border">
+            <div>
+              <h3 className="font-display text-2xl font-black text-text">{activeDoc.title}</h3>
+              <p className="text-text-muted text-sm mt-1">{activeDoc.description}</p>
             </div>
+            <div className="flex items-center gap-3">
+              <a 
+                href={activeDoc.file} 
+                download 
+                className="p-3 rounded-full bg-white border border-border text-text-light hover:text-primary hover:border-primary transition-all shadow-sm"
+                title="Download PDF"
+              >
+                <Download size={20} />
+              </a>
+              <a 
+                href={activeDoc.file} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-white font-bold text-sm shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+              >
+                <ExternalLink size={18} />
+                Open Full File
+              </a>
+            </div>
+          </div>
 
-            <div className="relative rounded-[40px] overflow-hidden bg-white border-8 border-bg shadow-2xl aspect-[1/1.4] md:aspect-auto md:h-[800px] group">
-              <iframe 
-                src={`${activeDoc.file}#toolbar=0&navpanes=0&scrollbar=0`} 
-                className="w-full h-full border-none"
-                title={activeDoc.title}
-              />
-              {/* Decorative Frame Elements */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-accent to-primary opacity-50" />
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-accent to-primary opacity-50" />
-            </div>
-          </motion.div>
-        </AnimatePresence>
+          <div className="relative rounded-[40px] overflow-hidden bg-white border-8 border-bg shadow-2xl aspect-[1/1.4] md:aspect-auto md:h-[800px] group">
+            <iframe 
+              src={`${activeDoc.file}#toolbar=0&navpanes=0&scrollbar=0`} 
+              className="w-full h-full border-none"
+              title={activeDoc.title}
+            />
+            {/* Decorative Frame Elements */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-accent to-primary opacity-50" />
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-accent to-primary opacity-50" />
+          </div>
+        </div>
       </div>
     </div>
   );

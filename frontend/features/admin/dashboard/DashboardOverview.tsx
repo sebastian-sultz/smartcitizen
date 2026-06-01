@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { Users, UserCheck, Heart, ArrowUpRight, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -129,12 +128,10 @@ export function DashboardOverview() {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
-          <motion.div
+          <div
             key={stat.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
-            className="bg-surface p-6 rounded-2xl shadow-card border border-border relative overflow-hidden group"
+            style={{ animationDelay: `${index * 0.1}s` }}
+            className="animate-fade-in-up bg-surface p-6 rounded-2xl shadow-card border border-border relative overflow-hidden group"
           >
             <div
               className={cn(
@@ -162,7 +159,7 @@ export function DashboardOverview() {
               {stat.title}
             </h3>
             <p className="text-2xl font-bold text-text mt-1">{stat.value}</p>
-          </motion.div>
+          </div>
         ))}
       </div>
     </div>

@@ -79,7 +79,7 @@ export default function StatsGrid({ stats }: StatsGridProps) {
           <Card
             key={idx}
             className={cn(
-              "bg-gradient-to-br border shadow-sm p-6 flex flex-col justify-between rounded-3xl",
+              "h-full bg-gradient-to-br border shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-300 p-6 flex flex-col justify-between rounded-[32px]",
               card.colorClass,
             )}
           >

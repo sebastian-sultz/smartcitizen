@@ -77,7 +77,8 @@ export const selectReferralCode = (state: CitizenState): string => {
 
 export const selectReferralLink = (state: CitizenState): string => {
   if (!state.user) return "";
-  return `https://globalsmartcitizensfoundation.org/register?ref=${state.user.id}`;
+  const origin = typeof window !== "undefined" ? window.location.origin : "https://globalsmartcitizensfoundation.org";
+  return `${origin}/join_us?ref=${state.user.id}`;
 };
 
 export const selectIsVolunteer = (state: CitizenState): boolean => {

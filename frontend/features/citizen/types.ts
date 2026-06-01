@@ -12,7 +12,7 @@ export interface DashboardStats {
 export interface ReferralStats {
   total_referrals: number;
   referral_payment_count: number;
-  total_contribution_generated: number;
+  total_contribution_generated?: number;
   referral_code: string;
   referral_link: string;
 }

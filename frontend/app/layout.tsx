@@ -41,6 +41,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { cookies } from "next/headers";
 import { parseJwt } from "@/lib/auth-token";
 import { AuthInitializer } from "@/components/providers/AuthInitializer";
+import { ReferralTracker } from "@/components/providers/ReferralTracker";
 
 export default async function RootLayout({
   children,
@@ -59,6 +60,7 @@ export default async function RootLayout({
     <html lang="en" className={`${sourceSans3.variable} ${figtree.variable}`}>
       <body className="min-h-screen bg-bg text-text font-body selection:bg-primary selection:text-white flex flex-col">
         <AuthInitializer session={initialSession} />
+        <ReferralTracker />
         <TooltipProvider>
           <AlertProvider>
             {children}

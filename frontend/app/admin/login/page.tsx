@@ -4,7 +4,6 @@ import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { LogIn, ShieldCheck, Phone, Lock } from "lucide-react";
-import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -51,11 +50,7 @@ export default function LoginPage() {
         <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent/5 rounded-full blur-3xl animate-pulse delay-700" />
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative z-10 w-full max-w-md"
-      >
+      <div className="animate-fade-in-up relative z-10 w-full max-w-md">
         <div className="bg-surface p-8 rounded-3xl shadow-2xl border border-border">
           <div className="flex flex-col items-center mb-8">
             <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center text-white shadow-xl shadow-primary/20 mb-4">
@@ -129,7 +124,7 @@ export default function LoginPage() {
         <p className="text-center mt-8 text-xs text-text-light">
           Global Smart Citizens Foundation &bull; Version 2.0.0
         </p>
-      </motion.div>
+      </div>
     </div>
   );
 }

@@ -1,7 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
-
 const partners = [
   "Ministry of Environment", "Digital India Initiative", "NITI Aayog (NGO Darpan)",
   "HDFC Bank", "Community Health Center", "National Sports Council",
@@ -15,11 +13,7 @@ export function PartnerMarquee() {
         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-text-light">TRUSTED BY & PARTNERED WITH</span>
       </div>
       <div className="relative flex overflow-x-hidden">
-        <motion.div 
-          className="flex whitespace-nowrap gap-12 items-center"
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-        >
+        <div className="animate-marquee flex whitespace-nowrap gap-12 items-center shrink-0">
           {[...partners, ...partners].map((partner, i) => (
             <div key={i} className="flex items-center gap-4 group">
               <div className="w-2 h-2 rounded-full bg-accent group-hover:scale-150 transition-transform" />
@@ -28,7 +22,7 @@ export function PartnerMarquee() {
               </span>
             </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </div>
   );

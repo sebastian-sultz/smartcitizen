@@ -1,20 +1,20 @@
 "use client";
 
-import { ReferralStats as ReferralStatsType } from "../types";
+import { UserResponse } from "@/features/shared/auth/types";
 import { Card } from "@/components/ui/Card";
 import { Users, ShieldCheck, Heart } from "lucide-react";
 
 interface ReferralStatsProps {
-  stats: ReferralStatsType | null;
+  user: UserResponse | null;
 }
 
-export default function ReferralStats({ stats }: ReferralStatsProps) {
-  if (!stats) return null;
+export default function ReferralStats({ user }: ReferralStatsProps) {
+  if (!user) return null;
 
   const cards = [
     {
       title: "Successfully Joined",
-      value: stats.total_referrals,
+      value: user.total_referrals,
       icon: Users,
       color: "from-purple-50 to-purple-100/50 border-purple-100 text-purple-500",
       textColor: "text-purple-900",
@@ -22,7 +22,7 @@ export default function ReferralStats({ stats }: ReferralStatsProps) {
     },
     {
       title: "Referred Payments",
-      value: stats.referral_payment_count,
+      value: user.referral_payment_count,
       icon: ShieldCheck,
       color: "from-emerald-50 to-emerald-100/50 border-emerald-100 text-emerald-500",
       textColor: "text-emerald-950",
@@ -32,7 +32,7 @@ export default function ReferralStats({ stats }: ReferralStatsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       {cards.map((card, idx) => {
         const Icon = card.icon;
         return (

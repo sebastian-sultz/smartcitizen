@@ -13,7 +13,6 @@ import { getActivityTimeline, getDonationStats } from "../api";
 import {
   DashboardStats,
   ActivityItem,
-  ReferralStats,
   DonationStats,
 } from "../types";
 
@@ -23,8 +22,6 @@ import MemberCard from "./MemberCard";
 import StatsGrid from "./StatsGrid";
 import QuickActions from "./QuickActions";
 import UpcomingEvents from "./UpcomingEvents";
-import ReferralSummaryWidget from "./ReferralSummaryWidget";
-import DonationSummaryWidget from "./DonationSummaryWidget";
 import ShareReferralDialog from "./ShareReferralDialog";
 
 export function CitizenDashboard() {
@@ -36,7 +33,6 @@ export function CitizenDashboard() {
 
   const [dbStats, setDbStats] = useState<DashboardStats | null>(null);
   const [activities, setActivities] = useState<ActivityItem[]>([]);
-  const [refStats, setRefStats] = useState<ReferralStats | null>(null);
   const [donStats, setDonStats] = useState<DonationStats | null>(null);
   const [localLoading, setLocalLoading] = useState(true);
   const [isShareOpen, setIsShareOpen] = useState(false);
@@ -85,14 +81,6 @@ export function CitizenDashboard() {
       events_attended: user.total_events_registered || 0,
       volunteer_status: isVolunteer ? "approved" : "not_applied",
     });
-
-    setRefStats({
-      total_referrals: user.total_referrals,
-      referral_payment_count: user.referral_payment_count,
-      total_contribution_generated: user.referral_payment_count * 100,
-      referral_code: referralCode,
-      referral_link: referralLink,
-    });
   }, [user, isVolunteer, referralCode, referralLink]);
 
   useEffect(() => {
@@ -115,8 +103,8 @@ export function CitizenDashboard() {
         onInviteClick={() => setIsShareOpen(true)}
       />
 
-      {/* Main Grid: Left Column for Actions/Timeline/Stats, Right Column for Info/Status widgets */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      {/* Main Grid: Left Column for Actions/Stats, Right Column for Info/Status widgets */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
         {/* Left Column (Main Panel) */}
         <div className="lg:col-span-2 space-y-8">
           <div className="space-y-4">
@@ -127,20 +115,16 @@ export function CitizenDashboard() {
           </div>
 
           <QuickActions onInviteClick={() => setIsShareOpen(true)} />
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-            <UpcomingEvents />
-          </div>
         </div>
 
         {/* Right Column (Sidebar Panels) */}
-        <div className="space-y-8">
+        <div className="h-full">
           <MemberCard profile={user} />
-
-
         </div>
       </div>
+
+      {/* Upcoming Events Section */}
+      <UpcomingEvents />
 
       {/* Share / Invite Friends Modal */}
       <ShareReferralDialog
