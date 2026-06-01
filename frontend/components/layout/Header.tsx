@@ -19,9 +19,8 @@ const aboutLinks = [
 
 const activityLinks = [
   { name: "Community Activities", href: "/volunteer_activity" },
-  { name: "Our Programs", href: "/our_work" },
   { name: "Upcoming Events", href: "/events" },
-  { name: "Volunteer Programs", href: "/volunteer" },
+  { name: "Our Programs", href: "/our_work" },
 ];
 
 export default function Header() {
@@ -156,27 +155,29 @@ export default function Header() {
                 />
               </Button>
                 {activeDropdown === "about" && (
-                  <div
-                    role="menu"
-                    aria-labelledby="about-nav-trigger"
-                    className="animate-dropdown absolute top-full left-0 mt-2 w-72 bg-white rounded-3xl shadow-2xl py-4 text-text border border-primary/5 overflow-hidden"
-                  >
-                    <div className="grid grid-cols-1 p-2 gap-1">
-                      {aboutLinks.map((link) => (
-                        <Link
-                          key={link.href}
-                          href={link.href}
-                          role="menuitem"
-                          onClick={() => setActiveDropdown(null)}
-                          className="px-6 py-3 hover:bg-primary/5 hover:text-primary rounded-2xl transition-all text-[14px] font-medium flex items-center justify-between group"
-                        >
-                          {link.name}
-                          <ChevronDown
-                            size={14}
-                            className="-rotate-90 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0"
-                          />
-                        </Link>
-                      ))}
+                  <div className="absolute top-full left-0 pt-2 w-72 z-50">
+                    <div
+                      role="menu"
+                      aria-labelledby="about-nav-trigger"
+                      className="animate-dropdown bg-white rounded-3xl shadow-2xl py-4 text-text border border-primary/5 overflow-hidden"
+                    >
+                      <div className="grid grid-cols-1 p-2 gap-1">
+                        {aboutLinks.map((link) => (
+                          <Link
+                            key={link.href}
+                            href={link.href}
+                            role="menuitem"
+                            onClick={() => setActiveDropdown(null)}
+                            className="px-6 py-3 hover:bg-primary/5 hover:text-primary rounded-2xl transition-all text-[14px] font-medium flex items-center justify-between group"
+                          >
+                            {link.name}
+                            <ChevronDown
+                              size={14}
+                              className="-rotate-90 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0"
+                            />
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -219,27 +220,29 @@ export default function Header() {
                 />
               </Button>
                 {activeDropdown === "activity" && (
-                  <div
-                    role="menu"
-                    aria-labelledby="activity-nav-trigger"
-                    className="animate-dropdown absolute top-full left-0 mt-2 w-72 bg-white rounded-3xl shadow-2xl py-4 text-text border border-primary/5 overflow-hidden"
-                  >
-                    <div className="grid grid-cols-1 p-2 gap-1">
-                      {activityLinks.map((link) => (
-                        <Link
-                          key={link.href}
-                          href={link.href}
-                          role="menuitem"
-                          onClick={() => setActiveDropdown(null)}
-                          className="px-6 py-3 hover:bg-primary/5 hover:text-primary rounded-2xl transition-all text-[14px] font-medium flex items-center justify-between group"
-                        >
-                          {link.name}
-                          <ChevronDown
-                            size={14}
-                            className="-rotate-90 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0"
-                          />
-                        </Link>
-                      ))}
+                  <div className="absolute top-full left-0 pt-2 w-72 z-50">
+                    <div
+                      role="menu"
+                      aria-labelledby="activity-nav-trigger"
+                      className="animate-dropdown bg-white rounded-3xl shadow-2xl py-4 text-text border border-primary/5 overflow-hidden"
+                    >
+                      <div className="grid grid-cols-1 p-2 gap-1">
+                        {activityLinks.map((link) => (
+                          <Link
+                            key={link.href}
+                            href={link.href}
+                            role="menuitem"
+                            onClick={() => setActiveDropdown(null)}
+                            className="px-6 py-3 hover:bg-primary/5 hover:text-primary rounded-2xl transition-all text-[14px] font-medium flex items-center justify-between group"
+                          >
+                            {link.name}
+                            <ChevronDown
+                              size={14}
+                              className="-rotate-90 opacity-0 group-hover:opacity-100 transition-all -translate-x-2 group-hover:translate-x-0"
+                            />
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
