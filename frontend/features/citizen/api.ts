@@ -4,7 +4,6 @@ import {
   ActivityItem,
   DonationRecord,
   DonationStats,
-  RecurringDonation,
   TaxCertificate,
   ReferralMember,
   Volunteer,
@@ -140,11 +139,6 @@ export const getDonationStats = async (): Promise<DonationStats> => {
     averageAmount: 0,
     donorLevel: 'Bronze',
   };
-};
-
-export const getRecurringDonations = async (): Promise<RecurringDonation[]> => {
-  await delay();
-  return [];
 };
 
 export const getTaxCertificates = async (): Promise<TaxCertificate[]> => {

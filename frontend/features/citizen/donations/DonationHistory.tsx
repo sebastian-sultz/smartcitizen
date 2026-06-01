@@ -13,9 +13,10 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Search, Eye, Filter, ArrowUpDown } from "lucide-react";
+import EmptyState from "@/components/ui/EmptyState";
+import { Search, Eye, Filter, Download, Heart } from "lucide-react";
 import DonationDetailModal from "./DonationDetailModal";
-import { formatDate } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 
 interface DonationHistoryProps {
   donations: DonationRecord[];
@@ -63,15 +64,32 @@ export default function DonationHistory({ donations, loading = false }: Donation
     },
     {
       label: "Transaction ID",
-      render: (row) => <span className="font-mono text-xs font-bold text-text-muted">{row.transactionId}</span>,
+      render: (row) => (
+        <span className="font-mono text-xs font-bold text-text-muted">
+          {row.transactionId}
+        </span>
+      ),
     },
     {
       label: "Amount",
-      render: (row) => <span className="font-display font-black text-text">₹{row.amount.toLocaleString("en-IN")}</span>,
+      render: (row) => (
+        <span
+          className={cn(
+            "font-display font-black",
+            row.status === "success" ? "text-primary" : "text-text",
+          )}
+        >
+          ₹{row.amount.toLocaleString("en-IN")}
+        </span>
+      ),
     },
     {
       label: "Purpose",
-      render: (row) => <span className="font-medium text-text-muted text-[13px]">{row.purpose}</span>,
+      render: (row) => (
+        <span className="font-medium text-text-muted text-[13px]">
+          {row.purpose}
+        </span>
+      ),
     },
     {
       label: "Status",
@@ -84,18 +102,51 @@ export default function DonationHistory({ donations, loading = false }: Donation
     {
       label: "Action",
       render: (row) => (
-        <Button
-          onClick={() => handleViewDetails(row)}
-          variant="outline"
-          size="sm"
-          className="text-xs font-bold py-1.5 h-auto rounded-xl gap-1 border-primary/20 text-primary hover:bg-primary/5"
-        >
-          <Eye size={12} />
-          Details
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            onClick={() => handleViewDetails(row)}
+            variant="outline"
+            size="sm"
+            className="text-xs font-bold py-1.5 h-auto rounded-xl gap-1 border-primary/20 text-primary hover:bg-primary/5"
+          >
+            <Eye size={12} />
+            Details
+          </Button>
+          {row.status === "success" && (
+            <Button
+              onClick={() => {
+                if (row.receiptUrl) {
+                  window.open(row.receiptUrl, "_blank");
+                } else {
+                  alert(
+                    `Downloading receipt for transaction ${row.transactionId}`,
+                  );
+                }
+              }}
+              variant="primary"
+              size="sm"
+              className="text-xs font-bold py-1.5 h-auto rounded-xl gap-1"
+            >
+              <Download size={12} />
+              Receipt
+            </Button>
+          )}
+        </div>
       ),
     },
   ];
+
+  if (!loading && donations.length === 0) {
+    return (
+      <EmptyState
+        icon={Heart}
+        title="No Donations Found"
+        description="You have not made any donations yet. Join hands with us to fund public assemblies, drives, and local community initiatives!"
+        ctaText="Make Your First Donation"
+        ctaHref="/donation"
+      />
+    );
+  }
 
   return (
     <div className="space-y-6">

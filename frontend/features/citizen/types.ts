@@ -169,16 +169,6 @@ export interface DonationStats {
   donorLevel: 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
 }
 
-export interface RecurringDonation {
-  id: string;
-  amount: number;
-  frequency: 'monthly' | 'quarterly' | 'annually';
-  purpose: string;
-  status: 'active' | 'paused' | 'cancelled';
-  nextBillingDate: string;
-  paymentMethod: string;
-}
-
 export interface TaxCertificate {
   id: string;
   fiscalYear: string;
