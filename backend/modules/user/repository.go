@@ -13,6 +13,7 @@ type Repository interface {
 	Delete(id string) error
 	GetSystemStats() (int64, int64, int64, float64, error)
 	FindNonAdminUsers(pagination *utils.Pagination) ([]User, error)
+	FindByReferralID(referralID string) ([]User, error)
 }
 
 type repository struct {
@@ -95,4 +96,11 @@ func (r *repository) FindNonAdminUsers(pagination *utils.Pagination) ([]User, er
 
 func (r *repository) Delete(id string) error {
 	return r.db.Where("id = ?", id).Delete(&User{}).Error
+}
+
+func (r *repository) FindByReferralID(referralID string) ([]User, error) {
+	var users []User
+	// ReferralID is a pointer (*string), we check against the value if provided
+	err := r.db.Where("referral_id = ?", referralID).Find(&users).Error
+	return users, err
 }

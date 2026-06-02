@@ -338,3 +338,30 @@ func (h *Handler) DeleteUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "user deleted successfully"})
 }
+
+func (h *Handler) GetReferredUsers(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user id is required"})
+		return
+	}
+
+	// The referral_id is a nil field, and we need to return users where their referral_id is this userid.
+	usersList, err := h.service.GetUsersByReferralID(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch referred users"})
+		return
+	}
+
+	var res []response.User
+	for _, u := range usersList {
+		// Since all these users have the same referral_id, their referrer is the user with 'id'
+		// We could fetch the referrer's name once to set ReferralName, or just set it if needed.
+		// For now we just map them.
+		res = append(res, mapToResponse(&u, nil))
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"users": res,
+	})
+}

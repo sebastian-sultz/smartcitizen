@@ -63,6 +63,7 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 		users.PUT("/:id/suspend", userHandler.SuspendUser)
 		users.DELETE("/:id", userHandler.DeleteUser)
 		users.GET("/:id/events", eventHandler.GetEventsByUserID)
+		users.GET("/:id/referred", userHandler.GetReferredUsers)
 	}
 
 	// Event Routes

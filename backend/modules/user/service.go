@@ -21,6 +21,7 @@ type Service interface {
 	GetNonAdminUsers(pagination *utils.Pagination) ([]User, error)
 	SuspendUser(id string, suspend bool) error
 	DeleteUser(id string) error
+	GetUsersByReferralID(referralID string) ([]User, error)
 }
 
 type service struct {
@@ -131,4 +132,8 @@ func (s *service) SuspendUser(id string, suspend bool) error {
 
 func (s *service) DeleteUser(id string) error {
 	return s.repo.Delete(id)
+}
+
+func (s *service) GetUsersByReferralID(referralID string) ([]User, error) {
+	return s.repo.FindByReferralID(referralID)
 }
