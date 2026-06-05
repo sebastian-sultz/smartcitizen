@@ -1,3 +1,5 @@
+github.com/PhonePe/phonepe-pg-sdk-go v1.0.0 h1:jKaCrZ4Htp5GlP8RofR7GmN2L/2F2SyCD/Vlk0NjXK0=
+github.com/PhonePe/phonepe-pg-sdk-go v1.0.0/go.mod h1:kTB/SRhe0unoa+OzfqC0cZb7XLqQAlpI2a8nCmxqgig=
 github.com/bytedance/gopkg v0.1.4 h1:oZnQwnX82KAIWb7033bEwtxvTqXcYMxDBaQxo5JJHWM=
 github.com/bytedance/gopkg v0.1.4/go.mod h1:v1zWfPm21Fb+OsyXN2VAHdL6TBb2L88anLQgdyje6R4=
 github.com/bytedance/sonic v1.15.1 h1:nJD5PmM0vY7J8CT6MxoqbVAAMhkSmV2HgRAUrrpLoOw=

@@ -6,6 +6,7 @@ import (
 	"backend/modules/report"
 	"backend/modules/user"
 	"backend/modules/volunteer"
+	"backend/modules/payment"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -33,6 +34,10 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 	reportRepo := report.NewRepository(db)
 	reportService := report.NewService(reportRepo)
 	reportHandler := report.NewHandler(reportService)
+
+	paymentRepo := payment.NewRepository(db)
+	paymentService := payment.NewService(paymentRepo)
+	paymentHandler := payment.NewHandler(paymentService)
 
 	// ==========================================
 	// ALL ROUTES REGISTRATION
@@ -116,5 +121,18 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 		admin.Use(middleware.AuthMiddleware())
 		admin.GET("/reports", reportHandler.GetReports)
 		admin.PUT("/reports/:id/resolve", reportHandler.ResolveReport)
+	}
+
+	// Payment Routes
+	payments := api.Group("/payments")
+	{
+		payments.POST("/initiate", paymentHandler.InitiatePayment)
+		payments.POST("/webhook", paymentHandler.HandleWebhook)
+		payments.GET("/status/:transactionId", paymentHandler.CheckPaymentStatus)
+		
+		// Authenticated access for history
+		protected := payments.Group("")
+		protected.Use(middleware.AuthMiddleware())
+		protected.GET("/history", paymentHandler.GetPaymentHistory)
 	}
 }
