@@ -130,9 +130,10 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 		payments.POST("/webhook", paymentHandler.HandleWebhook)
 		payments.GET("/status/:transactionId", paymentHandler.CheckPaymentStatus)
 		
-		// Authenticated access for history
+		// Authenticated access for history and stats
 		protected := payments.Group("")
 		protected.Use(middleware.AuthMiddleware())
 		protected.GET("/history", paymentHandler.GetPaymentHistory)
+		protected.GET("/stats", paymentHandler.GetDonationStats)
 	}
 }

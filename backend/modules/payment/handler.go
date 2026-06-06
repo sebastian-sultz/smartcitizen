@@ -122,3 +122,20 @@ func (h *Handler) GetPaymentHistory(c *gin.Context) {
 		Limit:      limit,
 	})
 }
+
+func (h *Handler) GetDonationStats(c *gin.Context) {
+	userIDVal, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	userID := userIDVal.(uuid.UUID).String()
+
+	stats, err := h.service.GetUserDonationStats(c.Request.Context(), userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, stats)
+}

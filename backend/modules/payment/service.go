@@ -23,6 +23,7 @@ type Service interface {
 	HandleWebhook(ctx context.Context, authHeader string, responseBody []byte) error
 	CheckPaymentStatus(ctx context.Context, orderID string) (*Payment, error)
 	GetPaymentHistory(ctx context.Context, userID *string, page, limit int) ([]dtoresponse.Payment, int64, error)
+	GetUserDonationStats(ctx context.Context, userID string) (*dtoresponse.UserDonationStatsResponse, error)
 }
 
 type service struct {
@@ -215,4 +216,19 @@ func (s *service) GetPaymentHistory(ctx context.Context, userID *string, page, l
 		})
 	}
 	return resp, total, nil
+}
+
+func (s *service) GetUserDonationStats(ctx context.Context, userID string) (*dtoresponse.UserDonationStatsResponse, error) {
+	stats, err := s.repo.GetUserDonationStats(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dtoresponse.UserDonationStatsResponse{
+		LifetimeDonated:   float64(stats.LifetimeDonated) / 100,
+		DonatedThisYear:   float64(stats.DonatedThisYear) / 100,
+		DonatedLastMonth:  float64(stats.DonatedLastMonth) / 100,
+		TotalTransactions: stats.TotalTransactions,
+		AverageAmount:     float64(stats.AverageAmount) / 100,
+	}, nil
 }
