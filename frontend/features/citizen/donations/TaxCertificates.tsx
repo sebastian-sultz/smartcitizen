@@ -78,13 +78,15 @@ export default function TaxCertificates({ certificates }: TaxCertificatesProps) 
                 onClick={() => handleDownload(cert.fiscalYear)}
                 disabled={cert.status !== "generated"}
                 variant={cert.status === "generated" ? "primary" : "outline"}
+                size="sm"
+                fullWidth
+                startIcon={<Download size={14} />}
                 className={cn(
-                  "w-full text-xs font-bold py-2 h-auto rounded-xl gap-2",
+                  "font-bold",
                   cert.status !== "generated" &&
                     "border-primary/20 text-primary hover:bg-primary/5",
                 )}
               >
-                <Download size={14} />
                 Download Slip (PDF)
               </Button>
             </CardContent>

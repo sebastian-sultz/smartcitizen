@@ -1,5 +1,6 @@
 import api from "@/lib/axios";
 import { handleApiError } from "@/lib/api-helpers";
+import { UserResponse } from "../shared/auth/types";
 import {
   ActivityItem,
   DonationRecord,
@@ -18,6 +19,9 @@ import {
   VolunteerEligibility,
   CreateVolunteerPayload,
   UpdateVolunteerPayload,
+  Payment,
+  PaymentHistoryResponse,
+  InitiatePaymentRequest,
 } from './types';
 
 const delay = (ms: number = 400) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -124,31 +128,65 @@ export const getActivityTimeline = async (): Promise<ActivityItem[]> => {
   return [];
 };
 
-export const getDonationHistory = async (): Promise<DonationRecord[]> => {
-  await delay();
-  return [];
+export const getDonationHistory = async (): Promise<Payment[]> => {
+  try {
+    const response = await api.get<PaymentHistoryResponse>("/payments/history?page=1&limit=100");
+    return response.data.data || [];
+  } catch (error: unknown) {
+    handleApiError(error, "Failed to load donation history");
+  }
 };
 
 export const getDonationStats = async (): Promise<DonationStats> => {
-  await delay();
-  return {
-    lifetimeDonated: 0,
-    donatedThisYear: 0,
-    donatedLastMonth: 0,
-    totalTransactions: 0,
-    averageAmount: 0,
-    donorLevel: 'Bronze',
-  };
+  try {
+    const response = await api.get<DonationStats>("/payments/stats");
+    return response.data;
+  } catch (error: unknown) {
+    handleApiError(error, "Failed to load donation stats");
+  }
 };
 
 export const getTaxCertificates = async (): Promise<TaxCertificate[]> => {
-  await delay();
-  return [];
+  try {
+    const response = await api.get<{ certificates: TaxCertificate[] }>("/payments/certificates");
+    return response.data.certificates || [];
+  } catch (error: unknown) {
+    handleApiError(error, "Failed to load tax certificates");
+  }
 };
 
-export const getReferredMembers = async (): Promise<ReferralMember[]> => {
-  await delay();
-  return [];
+export const initiatePayment = async (
+  payload: InitiatePaymentRequest
+): Promise<{ redirectUrl: string; merchantOrderId: string }> => {
+  try {
+    const response = await api.post<{ redirectUrl: string; merchantOrderId: string }>(
+      "/payments/initiate",
+      payload
+    );
+    return response.data;
+  } catch (error: unknown) {
+    handleApiError(error, "Failed to initiate payment");
+  }
+};
+
+export const getPaymentStatus = async (
+  transactionId: string
+): Promise<Payment> => {
+  try {
+    const response = await api.get<Payment>(`/payments/status/${transactionId}`);
+    return response.data;
+  } catch (error: unknown) {
+    handleApiError(error, "Failed to load payment status");
+  }
+};
+
+export const getReferredMembers = async (userId: string): Promise<UserResponse[]> => {
+  try {
+    const response = await api.get<{ users: UserResponse[] }>(`/users/${userId}/referred`);
+    return response.data.users || [];
+  } catch (error: unknown) {
+    handleApiError(error, "Failed to load referred members");
+  }
 };
 
 export const getFAQs = async (category?: string): Promise<FAQItem[]> => {

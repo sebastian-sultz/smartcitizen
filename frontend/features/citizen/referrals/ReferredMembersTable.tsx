@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ReferralMember } from "../types";
+import { UserResponse } from "@/features/shared/auth/types";
 import { TableComponent, Header } from "@/components/ui/TableComponent";
 import { Badge } from "@/components/ui/Badge";
 import { Input } from "@/components/ui/Input";
@@ -12,12 +12,12 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Search, Filter, User } from "lucide-react";
+import { Search, Filter } from "lucide-react";
 import Image from "next/image";
 import { formatDate } from "@/lib/utils";
 
 interface ReferredMembersTableProps {
-  members: ReferralMember[];
+  members: UserResponse[];
   loading?: boolean;
 }
 
@@ -27,36 +27,35 @@ export default function ReferredMembersTable({ members, loading = false }: Refer
 
   const filteredMembers = members.filter((item) => {
     const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || item.status === statusFilter;
+    const isUserActive = item.total_payments > 0;
+    const matchesStatus = statusFilter === "all" || 
+      (statusFilter === "active" && isUserActive) || 
+      (statusFilter === "registered" && !isUserActive);
     return matchesSearch && matchesStatus;
   });
 
-  const getStatusBadge = (status: ReferralMember["status"]) => {
-    switch (status) {
-      case "active":
-        return <Badge variant="success" size="sm">Active</Badge>;
-      case "registered":
-        return <Badge variant="primary-light" size="sm">Registered</Badge>;
-      default:
-        return <Badge variant="neutral" size="sm">Invited</Badge>;
+  const getStatusBadge = (user: UserResponse) => {
+    if (user.total_payments > 0) {
+      return <Badge variant="success" size="sm">Active</Badge>;
     }
+    return <Badge variant="primary-light" size="sm">Registered</Badge>;
   };
 
-  const getDonationBadge = (donationStatus: ReferralMember["donationStatus"]) => {
-    if (donationStatus === "donated") {
+  const getDonationBadge = (user: UserResponse) => {
+    if (user.total_payments > 0) {
       return <Badge variant="success" size="sm">Donated</Badge>;
     }
     return <Badge variant="neutral" size="sm">None</Badge>;
   };
 
-  const headers: Header<ReferralMember>[] = [
+  const headers: Header<UserResponse>[] = [
     {
       label: "Name",
       render: (row) => (
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-xs text-primary shrink-0 relative overflow-hidden">
-            {row.avatarUrl ? (
-              <Image src={row.avatarUrl} alt={row.name} fill className="object-cover" sizes="32px" />
+            {row.profile_photo ? (
+              <Image src={row.profile_photo} alt={row.name} fill className="object-cover" sizes="32px" />
             ) : (
               row.name.charAt(0).toUpperCase()
             )}
@@ -67,17 +66,17 @@ export default function ReferredMembersTable({ members, loading = false }: Refer
     },
     {
       label: "Join Status",
-      render: (row) => getStatusBadge(row.status),
+      render: (row) => getStatusBadge(row),
     },
     {
       label: "Donation Status",
-      render: (row) => getDonationBadge(row.donationStatus),
+      render: (row) => getDonationBadge(row),
     },
     {
       label: "Contributions Generated",
       render: (row) => (
         <span className="font-display font-black text-text text-sm">
-          ₹{row.totalDonated.toLocaleString("en-IN")}
+          ₹{row.total_amount.toLocaleString("en-IN")}
         </span>
       ),
     },
@@ -85,7 +84,7 @@ export default function ReferredMembersTable({ members, loading = false }: Refer
       label: "Registration Date",
       render: (row) => (
         <span className="text-[12px] text-text-muted font-medium">
-          {formatDate(row.registrationDate, "short")}
+          {formatDate(row.created_at, "short")}
         </span>
       ),
     },

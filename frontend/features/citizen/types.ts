@@ -152,7 +152,6 @@ export interface DonationRecord {
   id: string;
   transactionId: string;
   amount: number;
-  purpose: string;
   paymentMethod: string;
   status: 'success' | 'pending' | 'failed';
   date: string;
@@ -189,3 +188,31 @@ export interface ReferralMember {
   membershipStatus: 'active' | 'inactive';
 }
 
+export interface Payment {
+  id: string;
+  userId?: string;
+  merchantOrderId: string;
+  providerReferenceId?: string;
+  amount: number; // in paise
+  status: string; // SUCCESS, FAILED, PENDING, CANCELLED
+  paymentMethod?: string;
+  donorName?: string;
+  donorEmail?: string;
+  donorPhone?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PaymentHistoryResponse {
+  data: Payment[];
+  totalCount: number;
+  page: number;
+  limit: number;
+}
+
+export interface InitiatePaymentRequest {
+  amount: number;
+  donorName: string;
+  donorEmail?: string;
+  donorPhone?: string;
+}

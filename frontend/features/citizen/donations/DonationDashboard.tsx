@@ -12,7 +12,7 @@ import {
 } from "../api";
 import {
   DonationStats as DonationStatsType,
-  DonationRecord,
+  Payment,
   TaxCertificate,
 } from "../types";
 
@@ -20,7 +20,6 @@ import DonationHero from "./DonationHero";
 import DonationStats from "./DonationStats";
 import DonationHistory from "./DonationHistory";
 import TaxCertificates from "./TaxCertificates";
-import CheckoutModal from "./CheckoutModal";
 
 function DonationDashboardContent() {
   const searchParams = useSearchParams();
@@ -28,18 +27,10 @@ function DonationDashboardContent() {
   const initialTab = searchParams.get("tab") || "history";
 
   const [stats, setStats] = useState<DonationStatsType | null>(null);
-  const [history, setHistory] = useState<DonationRecord[]>([]);
+  const [history, setHistory] = useState<Payment[]>([]);
   const [certificates, setCertificates] = useState<TaxCertificate[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState(initialTab);
-
-  // Checkout modal state
-  const [checkoutOpen, setCheckoutOpen] = useState(false);
-  const [checkoutData, setCheckoutData] = useState<{
-    amount: number;
-    purpose: string;
-    provider: "phonepe" | "razorpay";
-  } | null>(null);
 
   const loadDonationData = async () => {
     try {
@@ -49,13 +40,28 @@ function DonationDashboardContent() {
         getDonationHistory(),
         getTaxCertificates(),
       ]);
-      setStats(statsData);
-      setHistory(historyData);
-      setCertificates(certsData);
+      setStats(statsData || null);
+      setHistory(historyData || []);
+      setCertificates(certsData || []);
     } catch (err) {
       console.error("Failed to load donation dashboard data:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const refreshDonationData = async () => {
+    try {
+      const [statsData, historyData, certsData] = await Promise.all([
+        getDonationStats(),
+        getDonationHistory(),
+        getTaxCertificates(),
+      ]);
+      setStats(statsData || null);
+      setHistory(historyData || []);
+      setCertificates(certsData || []);
+    } catch (err) {
+      console.error("Failed to refresh donation dashboard data:", err);
     }
   };
 
@@ -75,74 +81,18 @@ function DonationDashboardContent() {
     router.push(`/citizen/donations?tab=${val}`);
   };
 
-  const handleDonateInitiate = (data: {
-    amount: number;
-    purpose: string;
-    provider: "phonepe" | "razorpay";
-  }) => {
-    setCheckoutData(data);
-    setCheckoutOpen(true);
-  };
-
-  const handlePaymentSuccess = (details: {
+  const handleDonationSuccess = (details: {
     transactionId: string;
-    paymentMethod: string;
+    amount: number;
+    isManual: boolean;
   }) => {
-    if (!checkoutData) return;
-
-    // Create a new donation history record
-    const newRecord: DonationRecord = {
-      id: "sim-" + details.transactionId,
-      transactionId: details.transactionId,
-      amount: checkoutData.amount,
-      purpose: checkoutData.purpose,
-      paymentMethod: details.paymentMethod,
-      status: "success",
-      date: new Date().toISOString(),
-    };
-
-    // Prepend to transaction history list
-    setHistory((prev) => [newRecord, ...prev]);
-
-    // Update KPI metrics locally
-    setStats((prev) => {
-      if (!prev) {
-        return {
-          lifetimeDonated: checkoutData.amount,
-          donatedThisYear: checkoutData.amount,
-          donatedLastMonth: checkoutData.amount,
-          totalTransactions: 1,
-          averageAmount: checkoutData.amount,
-          donorLevel: "Bronze",
-        };
-      }
-
-      const updatedTotal = prev.lifetimeDonated + checkoutData.amount;
-      const updatedCount = prev.totalTransactions + 1;
-      const updatedAvg = Math.round(updatedTotal / updatedCount);
-
-      // Simple donor level progression calculation
-      let newLevel = prev.donorLevel;
-      if (updatedTotal >= 25000) newLevel = "Platinum";
-      else if (updatedTotal >= 10000) newLevel = "Gold";
-      else if (updatedTotal >= 5000) newLevel = "Silver";
-
-      return {
-        ...prev,
-        lifetimeDonated: updatedTotal,
-        donatedThisYear: prev.donatedThisYear + checkoutData.amount,
-        donatedLastMonth: prev.donatedLastMonth + checkoutData.amount,
-        totalTransactions: updatedCount,
-        averageAmount: updatedAvg,
-        donorLevel: newLevel,
-      };
-    });
-
     toast.success(
-      `Thank you! Contribution of ₹${checkoutData.amount.toLocaleString(
-        "en-IN"
-      )} processed successfully.`
+      `Thank you! Contribution of ₹${details.amount.toLocaleString(
+        "en-IN",
+      )} submitted successfully. Reference: ${details.transactionId}`,
     );
+    // Silent refresh to update the history table and dashboard cards
+    refreshDonationData();
   };
 
   if (loading) {
@@ -156,7 +106,7 @@ function DonationDashboardContent() {
   return (
     <div className="space-y-8">
       {/* Hero Section containing narrative and Quick Donation Panel */}
-      <DonationHero onDonateInitiate={handleDonateInitiate} />
+      <DonationHero onSuccess={handleDonationSuccess} />
 
       {/* KPI Stats Panel */}
       <DonationStats stats={stats} />
@@ -180,18 +130,6 @@ function DonationDashboardContent() {
           <TaxCertificates certificates={certificates} />
         </TabsContent>
       </Tabs>
-
-      {/* Checkout Gateway Simulator Modal */}
-      {checkoutData && (
-        <CheckoutModal
-          isOpen={checkoutOpen}
-          onOpenChange={setCheckoutOpen}
-          amount={checkoutData.amount}
-          purpose={checkoutData.purpose}
-          provider={checkoutData.provider}
-          onSuccess={handlePaymentSuccess}
-        />
-      )}
     </div>
   );
 }

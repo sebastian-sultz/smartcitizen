@@ -1,119 +1,90 @@
 "use client";
 
 import { useState } from "react";
-import { MoveRight } from "lucide-react";
+import { MoveRight, Heart } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 
-const amounts = [100, 200, 500, 1000, 2000];
+const PRESET_AMOUNTS = [500, 1000, 2500, 5000];
 
 export function DonationCTA() {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
 
   return (
-    <section className="py-12 md:py-16 bg-bg-alt overflow-hidden">
+    <section className="py-16 md:py-24 bg-bg-alt overflow-hidden">
       <div className="max-content">
-        <div className="flex flex-col lg:flex-row gap-16">
-          {/* Left - Message */}
-          <div className="flex-1 space-y-8">
-            <div className="space-y-4">
-              <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-accent">MAKE A DIFFERENCE</span>
-              <h2 className="font-display text-4xl md:text-5xl font-bold text-text leading-tight">
-                Your Support Creates Real Change
-              </h2>
-            </div>
-            
-            <div className="space-y-6 text-text-muted text-[17px] leading-relaxed">
-              <p>
-                Together, We Create Real Change. At GlobalSmart Citizens Foundation,
-                we are committed to creating meaningful and lasting change by empowering
-                individuals and communities. We work towards education, healthcare, social
-                welfare, and environmental sustainability.
-              </p>
-              <p>
-                Every donation is not just support — it is hope, empowerment, and a step
-                towards a better tomorrow.
-              </p>
-            </div>
-
-            <div className="space-y-6">
-              <div className="flex flex-wrap gap-3">
-                {amounts.map((amount) => (
-                  <Button
-                    variant={selectedAmount === amount ? "accent" : "secondary"}
-                    key={amount}
-                    shape="pill"
-                    noShadow
-                    normalCase
-                    onClick={() => setSelectedAmount(amount)}
-                  >
-                    ₹{amount}
-                  </Button>
-                ))}
-                <Button variant="secondary" shape="pill" noShadow normalCase>
-                  Other Amount
-                </Button>
-              </div>
-
-              <Link 
-                href="/donation" 
-                className="inline-flex items-center gap-2 bg-accent hover:bg-accent-light text-white px-10 py-4 rounded-lg font-bold transition-all transform hover:-translate-y-1 shadow-xl shadow-accent/20"
-              >
-                Contribute Now <MoveRight size={20} />
-              </Link>
-
-              <p className="text-[13px] text-text-light italic">
-                All donations are eligible for tax deduction under Section 80G. Contributions are voluntary and used strictly for social awareness, community development, and operational support.
-              </p>
-            </div>
+        <div className="max-w-3xl mx-auto text-center space-y-8 p-8 md:p-12 bg-white border border-border/80 rounded-[40px] shadow-card relative">
+          {/* Decorative Subtle Accent */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 bg-accent text-white rounded-2xl flex items-center justify-center shadow-lg shadow-accent/20">
+            <Heart size={20} fill="currentColor" />
           </div>
 
-          {/* Right - Bank/QR */}
-          <div className="flex-1">
-            <div className="bg-white p-8 md:p-12 rounded-2xl shadow-card space-y-12">
-              <div className="space-y-6 text-center">
-                <h4 className="font-display text-2xl font-bold text-primary">Pay via UPI</h4>
-                <p className="text-text-muted text-[15px]">Scan QR Code using PhonePe, Google Pay, or Paytm</p>
-                <div className="max-w-[240px] mx-auto p-4 bg-bg border border-border rounded-xl">
-                  {/* Placeholder for QR Code */}
-                  <div className="aspect-square bg-white border border-border flex items-center justify-center overflow-hidden relative">
-                    <Image src="/assets/qr.png" alt="UPI QR Code" width={240} height={240} className="w-full h-full object-cover" />
-                  </div>
-                </div>
-                <div className="flex justify-center gap-4 text-primary font-bold text-[14px]">
-                  <span>UPI</span>
-                  <span>PhonePe</span>
-                  <span>GPay</span>
-                  <span>Paytm</span>
-                </div>
-              </div>
+          <div className="space-y-4">
+            <span className="text-[11px] font-black uppercase tracking-[0.2em] text-accent block mt-2">
+              MAKE A DIFFERENCE
+            </span>
+            <h2 className="font-display text-3xl md:text-5xl font-black text-text leading-tight tracking-tight">
+              Support Our Civic Initiatives
+            </h2>
+            <p className="text-text-muted text-sm md:text-base max-w-xl mx-auto leading-relaxed">
+              Every contribution helps us power neighborhood assemblies, deploy
+              local community tools, and clean up our environment.
+            </p>
+          </div>
 
-              <div className="pt-12 border-t border-border space-y-6">
-                <h4 className="font-display text-2xl font-bold text-primary text-center">Bank Transfer</h4>
-                <div className="space-y-4 bg-bg p-6 rounded-xl border border-border">
-                  <div className="flex justify-between items-center text-[15px]">
-                    <span className="text-text-light">Account Name</span>
-                    <span className="font-bold text-text text-right">Global Smart Citizens Foundation</span>
-                  </div>
-                  <div className="flex justify-between items-center text-[15px]">
-                    <span className="text-text-light">Bank</span>
-                    <span className="font-bold text-text">HDFC Bank</span>
-                  </div>
-                  <div className="flex justify-between items-center text-[15px]">
-                    <span className="text-text-light">Account No</span>
-                    <span className="font-bold text-text tracking-wider">50200119596441</span>
-                  </div>
-                  <div className="flex justify-between items-center text-[15px]">
-                    <span className="text-text-light">IFSC Code</span>
-                    <span className="font-bold text-text tracking-wider">HDFC0000226</span>
-                  </div>
-                </div>
-                <p className="text-center text-[13px] text-text-muted">
-                  Please share your payment details on email or WhatsApp for receipt and records.
-                </p>
-              </div>
+          <div className="space-y-6 pt-4">
+            {/* Amount Presets */}
+            <div className="flex flex-wrap gap-2.5 justify-center">
+              {PRESET_AMOUNTS.map((amount) => (
+                <Button
+                  variant={selectedAmount === amount ? "accent" : "secondary"}
+                  key={amount}
+                  shape="pill"
+                  size="sm"
+                  noShadow
+                  normalCase
+                  className="transition-all"
+                  onClick={() => setSelectedAmount(amount)}
+                >
+                  ₹{amount.toLocaleString("en-IN")}
+                </Button>
+              ))}
+              <Button
+                asChild
+                variant="secondary"
+                shape="pill"
+                size="sm"
+                noShadow
+                normalCase
+              >
+                <Link href="/donation">Other Amount</Link>
+              </Button>
             </div>
+
+            {/* Core Action Link */}
+            <div className="pt-2">
+              <Button
+                asChild
+                variant="accent"
+                className="px-10 py-4 h-auto rounded-2xl font-black text-xs uppercase tracking-wider transition-all transform hover:-translate-y-0.5 shadow-xl shadow-accent/20"
+              >
+                <Link
+                  href={
+                    selectedAmount
+                      ? `/donation?amount=${selectedAmount}`
+                      : "/donation"
+                  }
+                >
+                  Contribute Now{" "}
+                  <MoveRight size={16} className="ml-2.5 inline" />
+                </Link>
+              </Button>
+            </div>
+
+            <p className="text-[11px] text-text-light leading-relaxed max-w-lg mx-auto italic">
+              All contributions are voluntary and fully eligible for tax
+              deduction benefits under Section 80G of the Income Tax Act.
+            </p>
           </div>
         </div>
       </div>

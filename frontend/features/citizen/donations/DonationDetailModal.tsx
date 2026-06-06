@@ -1,9 +1,10 @@
 "use client";
 
-import { DonationRecord } from "../types";
+import { Payment } from "../types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
+import { Separator } from "@/components/ui/separator";
 import { getStatusColor } from "./helpers";
 import {
   Download,
@@ -17,7 +18,7 @@ import {
 import { toast } from "sonner";
 
 interface DonationDetailModalProps {
-  donation: DonationRecord | null;
+  donation: Payment | null;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
@@ -25,7 +26,7 @@ interface DonationDetailModalProps {
 export default function DonationDetailModal({ donation, isOpen, onOpenChange }: DonationDetailModalProps) {
   if (!donation) return null;
 
-  const formattedDate = new Date(donation.date).toLocaleString("en-IN", {
+  const formattedDate = new Date(donation.createdAt).toLocaleString("en-IN", {
     dateStyle: "medium",
     timeStyle: "short",
   });
@@ -41,7 +42,7 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
   };
 
   const handleShare = () => {
-    const text = `I just contributed ₹${donation.amount.toLocaleString("en-IN")} to SmartCitizen to support "${donation.purpose}"! Join me in empowering our city.`;
+    const text = `I just contributed ₹${(donation.amount / 100).toLocaleString("en-IN")} to SmartCitizen! Join me in empowering our city.`;
     navigator.clipboard
       .writeText(text)
       .then(() => {
@@ -51,6 +52,8 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
         toast.error("Could not copy message automatically.");
       });
   };
+
+  const isSuccess = donation.status.toLowerCase() === "success";
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -70,13 +73,11 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
               Amount Supporting Foundation
             </span>
             <h3 className="text-3xl font-display font-black text-white">
-              ₹{donation.amount.toLocaleString("en-IN")}
+              ₹{(donation.amount / 100).toLocaleString("en-IN")}
             </h3>
             <div className="inline-block pt-1">
               <Badge variant={getStatusColor(donation.status)} size="sm">
-                {donation.status === "success"
-                  ? "Success (Verified)"
-                  : donation.status}
+                {isSuccess ? "Success (Verified)" : donation.status}
               </Badge>
             </div>
           </div>
@@ -85,22 +86,10 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
           <div className="space-y-3.5 text-sm">
             <div className="flex justify-between items-center pb-2 border-b border-border/50">
               <span className="text-text-muted font-bold text-xs uppercase tracking-wider">
-                Campaign Target
-              </span>
-              <span
-                className="font-semibold text-text max-w-[200px] text-right truncate"
-                title={donation.purpose}
-              >
-                {donation.purpose}
-              </span>
-            </div>
-
-            <div className="flex justify-between items-center pb-2 border-b border-border/50">
-              <span className="text-text-muted font-bold text-xs uppercase tracking-wider">
                 Transaction ID
               </span>
               <span className="font-mono text-xs text-text font-bold">
-                {donation.transactionId}
+                {donation.merchantOrderId}
               </span>
             </div>
 
@@ -109,7 +98,7 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
                 Payment Method
               </span>
               <span className="font-semibold text-text">
-                {donation.paymentMethod}
+                {donation.paymentMethod || "Online Gateway"}
               </span>
             </div>
 
@@ -142,7 +131,7 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
               <div className="relative">
                 <span
                   className={`absolute -left-[31px] top-0.5 flex h-4 w-4 items-center justify-center rounded-full ${
-                    donation.status === "success"
+                    isSuccess
                       ? "bg-primary text-white"
                       : "bg-slate-200 text-slate-400"
                   }`}
@@ -157,7 +146,7 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
               <div className="relative">
                 <span
                   className={`absolute -left-[31px] top-0.5 flex h-4 w-4 items-center justify-center rounded-full ${
-                    donation.status === "success"
+                    isSuccess
                       ? "bg-primary text-white"
                       : "bg-slate-200 text-slate-400"
                   }`}
@@ -172,24 +161,27 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
           </div>
 
           {/* Action Row & Share */}
-          <div className="w-full border-t border-border/80 pt-4 flex flex-col gap-3">
+          <div className="w-full pt-4 flex flex-col gap-3">
+            <Separator className="bg-border/80" />
             <div className="flex gap-3">
               <Button
                 onClick={handleDownloadReceipt}
                 variant="primary"
-                className="flex-1 text-xs font-bold py-2.5 h-auto rounded-xl gap-2"
+                size="sm"
+                className="flex-1 font-bold"
+                startIcon={<Download size={14} />}
               >
-                <Download size={14} />
                 Donation Receipt
               </Button>
 
-              {donation.status === "success" && (
+              {isSuccess && (
                 <Button
                   onClick={handleDownloadCertificate}
                   variant="accent"
-                  className="flex-1 text-xs font-bold py-2.5 h-auto rounded-xl gap-2"
+                  size="sm"
+                  className="flex-1 font-bold"
+                  startIcon={<FileText size={14} />}
                 >
-                  <FileText size={14} />
                   80G Tax Slip
                 </Button>
               )}
@@ -198,9 +190,11 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
             <Button
               onClick={handleShare}
               variant="outline"
-              className="w-full text-xs font-bold py-2.5 h-auto rounded-xl gap-2 border-primary/20 text-primary hover:bg-primary/5"
+              size="sm"
+              fullWidth
+              className="border-primary/20 hover:bg-primary/5 font-bold"
+              startIcon={<Share2 size={14} />}
             >
-              <Share2 size={14} />
               Share Your Support
             </Button>
           </div>

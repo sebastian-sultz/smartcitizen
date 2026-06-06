@@ -1,58 +1,71 @@
-import { QrCode, Building2 } from "lucide-react";
+import { Building2 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import Image from "next/image";
+import { Separator } from "@/components/ui/separator";
 
 export const PaymentInfo = () => {
   return (
-    <div className="lg:w-1/3 space-y-8">
-      <Card>
-        <CardHeader className="text-center">
+    <div className="lg:w-1/3 w-full space-y-6">
+      <Card className="rounded-[32px] border border-border shadow-card overflow-hidden">
+        <CardHeader className="border-b border-border/40 pb-5 text-center">
           <div className="flex items-center justify-center gap-3 text-primary mb-2">
-            <QrCode size={24} />
-            <CardTitle>UPI / QR Code</CardTitle>
+            <Building2 size={24} className="text-primary" />
+            <CardTitle className="text-lg font-display font-black text-text">
+              Bank Transfer Details
+            </CardTitle>
           </div>
-          <p className="text-text-muted text-[14px]">Scan QR Code using any UPI app to make a quick and secure donation.</p>
+          <p className="text-text-muted text-xs leading-relaxed">
+            Please make your offline donation or wire transfer directly to our
+            foundation bank account.
+          </p>
         </CardHeader>
-        <CardContent className="space-y-8 text-center">
-          <div className="relative aspect-square max-w-[200px] mx-auto bg-bg p-4 rounded-2xl border border-border overflow-hidden">
-            <Image 
-              src="/assets/qr.png" 
-              alt="UPI QR Code" 
-              fill
-              sizes="(max-width: 768px) 100vw, 200px"
-              className="object-cover" 
-            />
-          </div>
-          <div className="flex flex-wrap justify-center gap-3">
-             {["Paytm", "PhonePe", "GPay", "UPI"].map(tag => (
-               <span key={tag} className="text-[11px] font-bold uppercase tracking-widest text-text-light px-2 py-1 bg-bg border border-border rounded-md">{tag}</span>
-             ))}
+        <CardContent className="p-6 md:p-8 space-y-6">
+          <div className="space-y-4 bg-bg/50 p-6 rounded-2xl border border-border/60 text-xs">
+            <div className="space-y-1">
+              <p className="text-text-muted uppercase text-[10px] font-bold tracking-wider">
+                Account Name
+              </p>
+              <p className="font-bold text-text text-sm">
+                Global Smart Citizens Foundation
+              </p>
+            </div>
+
+            <Separator className="bg-border/40" />
+
+            <div className="space-y-1">
+              <p className="text-text-muted uppercase text-[10px] font-bold tracking-wider">
+                Bank Name
+              </p>
+              <p className="font-bold text-text text-sm">HDFC Bank</p>
+            </div>
+
+            <Separator className="bg-border/40" />
+
+            <div className="space-y-1">
+              <p className="text-text-muted uppercase text-[10px] font-bold tracking-wider">
+                Account Number
+              </p>
+              <p className="font-bold text-text text-sm tracking-widest">
+                50200119596441
+              </p>
+            </div>
+
+            <Separator className="bg-border/40" />
+
+            <div className="space-y-1">
+              <p className="text-text-muted uppercase text-[10px] font-bold tracking-wider">
+                IFSC Code
+              </p>
+              <p className="font-bold text-text text-sm tracking-widest">
+                HDFC0000226
+              </p>
+            </div>
           </div>
 
-          <div className="pt-8 border-t border-border space-y-6 text-left">
-            <div className="flex items-center justify-center gap-3 text-primary">
-              <Building2 size={24} />
-              <CardTitle>Bank Transfer</CardTitle>
-            </div>
-            <div className="space-y-4 bg-bg p-6 rounded-2xl border border-border text-[14px]">
-              <div className="space-y-1">
-                <p className="text-text-light uppercase text-[11px] font-bold tracking-wider">Account Name</p>
-                <p className="font-bold text-text">Global Smart Citizens Foundation</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-text-light uppercase text-[11px] font-bold tracking-wider">Bank</p>
-                <p className="font-bold text-text">HDFC Bank</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-text-light uppercase text-[11px] font-bold tracking-wider">Account Number</p>
-                <p className="font-bold text-text tracking-widest">50200119596441</p>
-              </div>
-              <div className="space-y-1">
-                <p className="text-text-light uppercase text-[11px] font-bold tracking-wider">IFSC Code</p>
-                <p className="font-bold text-text tracking-widest">HDFC0000226</p>
-              </div>
-            </div>
-          </div>
+          <p className="text-[11px] text-text-light leading-relaxed text-center italic bg-bg p-3.5 rounded-xl border border-border/40">
+            Note: All donations to Global Smart Citizens Foundation are eligible
+            for tax deduction benefits under Section 80G of the Income Tax Act,
+            1961.
+          </p>
         </CardContent>
       </Card>
     </div>

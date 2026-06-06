@@ -25,6 +25,8 @@ Do not use raw HTML tags if a corresponding custom UI component is available in 
 * **Tabs**: Always use components from `@/components/ui/tabs`.
 * **Tooltips**: Always use components from `@/components/ui/tooltip`.
 
+* **Variant & Prop Compliance**: When using custom UI components (like `Button`, `Input`, `Badge`, `Card`, etc.), you **must** use the component's built-in props and design variants (e.g., `variant`, `size`, `shape`, `fullWidth`, `startIcon`, `endIcon`, etc.) to control layout sizes, padding, rounding, and styling. **Never** add custom tailwind class name overrides (such as `font-bold`, `rounded-xl`, `w-full`, `px-*`, `py-*`, `flex`, `items-center`, `gap-*`) in `className` to duplicate or override properties that are already configured inside the custom component's variant system.
+
 ### 2. Next.js Image Optimization
 * **Never** use raw `<img>` tags for images in frontend components or pages.
 * **Always** import and use the Next.js `Image` component from `next/image`:

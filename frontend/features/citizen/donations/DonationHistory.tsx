@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { DonationRecord } from "../types";
+import { Payment } from "../types";
 import { TableComponent, Header } from "@/components/ui/TableComponent";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -21,40 +21,44 @@ import { getStatusColor } from "./helpers";
 import { toast } from "sonner";
 
 interface DonationHistoryProps {
-  donations: DonationRecord[];
+  donations: Payment[];
   loading?: boolean;
 }
 
 export default function DonationHistory({ donations, loading = false }: DonationHistoryProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [selectedDonation, setSelectedDonation] = useState<DonationRecord | null>(null);
+  const [selectedDonation, setSelectedDonation] = useState<Payment | null>(
+    null,
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Filter Logic
   const filteredDonations = donations.filter((item) => {
-    const matchesSearch = 
-      item.transactionId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.purpose.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = item.merchantOrderId
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
     
-    const matchesStatus = statusFilter === "all" || item.status === statusFilter;
+    const matchesStatus =
+      statusFilter === "all" ||
+      item.status.toLowerCase() === statusFilter.toLowerCase();
     
     return matchesSearch && matchesStatus;
   });
 
   // getStatusColor is imported from helpers.ts
 
-  const handleViewDetails = (donation: DonationRecord) => {
+  const handleViewDetails = (donation: Payment) => {
     setSelectedDonation(donation);
     setIsModalOpen(true);
   };
 
-  const tableHeaders: Header<DonationRecord>[] = [
+  const tableHeaders: Header<Payment>[] = [
     {
       label: "Date",
       render: (row) => (
         <span className="font-semibold text-text">
-          {formatDate(row.date, "short")}
+          {formatDate(row.createdAt, "short")}
         </span>
       ),
     },
@@ -62,7 +66,7 @@ export default function DonationHistory({ donations, loading = false }: Donation
       label: "Transaction ID",
       render: (row) => (
         <span className="font-mono text-xs font-bold text-text-muted">
-          {row.transactionId}
+          {row.merchantOrderId}
         </span>
       ),
     },
@@ -72,18 +76,12 @@ export default function DonationHistory({ donations, loading = false }: Donation
         <span
           className={cn(
             "font-display font-black",
-            row.status === "success" ? "text-primary" : "text-text",
+            row.status.toLowerCase() === "success"
+              ? "text-primary"
+              : "text-text",
           )}
         >
-          ₹{row.amount.toLocaleString("en-IN")}
-        </span>
-      ),
-    },
-    {
-      label: "Purpose",
-      render: (row) => (
-        <span className="font-medium text-text-muted text-[13px]">
-          {row.purpose}
+          ₹{(row.amount / 100).toLocaleString("en-IN")}
         </span>
       ),
     },
@@ -103,27 +101,23 @@ export default function DonationHistory({ donations, loading = false }: Donation
             onClick={() => handleViewDetails(row)}
             variant="outline"
             size="sm"
-            className="text-xs font-bold py-1.5 h-auto rounded-xl gap-1 border-primary/20 text-primary hover:bg-primary/5"
+            startIcon={<Eye size={12} />}
+            className="border-primary/20 text-primary hover:bg-primary/5 font-bold"
           >
-            <Eye size={12} />
             Details
           </Button>
-          {row.status === "success" && (
+          {row.status.toLowerCase() === "success" && (
             <Button
               onClick={() => {
-                if (row.receiptUrl) {
-                  window.open(row.receiptUrl, "_blank");
-                } else {
-                  toast.success(
-                    `Downloading receipt for transaction ${row.transactionId}`
-                  );
-                }
+                toast.success(
+                  `Downloading receipt for transaction ${row.merchantOrderId}`,
+                );
               }}
               variant="primary"
               size="sm"
-              className="text-xs font-bold py-1.5 h-auto rounded-xl gap-1"
+              startIcon={<Download size={12} />}
+              className="font-bold"
             >
-              <Download size={12} />
               Receipt
             </Button>
           )}

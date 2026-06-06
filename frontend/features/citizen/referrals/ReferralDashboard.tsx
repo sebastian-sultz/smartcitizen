@@ -8,7 +8,7 @@ import {
   selectReferralLink,
 } from "@/store/citizenStore";
 import { getReferredMembers } from "../api";
-import { ReferralMember } from "../types";
+import { UserResponse } from "@/features/shared/auth/types";
 
 import ReferralStats from "./ReferralStats";
 import ShareReferral from "./ShareReferral";
@@ -20,25 +20,31 @@ export default function ReferralDashboard() {
   const referralCode = useCitizenStore(selectReferralCode);
   const referralLink = useCitizenStore(selectReferralLink);
 
-  const [members, setMembers] = useState<ReferralMember[]>([]);
+  const [members, setMembers] = useState<UserResponse[]>([]);
   const [localLoading, setLocalLoading] = useState(true);
 
-  const loadReferralData = async () => {
-    try {
-      setLocalLoading(true);
-      await fetchProfile();
-      const membersData = await getReferredMembers();
-      setMembers(membersData);
-    } catch (err) {
-      console.error("Failed to load referral details:", err);
-    } finally {
-      setLocalLoading(false);
-    }
-  };
+  useEffect(() => {
+    fetchProfile();
+  }, [fetchProfile]);
 
   useEffect(() => {
-    loadReferralData();
-  }, []);
+    if (user?.id) {
+      const loadReferrals = async () => {
+        try {
+          setLocalLoading(true);
+          const membersData = await getReferredMembers(user.id);
+          setMembers(membersData || []);
+        } catch (err) {
+          console.error("Failed to load referral details:", err);
+        } finally {
+          setLocalLoading(false);
+        }
+      };
+      loadReferrals();
+    } else if (!storeLoading) {
+      setLocalLoading(false);
+    }
+  }, [user, storeLoading]);
 
   if (storeLoading || localLoading) {
     return (

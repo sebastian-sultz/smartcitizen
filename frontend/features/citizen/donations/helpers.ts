@@ -3,8 +3,8 @@ import { DonationRecord } from "../types";
 /**
  * Maps a donation status to the appropriate Badge variant.
  */
-export const getStatusColor = (status: DonationRecord["status"]): "success" | "warning" | "danger" => {
-  switch (status) {
+export const getStatusColor = (status: string): "success" | "warning" | "danger" => {
+  switch (status.toLowerCase()) {
     case "success":
       return "success";
     case "pending":
