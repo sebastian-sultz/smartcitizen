@@ -4,24 +4,17 @@ import (
 	"backend/modules/user"
 	"context"
 	"time"
+	"backend/dto/response"
 
 	"gorm.io/gorm"
 )
-
-type UserDonationStats struct {
-	LifetimeDonated   int64
-	DonatedThisYear   int64
-	DonatedLastMonth  int64
-	TotalTransactions int64
-	AverageAmount     int64
-}
 
 type Repository interface {
 	CreatePayment(ctx context.Context, payment *Payment) error
 	GetPaymentByOrderID(ctx context.Context, orderID string) (*Payment, error)
 	UpdatePayment(ctx context.Context, payment *Payment) error
 	ListPayments(ctx context.Context, userID *string, page, limit int) ([]Payment, int64, error)
-	GetUserDonationStats(ctx context.Context, userID string) (*UserDonationStats, error)
+	GetUserDonationStats(ctx context.Context, userID string) (*response.UserDonationStatsResponse, error)
 }
 
 type repository struct {
@@ -104,12 +97,12 @@ func (r *repository) ListPayments(ctx context.Context, userID *string, page, lim
 	return payments, total, nil
 }
 
-func (r *repository) GetUserDonationStats(ctx context.Context, userID string) (*UserDonationStats, error) {
-	var stats UserDonationStats
+func (r *repository) GetUserDonationStats(ctx context.Context, userID string) (*response.UserDonationStatsResponse, error) {
+	var stats response.UserDonationStatsResponse
 	now := time.Now()
-	
+
 	startOfYear := time.Date(now.Year(), 1, 1, 0, 0, 0, 0, now.Location())
-	
+
 	startOfMonth := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
 	startOfLastMonth := startOfMonth.AddDate(0, -1, 0)
 	endOfLastMonth := startOfMonth.Add(-time.Nanosecond)
@@ -128,25 +121,31 @@ func (r *repository) GetUserDonationStats(ctx context.Context, userID string) (*
 		return &stats, nil // Returns zeros if no successful transactions
 	}
 
+	// Helper variable for raw sum
+	var lifetime, thisYear, lastMonth int64
+
 	// 2. Lifetime Donated
-	if err := baseQuery.Select("COALESCE(SUM(amount), 0)").Scan(&stats.LifetimeDonated).Error; err != nil {
+	if err := baseQuery.Select("COALESCE(SUM(amount), 0)").Scan(&lifetime).Error; err != nil {
 		return nil, err
 	}
 
-	// 3. Average Amount
-	stats.AverageAmount = stats.LifetimeDonated / stats.TotalTransactions
-
 	// 4. Donated This Year
 	if err := baseQuery.Where("created_at >= ?", startOfYear).
-		Select("COALESCE(SUM(amount), 0)").Scan(&stats.DonatedThisYear).Error; err != nil {
+		Select("COALESCE(SUM(amount), 0)").Scan(&thisYear).Error; err != nil {
 		return nil, err
 	}
 
 	// 5. Donated Last Month
 	if err := baseQuery.Where("created_at >= ? AND created_at <= ?", startOfLastMonth, endOfLastMonth).
-		Select("COALESCE(SUM(amount), 0)").Scan(&stats.DonatedLastMonth).Error; err != nil {
+		Select("COALESCE(SUM(amount), 0)").Scan(&lastMonth).Error; err != nil {
 		return nil, err
 	}
+
+	// Convert from paise to rupees
+	stats.LifetimeDonated = float64(lifetime) / 100.0
+	stats.DonatedThisYear = float64(thisYear) / 100.0
+	stats.DonatedLastMonth = float64(lastMonth) / 100.0
+	stats.AverageAmount = stats.LifetimeDonated / float64(stats.TotalTransactions)
 
 	return &stats, nil
 }

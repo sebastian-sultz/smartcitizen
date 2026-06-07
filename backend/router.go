@@ -3,17 +3,33 @@ package main
 import (
 	"backend/infrastructure/middleware"
 	"backend/modules/event"
+	"backend/modules/payment"
 	"backend/modules/report"
 	"backend/modules/user"
 	"backend/modules/volunteer"
-	"backend/modules/payment"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 func SetupRoutes(r *gin.Engine, db *gorm.DB) {
+	r.Use(middleware.GlobalLogger())
 	r.Use(middleware.CORSMiddleware())
+
+	// Health Check Route
+	r.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status":  "server is up and running",
+			"service": "smartcitizen-backend",
+		})
+	})
+	r.GET("", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status":  "Chal rha hai",
+			"service": "ChalaJaaa",
+		})
+	})
+
 	api := r.Group("/api")
 
 	// ==========================================
@@ -105,7 +121,7 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 		// Authenticated routes
 		protected := api.Group("")
 		protected.Use(middleware.AuthMiddleware())
-		
+
 		// Get user's own reports
 		protected.GET("/reports", reportHandler.GetUserReports)
 		// Create report (accessible to authenticated users)
@@ -129,7 +145,7 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 		payments.POST("/initiate", paymentHandler.InitiatePayment)
 		payments.POST("/webhook", paymentHandler.HandleWebhook)
 		payments.GET("/status/:transactionId", paymentHandler.CheckPaymentStatus)
-		
+
 		// Authenticated access for history and stats
 		protected := payments.Group("")
 		protected.Use(middleware.AuthMiddleware())

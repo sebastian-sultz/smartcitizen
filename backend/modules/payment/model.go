@@ -27,6 +27,7 @@ type Payment struct {
 	DonorName           string         `gorm:"type:varchar(255)" json:"donorName,omitempty"`
 	DonorEmail          string         `gorm:"type:varchar(255)" json:"donorEmail,omitempty"`
 	DonorPhone          string         `gorm:"type:varchar(50)" json:"donorPhone,omitempty"`
+	PhonepeResponse     *string        `gorm:"type:text" json:"phonepeResponse,omitempty"`
 	CreatedAt           time.Time      `json:"createdAt"`
 	UpdatedAt           time.Time      `json:"updatedAt"`
 	DeletedAt           gorm.DeletedAt `gorm:"index" json:"-"`
