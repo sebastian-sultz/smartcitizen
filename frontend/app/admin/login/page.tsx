@@ -4,11 +4,10 @@ import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { LogIn, ShieldCheck, Phone, Lock } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { loginUser } from "@/features/shared/auth";
+import { loginUser, logoutUser } from "@/features/shared/auth";
 import { toast } from "sonner";
 
 const loginSchema = Yup.object().shape({
@@ -21,7 +20,6 @@ const loginSchema = Yup.object().shape({
 });
 
 export default function LoginPage() {
-  const router = useRouter();
 
   const formik = useFormik({
     initialValues: { phone: "", password: "" },
@@ -33,8 +31,13 @@ export default function LoginPage() {
           phone: values.phone,
           password: values.password,
         });
+        if (res.user.user_type !== "admin") {
+          toast.error("Access Denied: Administrator privileges required.");
+          await logoutUser();
+          return;
+        }
         toast.success(res.message || "Logged in successfully!");
-        router.push("/admin");
+        window.location.href = "/admin";
       } catch (err: unknown) {
         console.error("Admin login failed:", err);
       } finally {

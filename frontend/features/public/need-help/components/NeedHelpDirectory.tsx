@@ -1,41 +1,43 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Search, Filter, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { ProfessionalCard } from "./ProfessionalCard";
 import { NeedHelpHeader } from "./NeedHelpHeader";
+import { NeedHelpGate } from "./NeedHelpGate";
 import EmptyState from "@/components/ui/EmptyState";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import api from "@/lib/axios";
+import { useAuthStore } from "@/store/authStore";
+import { getAllVolunteers } from "@/features/public/volunteer/api";
+import { VolunteerResponse } from "@/features/public/volunteer/types";
 
 const categories = ["All", "Lawyer", "Doctor", "Counselor", "Financial Advisor", "IT Professional", "Teacher", "Social Worker"];
 
 export const NeedHelpDirectory = () => {
-  const [professionals, setProfessionals] = useState<any[]>([]);
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const [professionals, setProfessionals] = useState<VolunteerResponse[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedLocation, setSelectedLocation] = useState("all");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(isLoggedIn);
+
+  // Derive unique city options from fetched data — no hardcoding
+  const uniqueLocations = useMemo(() => {
+    const cities = professionals
+      .map((vol) => vol.city)
+      .filter((city): city is string => Boolean(city));
+    return Array.from(new Set(cities)).sort();
+  }, [professionals]);
 
   useEffect(() => {
+    if (!isLoggedIn) return;
     const fetchVolunteers = async () => {
       try {
-        const response = await api.get<{ volunteers: any[] }>("/volunteers");
-        const list = response.data.volunteers || [];
-        const mapped = list.map((vol: any) => ({
-          id: vol.id,
-          name: vol.name,
-          profession: vol.profession || "Volunteer Coordinator",
-          expertise: vol.experience ? (vol.experience.length > 60 ? vol.experience.substring(0, 60) + "..." : vol.experience) : "Community Support",
-          description: vol.experience || "Smart Citizen Coordinator assisting with community projects and guidance.",
-          location: [vol.city, vol.district].filter(Boolean).join(", ") || vol.address || "India",
-          photoUrl: vol.image || undefined,
-          showPhone: true,
-        }));
-        setProfessionals(mapped);
+        const res = await getAllVolunteers();
+        setProfessionals(res.volunteers || []);
       } catch (error) {
         console.error("Failed to load live volunteers:", error);
         setProfessionals([]);
@@ -43,19 +45,36 @@ export const NeedHelpDirectory = () => {
         setIsLoading(false);
       }
     };
-
     fetchVolunteers();
-  }, []);
+  }, [isLoggedIn]);
 
-  const filteredProfessionals = professionals.filter((prof) => {
-    const matchesSearch = 
-      prof.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      prof.expertise.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      prof.location.toLowerCase().includes(searchTerm.toLowerCase());
-      
-    const matchesCategory = selectedCategory === "All" || prof.profession.toLowerCase() === selectedCategory.toLowerCase();
+  // Show gate for non-authenticated visitors
+  if (!isLoggedIn) {
+    return (
+      <div className="space-y-8">
+        <NeedHelpHeader />
+        <NeedHelpGate />
+      </div>
+    );
+  }
 
-    const matchesLocation = selectedLocation === "all" || prof.location.toLowerCase().includes(selectedLocation.toLowerCase());
+  const filteredProfessionals = professionals.filter((vol) => {
+    const location = [vol.city, vol.district].filter(Boolean).join(", ") || vol.address || "India";
+    const profession = vol.profession || "";
+    const experience = vol.experience || "";
+
+    const matchesSearch =
+      vol.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      experience.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      location.toLowerCase().includes(searchTerm.toLowerCase());
+
+    const matchesCategory =
+      selectedCategory === "All" ||
+      profession.toLowerCase() === selectedCategory.toLowerCase();
+
+    const matchesLocation =
+      selectedLocation === "all" ||
+      location.toLowerCase().includes(selectedLocation.toLowerCase());
 
     return matchesSearch && matchesCategory && matchesLocation;
   });
@@ -63,12 +82,10 @@ export const NeedHelpDirectory = () => {
   return (
     <div className="space-y-8">
       <NeedHelpHeader />
-      
+
       {/* Search and Filters */}
       <div className="bg-white rounded-2xl p-6 border border-border shadow-sm space-y-6 relative overflow-hidden">
-        {/* Top official accent stripe */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-primary" />
-        
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1">
             <Input
@@ -88,9 +105,11 @@ export const NeedHelpDirectory = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Locations</SelectItem>
-                <SelectItem value="Delhi NCR">Delhi NCR</SelectItem>
-                <SelectItem value="Mumbai">Mumbai</SelectItem>
-                <SelectItem value="Bangalore">Bangalore</SelectItem>
+                {uniqueLocations.map((city) => (
+                  <SelectItem key={city} value={city}>
+                    {city}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
@@ -125,12 +144,12 @@ export const NeedHelpDirectory = () => {
         </div>
       ) : filteredProfessionals.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProfessionals.map((prof) => (
-            <ProfessionalCard key={prof.id} {...prof} />
+          {filteredProfessionals.map((vol) => (
+            <ProfessionalCard key={vol.id} {...vol} />
           ))}
         </div>
       ) : (
-        <EmptyState 
+        <EmptyState
           icon={Search}
           title="No volunteers found"
           description="We couldn't find any volunteers matching your search criteria. Try adjusting your filters."

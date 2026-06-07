@@ -4,15 +4,15 @@ export interface VolunteerResponse {
   name: string;
   email: string;
   phone: string;
-  alternate_phone?: string;
-  address?: string;
-  city?: string;
-  district?: string;
-  pincode?: string;
-  profession?: string;
-  experience?: string;
+  alternate_phone: string;
+  address: string;
+  city: string;
+  district: string;
+  pincode: string;
+  profession: string;
+  experience: string;
   ispublicconsent: boolean;
-  image?: string;
+  image: string | null;
   created_at: string;
   updated_at: string;
 }

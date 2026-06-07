@@ -36,7 +36,7 @@ export function Hero() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
               </span>
-              Empowering India's Future
+              Empowering India&apos;s Future
             </div>
 
             <div className="animate-fade-in-up-delay-1 space-y-6">
@@ -157,7 +157,7 @@ export function Hero() {
                       className="w-full relative overflow-hidden bg-primary hover:bg-primary-light text-white font-black rounded-2xl py-3 px-4 shadow-lg shadow-primary/15 transition-all duration-300 group/btn text-xs h-auto"
                     >
                       <Link
-                        href="/register"
+                        href="/join_us"
                         className="flex items-center justify-between gap-2"
                       >
                         <span>Become Smart Citizen</span>

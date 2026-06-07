@@ -12,7 +12,7 @@ function parseJwt(token: string) {
         .join(""),
     );
     return JSON.parse(jsonPayload);
-  } catch (e) {
+  } catch {
     return null;
   }
 }
@@ -104,7 +104,7 @@ export async function proxy(request: NextRequest) {
 
   // Citizen/Member routes protection
   if (pathname.startsWith("/citizen")) {
-    if (!token || userType !== "member") {
+    if (!token || userType === "admin") {
       const redirectRes = NextResponse.redirect(
         new URL("/member_login", request.url),
       );
@@ -121,7 +121,7 @@ export async function proxy(request: NextRequest) {
   // A member visiting /admin/login should NOT be redirected (they're not an admin).
   if (token && userType) {
     if (pathname === "/member_login" || pathname === "/join_us") {
-      if (userType === "member") {
+      if (userType !== "admin") {
         return createResponse(
           NextResponse.redirect(new URL("/citizen", request.url)),
         );
