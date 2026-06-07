@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { TableComponent } from "@/components/ui/TableComponent";
 import { getModerationColumns } from "./ModerationColumns";
-import { SupportTicket } from "@/features/citizen/types";
+import { SupportTicket } from "@/features/shared/reports";
 import { getAdminReports, resolveAdminReport } from "../api";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "sonner";

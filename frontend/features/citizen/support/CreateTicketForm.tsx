@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
 import { MessageSquare, ArrowLeft, CircleQuestionMark } from "lucide-react";
 import { toast } from "sonner";
-import { CreateSupportTicketPayload } from "../types";
+import { CreateSupportTicketPayload } from "@/features/shared/reports";
 
 interface CreateTicketFormProps {
   onSubmit: (values: CreateSupportTicketPayload) => Promise<void>;

@@ -1,6 +1,6 @@
 import api from "@/lib/axios";
 import { handleApiError } from "@/lib/api-helpers";
-import { SupportTicket } from "@/features/citizen/types";
+import { SupportTicket } from "@/features/shared/reports";
 import { UserResponse } from "@/features/shared/auth/types";
 
 export const getAdminReports = async (status?: string): Promise<SupportTicket[]> => {

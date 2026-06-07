@@ -11,8 +11,7 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Send, AlertCircle } from "lucide-react";
-import { SupportTicket, TicketMessage } from "@/features/citizen/types";
-import { getReport, addReportMessage } from "@/features/citizen/api";
+import { SupportTicket, TicketMessage, getReport, addReportMessage } from "@/features/shared/reports";
 import { useAuthStore } from "@/store/authStore";
 import { cn, formatDate } from "@/lib/utils";
 import { getTicketStatusBadge } from "@/features/citizen/support/ticket-utils";

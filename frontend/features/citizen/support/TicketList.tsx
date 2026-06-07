@@ -1,6 +1,6 @@
 "use client";
 
-import { SupportTicket } from "../types";
+import { SupportTicket } from "@/features/shared/reports";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Plus, MessageSquare } from "lucide-react";

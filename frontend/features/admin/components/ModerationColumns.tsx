@@ -3,7 +3,7 @@ import { Header } from "@/components/ui/TableComponent";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { CheckCircle2, MessageSquare } from "lucide-react";
-import { SupportTicket } from "@/features/citizen/types";
+import { SupportTicket } from "@/features/shared/reports";
 import { formatDate } from "@/lib/utils";
 
 export const getModerationColumns = (

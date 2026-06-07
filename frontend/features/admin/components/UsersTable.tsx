@@ -8,8 +8,10 @@ import { getUsersColumns } from "./UsersColumns";
 import { getNonAdminUsers, suspendUser, deleteUser } from "../api";
 import { UserResponse } from "@/features/shared/auth/types";
 import { UserDetailModal } from "./UserDetailModal";
+import { useAlert } from "@/components/ui/AlertProvider";
 
 export const UsersTable = () => {
+  const { showConfirm } = useAlert();
   const [users, setUsers] = useState<UserResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -48,33 +50,41 @@ export const UsersTable = () => {
 
   const handleSuspendToggle = async (user: UserResponse) => {
     const action = user.is_suspended ? "activate" : "suspend";
-    const confirmed = window.confirm(`Are you sure you want to ${action} user "${user.name}"?`);
-    if (!confirmed) return;
-
-    try {
-      setIsLoading(true);
-      await suspendUser(user.id, !user.is_suspended);
-      await fetchUsers();
-    } catch (err) {
-      console.error("Failed to update suspension status:", err);
-    } finally {
-      setIsLoading(false);
-    }
+    showConfirm({
+      title: `${action.charAt(0).toUpperCase() + action.slice(1)} User`,
+      message: `Are you sure you want to ${action} user "${user.name}"?`,
+      type: "warning",
+      onConfirm: async () => {
+        try {
+          setIsLoading(true);
+          await suspendUser(user.id, !user.is_suspended);
+          await fetchUsers();
+        } catch (err) {
+          console.error("Failed to update suspension status:", err);
+        } finally {
+          setIsLoading(false);
+        }
+      },
+    });
   };
 
   const handleDeleteUser = async (user: UserResponse) => {
-    const confirmed = window.confirm(`Are you sure you want to delete user "${user.name}"? This action cannot be undone.`);
-    if (!confirmed) return;
-
-    try {
-      setIsLoading(true);
-      await deleteUser(user.id);
-      await fetchUsers();
-    } catch (err) {
-      console.error("Failed to delete user:", err);
-    } finally {
-      setIsLoading(false);
-    }
+    showConfirm({
+      title: "Delete User",
+      message: `Are you sure you want to delete user "${user.name}"? This action cannot be undone.`,
+      type: "error",
+      onConfirm: async () => {
+        try {
+          setIsLoading(true);
+          await deleteUser(user.id);
+          await fetchUsers();
+        } catch (err) {
+          console.error("Failed to delete user:", err);
+        } finally {
+          setIsLoading(false);
+        }
+      },
+    });
   };
 
   const columns = getUsersColumns(handleViewDetails, handleSuspendToggle, handleDeleteUser);
