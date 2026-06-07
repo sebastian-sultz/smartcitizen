@@ -193,7 +193,7 @@ export default function AdminChatModal({
                 placeholder="Type administrator response..."
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
-                className="py-2 px-3 text-xs sm:text-sm"
+                size="sm"
                 disabled={submitting}
               />
             </div>
@@ -202,7 +202,8 @@ export default function AdminChatModal({
               disabled={!replyText.trim() || submitting}
               isLoading={submitting}
               startIcon={<Send size={12} />}
-              className="shrink-0 text-xs font-bold py-2 px-4 h-auto rounded-xl"
+              size="sm"
+              className="shrink-0"
             >
               Send
             </Button>
