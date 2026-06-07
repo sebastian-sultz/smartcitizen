@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { UserResponse } from "@/features/shared/auth/types";
 import { Volunteer } from "@/features/citizen/types";
-import { getMemberProfile, getVolunteers } from "@/features/citizen/api";
+import { getMemberProfile } from "@/features/citizen/api";
 
 interface CitizenState {
   user: UserResponse | null;
@@ -26,14 +26,9 @@ export const useCitizenStore = create<CitizenState>((set, get) => ({
 
     set({ loading: true });
     try {
-      const [profRes, volListRes] = await Promise.all([
-        getMemberProfile(),
-        getVolunteers(),
-      ]);
+      const profRes = await getMemberProfile();
       const user = profRes.user;
-      const volunteers = volListRes?.volunteers || [];
-      const volunteer =
-        volunteers.find((v) => v.user_id === user.id) || null;
+      const volunteer = user.volunteer || null;
 
       set({ user, volunteer, hasFetched: true });
     } catch (err) {
@@ -46,14 +41,9 @@ export const useCitizenStore = create<CitizenState>((set, get) => ({
   refreshProfile: async () => {
     set({ loading: true });
     try {
-      const [profRes, volListRes] = await Promise.all([
-        getMemberProfile(),
-        getVolunteers(),
-      ]);
+      const profRes = await getMemberProfile();
       const user = profRes.user;
-      const volunteers = volListRes?.volunteers || [];
-      const volunteer =
-        volunteers.find((v) => v.user_id === user.id) || null;
+      const volunteer = user.volunteer || null;
 
       set({ user, volunteer, hasFetched: true });
     } catch (err) {

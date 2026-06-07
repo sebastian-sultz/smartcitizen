@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"backend/dto/request"
+	"backend/dto/response"
 	"backend/pkg/cloudinary"
 	"backend/pkg/utils"
 
@@ -22,6 +23,7 @@ type Service interface {
 	SuspendUser(id string, suspend bool) error
 	DeleteUser(id string) error
 	GetUsersByReferralID(referralID string) ([]User, error)
+	GetVolunteerByUserID(userID string) (*response.Volunteer, error)
 }
 
 type service struct {
@@ -136,4 +138,8 @@ func (s *service) DeleteUser(id string) error {
 
 func (s *service) GetUsersByReferralID(referralID string) ([]User, error) {
 	return s.repo.FindByReferralID(referralID)
+}
+
+func (s *service) GetVolunteerByUserID(userID string) (*response.Volunteer, error) {
+	return s.repo.FindVolunteerByUserID(userID)
 }

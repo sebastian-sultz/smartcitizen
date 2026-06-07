@@ -1,3 +1,5 @@
+import { Volunteer } from "@/features/citizen/types";
+
 export interface UserResponse {
   id: string;
   name: string;
@@ -7,11 +9,13 @@ export interface UserResponse {
   total_payments: number;
   total_amount: number;
   referral_payment_count: number;
+  referral_payment_amount: number;
   total_referrals: number;
   referral_id: string | null;
   total_events_registered: number;
   referral_name?: string | null;
   is_suspended: boolean;
+  volunteer?: Volunteer | null;
   created_at: string;
   updated_at: string;
 }

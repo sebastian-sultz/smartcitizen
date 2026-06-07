@@ -41,6 +41,7 @@ type User struct {
 	TotalPayments        int64    `gorm:"default:0" json:"total_payments"`
 	TotalAmount          float64  `gorm:"default:0.0" json:"total_amount"`
 	ReferralPaymentCount int64    `gorm:"default:0" json:"referral_payment_count"`
+	ReferralPaymentAmount float64 `gorm:"default:0.0" json:"referral_payment_amount"`
 	TotalReferrals       int64    `gorm:"default:0" json:"total_referrals"`
 	TotalEventsRegistered int64   `gorm:"default:0" json:"total_events_registered"`
 	ReferralID           *string  `json:"referral_id"`

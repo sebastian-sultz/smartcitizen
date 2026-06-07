@@ -1,6 +1,7 @@
 package payment
 
 import (
+	"backend/modules/user"
 	"context"
 	"time"
 
@@ -44,7 +45,42 @@ func (r *repository) GetPaymentByOrderID(ctx context.Context, orderID string) (*
 }
 
 func (r *repository) UpdatePayment(ctx context.Context, payment *Payment) error {
-	return r.db.WithContext(ctx).Save(payment).Error
+	return r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		var currentPayment Payment
+		if err := tx.Where("id = ?", payment.ID).First(&currentPayment).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Save(payment).Error; err != nil {
+			return err
+		}
+
+		if currentPayment.Status != PaymentStatusSuccess && payment.Status == PaymentStatusSuccess {
+			if payment.UserID != nil {
+				var u user.User
+				if err := tx.Where("id = ?", *payment.UserID).First(&u).Error; err == nil {
+					u.TotalPayments += 1
+					u.TotalAmount += float64(payment.Amount) / 100.0
+					if err := tx.Save(&u).Error; err != nil {
+						return err
+					}
+
+					if u.ReferralID != nil && *u.ReferralID != "" {
+						var referrer user.User
+						if err := tx.Where("id = ?", *u.ReferralID).First(&referrer).Error; err == nil {
+							referrer.ReferralPaymentCount += 1
+							referrer.ReferralPaymentAmount += float64(payment.Amount) / 100.0
+							if err := tx.Save(&referrer).Error; err != nil {
+								return err
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return nil
+	})
 }
 
 func (r *repository) ListPayments(ctx context.Context, userID *string, page, limit int) ([]Payment, int64, error) {

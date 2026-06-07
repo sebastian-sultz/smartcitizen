@@ -22,23 +22,27 @@ func NewHandler(service Service) *Handler {
 	return &Handler{service: service}
 }
 
-func mapToResponse(u *User, refName *string) response.User {
+
+
+func mapToResponse(u *User, refName *string, vol *response.Volunteer) response.User {
 	return response.User{
-		ID:                   u.ID,
-		Name:                 u.Name,
-		Phone:                u.Phone,
-		ProfilePhoto:         u.ProfilePhoto,
-		UserType:             string(u.UserType),
-		TotalPayments:        u.TotalPayments,
-		TotalAmount:          u.TotalAmount,
-		ReferralPaymentCount: u.ReferralPaymentCount,
-		TotalReferrals:       u.TotalReferrals,
+		ID:                    u.ID,
+		Name:                  u.Name,
+		Phone:                 u.Phone,
+		ProfilePhoto:          u.ProfilePhoto,
+		UserType:              string(u.UserType),
+		TotalPayments:         u.TotalPayments,
+		TotalAmount:           u.TotalAmount,
+		ReferralPaymentCount:  u.ReferralPaymentCount,
+		ReferralPaymentAmount: u.ReferralPaymentAmount,
+		TotalReferrals:        u.TotalReferrals,
 		TotalEventsRegistered: u.TotalEventsRegistered,
-		ReferralID:           u.ReferralID,
-		ReferralName:         refName,
-		IsSuspended:          u.IsSuspended,
-		CreatedAt:            u.CreatedAt,
-		UpdatedAt:            u.UpdatedAt,
+		ReferralID:            u.ReferralID,
+		ReferralName:          refName,
+		IsSuspended:           u.IsSuspended,
+		Volunteer:             vol,
+		CreatedAt:             u.CreatedAt,
+		UpdatedAt:             u.UpdatedAt,
 	}
 }
 
@@ -68,7 +72,7 @@ func (h *Handler) Register(c *gin.Context) {
 	c.SetCookie("access_token", accessToken, 15*60, "/", "", false, true)
 	c.SetCookie("refresh_token", refreshToken, 7*24*60*60, "/", "", false, true)
 
-	c.JSON(http.StatusCreated, gin.H{"message": "registered successfully", "user": mapToResponse(user, nil)})
+	c.JSON(http.StatusCreated, gin.H{"message": "registered successfully", "user": mapToResponse(user, nil, nil)})
 }
 
 func (h *Handler) Login(c *gin.Context) {
@@ -97,7 +101,7 @@ func (h *Handler) Login(c *gin.Context) {
 	c.SetCookie("access_token", accessToken, 15*60, "/", "", false, true)
 	c.SetCookie("refresh_token", refreshToken, 7*24*60*60, "/", "", false, true)
 
-	c.JSON(http.StatusOK, gin.H{"message": "logged in successfully", "user": mapToResponse(user, nil)})
+	c.JSON(http.StatusOK, gin.H{"message": "logged in successfully", "user": mapToResponse(user, nil, nil)})
 }
 
 func (h *Handler) ForgetPassword(c *gin.Context) {
@@ -210,7 +214,12 @@ func (h *Handler) GetProfile(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, gin.H{"user": mapToResponse(user, refName)})
+	var vol *response.Volunteer
+	if user.UserType == Volunteer {
+		vol, _ = h.service.GetVolunteerByUserID(user.ID.String())
+	}
+
+	c.JSON(http.StatusOK, gin.H{"user": mapToResponse(user, refName, vol)})
 }
 
 func (h *Handler) GetStats(c *gin.Context) {
@@ -251,7 +260,12 @@ func (h *Handler) Me(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, gin.H{"user": mapToResponse(user, refName)})
+	var vol *response.Volunteer
+	if user.UserType == Volunteer {
+		vol, _ = h.service.GetVolunteerByUserID(user.ID.String())
+	}
+
+	c.JSON(http.StatusOK, gin.H{"user": mapToResponse(user, refName, vol)})
 }
 
 func (h *Handler) GetAllNonAdminUsers(c *gin.Context) {
@@ -278,7 +292,7 @@ func (h *Handler) GetAllNonAdminUsers(c *gin.Context) {
 				refName = &refUser.Name
 			}
 		}
-		res = append(res, mapToResponse(&u, refName))
+		res = append(res, mapToResponse(&u, refName, nil))
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -358,7 +372,7 @@ func (h *Handler) GetReferredUsers(c *gin.Context) {
 		// Since all these users have the same referral_id, their referrer is the user with 'id'
 		// We could fetch the referrer's name once to set ReferralName, or just set it if needed.
 		// For now we just map them.
-		res = append(res, mapToResponse(&u, nil))
+		res = append(res, mapToResponse(&u, nil, nil))
 	}
 
 	c.JSON(http.StatusOK, gin.H{

@@ -7,6 +7,7 @@ import {
   selectVolunteerStatus,
 } from "@/store/citizenStore";
 import { updateVolunteer } from "../api";
+import { updateProfilePhoto } from "@/features/shared/auth";
 import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -18,9 +19,11 @@ import {
   MapPin,
   Edit3,
   Building,
+  Camera,
 } from "lucide-react";
 import Image from "next/image";
 import { formatDate } from "@/lib/utils";
+import { toast } from "sonner";
 
 import ProfileEditForm from "./ProfileEditForm";
 import VolunteerPreferences from "./VolunteerPreferences";
@@ -38,6 +41,37 @@ export default function ProfileView() {
   const volunteerStatus = useCitizenStore(selectVolunteerStatus);
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file");
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File size must be under 5MB");
+      return;
+    }
+
+    setIsUploading(true);
+    const uploadToastId = toast.loading("Uploading profile photo...");
+    try {
+      if (profile) {
+        await updateProfilePhoto(profile.id, file);
+        toast.success("Profile photo updated successfully!", { id: uploadToastId });
+        await refreshProfile();
+      }
+    } catch (err) {
+      console.error("Failed to upload profile photo:", err);
+      toast.error("Failed to upload profile photo", { id: uploadToastId });
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   useEffect(() => {
     fetchProfile();
@@ -89,17 +123,40 @@ export default function ProfileView() {
         <div className="absolute top-0 inset-x-0 h-36 bg-gradient-to-r from-primary/15 to-primary/5" />
 
         <CardContent className="pt-20 pb-8 px-6 sm:px-10 relative z-10 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6">
-          <div className="w-24 h-24 rounded-full bg-white border-4 border-white shadow-lg overflow-hidden flex items-center justify-center font-bold text-3xl text-primary shrink-0 font-display relative">
-            {profile.profile_photo ? (
-              <Image
-                src={profile.profile_photo}
-                alt={profile.name}
-                fill
-                className="object-cover"
-                sizes="96px"
-              />
-            ) : (
-              userInitials
+          <div className="relative group shrink-0">
+            <div className="w-24 h-24 rounded-full bg-white border-4 border-white shadow-lg overflow-hidden flex items-center justify-center font-bold text-3xl text-primary font-display relative">
+              {isUploading ? (
+                <Spinner className="size-6 text-primary" />
+              ) : profile.profile_photo ? (
+                <Image
+                  src={profile.profile_photo}
+                  alt={profile.name}
+                  fill
+                  className="object-cover"
+                  sizes="96px"
+                  priority
+                />
+              ) : (
+                userInitials
+              )}
+            </div>
+            {!isUploading && (
+              <>
+                <label
+                  htmlFor="profile-photo-upload"
+                  className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity animate-in fade-in duration-200"
+                  title="Upload profile photo"
+                >
+                  <Camera className="text-white w-6 h-6" />
+                </label>
+                <input
+                  id="profile-photo-upload"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handlePhotoUpload}
+                />
+              </>
             )}
           </div>
 

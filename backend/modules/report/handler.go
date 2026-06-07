@@ -192,3 +192,16 @@ func (h *Handler) GetUserReports(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"reports": reports})
 }
+
+
+Smart Citizen ID Generation: The unique GSCXXXXXX ID sequence is missing from the backend user schema.
+the slug thing
+
+
+Contact Enquiry Form	Section 8 / 22	Missing	Mocked UI	Frontend landing page contact form doesn't connect to any endpoint.
+
+http://localhost:3000/api/reports
+ this api is giving 500 error
+
+
+ there is some eror in uuid and uuid.string and userid thing. letter cases and check all the inconsistencies.

@@ -1,6 +1,7 @@
 package user
 
 import (
+	"backend/dto/response"
 	"backend/pkg/utils"
 	"gorm.io/gorm"
 )
@@ -14,6 +15,7 @@ type Repository interface {
 	GetSystemStats() (int64, int64, int64, float64, error)
 	FindNonAdminUsers(pagination *utils.Pagination) ([]User, error)
 	FindByReferralID(referralID string) ([]User, error)
+	FindVolunteerByUserID(userID string) (*response.Volunteer, error)
 }
 
 type repository struct {
@@ -103,4 +105,13 @@ func (r *repository) FindByReferralID(referralID string) ([]User, error) {
 	// ReferralID is a pointer (*string), we check against the value if provided
 	err := r.db.Where("referral_id = ?", referralID).Find(&users).Error
 	return users, err
+}
+
+func (r *repository) FindVolunteerByUserID(userID string) (*response.Volunteer, error) {
+	var vol response.Volunteer
+	err := r.db.Table("volunteers").Where("user_id = ? AND deleted_at IS NULL", userID).First(&vol).Error
+	if err != nil {
+		return nil, err
+	}
+	return &vol, nil
 }
