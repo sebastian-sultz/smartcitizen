@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Link from "next/link";
-import { loginUser, forgetPassword } from "../api";
+import { loginUser, forgetPassword, logoutUser } from "../api";
 import { toast } from "sonner";
 
 export const LoginForm = () => {
@@ -44,6 +44,11 @@ export const LoginForm = () => {
             phone: values.mobileNumber,
             password: values.password,
           });
+          if (res.user.user_type === "admin") {
+            toast.error("Access Denied: Admins must use the Admin portal to sign in.");
+            await logoutUser();
+            return;
+          }
           toast.success(res.message || "Login successful!");
           // Wait briefly for toast
           await new Promise((resolve) => setTimeout(resolve, 800));

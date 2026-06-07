@@ -16,7 +16,7 @@ export function parseJwt(token: string): DecodedToken | null {
         .join("")
     );
     return JSON.parse(jsonPayload);
-  } catch (e) {
+  } catch {
     return null;
   }
 }
