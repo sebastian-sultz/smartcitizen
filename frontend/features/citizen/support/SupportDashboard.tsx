@@ -49,7 +49,9 @@ export default function SupportDashboard() {
   };
 
   useEffect(() => {
-    loadSupportData();
+    Promise.resolve().then(() => {
+      loadSupportData();
+    });
   }, []);
 
   const handleSelectTicket = (ticket: SupportTicket) => {

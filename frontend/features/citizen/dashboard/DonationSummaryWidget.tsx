@@ -2,7 +2,7 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { DonationStats } from "../types";
-import { Heart, Calendar, ArrowUpRight } from "lucide-react";
+import { Heart, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useRouter } from "next/navigation";
 

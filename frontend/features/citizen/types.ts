@@ -3,10 +3,7 @@ import { UserResponse } from "@/features/shared/auth/types";
 export interface DashboardStats {
   total_amount: number;
   total_referrals: number;
-  campaigns_joined: number;
-  badge_level: string;
   events_attended: number;
-  volunteer_status: 'not_applied' | 'pending' | 'approved' | 'rejected';
 }
 
 export interface ReferralStats {
@@ -105,13 +102,6 @@ export interface SupportTicket {
   messages?: TicketMessage[];
   user?: UserResponse;
   admin?: UserResponse;
-}
-
-export interface FAQItem {
-  id: string;
-  category: 'general' | 'donation' | 'volunteer' | 'account';
-  question: string;
-  answer: string;
 }
 
 // API Response interfaces

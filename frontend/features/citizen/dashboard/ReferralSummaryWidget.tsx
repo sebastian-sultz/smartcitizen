@@ -2,7 +2,7 @@
 
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { ReferralStats } from "../types";
-import { Share2, Users, Trophy } from "lucide-react";
+import { Share2, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
 interface ReferralSummaryWidgetProps {

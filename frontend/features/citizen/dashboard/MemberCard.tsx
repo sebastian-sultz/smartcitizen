@@ -5,7 +5,7 @@ import { UserResponse } from "@/features/shared/auth/types";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { QRCodeSVG } from "qrcode.react";
-import { User, Phone, Calendar, Award, QrCode } from "lucide-react";
+import { User, Phone, Calendar, QrCode } from "lucide-react";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/Button";

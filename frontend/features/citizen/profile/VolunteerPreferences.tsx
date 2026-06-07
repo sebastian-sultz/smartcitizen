@@ -1,6 +1,5 @@
 "use client";
 
-import { UserResponse } from "@/features/shared/auth/types";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { ShieldCheck, Award, ArrowRight, Sparkles, Heart } from "lucide-react";
@@ -8,14 +7,11 @@ import { Button } from "@/components/ui/Button";
 import { useRouter } from "next/navigation";
 
 interface VolunteerPreferencesProps {
-  profile: UserResponse | null;
-  volunteerStatus: 'not_applied' | 'pending' | 'approved' | 'rejected';
+  isVolunteer: boolean;
 }
 
-export default function VolunteerPreferences({ profile, volunteerStatus }: VolunteerPreferencesProps) {
+export default function VolunteerPreferences({ isVolunteer }: VolunteerPreferencesProps) {
   const router = useRouter();
-
-  const isVolunteer = volunteerStatus === "approved";
 
   return (
     <Card className="rounded-[40px] border-primary/5 shadow-sm">
@@ -73,23 +69,13 @@ export default function VolunteerPreferences({ profile, volunteerStatus }: Volun
               </p>
             </div>
 
-            {volunteerStatus === "pending" ? (
-              <div className="p-3 bg-amber-50 text-amber-800 border border-amber-100 rounded-2xl text-xs text-center font-bold">
-                Application Review Pending — We'll notify you soon.
-              </div>
-            ) : volunteerStatus === "rejected" ? (
-              <div className="p-3 bg-rose-50 text-rose-800 border border-rose-100 rounded-2xl text-xs text-center font-bold">
-                Status: Gating checklist not fully met. Keep inviting!
-              </div>
-            ) : (
-              <Button
-                onClick={() => router.push("/citizen/volunteer")}
-                className="w-full sm:w-auto text-xs font-bold py-2.5 px-5 h-auto rounded-xl gap-1.5 shadow-sm"
-              >
-                Start Gated Application
-                <ArrowRight size={13} />
-              </Button>
-            )}
+            <Button
+              onClick={() => router.push("/citizen/volunteer")}
+              className="w-full sm:w-auto text-xs font-bold py-2.5 px-5 h-auto rounded-xl gap-1.5 shadow-sm"
+            >
+              Start Gated Application
+              <ArrowRight size={13} />
+            </Button>
           </div>
         )}
       </CardContent>

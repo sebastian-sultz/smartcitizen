@@ -1,4 +1,3 @@
-import { DonationRecord } from "../types";
 
 /**
  * Maps a donation status to the appropriate Badge variant.

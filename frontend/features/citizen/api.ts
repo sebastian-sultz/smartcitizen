@@ -3,25 +3,20 @@ import { handleApiError } from "@/lib/api-helpers";
 import { UserResponse } from "../shared/auth/types";
 import {
   ActivityItem,
-  DonationRecord,
   DonationStats,
   TaxCertificate,
-  ReferralMember,
-  Volunteer,
-  SupportTicket,
-  FAQItem,
   UserProfileResponse,
   VolunteersListResponse,
   VolunteerResponse,
   ReportResponse,
   ReportMessagesResponse,
   AddMessageResponse,
-  VolunteerEligibility,
   CreateVolunteerPayload,
   UpdateVolunteerPayload,
   Payment,
   PaymentHistoryResponse,
   InitiatePaymentRequest,
+  SupportTicket,
 } from './types';
 
 const delay = (ms: number = 400) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -128,10 +123,15 @@ export const getActivityTimeline = async (): Promise<ActivityItem[]> => {
   return [];
 };
 
-export const getDonationHistory = async (): Promise<Payment[]> => {
+export const getDonationHistory = async (
+  offset: number = 0,
+  limit: number = 10
+): Promise<PaymentHistoryResponse> => {
   try {
-    const response = await api.get<PaymentHistoryResponse>("/payments/history?page=1&limit=100");
-    return response.data.data || [];
+    const response = await api.get<PaymentHistoryResponse>(
+      `/payments/history?offset=${offset}&limit=${limit}`
+    );
+    return response.data;
   } catch (error: unknown) {
     handleApiError(error, "Failed to load donation history");
   }
@@ -187,9 +187,4 @@ export const getReferredMembers = async (userId: string): Promise<UserResponse[]
   } catch (error: unknown) {
     handleApiError(error, "Failed to load referred members");
   }
-};
-
-export const getFAQs = async (category?: string): Promise<FAQItem[]> => {
-  await delay();
-  return [];
 };

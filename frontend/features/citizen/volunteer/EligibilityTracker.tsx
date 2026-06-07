@@ -3,7 +3,7 @@
 import { VolunteerEligibility } from "../types";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { CheckCircle2, Circle, Share2, Award, Users } from "lucide-react";
+import { Share2, Award, Users } from "lucide-react";
 
 interface EligibilityTrackerProps {
   eligibility: VolunteerEligibility;
