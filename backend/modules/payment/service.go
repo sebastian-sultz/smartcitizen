@@ -12,12 +12,14 @@ import (
 
 	dtorequest "backend/dto/request"
 	dtoresponse "backend/dto/response"
+	"backend/modules/user"
 
 	"github.com/PhonePe/phonepe-pg-sdk-go/common/models"
 	"github.com/PhonePe/phonepe-pg-sdk-go/common/types"
 	"github.com/PhonePe/phonepe-pg-sdk-go/payments/v2/models/request"
 	"github.com/PhonePe/phonepe-pg-sdk-go/payments/v2/standardcheckout"
 	"github.com/google/uuid"
+	"gorm.io/datatypes"
 )
 
 type Service interface {
@@ -29,14 +31,15 @@ type Service interface {
 }
 
 type service struct {
-	repo        Repository
-	client      *standardcheckout.StandardCheckoutClient
-	webhookUser string
-	webhookPass string
-	frontendURL string
+	repo         Repository
+	userService  user.Service
+	client       *standardcheckout.StandardCheckoutClient
+	webhookUser  string
+	webhookPass  string
+	frontendURL  string
 }
 
-func NewService(repo Repository) Service {
+func NewService(repo Repository, userService user.Service) Service {
 	clientID := os.Getenv("PHONEPE_CLIENT_ID")
 	clientSecret := os.Getenv("PHONEPE_CLIENT_SECRET")
 	clientVerStr := os.Getenv("PHONEPE_CLIENT_VERSION")
@@ -70,11 +73,12 @@ func NewService(repo Repository) Service {
 	}
 
 	return &service{
-		repo:        repo,
-		client:      client,
-		webhookUser: webhookUser,
-		webhookPass: webhookPass,
-		frontendURL: frontendURL,
+		repo:         repo,
+		userService:  userService,
+		client:       client,
+		webhookUser:  webhookUser,
+		webhookPass:  webhookPass,
+		frontendURL:  frontendURL,
 	}
 }
 
@@ -149,8 +153,21 @@ func (s *service) HandleWebhook(ctx context.Context, authHeader string, response
 		return errors.New("invalid webhook response data")
 	}
 
-	orderID := callbackResponse.Data.MerchantOrderID
-	state := callbackResponse.Data.State
+	// PhonePe V2 Webhook sends the data in "payload", not "data", so SDK's CallbackResponse fails to parse the inner fields.
+	// We parse it manually.
+	var parsedBody struct {
+		Payload struct {
+			MerchantOrderId string `json:"merchantOrderId"`
+			State           string `json:"state"`
+		} `json:"payload"`
+	}
+	if err := json.Unmarshal(responseBody, &parsedBody); err != nil {
+		log.Printf("Failed to unmarshal actual webhook body: %v", err)
+		return fmt.Errorf("invalid webhook JSON: %w", err)
+	}
+
+	orderID := parsedBody.Payload.MerchantOrderId
+	state := parsedBody.Payload.State
 	
 	log.Printf("Webhook processed for OrderID: %s, State: %s", orderID, state)
 
@@ -160,12 +177,17 @@ func (s *service) HandleWebhook(ctx context.Context, authHeader string, response
 		return fmt.Errorf("payment not found: %w", err)
 	}
 
-	respString := string(responseBody)
-	payment.PhonepeResponse = &respString
+	payment.PhonepeResponse = datatypes.JSON(responseBody)
 
 	switch state {
 	case "COMPLETED":
-		payment.Status = PaymentStatusSuccess
+		if payment.Status != PaymentStatusSuccess {
+			payment.Status = PaymentStatusSuccess
+			if payment.UserID != nil {
+				// Record the successful payment via user service (converts to INR float64)
+				_ = s.userService.RecordSuccessfulPayment(payment.UserID.String(), float64(payment.Amount)/100.0)
+			}
+		}
 	case "FAILED":
 		payment.Status = PaymentStatusFailed
 	case "PENDING":
@@ -204,15 +226,19 @@ func (s *service) CheckPaymentStatus(ctx context.Context, orderID string) (*Paym
 
 		// Save the JSON response
 		if respBytes, err := json.Marshal(statusResp); err == nil {
-			respString := string(respBytes)
-			payment.PhonepeResponse = &respString
+			payment.PhonepeResponse = datatypes.JSON(respBytes)
 		}
 
 		updated := false
 		switch statusResp.State {
 		case "COMPLETED":
-			payment.Status = PaymentStatusSuccess
-			updated = true
+			if payment.Status != PaymentStatusSuccess {
+				payment.Status = PaymentStatusSuccess
+				if payment.UserID != nil {
+					_ = s.userService.RecordSuccessfulPayment(payment.UserID.String(), float64(payment.Amount)/100.0)
+				}
+				updated = true
+			}
 		case "FAILED":
 			payment.Status = PaymentStatusFailed
 			updated = true

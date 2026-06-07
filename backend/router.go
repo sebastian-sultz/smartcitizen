@@ -52,7 +52,7 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 	reportHandler := report.NewHandler(reportService)
 
 	paymentRepo := payment.NewRepository(db)
-	paymentService := payment.NewService(paymentRepo)
+	paymentService := payment.NewService(paymentRepo, userService)
 	paymentHandler := payment.NewHandler(paymentService)
 
 	// ==========================================

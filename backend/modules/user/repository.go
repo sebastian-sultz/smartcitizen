@@ -16,6 +16,7 @@ type Repository interface {
 	FindNonAdminUsers(pagination *utils.Pagination) ([]User, error)
 	FindByReferralID(referralID string) ([]User, error)
 	FindVolunteerByUserID(userID string) (*response.Volunteer, error)
+	RecordSuccessfulPayment(userID string, amount float64) error
 }
 
 type repository struct {
@@ -114,4 +115,32 @@ func (r *repository) FindVolunteerByUserID(userID string) (*response.Volunteer, 
 		return nil, err
 	}
 	return &vol, nil
+}
+
+func (r *repository) RecordSuccessfulPayment(userID string, amount float64) error {
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		var u User
+		if err := tx.Where("id = ?", userID).First(&u).Error; err != nil {
+			return err
+		}
+
+		u.TotalPayments += 1
+		u.TotalAmount += amount
+		if err := tx.Save(&u).Error; err != nil {
+			return err
+		}
+
+		if u.ReferralID != nil && *u.ReferralID != "" {
+			var referrer User
+			if err := tx.Where("id = ?", *u.ReferralID).First(&referrer).Error; err == nil {
+				referrer.ReferralPaymentCount += 1
+				referrer.ReferralPaymentAmount += amount
+				if err := tx.Save(&referrer).Error; err != nil {
+					return err
+				}
+			}
+		}
+
+		return nil
+	})
 }

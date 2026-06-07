@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/datatypes"
 )
 
 type InitiatePaymentResponse struct {
@@ -20,11 +21,11 @@ type Payment struct {
 	Status              string     `json:"status"`
 	PaymentMethod       string     `json:"paymentMethod,omitempty"`
 	DonorName           string     `json:"donorName,omitempty"`
-	DonorEmail          string     `json:"donorEmail,omitempty"`
-	DonorPhone          string     `json:"donorPhone,omitempty"`
-	PhonepeResponse     *string    `json:"phonepeResponse,omitempty"`
-	CreatedAt           time.Time  `json:"createdAt"`
-	UpdatedAt           time.Time  `json:"updatedAt"`
+	DonorEmail          string         `json:"donorEmail,omitempty"`
+	DonorPhone          string         `json:"donorPhone,omitempty"`
+	PhonepeResponse     datatypes.JSON `json:"phonepeResponse,omitempty"`
+	CreatedAt           time.Time      `json:"createdAt"`
+	UpdatedAt           time.Time      `json:"updatedAt"`
 }
 
 type PaymentHistoryResponse struct {

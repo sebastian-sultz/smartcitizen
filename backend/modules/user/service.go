@@ -24,6 +24,7 @@ type Service interface {
 	DeleteUser(id string) error
 	GetUsersByReferralID(referralID string) ([]User, error)
 	GetVolunteerByUserID(userID string) (*response.Volunteer, error)
+	RecordSuccessfulPayment(userID string, amount float64) error
 }
 
 type service struct {
@@ -142,4 +143,8 @@ func (s *service) GetUsersByReferralID(referralID string) ([]User, error) {
 
 func (s *service) GetVolunteerByUserID(userID string) (*response.Volunteer, error) {
 	return s.repo.FindVolunteerByUserID(userID)
+}
+
+func (s *service) RecordSuccessfulPayment(userID string, amount float64) error {
+	return s.repo.RecordSuccessfulPayment(userID, amount)
 }
