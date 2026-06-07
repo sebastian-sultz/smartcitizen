@@ -129,19 +129,19 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           handleClose();
         }
       }}>
-        <DialogContent className="max-w-[400px] p-6 sm:p-6 text-center flex flex-col items-center gap-0">
+        <DialogContent size="sm" className="text-center flex flex-col items-center gap-0">
           <div className="mb-4">
             {getIcon()}
           </div>
           <DialogHeader className="space-y-2 mb-6">
-            <DialogTitle className="text-xl font-bold tracking-tight text-text text-center">
+            <DialogTitle className="text-center">
               {options.title}
             </DialogTitle>
-            <DialogDescription className="text-[14px] text-text-light text-center leading-relaxed whitespace-pre-line">
+            <DialogDescription className="text-center whitespace-pre-line">
               {options.message}
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="w-full mt-2 -mx-0 -mb-0 p-0 bg-transparent border-t-0 flex flex-row justify-center gap-3">
+          <DialogFooter className="w-full mt-2 m-0 p-0 bg-transparent border-t-0 flex flex-row justify-center gap-3">
             {isConfirm ? (
               <>
                 <Button 

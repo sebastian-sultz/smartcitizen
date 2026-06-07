@@ -100,15 +100,15 @@ export default function AdminChatModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl h-[550px] flex flex-col p-6 gap-4">
+      <DialogContent size="xl" className="h-[550px] flex flex-col p-6 gap-4">
         {/* Modal Header */}
-        <DialogHeader className="border-b border-border/80 pb-3 shrink-0">
+        <DialogHeader className="border-b border-border/60 pb-4 shrink-0">
           <div className="flex justify-between items-start gap-4">
             <div>
-              <DialogTitle className="font-display font-bold text-text text-base sm:text-lg">
+              <DialogTitle>
                 {subject}
               </DialogTitle>
-              <DialogDescription className="text-xs text-text-muted mt-1 font-medium">
+              <DialogDescription>
                 Submitted by: {ticket.user?.name || "Anonymous User"}
               </DialogDescription>
             </div>

@@ -57,9 +57,9 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md rounded-[32px] p-6">
+      <DialogContent size="md" className="p-6">
         <DialogHeader>
-          <DialogTitle className="font-display font-bold text-lg text-text flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2">
             <Heart size={18} className="text-rose-500" fill="currentColor" />
             Transaction Record Details
           </DialogTitle>
@@ -168,7 +168,7 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
                 onClick={handleDownloadReceipt}
                 variant="primary"
                 size="sm"
-                className="flex-1 font-bold"
+                className="flex-1"
                 startIcon={<Download size={14} />}
               >
                 Donation Receipt
@@ -179,7 +179,7 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
                   onClick={handleDownloadCertificate}
                   variant="accent"
                   size="sm"
-                  className="flex-1 font-bold"
+                  className="flex-1"
                   startIcon={<FileText size={14} />}
                 >
                   80G Tax Slip
@@ -192,7 +192,7 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
               variant="outline"
               size="sm"
               fullWidth
-              className="border-primary/20 hover:bg-primary/5 font-bold"
+              className="border-primary/20 hover:bg-primary/5"
               startIcon={<Share2 size={14} />}
             >
               Share Your Support

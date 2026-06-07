@@ -47,9 +47,9 @@ export default function ShareReferralDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md rounded-3xl p-6 sm:p-8">
+      <DialogContent size="md" className="p-6 sm:p-8">
         <DialogHeader>
-          <DialogTitle className="font-display text-xl font-bold text-text flex items-center gap-2">
+          <DialogTitle className="flex items-center gap-2">
             <Share2 size={20} className="text-primary" />
             Invite Your Friends
           </DialogTitle>
@@ -98,17 +98,17 @@ export default function ShareReferralDialog({
             <Button
               onClick={handleWhatsAppShare}
               variant="success"
-              className="font-bold gap-2 py-3 rounded-xl w-full"
+              fullWidth
+              startIcon={<Send size={15} />}
             >
-              <Send size={15} />
               WhatsApp
             </Button>
             <Button
               onClick={handleEmailShare}
               variant="secondary"
-              className="font-bold gap-2 py-3 rounded-xl w-full"
+              fullWidth
+              startIcon={<Mail size={15} />}
             >
-              <Mail size={15} />
               Email
             </Button>
           </div>

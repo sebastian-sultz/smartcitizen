@@ -108,9 +108,9 @@ export default function MemberCard({ profile }: MemberCardProps) {
                   Digital Membership ID
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-xs sm:max-w-sm rounded-[32px] p-6 text-center">
+              <DialogContent size="sm" className="p-6 text-center">
                 <DialogHeader>
-                  <DialogTitle className="font-display font-bold text-lg text-text">
+                  <DialogTitle>
                     Digital Membership ID
                   </DialogTitle>
                 </DialogHeader>

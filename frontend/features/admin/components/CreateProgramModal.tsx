@@ -135,14 +135,13 @@ export const CreateProgramModal: React.FC<CreateProgramModalProps> = ({
         }
       }}
     >
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] flex flex-col p-0 sm:p-0 overflow-hidden gap-0">
+      <DialogContent size="xl" className="max-h-[90vh] flex flex-col p-0 sm:p-0 overflow-hidden gap-0">
         <DialogHeader className="px-6 pt-6 pb-4 sm:px-8 sm:pt-8 border-b border-border bg-surface shrink-0">
-          <DialogTitle className="text-2xl font-bold tracking-tight text-text">
+          <DialogTitle>
             Create New Program
           </DialogTitle>
-          <DialogDescription className="text-[14px] text-text-light mt-1">
-            Fill in the details below to add a new program, initiative, or workshop to the
-            portal.
+          <DialogDescription>
+            Fill in the details below to add a new program, initiative, or workshop to the portal.
           </DialogDescription>
         </DialogHeader>
 
@@ -391,7 +390,7 @@ export const CreateProgramModal: React.FC<CreateProgramModalProps> = ({
           </div>
 
           {/* Dialog Footer */}
-          <DialogFooter className="mx-0 mb-0 mt-0 px-6 py-4 sm:px-8 bg-bg-alt/50 border-t border-border flex flex-row items-center justify-end gap-3 shrink-0">
+          <DialogFooter className="m-0 sm:m-0 rounded-none bg-bg-alt/50 mt-0 px-6 py-4 sm:px-8 border-t border-border">
             <Button
               type="button"
               variant="secondary"
