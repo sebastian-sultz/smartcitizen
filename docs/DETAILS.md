@@ -40,9 +40,9 @@ The platform must be:
 - TypeScript
 - Tailwind CSS
 - shadcn/ui
-- React Hook Form
-- Zod validation
-- TanStack Query
+- Formik
+- Yup
+
 - Zustand (if lightweight state needed)
 
 ---
