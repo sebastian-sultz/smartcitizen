@@ -3,10 +3,9 @@ package payment
 import (
 	"io"
 	"net/http"
-	"strconv"
 
 	dtorequest "backend/dto/request"
-	dtoresponse "backend/dto/response"
+	"backend/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -84,17 +83,7 @@ func (h *Handler) CheckPaymentStatus(c *gin.Context) {
 }
 
 func (h *Handler) GetPaymentHistory(c *gin.Context) {
-	pageStr := c.DefaultQuery("page", "1")
-	limitStr := c.DefaultQuery("limit", "10")
-
-	page, _ := strconv.Atoi(pageStr)
-	limit, _ := strconv.Atoi(limitStr)
-	if page < 1 {
-		page = 1
-	}
-	if limit < 1 || limit > 100 {
-		limit = 10
-	}
+	pagination := utils.GetPaginationFromContext(c)
 
 	var userID *string
 	// Optional filter by user
@@ -109,17 +98,15 @@ func (h *Handler) GetPaymentHistory(c *gin.Context) {
 		userID = &qUserID
 	}
 
-	payments, total, err := h.service.GetPaymentHistory(c.Request.Context(), userID, page, limit)
+	payments, err := h.service.GetPaymentHistory(c.Request.Context(), userID, &pagination)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, dtoresponse.PaymentHistoryResponse{
-		Data:       payments,
-		TotalCount: total,
-		Page:       page,
-		Limit:      limit,
+	c.JSON(http.StatusOK, gin.H{
+		"data":       payments,
+		"pagination": pagination,
 	})
 }
 

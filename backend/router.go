@@ -100,7 +100,7 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 			protected.PUT("/:id", eventHandler.UpdateEvent)
 			protected.DELETE("/:id", eventHandler.DeleteEvent)
 			protected.POST("/:id/register", eventHandler.RegisterForEvent)
-			protected.GET("/:id/users", eventHandler.GetUsersByEventID)
+			protected.GET("/:id/users", middleware.AdminMiddleware(), eventHandler.GetUsersByEventID)
 		}
 	}
 

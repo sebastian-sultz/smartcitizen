@@ -13,6 +13,7 @@ import (
 	dtorequest "backend/dto/request"
 	dtoresponse "backend/dto/response"
 	"backend/modules/user"
+	"backend/pkg/utils"
 
 	"github.com/PhonePe/phonepe-pg-sdk-go/common/models"
 	"github.com/PhonePe/phonepe-pg-sdk-go/common/types"
@@ -26,7 +27,7 @@ type Service interface {
 	InitiatePayment(ctx context.Context, req dtorequest.InitiatePaymentRequest, userID *uuid.UUID) (*dtoresponse.InitiatePaymentResponse, error)
 	HandleWebhook(ctx context.Context, authHeader string, responseBody []byte) error
 	CheckPaymentStatus(ctx context.Context, orderID string) (*Payment, error)
-	GetPaymentHistory(ctx context.Context, userID *string, page, limit int) ([]dtoresponse.Payment, int64, error)
+	GetPaymentHistory(ctx context.Context, userID *string, pagination *utils.Pagination) ([]dtoresponse.Payment, error)
 	GetUserDonationStats(ctx context.Context, userID string) (*dtoresponse.UserDonationStatsResponse, error)
 }
 
@@ -257,10 +258,10 @@ func (s *service) CheckPaymentStatus(ctx context.Context, orderID string) (*Paym
 	return payment, nil
 }
 
-func (s *service) GetPaymentHistory(ctx context.Context, userID *string, page, limit int) ([]dtoresponse.Payment, int64, error) {
-	payments, total, err := s.repo.ListPayments(ctx, userID, page, limit)
+func (s *service) GetPaymentHistory(ctx context.Context, userID *string, pagination *utils.Pagination) ([]dtoresponse.Payment, error) {
+	payments, err := s.repo.ListPayments(ctx, userID, pagination)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 
 	var resp []dtoresponse.Payment
@@ -281,7 +282,7 @@ func (s *service) GetPaymentHistory(ctx context.Context, userID *string, page, l
 			UpdatedAt:           p.UpdatedAt,
 		})
 	}
-	return resp, total, nil
+	return resp, nil
 }
 
 func (s *service) GetUserDonationStats(ctx context.Context, userID string) (*dtoresponse.UserDonationStatsResponse, error) {

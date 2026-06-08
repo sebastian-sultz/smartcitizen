@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 	"backend/dto/response"
+	"backend/pkg/utils"
 
 	"gorm.io/gorm"
 )
@@ -12,7 +13,7 @@ type Repository interface {
 	CreatePayment(ctx context.Context, payment *Payment) error
 	GetPaymentByOrderID(ctx context.Context, orderID string) (*Payment, error)
 	UpdatePayment(ctx context.Context, payment *Payment) error
-	ListPayments(ctx context.Context, userID *string, page, limit int) ([]Payment, int64, error)
+	ListPayments(ctx context.Context, userID *string, pagination *utils.Pagination) ([]Payment, error)
 	GetUserDonationStats(ctx context.Context, userID string) (*response.UserDonationStatsResponse, error)
 }
 
@@ -51,25 +52,24 @@ func (r *repository) UpdatePayment(ctx context.Context, payment *Payment) error 
 	})
 }
 
-func (r *repository) ListPayments(ctx context.Context, userID *string, page, limit int) ([]Payment, int64, error) {
+func (r *repository) ListPayments(ctx context.Context, userID *string, pagination *utils.Pagination) ([]Payment, error) {
 	var payments []Payment
-	var total int64
 
 	query := r.db.WithContext(ctx).Model(&Payment{})
 	if userID != nil {
 		query = query.Where("user_id = ?", *userID)
 	}
 
-	if err := query.Count(&total).Error; err != nil {
-		return nil, 0, err
+	if err := query.Count(&pagination.TotalRows).Error; err != nil {
+		return nil, err
+	}
+	pagination.Calculate()
+
+	if err := query.Order("created_at desc").Offset(pagination.Offset).Limit(pagination.Limit).Find(&payments).Error; err != nil {
+		return nil, err
 	}
 
-	offset := (page - 1) * limit
-	if err := query.Order("created_at desc").Offset(offset).Limit(limit).Find(&payments).Error; err != nil {
-		return nil, 0, err
-	}
-
-	return payments, total, nil
+	return payments, nil
 }
 
 func (r *repository) GetUserDonationStats(ctx context.Context, userID string) (*response.UserDonationStatsResponse, error) {

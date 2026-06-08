@@ -28,13 +28,6 @@ type Payment struct {
 	UpdatedAt           time.Time      `json:"updatedAt"`
 }
 
-type PaymentHistoryResponse struct {
-	Data       []Payment `json:"data"`
-	TotalCount int64     `json:"totalCount"`
-	Page       int       `json:"page"`
-	Limit      int       `json:"limit"`
-}
-
 type UserDonationStatsResponse struct {
 	LifetimeDonated   float64 `json:"lifetimeDonated"`
 	DonatedThisYear   float64 `json:"donatedThisYear"`

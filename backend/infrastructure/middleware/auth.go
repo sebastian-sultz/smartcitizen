@@ -35,3 +35,23 @@ func AuthMiddleware() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func AdminMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		userTypeVal, exists := c.Get("userType")
+		if !exists {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+			c.Abort()
+			return
+		}
+
+		userType, ok := userTypeVal.(string)
+		if !ok || userType != "admin" {
+			c.JSON(http.StatusForbidden, gin.H{"error": "admin access required"})
+			c.Abort()
+			return
+		}
+
+		c.Next()
+	}
+}
