@@ -74,9 +74,3 @@ export const selectReferralLink = (state: CitizenState): string => {
 export const selectIsVolunteer = (state: CitizenState): boolean => {
   return !!state.volunteer;
 };
-
-export const selectVolunteerStatus = (
-  state: CitizenState
-): "not_applied" | "pending" | "approved" | "rejected" => {
-  return state.volunteer ? "approved" : "not_applied";
-};

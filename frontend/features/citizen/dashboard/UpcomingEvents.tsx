@@ -17,7 +17,7 @@ import EmptyState from "@/components/ui/EmptyState";
 import EventCard from "./EventCard";
 
 export default function UpcomingEvents() {
-  const { showAlert } = useAlert();
+  const { showAlert, showConfirm } = useAlert();
   const [events, setEvents] = useState<EventResponse[]>([]);
   const [loading, setLoading] = useState(true);
   const [registeredEvents, setRegisteredEvents] = useState<string[]>([]);
@@ -53,10 +53,15 @@ export default function UpcomingEvents() {
 
   const handleRegister = async (eventId: string, title: string) => {
     if (!session) {
-      showAlert({
+      showConfirm({
         title: "Authentication Required",
-        message: "Please login to register for events.",
+        message: "You need to be logged in as a member to register for community events. Would you like to go to the login page now?",
+        confirmText: "Go to Login",
+        cancelText: "Cancel",
         type: "warning",
+        onConfirm: () => {
+          window.location.href = "/member_login";
+        },
       });
       return;
     }

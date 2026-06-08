@@ -11,8 +11,7 @@ import {
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Send, AlertCircle } from "lucide-react";
-import { SupportTicket, TicketMessage } from "@/features/citizen/types";
-import { getReport, addReportMessage } from "@/features/citizen/api";
+import { SupportTicket, TicketMessage, getReport, addReportMessage } from "@/features/shared/reports";
 import { useAuthStore } from "@/store/authStore";
 import { cn, formatDate } from "@/lib/utils";
 import { getTicketStatusBadge } from "@/features/citizen/support/ticket-utils";
@@ -101,15 +100,15 @@ export default function AdminChatModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl h-[550px] flex flex-col p-6 gap-4">
+      <DialogContent size="xl" className="h-[550px] flex flex-col p-6 gap-4">
         {/* Modal Header */}
-        <DialogHeader className="border-b border-border/80 pb-3 shrink-0">
+        <DialogHeader className="border-b border-border/60 pb-4 shrink-0">
           <div className="flex justify-between items-start gap-4">
             <div>
-              <DialogTitle className="font-display font-bold text-text text-base sm:text-lg">
+              <DialogTitle>
                 {subject}
               </DialogTitle>
-              <DialogDescription className="text-xs text-text-muted mt-1 font-medium">
+              <DialogDescription>
                 Submitted by: {ticket.user?.name || "Anonymous User"}
               </DialogDescription>
             </div>
@@ -193,7 +192,7 @@ export default function AdminChatModal({
                 placeholder="Type administrator response..."
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
-                className="py-2 px-3 text-xs sm:text-sm"
+                size="sm"
                 disabled={submitting}
               />
             </div>
@@ -202,7 +201,8 @@ export default function AdminChatModal({
               disabled={!replyText.trim() || submitting}
               isLoading={submitting}
               startIcon={<Send size={12} />}
-              className="shrink-0 text-xs font-bold py-2 px-4 h-auto rounded-xl"
+              size="sm"
+              className="shrink-0"
             >
               Send
             </Button>

@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/Badge";
-import { SupportTicket } from "../types";
+import { SupportTicket } from "@/features/shared/reports";
 
 export function getTicketStatusBadge(status: SupportTicket["status"]) {
   switch (status) {

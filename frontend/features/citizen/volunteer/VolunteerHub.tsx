@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Spinner } from "@/components/ui/spinner";
 import {
   useCitizenStore,
@@ -15,25 +15,15 @@ import ApplicationStatus from "./ApplicationStatus";
 export default function VolunteerHub() {
   const {
     user,
-    volunteer,
     loading: storeLoading,
     fetchProfile,
     refreshProfile,
   } = useCitizenStore();
   const isVolunteer = useCitizenStore(selectIsVolunteer);
 
-  const [applicationSubmitted, setApplicationSubmitted] = useState(false);
-
   useEffect(() => {
     fetchProfile();
-  }, []);
-
-  // Re-fetch after application submission to get updated volunteer record
-  useEffect(() => {
-    if (applicationSubmitted) {
-      refreshProfile();
-    }
-  }, [applicationSubmitted]);
+  }, [fetchProfile]);
 
   if (storeLoading) {
     return (
@@ -56,12 +46,8 @@ export default function VolunteerHub() {
     required_payments: 10,
   };
 
-  // Determine current status
-  const volunteerStatus = isVolunteer ? "approved" : "not_applied";
-  const currentStatus = applicationSubmitted ? "pending" : volunteerStatus;
-
-  if (currentStatus !== "not_applied") {
-    return <ApplicationStatus status={currentStatus} />;
+  if (isVolunteer) {
+    return <ApplicationStatus />;
   }
 
   // If not applied yet: check eligibility gating
@@ -72,7 +58,7 @@ export default function VolunteerHub() {
       {eligibility.is_eligible && (
         <VolunteerApplicationForm
           user={user}
-          onSubmitSuccess={() => setApplicationSubmitted(true)}
+          onSubmitSuccess={refreshProfile}
         />
       )}
     </div>

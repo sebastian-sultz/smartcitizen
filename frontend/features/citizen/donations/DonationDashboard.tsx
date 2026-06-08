@@ -24,41 +24,61 @@ import TaxCertificates from "./TaxCertificates";
 function DonationDashboardContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const initialTab = searchParams.get("tab") || "history";
+  const activeTab = searchParams.get("tab") || "history";
 
   const [stats, setStats] = useState<DonationStatsType | null>(null);
   const [history, setHistory] = useState<Payment[]>([]);
+  const [totalHistory, setTotalHistory] = useState(0);
   const [certificates, setCertificates] = useState<TaxCertificate[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState(initialTab);
+  const [historyLoading, setHistoryLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
 
   const loadDonationData = async () => {
     try {
-      setLoading(true);
-      const [statsData, historyData, certsData] = await Promise.all([
+      const offset = (page - 1) * limit;
+      const [statsData, historyRes, certsData] = await Promise.all([
         getDonationStats(),
-        getDonationHistory(),
+        getDonationHistory(offset, limit),
         getTaxCertificates(),
       ]);
       setStats(statsData || null);
-      setHistory(historyData || []);
+      setHistory(historyRes?.data || []);
+      setTotalHistory(historyRes?.totalCount || 0);
       setCertificates(certsData || []);
     } catch (err) {
       console.error("Failed to load donation dashboard data:", err);
     } finally {
       setLoading(false);
+      setHistoryLoading(false);
+    }
+  };
+
+  const loadHistoryOnly = async () => {
+    try {
+      const offset = (page - 1) * limit;
+      const historyRes = await getDonationHistory(offset, limit);
+      setHistory(historyRes?.data || []);
+      setTotalHistory(historyRes?.totalCount || 0);
+    } catch (err) {
+      console.error("Failed to load donation history page:", err);
+    } finally {
+      setHistoryLoading(false);
     }
   };
 
   const refreshDonationData = async () => {
     try {
-      const [statsData, historyData, certsData] = await Promise.all([
+      const offset = (page - 1) * limit;
+      const [statsData, historyRes, certsData] = await Promise.all([
         getDonationStats(),
-        getDonationHistory(),
+        getDonationHistory(offset, limit),
         getTaxCertificates(),
       ]);
       setStats(statsData || null);
-      setHistory(historyData || []);
+      setHistory(historyRes?.data || []);
+      setTotalHistory(historyRes?.totalCount || 0);
       setCertificates(certsData || []);
     } catch (err) {
       console.error("Failed to refresh donation dashboard data:", err);
@@ -66,18 +86,22 @@ function DonationDashboardContent() {
   };
 
   useEffect(() => {
-    loadDonationData();
+    Promise.resolve().then(() => {
+      loadDonationData();
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    const tab = searchParams.get("tab");
-    if (tab) {
-      setActiveTab(tab);
+    if (!loading) {
+      Promise.resolve().then(() => {
+        loadHistoryOnly();
+      });
     }
-  }, [searchParams]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, limit, loading]);
 
   const handleTabChange = (val: string) => {
-    setActiveTab(val);
     router.push(`/citizen/donations?tab=${val}`);
   };
 
@@ -123,7 +147,18 @@ function DonationDashboardContent() {
         </TabsList>
 
         <TabsContent value="history">
-          <DonationHistory donations={history} />
+          <DonationHistory
+            donations={history}
+            loading={historyLoading}
+            page={page}
+            limit={limit}
+            total={totalHistory}
+            onPaginationChange={(p, l) => {
+              setHistoryLoading(true);
+              setPage(p);
+              setLimit(l);
+            }}
+          />
         </TabsContent>
 
         <TabsContent value="tax">

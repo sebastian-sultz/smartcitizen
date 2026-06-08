@@ -23,9 +23,20 @@ import { toast } from "sonner";
 interface DonationHistoryProps {
   donations: Payment[];
   loading?: boolean;
+  page: number;
+  limit: number;
+  total: number;
+  onPaginationChange: (page: number, limit: number) => void;
 }
 
-export default function DonationHistory({ donations, loading = false }: DonationHistoryProps) {
+export default function DonationHistory({
+  donations,
+  loading = false,
+  page,
+  limit,
+  total,
+  onPaginationChange,
+}: DonationHistoryProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedDonation, setSelectedDonation] = useState<Payment | null>(
@@ -102,7 +113,7 @@ export default function DonationHistory({ donations, loading = false }: Donation
             variant="outline"
             size="sm"
             startIcon={<Eye size={12} />}
-            className="border-primary/20 text-primary hover:bg-primary/5 font-bold"
+            className="border-primary/20 text-primary hover:bg-primary/5"
           >
             Details
           </Button>
@@ -116,7 +127,6 @@ export default function DonationHistory({ donations, loading = false }: Donation
               variant="primary"
               size="sm"
               startIcon={<Download size={12} />}
-              className="font-bold"
             >
               Receipt
             </Button>
@@ -180,6 +190,12 @@ export default function DonationHistory({ donations, loading = false }: Donation
           data={filteredDonations}
           loading={loading}
           emptyMessage="No transaction records match your filters."
+          pagination={{
+            page,
+            limit,
+            total,
+            onChange: onPaginationChange,
+          }}
         />
       </div>
 

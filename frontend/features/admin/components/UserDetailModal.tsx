@@ -14,12 +14,12 @@ interface UserDetailModalProps {
 export const UserDetailModal = ({ open, onOpenChange, user }: UserDetailModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-2xl max-h-[85vh] flex flex-col p-6 overflow-hidden">
-        <DialogHeader className="border-b border-border/80 pb-3 shrink-0">
-          <DialogTitle className="font-display font-bold text-text text-base sm:text-lg">
+      <DialogContent size="xl" className="max-h-[85vh] flex flex-col p-6 overflow-hidden">
+        <DialogHeader className="border-b border-border/60 pb-4 shrink-0">
+          <DialogTitle>
             User Profile Details
           </DialogTitle>
-          <DialogDescription className="text-xs text-text-muted mt-1 font-medium">
+          <DialogDescription>
             Detailed metadata and engagement stats for this member
           </DialogDescription>
         </DialogHeader>

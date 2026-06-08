@@ -2,7 +2,7 @@
 
 import { DashboardStats } from "../types";
 import { Card } from "@/components/ui/Card";
-import { Heart, Users, Flag, Award, Calendar, ShieldCheck } from "lucide-react";
+import { Heart, Users, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface StatsGridProps {
@@ -11,36 +11,6 @@ interface StatsGridProps {
 
 export default function StatsGrid({ stats }: StatsGridProps) {
   if (!stats) return null;
-
-  const getVolunteerStatusLabel = (
-    status: DashboardStats["volunteer_status"],
-  ) => {
-    switch (status) {
-      case "approved":
-        return "Approved Volunteer";
-      case "pending":
-        return "Review Pending";
-      case "rejected":
-        return "Not Eligible";
-      default:
-        return "Apply to Volunteer";
-    }
-  };
-
-  const getVolunteerStatusColor = (
-    status: DashboardStats["volunteer_status"],
-  ) => {
-    switch (status) {
-      case "approved":
-        return "from-emerald-50 to-emerald-100/50 border-emerald-100 text-emerald-600";
-      case "pending":
-        return "from-amber-50 to-amber-100/50 border-amber-100 text-amber-600";
-      case "rejected":
-        return "from-rose-50 to-rose-100/50 border-rose-100 text-rose-600";
-      default:
-        return "from-slate-50 to-slate-100/50 border-slate-100 text-slate-600";
-    }
-  };
 
   const statCards = [
     {

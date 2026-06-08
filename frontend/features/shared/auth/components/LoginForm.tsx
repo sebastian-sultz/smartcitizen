@@ -10,6 +10,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Link from "next/link";
 import { loginUser, forgetPassword, logoutUser } from "../api";
 import { toast } from "sonner";
+import { PHONE_REGEX } from "@/lib/regex";
 
 export const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,7 +25,7 @@ export const LoginForm = () => {
     },
     validationSchema: Yup.object().shape({
       mobileNumber: Yup.string()
-        .matches(/^[0-9]{10}$/, "Enter a valid 10-digit mobile number")
+        .matches(PHONE_REGEX, "Enter a valid 10-digit mobile number")
         .required("Mobile number is required"),
       password: Yup.string().when((_, schema) => 
         view === "login" ? schema.required("Password is required") : schema

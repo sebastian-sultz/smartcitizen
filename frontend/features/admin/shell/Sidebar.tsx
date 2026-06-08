@@ -108,11 +108,12 @@ export function Sidebar() {
                     <Button
                       variant="ghost-white"
                       shape="square"
+                      size="sm"
                       fullWidth
                       normalCase
                       onClick={() => toggleMenu(item.title)}
                       className={cn(
-                        "justify-between p-3 text-sm font-normal group h-auto",
+                        "justify-between group",
                         isOpen && "bg-white/5"
                       )}
                     >
@@ -162,11 +163,11 @@ export function Sidebar() {
             <Button 
               variant="ghost-danger-white"
               shape="square"
+              size="sm"
               fullWidth
               alignLeft
               normalCase
               onClick={() => performLogout('/admin/login')}
-              className="p-3 text-sm h-auto"
             >
               <LogOut className="w-5 h-5 mr-3 shrink-0" />
               Sign Out

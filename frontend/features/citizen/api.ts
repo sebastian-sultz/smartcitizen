@@ -3,20 +3,11 @@ import { handleApiError } from "@/lib/api-helpers";
 import { UserResponse } from "../shared/auth/types";
 import {
   ActivityItem,
-  DonationRecord,
   DonationStats,
   TaxCertificate,
-  ReferralMember,
-  Volunteer,
-  SupportTicket,
-  FAQItem,
   UserProfileResponse,
   VolunteersListResponse,
   VolunteerResponse,
-  ReportResponse,
-  ReportMessagesResponse,
-  AddMessageResponse,
-  VolunteerEligibility,
   CreateVolunteerPayload,
   UpdateVolunteerPayload,
   Payment,
@@ -69,57 +60,13 @@ export const updateVolunteer = async (
   }
 };
 
-export const getUserReports = async (status?: string): Promise<SupportTicket[]> => {
-  try {
-    const url = status ? `/reports?status=${status}` : '/reports';
-    const response = await api.get<{ reports: SupportTicket[] }>(url);
-    return response.data.reports || [];
-  } catch (error: unknown) {
-    handleApiError(error, "Failed to load support tickets");
-  }
-};
-
-export const getReport = async (id: string): Promise<ReportResponse> => {
-  try {
-    const response = await api.get(`/reports/${id}`);
-    return response.data;
-  } catch (error: unknown) {
-    handleApiError(error, "Failed to load support ticket");
-  }
-};
-
-export const createReport = async (payload: {
-  title: string;
-  description: string;
-}): Promise<ReportResponse> => {
-  try {
-    const response = await api.post('/reports', payload);
-    return response.data;
-  } catch (error: unknown) {
-    handleApiError(error, "Failed to create support ticket");
-  }
-};
-
-export const addReportMessage = async (
-  reportId: string,
-  payload: { message: string }
-): Promise<AddMessageResponse> => {
-  try {
-    const response = await api.post(`/reports/${reportId}/messages`, payload);
-    return response.data;
-  } catch (error: unknown) {
-    handleApiError(error, "Failed to send message");
-  }
-};
-
-export const getReportMessages = async (reportId: string): Promise<ReportMessagesResponse> => {
-  try {
-    const response = await api.get(`/reports/${reportId}/messages`);
-    return response.data;
-  } catch (error: unknown) {
-    handleApiError(error, "Failed to load messages");
-  }
-};
+export {
+  getUserReports,
+  getReport,
+  createReport,
+  addReportMessage,
+  getReportMessages,
+} from "@/features/shared/reports";
 
 // --- Mock-only Mappings (stubbed to return empty defaults since mock data is removed) ---
 
@@ -128,10 +75,15 @@ export const getActivityTimeline = async (): Promise<ActivityItem[]> => {
   return [];
 };
 
-export const getDonationHistory = async (): Promise<Payment[]> => {
+export const getDonationHistory = async (
+  offset: number = 0,
+  limit: number = 10
+): Promise<PaymentHistoryResponse> => {
   try {
-    const response = await api.get<PaymentHistoryResponse>("/payments/history?page=1&limit=100");
-    return response.data.data || [];
+    const response = await api.get<PaymentHistoryResponse>(
+      `/payments/history?offset=${offset}&limit=${limit}`
+    );
+    return response.data;
   } catch (error: unknown) {
     handleApiError(error, "Failed to load donation history");
   }
@@ -187,9 +139,4 @@ export const getReferredMembers = async (userId: string): Promise<UserResponse[]
   } catch (error: unknown) {
     handleApiError(error, "Failed to load referred members");
   }
-};
-
-export const getFAQs = async (category?: string): Promise<FAQItem[]> => {
-  await delay();
-  return [];
 };

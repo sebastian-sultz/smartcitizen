@@ -2,7 +2,6 @@
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { UserResponse } from "@/features/shared/auth/types";
 import { SocialLinksPayload } from "../types";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -11,11 +10,10 @@ import { toast } from "sonner";
 import { Share2 } from "lucide-react";
 
 interface SocialLinksProps {
-  profile: UserResponse;
   onSave: (updated: SocialLinksPayload) => Promise<void>;
 }
 
-export default function SocialLinks({ profile, onSave }: SocialLinksProps) {
+export default function SocialLinks({ onSave }: SocialLinksProps) {
   const formik = useFormik({
     initialValues: {
       linkedin_url: "",

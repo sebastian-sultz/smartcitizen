@@ -42,7 +42,7 @@ export const getVolunteerAppsColumns = (
     label: "Status",
     render: (app) => (
       <Badge variant="success">
-        Approved
+        Active
       </Badge>
     ),
   },

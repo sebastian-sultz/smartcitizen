@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { MapPin, Clock, CheckCircle, CalendarDays, Phone, User as UserIcon } from "lucide-react";
+import { MapPin, Clock, CheckCircle, CalendarDays } from "lucide-react";
 import {
   Dialog,
   DialogTrigger,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Shield, EyeOff, Trash2, Smartphone, Eye } from "lucide-react";
+import { Shield, EyeOff, Trash2, Eye } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useAlert } from "@/components/ui/AlertProvider";
@@ -9,7 +9,6 @@ import { Switch } from "@/components/ui/switch";
 
 export const PrivacyControls = () => {
   const { showAlert, showConfirm } = useAlert();
-  const [showPhone, setShowPhone] = useState(false);
   const [inDirectory, setInDirectory] = useState(true);
 
   return (

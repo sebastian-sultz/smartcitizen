@@ -17,14 +17,16 @@ export default function WelcomeHero({ profile, onInviteClick }: WelcomeHeroProps
   const [greeting, setGreeting] = useState("Hello");
 
   useEffect(() => {
-    const hours = new Date().getHours();
-    if (hours < 12) {
-      setGreeting("Good morning");
-    } else if (hours < 17) {
-      setGreeting("Good afternoon");
-    } else {
-      setGreeting("Good evening");
-    }
+    Promise.resolve().then(() => {
+      const hours = new Date().getHours();
+      if (hours < 12) {
+        setGreeting("Good morning");
+      } else if (hours < 17) {
+        setGreeting("Good afternoon");
+      } else {
+        setGreeting("Good evening");
+      }
+    });
   }, []);
 
   const formattedDate = profile?.created_at

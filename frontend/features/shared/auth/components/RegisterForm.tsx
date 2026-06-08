@@ -10,6 +10,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Link from "next/link";
 import { registerUser } from "../api";
 import { toast } from "sonner";
+import { PHONE_REGEX, NAME_REGEX } from "@/lib/regex";
 
 export const RegisterForm = () => {
   const [step, setStep] = useState<"details" | "otp" | "success">("details");
@@ -23,11 +24,13 @@ export const RegisterForm = () => {
       password: "",
     },
     validationSchema: Yup.object().shape({
-      fullName: Yup.string().when((_, schema) => 
-        step === "details" ? schema.required("Full Name is required") : schema
-      ),
+      fullName: Yup.string()
+        .matches(NAME_REGEX, "Enter a valid name (letters, spaces, dots, hyphens only)")
+        .when((_, schema) => 
+          step === "details" ? schema.required("Full Name is required") : schema
+        ),
       mobileNumber: Yup.string()
-        .matches(/^[0-9]{10}$/, "Enter a valid 10-digit mobile number")
+        .matches(PHONE_REGEX, "Enter a valid 10-digit mobile number")
         .when((_, schema) => 
           step === "details" ? schema.required("Mobile number is required") : schema
         ),

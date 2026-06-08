@@ -35,7 +35,8 @@ export function Header() {
             type="text" 
             placeholder="Search activities..." 
             icon={<Search size={18} />}
-            className="py-1.5 h-9 text-sm rounded-full bg-bg pl-10"
+            size="sm"
+            shape="pill"
           />
         </div>
 

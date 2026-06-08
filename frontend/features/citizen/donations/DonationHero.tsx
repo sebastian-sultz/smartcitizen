@@ -1,6 +1,5 @@
 "use client";
 
-import { Card } from "@/components/ui/Card";
 import { HeartHandshake, ShieldCheck, Zap, Globe, Coins } from "lucide-react";
 import UnifiedDonationForm from "@/features/public/donation/components/UnifiedDonationForm";
 import { initiatePayment } from "../api";

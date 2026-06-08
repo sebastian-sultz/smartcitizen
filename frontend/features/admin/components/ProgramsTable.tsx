@@ -138,12 +138,12 @@ export const ProgramsTable = () => {
 
       {/* View Participants Dialog */}
       <Dialog open={participantsOpen} onOpenChange={setParticipantsOpen}>
-        <DialogContent className="sm:max-w-2xl max-h-[80vh] flex flex-col p-6">
-          <DialogHeader className="border-b border-border/80 pb-3 shrink-0">
-            <DialogTitle className="font-display font-bold text-text text-base sm:text-lg">
+        <DialogContent size="xl" className="max-h-[80vh] flex flex-col p-6">
+          <DialogHeader className="border-b border-border/60 pb-4 shrink-0">
+            <DialogTitle>
               Program Participants
             </DialogTitle>
-            <DialogDescription className="text-xs text-text-muted mt-1 font-medium">
+            <DialogDescription>
               Registered users for: <span className="font-bold text-text">{selectedProgramName}</span>
             </DialogDescription>
           </DialogHeader>

@@ -17,6 +17,7 @@ import { Heart, Mail, Phone, MapPin, Building, Hash } from "lucide-react";
 import { toast } from "sonner";
 import { createVolunteer } from "../api";
 import { UserResponse } from "@/features/shared/auth/types";
+import { PINCODE_REGEX, EMAIL_REGEX, PHONE_REGEX, NAME_REGEX, CITY_REGEX, ADDRESS_REGEX } from "@/lib/regex";
 
 interface VolunteerApplicationFormProps {
   user: UserResponse;
@@ -41,20 +42,32 @@ export default function VolunteerApplicationForm({ user, onSubmitSuccess }: Volu
       pincode: "",
     },
     validationSchema: Yup.object().shape({
-      profession: Yup.string().required("Profession or student status is required"),
+      profession: Yup.string()
+        .matches(NAME_REGEX, "Enter a valid profession (letters, spaces, dots, hyphens only)")
+        .required("Profession or student status is required"),
       experience: Yup.string().required("Brief description of volunteer experience is required"),
       availability: Yup.string().required("Availability is required"),
       interest: Yup.string().required("Primary area of interest is required"),
       workType: Yup.string().required("Preferred work location is required"),
       motivation: Yup.string().required("Please explain your motivation").min(20, "Please explain in at least 20 characters"),
       consent: Yup.boolean(),
-      email: Yup.string().email("Enter a valid email address").required("Email is required"),
-      alternate_phone: Yup.string().nullable(),
-      address: Yup.string().required("Address is required"),
-      city: Yup.string().required("City is required"),
-      district: Yup.string().required("District is required"),
+      email: Yup.string()
+        .matches(EMAIL_REGEX, "Enter a valid email address")
+        .required("Email is required"),
+      alternate_phone: Yup.string()
+        .matches(PHONE_REGEX, { message: "Enter a valid 10-digit alternate phone number", excludeEmptyString: true })
+        .nullable(),
+      address: Yup.string()
+        .matches(ADDRESS_REGEX, "Enter a valid address (alphanumeric and standard punctuation only)")
+        .required("Address is required"),
+      city: Yup.string()
+        .matches(CITY_REGEX, "Enter a valid city (letters, spaces, dots, hyphens only)")
+        .required("City is required"),
+      district: Yup.string()
+        .matches(CITY_REGEX, "Enter a valid district (letters, spaces, dots, hyphens only)")
+        .required("District is required"),
       pincode: Yup.string()
-        .matches(/^[0-9]{6}$/, "Enter a valid 6-digit Pincode")
+        .matches(PINCODE_REGEX, "Enter a valid 6-digit Pincode")
         .required("Pincode is required"),
     }),
     onSubmit: async (values, { setSubmitting }) => {

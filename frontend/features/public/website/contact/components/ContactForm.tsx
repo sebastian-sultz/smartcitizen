@@ -2,12 +2,13 @@
 
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useAlert } from "@/components/ui/AlertProvider";
+
+import { PHONE_REGEX, EMAIL_REGEX, NAME_REGEX } from "@/lib/regex";
 
 interface ContactFormProps {
   helpAreas: { title: string }[];
@@ -24,11 +25,15 @@ export const ContactForm = ({ helpAreas }: ContactFormProps) => {
       message: "",
     },
     validationSchema: Yup.object({
-      fullName: Yup.string().required("Full name is required"),
+      fullName: Yup.string()
+        .matches(NAME_REGEX, "Enter a valid name (letters, spaces, dots, hyphens only)")
+        .required("Full name is required"),
       mobileNumber: Yup.string()
-        .matches(/^[0-9]{10}$/, "Enter a valid 10-digit mobile number")
+        .matches(PHONE_REGEX, "Enter a valid 10-digit mobile number")
         .required("Mobile number is required"),
-      email: Yup.string().email("Invalid email address"),
+      email: Yup.string()
+        .matches(EMAIL_REGEX, { message: "Invalid email address", excludeEmptyString: true })
+        .nullable(),
       helpArea: Yup.string().required("Please select an area of help"),
       message: Yup.string().required("Please describe how we can assist you"),
     }),

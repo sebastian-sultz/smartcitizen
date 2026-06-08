@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { SupportTicket } from "../types";
-import { addReportMessage, getReport } from "../api";
+import { SupportTicket, addReportMessage, getReport } from "@/features/shared/reports";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { ArrowLeft, Send, AlertCircle } from "lucide-react";

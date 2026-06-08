@@ -3,10 +3,7 @@ import { UserResponse } from "@/features/shared/auth/types";
 export interface DashboardStats {
   total_amount: number;
   total_referrals: number;
-  campaigns_joined: number;
-  badge_level: string;
   events_attended: number;
-  volunteer_status: 'not_applied' | 'pending' | 'approved' | 'rejected';
 }
 
 export interface ReferralStats {
@@ -54,10 +51,6 @@ export interface UpdateVolunteerPayload {
   ispublicconsent?: boolean;
 }
 
-export interface CreateSupportTicketPayload {
-  subject: string;
-  description: string;
-}
 
 export interface SocialLinksPayload {
   linkedin_url: string;
@@ -84,35 +77,6 @@ export interface Volunteer {
   updated_at: string;
 }
 
-export interface TicketMessage {
-  id: string;
-  report_id: string;
-  sender_id: string;
-  message: string;
-  created_at: string;
-}
-
-export interface SupportTicket {
-  id: string;
-  user_id: string;
-  admin_id?: string | null;
-  title: string;
-  description: string;
-  status: 'Open' | 'Resolved' | 'Closed';
-  action_taken?: string | null;
-  resolved_at?: string | null;
-  created_at: string;
-  messages?: TicketMessage[];
-  user?: UserResponse;
-  admin?: UserResponse;
-}
-
-export interface FAQItem {
-  id: string;
-  category: 'general' | 'donation' | 'volunteer' | 'account';
-  question: string;
-  answer: string;
-}
 
 // API Response interfaces
 export interface UserProfileResponse {
@@ -127,17 +91,7 @@ export interface VolunteerResponse {
   volunteer: Volunteer;
 }
 
-export interface ReportResponse {
-  report: SupportTicket;
-}
 
-export interface ReportMessagesResponse {
-  messages: TicketMessage[];
-}
-
-export interface AddMessageResponse {
-  data: TicketMessage;
-}
 export interface ActivityItem {
   id: string;
   type: 'donation' | 'referral_join' | 'referral_donate' | 'event_register' | 'volunteer_apply' | 'ticket_update';
@@ -216,3 +170,5 @@ export interface InitiatePaymentRequest {
   donorEmail?: string;
   donorPhone?: string;
 }
+
+

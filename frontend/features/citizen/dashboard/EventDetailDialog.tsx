@@ -1,5 +1,5 @@
 "use client";
-
+ 
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import {
@@ -17,7 +17,8 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { EventResponse } from "../community/types";
-
+import { cn } from "@/lib/utils";
+ 
 interface EventDetailDialogProps {
   event: EventResponse;
   isRegistered: boolean;
@@ -25,7 +26,7 @@ interface EventDetailDialogProps {
   fullDate: string;
   timeStr: string;
 }
-
+ 
 export default function EventDetailDialog({
   event,
   isRegistered,
@@ -34,7 +35,7 @@ export default function EventDetailDialog({
   timeStr,
 }: EventDetailDialogProps) {
   return (
-    <DialogContent className="sm:max-w-lg p-0 sm:p-0 overflow-hidden bg-surface border-border flex flex-col max-h-[90vh]">
+    <DialogContent size="lg" className="p-0 sm:p-0 overflow-hidden bg-surface border-border flex flex-col max-h-[90vh]">
       {/* Header Image */}
       <div className="relative w-full h-56 sm:h-64 bg-muted/50 shrink-0">
         {event.image ? (
@@ -65,10 +66,10 @@ export default function EventDetailDialog({
       {/* Scrollable Content */}
       <div className="flex-grow overflow-y-auto p-6 space-y-6">
         <DialogHeader className="gap-2">
-          <DialogTitle className="text-2xl sm:text-3xl font-display font-black text-text leading-tight">
+          <DialogTitle className="text-2xl sm:text-3xl font-black">
             {event.event_name}
           </DialogTitle>
-          <DialogDescription className="text-base text-text-muted hidden">
+          <DialogDescription className="hidden">
             Detailed view for {event.event_name}
           </DialogDescription>
         </DialogHeader>
@@ -127,16 +128,18 @@ export default function EventDetailDialog({
       </div>
 
       {/* Sticky Footer */}
-      <DialogFooter className="p-5 sm:px-8 sm:pb-8 bg-surface/80 backdrop-blur-md border-t border-border/50 shrink-0">
+      <DialogFooter className="m-0 sm:m-0 rounded-none p-5 sm:px-8 sm:pb-8 bg-surface/80 backdrop-blur-md border-t border-border/50 shrink-0">
         <Button
           variant={isRegistered ? "outline" : "primary"}
           onClick={onRegister}
           disabled={isRegistered}
-          className={`w-full font-bold py-4 h-14 rounded-xl text-base transition-all duration-300 shadow-sm ${
+          fullWidth
+          className={cn(
+            "h-14 text-base transition-all duration-300 shadow-sm",
             isRegistered
               ? "border-green-200 text-green-700 bg-green-50 hover:bg-green-100 opacity-100"
               : "hover:shadow-md hover:-translate-y-0.5"
-          }`}
+          )}
         >
           {isRegistered ? (
             <span className="flex items-center justify-center gap-2">

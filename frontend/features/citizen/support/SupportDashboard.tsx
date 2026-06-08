@@ -9,8 +9,8 @@ import {
   createReport,
   addReportMessage,
   getUserReports,
-} from "../api";
-import { SupportTicket } from "../types";
+  SupportTicket,
+} from "@/features/shared/reports";
 
 import { Card } from "@/components/ui/Card";
 import TicketList from "./TicketList";
@@ -49,7 +49,9 @@ export default function SupportDashboard() {
   };
 
   useEffect(() => {
-    loadSupportData();
+    Promise.resolve().then(() => {
+      loadSupportData();
+    });
   }, []);
 
   const handleSelectTicket = (ticket: SupportTicket) => {

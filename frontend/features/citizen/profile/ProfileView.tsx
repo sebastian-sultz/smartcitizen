@@ -2,25 +2,14 @@
 
 import { useEffect, useState } from "react";
 import { UpdateVolunteerPayload } from "../types";
-import {
-  useCitizenStore,
-  selectVolunteerStatus,
-} from "@/store/citizenStore";
+import { useCitizenStore, selectIsVolunteer } from "@/store/citizenStore";
 import { updateVolunteer } from "../api";
 import { updateProfilePhoto } from "@/features/shared/auth";
 import { Spinner } from "@/components/ui/spinner";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import {
-  Mail,
-  Phone,
-  Calendar,
-  MapPin,
-  Edit3,
-  Building,
-  Camera,
-} from "lucide-react";
+import { Mail, Phone, MapPin, Edit3, Building, Camera } from "lucide-react";
 import Image from "next/image";
 import { formatDate } from "@/lib/utils";
 import { toast } from "sonner";
@@ -38,7 +27,7 @@ export default function ProfileView() {
     refreshProfile,
     setVolunteer,
   } = useCitizenStore();
-  const volunteerStatus = useCitizenStore(selectVolunteerStatus);
+  const isVolunteer = useCitizenStore(selectIsVolunteer);
 
   const [isEditing, setIsEditing] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -62,7 +51,9 @@ export default function ProfileView() {
     try {
       if (profile) {
         await updateProfilePhoto(profile.id, file);
-        toast.success("Profile photo updated successfully!", { id: uploadToastId });
+        toast.success("Profile photo updated successfully!", {
+          id: uploadToastId,
+        });
         await refreshProfile();
       }
     } catch (err) {
@@ -75,7 +66,7 @@ export default function ProfileView() {
 
   useEffect(() => {
     fetchProfile();
-  }, []);
+  }, [fetchProfile]);
 
   const handleProfileSave = async (updatedFields: UpdateVolunteerPayload) => {
     try {
@@ -109,8 +100,6 @@ export default function ProfileView() {
         .toUpperCase()
         .substring(0, 2)
     : "SC";
-
-  const formattedDOB = "Not Configured";
 
   const formattedJoinDate = profile.created_at
     ? formatDate(profile.created_at, "long-in")
@@ -238,14 +227,6 @@ export default function ProfileView() {
 
                   <div className="space-y-1">
                     <span className="flex items-center gap-1.5 text-text-muted font-bold text-xs uppercase tracking-wider">
-                      <Calendar size={14} className="text-primary/70" />
-                      Date of Birth
-                    </span>
-                    <p className="font-semibold text-text">{formattedDOB}</p>
-                  </div>
-
-                  <div className="space-y-1">
-                    <span className="flex items-center gap-1.5 text-text-muted font-bold text-xs uppercase tracking-wider">
                       <MapPin size={14} className="text-primary/70" />
                       Residential Address
                     </span>
@@ -280,17 +261,13 @@ export default function ProfileView() {
             </Card>
           )}
 
-          <VolunteerPreferences
-            profile={profile}
-            volunteerStatus={volunteerStatus}
-          />
+          <VolunteerPreferences isVolunteer={isVolunteer} />
           {profile.user_type === "volunteer" && (
             <div className="mt-8">
               <PrivacyControls />
             </div>
           )}
         </div>
-
       </div>
     </div>
   );

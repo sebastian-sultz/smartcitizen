@@ -18,16 +18,21 @@ export const EventRegisterButton: React.FC<EventRegisterButtonProps> = ({
   isRegistered,
   onRegisterSuccess,
 }) => {
-  const { showAlert } = useAlert();
+  const { showAlert, showConfirm } = useAlert();
   const { session } = useAuthStore();
   const [loading, setLoading] = useState(false);
-
+ 
   const handleRegister = async () => {
     if (!session) {
-      showAlert({
+      showConfirm({
         title: "Authentication Required",
-        message: "Please login to register for events.",
+        message: "You need to be logged in as a member to register for community events. Would you like to go to the login page now?",
+        confirmText: "Go to Login",
+        cancelText: "Cancel",
         type: "warning",
+        onConfirm: () => {
+          window.location.href = "/member_login";
+        },
       });
       return;
     }
