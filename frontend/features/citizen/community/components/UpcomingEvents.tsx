@@ -142,7 +142,7 @@ export function UpcomingEvents() {
                         rel={event.registration_link.startsWith("http") ? "noopener noreferrer" : undefined}
                         className="inline-flex items-center gap-2 font-black text-[14px] text-primary hover:text-primary-light transition-colors group/link"
                       >
-                        {event.cta_text || "Register Now"}
+                        Learn More
                         <MoveRight size={16} className="group-hover/link:translate-x-1 transition-transform" />
                       </a>
                     ) : (
@@ -150,7 +150,7 @@ export function UpcomingEvents() {
                         href={`/events`}
                         className="inline-flex items-center gap-2 font-black text-[14px] text-primary hover:text-primary-light transition-colors group/link"
                       >
-                        {event.cta_text || "Learn More"}
+                        Learn More
                         <MoveRight size={16} className="group-hover/link:translate-x-1 transition-transform" />
                       </Link>
                     )}

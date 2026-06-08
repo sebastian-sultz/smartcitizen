@@ -1,50 +1,54 @@
-"use client"
+"use client";
 
-import { useTheme } from "next-themes"
-import { Toaster as Sonner, type ToasterProps } from "sonner"
-import { CircleCheckIcon, InfoIcon, TriangleAlertIcon, OctagonXIcon } from "lucide-react"
-import { Spinner } from "@/components/ui/spinner"
+import { useTheme } from "next-themes";
+import { Toaster as Sonner, type ToasterProps } from "sonner";
+import {
+  CircleCheckIcon,
+  InfoIcon,
+  TriangleAlertIcon,
+  OctagonXIcon,
+} from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme()
+  const { theme = "system" } = useTheme();
 
   return (
     <Sonner
       theme={theme as ToasterProps["theme"]}
       className="toaster group"
       icons={{
-        success: (
-          <CircleCheckIcon className="size-4" />
-        ),
-        info: (
-          <InfoIcon className="size-4" />
-        ),
-        warning: (
-          <TriangleAlertIcon className="size-4" />
-        ),
-        error: (
-          <OctagonXIcon className="size-4" />
-        ),
-        loading: (
-          <Spinner className="size-4" />
-        ),
+        success: <CircleCheckIcon className="size-5 text-success shrink-0" />,
+        info: <InfoIcon className="size-5 text-primary shrink-0" />,
+        warning: <TriangleAlertIcon className="size-5 text-accent shrink-0" />,
+        error: <OctagonXIcon className="size-5 text-danger shrink-0" />,
+        loading: <Spinner className="size-5 text-primary shrink-0" />,
       }}
       style={
         {
-          "--normal-bg": "var(--popover)",
-          "--normal-text": "var(--popover-foreground)",
-          "--normal-border": "var(--border)",
-          "--border-radius": "var(--radius)",
+          "--normal-bg": "var(--color-surface)",
+          "--normal-text": "var(--color-text)",
+          "--normal-border": "var(--color-border)",
+          "--border-radius": "16px",
+          "--font-sans": "var(--font-body)",
         } as React.CSSProperties
       }
       toastOptions={{
         classNames: {
-          toast: "cn-toast",
+          toast:
+            "group toast bg-surface text-text border-border border rounded-2xl p-4 shadow-card flex items-center gap-3 font-body font-bold text-sm",
+          title: "font-display font-bold text-text text-sm",
+          description: "text-text-muted text-xs leading-relaxed font-medium",
+          success: "bg-success-bg border-success/15 text-success",
+          error: "bg-danger-bg border-danger/15 text-danger",
+          warning: "bg-accent/5 border-accent/15 text-accent",
+          info: "bg-primary/5 border-primary/15 text-primary",
         },
       }}
+      closeButton
       {...props}
     />
-  )
-}
+  );
+};
 
-export { Toaster }
+export { Toaster };

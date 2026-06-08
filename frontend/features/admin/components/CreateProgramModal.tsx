@@ -35,6 +35,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { PHONE_REGEX, NAME_REGEX, CITY_REGEX, ADDRESS_REGEX } from "@/lib/regex";
+
 interface CreateProgramModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -42,16 +44,24 @@ interface CreateProgramModalProps {
 }
 
 const programSchema = Yup.object().shape({
-  event_name: Yup.string().required("Program name is required"),
+  event_name: Yup.string()
+    .matches(ADDRESS_REGEX, "Enter a valid program name")
+    .required("Program name is required"),
   event_type: Yup.string().oneOf(["Event", "Initiative"]).required("Program type is required"),
   event_date: Yup.string().required("Program date & time is required"),
-  event_address: Yup.string().required("Program location is required"),
-  organizer_name: Yup.string().required("Organizer name is required"),
+  event_address: Yup.string()
+    .matches(ADDRESS_REGEX, "Enter a valid address (alphanumeric and standard punctuation only)")
+    .required("Program location is required"),
+  organizer_name: Yup.string()
+    .matches(NAME_REGEX, "Enter a valid organizer name (letters, spaces, dots, hyphens only)")
+    .required("Organizer name is required"),
   organizer_phone: Yup.string()
-    .matches(/^[0-9]{10}$/, "Enter a valid 10-digit mobile number")
+    .matches(PHONE_REGEX, "Enter a valid 10-digit mobile number")
     .required("Organizer phone is required"),
   description: Yup.string(),
-  category: Yup.string(),
+  category: Yup.string()
+    .matches(CITY_REGEX, { message: "Enter a valid category (letters and spaces only)", excludeEmptyString: true })
+    .nullable(),
   cta_text: Yup.string(),
 });
 

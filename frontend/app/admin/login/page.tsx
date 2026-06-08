@@ -9,10 +9,11 @@ import { Input } from "@/components/ui/Input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { loginUser, logoutUser } from "@/features/shared/auth";
 import { toast } from "sonner";
+import { PHONE_REGEX } from "@/lib/regex";
 
 const loginSchema = Yup.object().shape({
   phone: Yup.string()
-    .matches(/^[0-9]{10}$/, "Enter a valid 10-digit mobile number")
+    .matches(PHONE_REGEX, "Enter a valid 10-digit mobile number")
     .required("Mobile number is required"),
   password: Yup.string()
     .min(4, "Password too short")

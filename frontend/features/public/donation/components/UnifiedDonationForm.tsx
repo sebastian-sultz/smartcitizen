@@ -6,7 +6,6 @@ import * as Yup from "yup";
 import { 
   Heart, 
   ShieldCheck, 
-  CreditCard, 
   Smartphone, 
   Send, 
   Building2 
@@ -16,6 +15,7 @@ import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 import { useCitizenStore } from "@/store/citizenStore";
+import { PAN_REGEX, NAME_REGEX } from "@/lib/regex";
 import ManualUploadField from "./ManualUploadField";
 
 const PRESET_AMOUNTS = [500, 1000, 2500, 5000];
@@ -43,7 +43,6 @@ export default function UnifiedDonationForm({
 }: UnifiedDonationFormProps) {
   const { user } = useCitizenStore();
   const [paymentType, setPaymentType] = useState<"online" | "manual">("online");
-  const [onlineProvider, setOnlineProvider] = useState<"PhonePe" | "Razorpay">("PhonePe");
 
   const formik = useFormik({
     initialValues: {
@@ -60,10 +59,11 @@ export default function UnifiedDonationForm({
         .min(100, "Minimum contribution is ₹100")
         .max(10000000, "Maximum contribution is ₹10,000,000"),
       donorName: Yup.string()
+        .matches(NAME_REGEX, { message: "Enter a valid name (letters, spaces, dots, hyphens only)", excludeEmptyString: true })
         .max(100, "Name must be under 100 characters")
         .nullable(),
       pan: Yup.string()
-        .matches(/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/i, "Enter a valid 10-character PAN (e.g. ABCDE1234F)")
+        .matches(PAN_REGEX, "Enter a valid 10-character PAN (e.g. ABCDE1234F)")
         .nullable(),
       transactionId: Yup.string().when([], {
         is: () => paymentType === "manual",
