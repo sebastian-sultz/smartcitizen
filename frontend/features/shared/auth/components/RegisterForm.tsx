@@ -96,8 +96,13 @@ export const RegisterForm = () => {
             <p className="text-text-muted text-[15px] leading-relaxed">
               Keep this ID safe. You will need it to participate in awareness campaigns and volunteer programs.
             </p>
-            <Button className="w-full mt-4" >
-              <Link href="/citizen">Go to Dashboard</Link>
+            <Button 
+              className="w-full mt-4" 
+              onClick={() => {
+                window.location.href = "/citizen";
+              }}
+            >
+              Go to Dashboard
             </Button>
           </div>
         ) : (

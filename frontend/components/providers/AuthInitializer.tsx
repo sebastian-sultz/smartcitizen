@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { useAuthStore, Session } from "@/store/authStore";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { logoutUser } from "@/features/shared/auth/api";
+import { getProfile, logoutUser } from "@/features/shared/auth/api";
 import { resetRedirectState } from "@/lib/axios";
 
 export function AuthInitializer({ session }: { session: Session | null }) {
@@ -15,10 +15,37 @@ export function AuthInitializer({ session }: { session: Session | null }) {
     useAuthStore.setState({
       session,
       isLoggedIn: !!session,
+      isInitialized: !!session,
       userType: session?.userType || null,
     });
     initialized.current = true;
   }
+
+  useEffect(() => {
+    const checkSession = async () => {
+      const state = useAuthStore.getState();
+      if (!state.isLoggedIn && !state.isInitialized) {
+        try {
+          const user = await getProfile();
+          useAuthStore.setState({
+            session: { userId: user.id, userType: user.user_type },
+            isLoggedIn: true,
+            isInitialized: true,
+            userType: user.user_type,
+          });
+        } catch (err) {
+          useAuthStore.setState({
+            session: null,
+            isLoggedIn: false,
+            isInitialized: true,
+            userType: null,
+          });
+        }
+      }
+    };
+
+    checkSession();
+  }, []);
 
   useEffect(() => {
     const handleSessionExpired = async (e: Event) => {

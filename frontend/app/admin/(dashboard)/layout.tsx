@@ -1,5 +1,6 @@
 import { Sidebar } from "@/features/admin/shell/Sidebar";
 import { Header } from "@/features/admin/shell/Header";
+import { CurrentYear } from "@/components/ui/CurrentYear";
 
 export default function DashboardLayout({
   children,
@@ -17,7 +18,7 @@ export default function DashboardLayout({
           </div>
         </main>
         <footer className="p-6 text-center text-xs text-text-light lg:ml-72 transition-all">
-          &copy; {new Date().getFullYear()} Global Smart Citizens Foundation. All rights reserved.
+          &copy; <CurrentYear /> Global Smart Citizens Foundation. All rights reserved.
         </footer>
       </div>
     </div>

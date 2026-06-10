@@ -20,34 +20,23 @@ import {
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { performLogout } from "@/lib/api-helpers";
-import { getProfile } from "@/features/shared/auth/api";
-import { UserResponse } from "@/features/shared/auth/types";
+import { useCitizenStore } from "@/store/citizenStore";
 import Image from "next/image";
 
 export default function CitizenLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const [profile, setProfile] = useState<UserResponse | null>(null);
+  const { user: profile, volunteer, fetchProfile } = useCitizenStore();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const u = await getProfile();
-        if (u) {
-          setProfile(u);
-        }
-      } catch (err) {
-        console.error("Failed to load user profile in layout:", err);
-      }
-    };
     fetchProfile();
 
     const saved = localStorage.getItem("citizen-sidebar-collapsed");
     if (saved === "true") {
       setIsCollapsed(true);
     }
-  }, []);
+  }, [fetchProfile]);
 
   const toggleCollapse = () => {
     const nextState = !isCollapsed;
@@ -67,10 +56,10 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
     { href: "/citizen/settings", label: "Privacy & Settings", icon: Settings },
   ];
 
-  const isVolunteerOrAdmin = profile?.user_type === "volunteer" || profile?.user_type === "admin";
+  const isVolunteer = !!volunteer;
   const filteredNavItems = navItems.filter((item) => {
     if (item.href === "/citizen/profile" || item.href === "/citizen/settings") {
-      return isVolunteerOrAdmin;
+      return isVolunteer;
     }
     return true;
   });

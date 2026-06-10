@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ChevronDown, Menu, X, Heart, LogIn, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { useAuthStore } from "@/store/authStore";
@@ -24,6 +25,7 @@ const activityLinks = [
 
 export default function Header() {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const isInitialized = useAuthStore((state) => state.isInitialized);
   const userType = useAuthStore((state) => state.userType);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -262,7 +264,9 @@ export default function Header() {
 
           {/* CTAs */}
           <div className="hidden lg:flex items-center gap-3">
-            {isLoggedIn ? (
+            {!isInitialized ? (
+              <Skeleton className="h-10 w-24 rounded-full" />
+            ) : isLoggedIn ? (
               <Button
                 asChild
                 variant="outline"
@@ -443,7 +447,12 @@ export default function Header() {
                   </Link>
                 </Button>
                 <div className="grid grid-cols-2 gap-3">
-                  {isLoggedIn ? (
+                  {!isInitialized ? (
+                    <>
+                      <Skeleton className="h-12 w-full rounded-2xl" />
+                      <Skeleton className="h-12 w-full rounded-2xl" />
+                    </>
+                  ) : isLoggedIn ? (
                     <>
                       <Button
                         asChild

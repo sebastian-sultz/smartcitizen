@@ -69,6 +69,13 @@ export async function proxy(request: NextRequest) {
             }
           }
         }
+      } else {
+        // Clear invalid cookies to prevent repeating refresh calls on every page load
+        responseCookiesToSet = [
+          "access_token=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax",
+          "refresh_token=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax",
+        ];
+        isRefreshed = true;
       }
     } catch (e) {
       console.error("Server-side token refresh failed in middleware:", e);
@@ -134,6 +141,13 @@ export async function proxy(request: NextRequest) {
         );
       }
     }
+  }
+
+  // If we refreshed the token, redirect the browser to the same URL so that
+  // the client browser saves the new access_token cookie, and the subsequent
+  // request contains the new access_token, which is then visible to Server Components.
+  if (isRefreshed && token) {
+    return createResponse(NextResponse.redirect(new URL(request.url)));
   }
 
   return createResponse(NextResponse.next());

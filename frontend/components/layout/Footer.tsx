@@ -1,10 +1,9 @@
 import Link from "next/link";
 import { MessageCircle, MapPin, Phone, Mail, Globe } from "lucide-react";
 import { Facebook, Instagram, Twitter, Youtube } from "@/components/icons/SocialIcons";
+import { CurrentYear } from "@/components/ui/CurrentYear";
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear();
-
   return (
     <footer className="bg-dark text-white pt-16 md:pt-24 pb-8">
       <div className="max-content">
@@ -43,7 +42,7 @@ export default function Footer() {
               ))}
             </div>
           </div>
-
+ 
           {/* Col 2: Quick Links */}
           <div className="space-y-6">
             <h4 className="font-display text-xl font-bold text-accent">Quick Links</h4>
@@ -66,7 +65,7 @@ export default function Footer() {
               ))}
             </ul>
           </div>
-
+ 
           {/* Col 3: Legal & Policies */}
           <div className="space-y-6">
             <h4 className="font-display text-xl font-bold text-accent">Legal & Policies</h4>
@@ -86,7 +85,7 @@ export default function Footer() {
               ))}
             </ul>
           </div>
-
+ 
           {/* Col 4: Contact & Donate */}
           <div className="space-y-6">
             <h4 className="font-display text-xl font-bold text-accent">Contact & Donate</h4>
@@ -119,10 +118,10 @@ export default function Footer() {
             </div>
           </div>
         </div>
-
+ 
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-[13px] text-white/40">
-          <p>© {currentYear} GlobalSmart Citizens Foundation. All rights reserved.</p>
+          <p>© <CurrentYear /> GlobalSmart Citizens Foundation. All rights reserved.</p>
           <div className="flex gap-6">
             <Link href="/term" className="hover:text-white transition-colors">Terms</Link>
             <Link href="/privacy_policy" className="hover:text-white transition-colors">Privacy</Link>

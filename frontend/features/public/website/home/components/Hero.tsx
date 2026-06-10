@@ -9,6 +9,7 @@ import { useAuthStore } from "@/store/authStore";
 
 export function Hero() {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const isInitialized = useAuthStore((state) => state.isInitialized);
 
   return (
     <section className="relative min-h-screen flex items-center bg-bg overflow-hidden pt-24 pb-20 lg:pt-27 lg:pb-12">
@@ -88,7 +89,7 @@ export function Hero() {
           {/* Right Side - Visuals */}
           <div className="animate-scale-in flex-1 relative w-full max-w-2xl">
             {/* Floating Become Smart Citizen Card - One-time entrance animation */}
-            {!isLoggedIn && (
+            {isInitialized && !isLoggedIn && (
               <div className="animate-fade-in-right-delay-1 absolute -top-12 -left-20 md:-left-32 lg:-left-40 z-20 max-w-[290px] hidden sm:block">
                 <Card className="bg-white/95 backdrop-blur-xl border border-white/50 shadow-2xl p-5 rounded-3xl relative overflow-hidden group hover:shadow-primary/20 hover:border-primary/20 transition-all duration-500">
                   <div className="absolute top-0 right-0 w-28 h-28 bg-gradient-to-br from-primary/10 to-primary-light/5 rounded-full blur-2xl -z-10 group-hover:scale-110 transition-transform duration-500" />

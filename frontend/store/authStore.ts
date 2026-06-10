@@ -10,6 +10,7 @@ export interface Session {
 interface AuthState {
   session: Session | null;
   isLoggedIn: boolean;
+  isInitialized: boolean;
   userType: string | null;
   setSession: (session: Session | null) => void;
   logout: (onSuccess?: () => void) => Promise<void>;
@@ -18,12 +19,14 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
   session: null,
   isLoggedIn: false,
+  isInitialized: false,
   userType: null,
   setSession: (session) => {
     resetRedirectState();
     set({
       session,
       isLoggedIn: !!session,
+      isInitialized: true,
       userType: session?.userType || null,
     });
   },
@@ -33,7 +36,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     } catch (err) {
       console.error("Logout failed:", err);
     } finally {
-      set({ session: null, isLoggedIn: false, userType: null });
+      set({ session: null, isLoggedIn: false, isInitialized: true, userType: null });
       resetRedirectState();
       if (onSuccess) {
         onSuccess();
