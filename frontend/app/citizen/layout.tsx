@@ -3,19 +3,19 @@
 import { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  LayoutDashboard, 
-  User, 
-  Heart, 
-  Share2, 
-  Award, 
-  MessageSquare, 
-  Settings, 
-  LogOut, 
-  Menu, 
+import {
+  LayoutDashboard,
+  User,
+  Heart,
+  Share2,
+  Award,
+  MessageSquare,
+  Settings,
+  LogOut,
+  Menu,
   X,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
@@ -25,7 +25,7 @@ import Image from "next/image";
 
 export default function CitizenLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const { user: profile, volunteer, fetchProfile } = useCitizenStore();
+  const { volunteer, fetchProfile } = useCitizenStore();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
@@ -44,7 +44,7 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
     localStorage.setItem("citizen-sidebar-collapsed", String(nextState));
   };
 
-  const handleLogout = () => performLogout('/member_login');
+  const handleLogout = () => performLogout("/member_login");
 
   const navItems = [
     { href: "/citizen", label: "Dashboard", icon: LayoutDashboard },
@@ -64,23 +64,29 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
     return true;
   });
 
-  const userInitials = profile?.name
-    ? profile.name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .substring(0, 2)
-    : "SC";
-
   return (
     <div className="min-h-screen md:h-screen bg-bg flex flex-col md:flex-row md:overflow-hidden">
-      
       {/* Mobile Header Bar */}
-      <header className="md:hidden h-16 bg-white border-b border-border flex items-center justify-between px-6 sticky top-0 z-40">
-        <Link href="/" className="flex flex-col">
-          <span className="font-display font-black text-lg text-primary leading-none">GlobalSmart</span>
-          <span className="text-[8px] font-bold uppercase tracking-widest text-text-muted opacity-60">Citizen Portal</span>
+      <header className="md:hidden h-20 bg-white/95 backdrop-blur-md border-b border-border/60 flex items-center justify-between px-6 sticky top-0 z-40 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)]">
+        <Link href="/citizen" className="flex items-center gap-3">
+          <div className="relative w-10 h-10 shrink-0">
+            <Image
+              src="/assets/logo.png"
+              alt="GlobalSmart Logo"
+              fill
+              sizes="40px"
+              className="object-contain"
+              priority
+            />
+          </div>
+          <div className="flex flex-col">
+            <span className="font-display font-black text-xl text-primary leading-none">
+              GlobalSmart
+            </span>
+            <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-text-muted opacity-60 mt-0.5">
+              Citizen Portal
+            </span>
+          </div>
         </Link>
         <Button
           variant="ghost"
@@ -95,26 +101,45 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
 
       {/* Mobile Drawer Overlay */}
       {isMobileOpen && (
-        <div 
-          className="fixed inset-0 bg-black/50 z-50 md:hidden"
+        <div
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 md:hidden"
           onClick={() => setIsMobileOpen(false)}
         />
       )}
 
       {/* Mobile Drawer Menu */}
-      <aside 
+      <aside
         className={cn(
-          "fixed top-0 bottom-0 left-0 w-80 bg-white z-50 md:hidden flex flex-col transition-transform duration-300 ease-in-out border-r border-border",
-          isMobileOpen ? "translate-x-0" : "-translate-x-full"
+          "fixed top-0 bottom-0 left-0 w-80 bg-gradient-to-b from-white to-bg/40 z-50 md:hidden flex flex-col transition-transform duration-300 ease-in-out border-r border-border/60 shadow-xl",
+          isMobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
         {/* Mobile menu top */}
-        <div className="p-6 border-b border-border flex items-center justify-between">
-          <Link href="/" className="flex flex-col" onClick={() => setIsMobileOpen(false)}>
-            <span className="font-display font-black text-xl text-primary leading-none">GlobalSmart</span>
-            <span className="text-[9px] font-bold uppercase tracking-widest text-text-muted opacity-60">Citizen Portal</span>
+        <div className="p-6 border-b border-border/40 flex items-center justify-between bg-white">
+          <Link
+            href="/citizen"
+            className="flex items-center gap-3.5"
+            onClick={() => setIsMobileOpen(false)}
+          >
+            <div className="relative w-10 h-10 shrink-0">
+              <Image
+                src="/assets/logo.png"
+                alt="GlobalSmart Logo"
+                fill
+                sizes="40px"
+                className="object-contain"
+              />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-display font-black text-xl text-primary leading-none">
+                GlobalSmart
+              </span>
+              <span className="text-[9.5px] font-bold uppercase tracking-[0.12em] text-text-muted opacity-60 mt-0.5">
+                Citizen Portal
+              </span>
+            </div>
           </Link>
-          <Button 
+          <Button
             variant="ghost"
             size="icon"
             onClick={() => setIsMobileOpen(false)}
@@ -125,61 +150,45 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
           </Button>
         </div>
 
-        {/* Mobile user profile card */}
-        <div className="p-6 border-b border-border bg-bg/30">
-          <div className="flex items-center gap-4">
-            <div className="relative w-12 h-12 rounded-full overflow-hidden bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-primary">
-              {profile?.profile_photo ? (
-                <Image 
-                  src={profile.profile_photo} 
-                  alt={profile.name} 
-                  fill 
-                  sizes="48px"
-                  className="object-cover" 
-                />
-              ) : (
-                userInitials
-              )}
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="font-bold text-sm text-text truncate">{profile?.name || "Loading..."}</p>
-              <p className="text-[11px] text-text-muted font-mono truncate">{profile?.referral_id || "SC-CITIZEN"}</p>
-            </div>
-          </div>
-        </div>
-
         {/* Mobile Navigation links */}
-        <nav className="p-4 space-y-1 overflow-y-auto flex-1">
+        <nav className="p-4 space-y-1.5 overflow-y-auto flex-1">
           {filteredNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
             return (
-              <Link 
+              <Link
                 key={item.href}
-                href={item.href} 
+                href={item.href}
                 onClick={() => setIsMobileOpen(false)}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-[14px] transition-colors",
-                  isActive 
-                    ? "bg-primary/10 text-primary" 
-                    : "text-text-muted hover:bg-bg hover:text-text"
+                  "flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-[14px] transition-all relative overflow-hidden",
+                  isActive
+                    ? "bg-primary/[0.04] text-primary before:absolute before:left-0 before:top-2 before:bottom-2 before:w-[3.5px] before:bg-primary before:rounded-r-md"
+                    : "text-text-light hover:bg-bg hover:text-text duration-200",
                 )}
               >
-                <Icon size={18} />
-                {item.label}
+                <Icon
+                  size={18}
+                  className={cn(
+                    "shrink-0",
+                    isActive ? "text-primary" : "text-text-light/85",
+                  )}
+                />
+                <span>{item.label}</span>
               </Link>
             );
           })}
         </nav>
 
-        {/* Mobile Logout section */}
-        <div className="p-6 border-t border-border bg-white mt-auto">
-          <Button 
-            variant="ghost-danger" 
-            fullWidth 
-            alignLeft 
-            normalCase 
+        {/* Mobile bottom panel containing Logout */}
+        <div className="p-4 border-t border-border/40 bg-white mt-auto">
+          <Button
+            variant="ghost-danger"
+            fullWidth
+            alignLeft
+            normalCase
             onClick={handleLogout}
+            className="py-2.5 h-auto text-xs font-bold"
           >
             <LogOut size={18} className="shrink-0" />
             Log Out
@@ -188,10 +197,10 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
       </aside>
 
       {/* Desktop Sidebar Navigation */}
-      <aside 
+      <aside
         className={cn(
-          "hidden md:flex flex-col bg-white border-r border-border shrink-0 h-screen sticky top-0 transition-all duration-300 ease-in-out relative",
-          isCollapsed ? "w-20" : "w-64 lg:w-72"
+          "hidden md:flex flex-col bg-gradient-to-b from-white to-bg/40 border-r border-border/60 shrink-0 h-screen sticky top-0 transition-all duration-300 ease-in-out relative shadow-[2px_0_8px_-4px_rgba(0,0,0,0.03)]",
+          isCollapsed ? "w-20" : "w-64 lg:w-72",
         )}
       >
         {/* Toggle Collapse Button */}
@@ -200,85 +209,105 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
           size="icon"
           shape="circle"
           onClick={toggleCollapse}
-          className="absolute -right-3 top-8 w-6 h-6 bg-white border border-border text-text shadow-sm hover:bg-bg transition-colors z-20"
+          className="absolute -right-3.5 top-8 w-7 h-7 bg-white border border-border/80 text-text/80 shadow-md hover:bg-bg-alt hover:text-primary transition-all z-20"
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
         </Button>
 
         {/* Desktop sidebar top logo */}
-        <div className={cn("p-6 border-b border-border", isCollapsed ? "text-center" : "")}>
-          <Link href="/" className="flex flex-col">
+        <div
+          className={cn(
+            "pt-7 pb-5 px-6 border-b border-border/40",
+            isCollapsed ? "flex justify-center" : "",
+          )}
+        >
+          <Link href="/citizen" className="flex items-center gap-2">
             {isCollapsed ? (
-              <span className="font-display font-black text-xl text-primary leading-none">GS</span>
+              <div className="relative w-9 h-9 shrink-0 transition-all duration-300">
+                <Image
+                  src="/assets/logo.png"
+                  alt="GlobalSmart Logo"
+                  fill
+                  sizes="36px"
+                  className="object-contain"
+                  priority
+                />
+              </div>
             ) : (
               <>
-                <span className="font-display font-black text-xl text-primary leading-none">GlobalSmart</span>
-                <span className="text-[9px] font-bold uppercase tracking-widest text-text-muted opacity-60 mt-0.5">Citizen Portal</span>
+                <div className="relative w-15 h-15 shrink-0 transition-all duration-300">
+                  <Image
+                    src="/assets/logo.png"
+                    alt="GlobalSmart Logo"
+                    fill
+                    sizes="60px"
+                    className="object-contain"
+                    priority
+                  />
+                </div>
+                <div className="flex flex-col animate-fade-in">
+                  <span className="font-display font-black text-xl text-primary leading-none">
+                    GlobalSmart
+                  </span>
+                  <span className="text-[9.5px] font-bold uppercase tracking-[0.12em] text-text-muted opacity-60 mt-0.5">
+                    Citizen Portal
+                  </span>
+                </div>
               </>
             )}
           </Link>
         </div>
 
-        {/* Desktop user profile mini-card */}
-        <div className={cn("p-4 border-b border-border bg-bg/25", isCollapsed ? "flex justify-center" : "")}>
-          <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 rounded-full overflow-hidden bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-primary shrink-0">
-              {profile?.profile_photo ? (
-                <Image 
-                  src={profile.profile_photo} 
-                  alt={profile.name} 
-                  fill 
-                  sizes="40px"
-                  className="object-cover" 
-                />
-              ) : (
-                userInitials
-              )}
-            </div>
-            {!isCollapsed && (
-              <div className="flex-1 min-w-0">
-                <p className="font-bold text-[13px] text-text truncate">{profile?.name || "Loading..."}</p>
-                <p className="text-[10px] text-text-muted font-mono truncate">{profile?.referral_id || "SC-MEMBER"}</p>
-              </div>
-            )}
-          </div>
-        </div>
-        
         {/* Desktop nav links */}
-        <nav className="p-4 space-y-1 flex-1 overflow-y-auto">
+        <nav className="p-4 space-y-1.5 flex-1 overflow-y-auto">
           {filteredNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
             return (
-              <Link 
+              <Link
                 key={item.href}
-                href={item.href} 
+                href={item.href}
                 title={isCollapsed ? item.label : undefined}
                 className={cn(
-                  "flex items-center rounded-xl font-bold text-[14px] transition-all",
-                  isCollapsed ? "justify-center p-3" : "gap-3 px-4 py-3",
-                  isActive 
-                    ? "bg-primary/10 text-primary shadow-sm" 
-                    : "text-text-muted hover:bg-bg hover:text-text"
+                  "flex items-center rounded-xl font-bold text-[14px] transition-all relative overflow-hidden",
+                  isCollapsed
+                    ? "justify-center p-3 my-1.5"
+                    : "gap-3 px-4 py-3 my-1",
+                  isActive
+                    ? "bg-primary/[0.04] text-primary before:absolute before:left-0 before:top-2.5 before:bottom-2.5 before:w-[3.5px] before:bg-primary before:rounded-r-md"
+                    : "text-text-light hover:bg-bg/60 hover:text-text duration-200",
                 )}
               >
-                <Icon size={18} className="shrink-0" />
-                {!isCollapsed && <span>{item.label}</span>}
+                <Icon
+                  size={18}
+                  className={cn(
+                    "shrink-0 transition-colors",
+                    isActive ? "text-primary" : "text-text-light/85",
+                  )}
+                />
+                {!isCollapsed && (
+                  <span className="transition-all">{item.label}</span>
+                )}
               </Link>
             );
           })}
         </nav>
 
-        {/* Desktop logout section */}
-        <div className="p-4 border-t border-border bg-white mt-auto">
-          <Button 
-            variant="ghost-danger" 
-            fullWidth={!isCollapsed} 
-            alignLeft={!isCollapsed} 
-            normalCase 
+        {/* Desktop bottom panel containing Logout */}
+        <div
+          className={cn(
+            "p-4 border-t border-border/40 bg-gradient-to-t from-bg/25 to-white mt-auto",
+            isCollapsed && "flex justify-center",
+          )}
+        >
+          <Button
+            variant="ghost-danger"
+            fullWidth={!isCollapsed}
+            alignLeft={!isCollapsed}
+            normalCase
             size={isCollapsed ? "icon" : "md"}
-            className="transition-all"
+            className="transition-all py-2.5 h-auto text-xs font-bold"
             onClick={handleLogout}
             title={isCollapsed ? "Log Out" : undefined}
           >
@@ -290,11 +319,8 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
 
       {/* Main Content Area */}
       <main className="flex-1 p-6 md:p-8 lg:p-10 overflow-y-auto pb-24 md:pb-12">
-        <div className="max-w-6xl mx-auto">
-          {children}
-        </div>
+        <div className="max-w-6xl mx-auto">{children}</div>
       </main>
-
     </div>
   );
 }

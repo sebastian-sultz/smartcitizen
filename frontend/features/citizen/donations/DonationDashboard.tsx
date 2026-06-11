@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, Suspense } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
@@ -9,6 +8,7 @@ import {
   getDonationStats,
   getDonationHistory,
   getTaxCertificates,
+  initiatePayment,
 } from "../api";
 import {
   DonationStats as DonationStatsType,
@@ -18,13 +18,12 @@ import {
 
 import DonationHero from "./DonationHero";
 import DonationStats from "./DonationStats";
+import HorizontalDonationForm from "./HorizontalDonationForm";
 import DonationHistory from "./DonationHistory";
 import TaxCertificates from "./TaxCertificates";
 
 function DonationDashboardContent() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const activeTab = searchParams.get("tab") || "history";
+  const [activeTab, setActiveTab] = useState("history");
 
   const [stats, setStats] = useState<DonationStatsType | null>(null);
   const [history, setHistory] = useState<Payment[]>([]);
@@ -35,8 +34,10 @@ function DonationDashboardContent() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
 
-  const loadDonationData = async () => {
+  const loadInitialData = async () => {
     try {
+      setLoading(true);
+      setHistoryLoading(true);
       const [statsData, historyRes, certsData] = await Promise.all([
         getDonationStats(),
         getDonationHistory(page, limit),
@@ -47,7 +48,7 @@ function DonationDashboardContent() {
       setTotalHistory(historyRes?.pagination?.total_rows || 0);
       setCertificates(certsData || []);
     } catch (err) {
-      console.error("Failed to load donation dashboard data:", err);
+      console.error("Failed to load initial donation data:", err);
     } finally {
       setLoading(false);
       setHistoryLoading(false);
@@ -56,6 +57,7 @@ function DonationDashboardContent() {
 
   const loadHistoryOnly = async () => {
     try {
+      setHistoryLoading(true);
       const historyRes = await getDonationHistory(page, limit);
       setHistory(historyRes?.data || []);
       setTotalHistory(historyRes?.pagination?.total_rows || 0);
@@ -83,23 +85,19 @@ function DonationDashboardContent() {
   };
 
   useEffect(() => {
-    Promise.resolve().then(() => {
-      loadDonationData();
-    });
+    loadInitialData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (!loading) {
-      Promise.resolve().then(() => {
-        loadHistoryOnly();
-      });
+    if (!loading && activeTab === "history") {
+      loadHistoryOnly();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, limit, loading]);
+  }, [page, limit]);
 
   const handleTabChange = (val: string) => {
-    router.push(`/citizen/donations?tab=${val}`);
+    setActiveTab(val);
   };
 
   const handleDonationSuccess = (details: {
@@ -126,11 +124,17 @@ function DonationDashboardContent() {
 
   return (
     <div className="space-y-8">
-      {/* Hero Section containing narrative and Quick Donation Panel */}
-      <DonationHero onSuccess={handleDonationSuccess} />
+      {/* Hero Section containing narrative */}
+      <DonationHero />
 
       {/* KPI Stats Panel */}
       <DonationStats stats={stats} />
+
+      {/* Quick Donation Panel */}
+      <HorizontalDonationForm
+        submitApiCall={initiatePayment}
+        onSuccess={handleDonationSuccess}
+      />
 
       {/* Tabs Layout */}
       <Tabs

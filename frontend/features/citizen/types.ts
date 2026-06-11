@@ -119,7 +119,6 @@ export interface DonationStats {
   donatedLastMonth: number;
   totalTransactions: number;
   averageAmount: number;
-  donorLevel: 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
 }
 
 export interface TaxCertificate {

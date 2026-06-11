@@ -4,7 +4,9 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { DonationStats } from "../types";
 import { Heart, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 import { useRouter } from "next/navigation";
+import { getDonorLevel } from "../utils";
 
 interface DonationSummaryWidgetProps {
   stats: DonationStats | null;
@@ -14,6 +16,16 @@ export default function DonationSummaryWidget({ stats }: DonationSummaryWidgetPr
   const router = useRouter();
 
   if (!stats) return null;
+
+  const level = getDonorLevel(stats.lifetimeDonated);
+  const getLevelBadgeVariant = (lvl: string) => {
+    switch (lvl) {
+      case "Platinum": return "info";
+      case "Gold": return "warning";
+      case "Silver": return "secondary";
+      default: return "muted";
+    }
+  };
 
   return (
     <Card className="rounded-[40px] border-primary/5 shadow-sm">
@@ -39,9 +51,9 @@ export default function DonationSummaryWidget({ stats }: DonationSummaryWidgetPr
               </div>
             </div>
             <div className="text-right">
-              <span className="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 bg-accent/15 text-accent rounded-full">
-                {stats.donorLevel}
-              </span>
+              <Badge variant={getLevelBadgeVariant(level)} size="sm">
+                {level}
+              </Badge>
             </div>
           </div>
 
