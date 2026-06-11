@@ -82,13 +82,10 @@ func (r *repository) GetUserDonationStats(ctx context.Context, userID string) (*
 	startOfLastMonth := startOfMonth.AddDate(0, -1, 0)
 	endOfLastMonth := startOfMonth.Add(-time.Nanosecond)
 
-	// Base query for successful payments of this user
-	baseQuery := r.db.WithContext(ctx).Model(&Payment{}).
-		Where("user_id = ?", userID).
-		Where("status = ?", PaymentStatusSuccess)
-
 	// 1. Total Transactions
-	if err := baseQuery.Count(&stats.TotalTransactions).Error; err != nil {
+	if err := r.db.WithContext(ctx).Model(&Payment{}).
+		Where("user_id = ? AND status = ?", userID, PaymentStatusSuccess).
+		Count(&stats.TotalTransactions).Error; err != nil {
 		return nil, err
 	}
 
@@ -96,22 +93,26 @@ func (r *repository) GetUserDonationStats(ctx context.Context, userID string) (*
 		return &stats, nil // Returns zeros if no successful transactions
 	}
 
-	// Helper variable for raw sum
+	// Helper variables for raw sums
 	var lifetime, thisYear, lastMonth int64
 
 	// 2. Lifetime Donated
-	if err := baseQuery.Select("COALESCE(SUM(amount), 0)").Scan(&lifetime).Error; err != nil {
+	if err := r.db.WithContext(ctx).Model(&Payment{}).
+		Where("user_id = ? AND status = ?", userID, PaymentStatusSuccess).
+		Select("COALESCE(SUM(amount), 0)").Scan(&lifetime).Error; err != nil {
 		return nil, err
 	}
 
-	// 4. Donated This Year
-	if err := baseQuery.Where("created_at >= ?", startOfYear).
+	// 3. Donated This Year
+	if err := r.db.WithContext(ctx).Model(&Payment{}).
+		Where("user_id = ? AND status = ? AND created_at >= ?", userID, PaymentStatusSuccess, startOfYear).
 		Select("COALESCE(SUM(amount), 0)").Scan(&thisYear).Error; err != nil {
 		return nil, err
 	}
 
-	// 5. Donated Last Month
-	if err := baseQuery.Where("created_at >= ? AND created_at <= ?", startOfLastMonth, endOfLastMonth).
+	// 4. Donated Last Month
+	if err := r.db.WithContext(ctx).Model(&Payment{}).
+		Where("user_id = ? AND status = ? AND created_at >= ? AND created_at <= ?", userID, PaymentStatusSuccess, startOfLastMonth, endOfLastMonth).
 		Select("COALESCE(SUM(amount), 0)").Scan(&lastMonth).Error; err != nil {
 		return nil, err
 	}
