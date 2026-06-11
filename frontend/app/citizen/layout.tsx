@@ -179,7 +179,6 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
             fullWidth 
             alignLeft 
             normalCase 
-            className="gap-3 px-4 py-3 text-[14px]"
             onClick={handleLogout}
           >
             <LogOut size={18} className="shrink-0" />
@@ -201,7 +200,7 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
           size="icon"
           shape="circle"
           onClick={toggleCollapse}
-          className="absolute -right-3 top-8 w-6 h-6 bg-white border border-border flex items-center justify-center text-text shadow-sm hover:bg-bg transition-colors z-20"
+          className="absolute -right-3 top-8 w-6 h-6 bg-white border border-border text-text shadow-sm hover:bg-bg transition-colors z-20"
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
@@ -278,7 +277,8 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
             fullWidth={!isCollapsed} 
             alignLeft={!isCollapsed} 
             normalCase 
-            className={cn("text-[14px] transition-all", isCollapsed ? "p-3 justify-center" : "gap-3 px-4 py-3")}
+            size={isCollapsed ? "icon" : "md"}
+            className="transition-all"
             onClick={handleLogout}
             title={isCollapsed ? "Log Out" : undefined}
           >

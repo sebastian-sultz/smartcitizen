@@ -59,8 +59,9 @@ export default function ShareReferral({ user, referralLink }: ShareReferralProps
               </div>
               <Button
                 onClick={handleCopyLink}
-                variant="secondary"
-                className="bg-primary/10 text-primary border-none hover:bg-primary/20 px-4 py-3 h-auto rounded-xl shrink-0 flex items-center justify-center"
+                variant="ghost-primary"
+                size="sm"
+                className="shrink-0"
                 title="Copy link"
               >
                 {copiedLink ? <Check size={16} /> : <Copy size={16} />}
@@ -106,15 +107,18 @@ export default function ShareReferral({ user, referralLink }: ShareReferralProps
               <div className="space-y-2">
                 <Button
                   onClick={handleWhatsAppShare}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2 py-2.5 text-xs rounded-xl border-none w-full flex items-center justify-center leading-none"
+                  variant="success"
+                  size="sm"
+                  fullWidth
                 >
                   <Send size={13} />
                   WhatsApp
                 </Button>
                 <Button
                   onClick={handleEmailShare}
-                  variant="outline"
-                  className="border-border hover:bg-bg text-text font-bold gap-2 py-2.5 text-xs rounded-xl w-full flex items-center justify-center leading-none"
+                  variant="secondary"
+                  size="sm"
+                  fullWidth
                 >
                   <Mail size={13} />
                   Email

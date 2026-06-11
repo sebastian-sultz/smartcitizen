@@ -83,8 +83,9 @@ export default function ShareReferralDialog({
               </div>
               <Button
                 onClick={handleCopyLink}
-                variant="secondary"
-                className="px-4 rounded-xl shrink-0 border border-border hover:border-primary/20 hover:text-primary flex items-center justify-center"
+                variant="ghost-primary"
+                size="sm"
+                className="shrink-0 border border-border"
                 title="Copy Link"
               >
                 <Copy size={16} />

@@ -164,26 +164,30 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
           <div className="w-full pt-4 flex flex-col gap-3">
             <Separator className="bg-border/80" />
             <div className="flex gap-3">
-              <Button
-                onClick={handleDownloadReceipt}
-                variant="primary"
-                size="sm"
-                className="flex-1"
-                startIcon={<Download size={14} />}
-              >
-                Donation Receipt
-              </Button>
+              <div className="flex-1">
+                <Button
+                  onClick={handleDownloadReceipt}
+                  variant="primary"
+                  size="sm"
+                  fullWidth
+                  startIcon={<Download size={14} />}
+                >
+                  Donation Receipt
+                </Button>
+              </div>
 
               {isSuccess && (
-                <Button
-                  onClick={handleDownloadCertificate}
-                  variant="accent"
-                  size="sm"
-                  className="flex-1"
-                  startIcon={<FileText size={14} />}
-                >
-                  80G Tax Slip
-                </Button>
+                <div className="flex-1">
+                  <Button
+                    onClick={handleDownloadCertificate}
+                    variant="accent"
+                    size="sm"
+                    fullWidth
+                    startIcon={<FileText size={14} />}
+                  >
+                    80G Tax Slip
+                  </Button>
+                </div>
               )}
             </div>
 

@@ -37,15 +37,14 @@ function DonationDashboardContent() {
 
   const loadDonationData = async () => {
     try {
-      const offset = (page - 1) * limit;
       const [statsData, historyRes, certsData] = await Promise.all([
         getDonationStats(),
-        getDonationHistory(offset, limit),
+        getDonationHistory(page, limit),
         getTaxCertificates(),
       ]);
       setStats(statsData || null);
       setHistory(historyRes?.data || []);
-      setTotalHistory(historyRes?.totalCount || 0);
+      setTotalHistory(historyRes?.pagination?.total_rows || 0);
       setCertificates(certsData || []);
     } catch (err) {
       console.error("Failed to load donation dashboard data:", err);
@@ -57,10 +56,9 @@ function DonationDashboardContent() {
 
   const loadHistoryOnly = async () => {
     try {
-      const offset = (page - 1) * limit;
-      const historyRes = await getDonationHistory(offset, limit);
+      const historyRes = await getDonationHistory(page, limit);
       setHistory(historyRes?.data || []);
-      setTotalHistory(historyRes?.totalCount || 0);
+      setTotalHistory(historyRes?.pagination?.total_rows || 0);
     } catch (err) {
       console.error("Failed to load donation history page:", err);
     } finally {
@@ -70,15 +68,14 @@ function DonationDashboardContent() {
 
   const refreshDonationData = async () => {
     try {
-      const offset = (page - 1) * limit;
       const [statsData, historyRes, certsData] = await Promise.all([
         getDonationStats(),
-        getDonationHistory(offset, limit),
+        getDonationHistory(page, limit),
         getTaxCertificates(),
       ]);
       setStats(statsData || null);
       setHistory(historyRes?.data || []);
-      setTotalHistory(historyRes?.totalCount || 0);
+      setTotalHistory(historyRes?.pagination?.total_rows || 0);
       setCertificates(certsData || []);
     } catch (err) {
       console.error("Failed to refresh donation dashboard data:", err);

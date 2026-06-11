@@ -110,7 +110,7 @@ export default function ReferralProgress({ user }: ReferralProgressProps) {
                     <p className="text-[11px] mt-0.5">You have met all referral and contribution milestones required to apply as a coordinator.</p>
                   </div>
                 </div>
-                <Button className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 rounded-xl border-none" asChild>
+                <Button variant="success" size="sm" fullWidth asChild>
                   <Link href="/citizen/volunteer">Apply Now</Link>
                 </Button>
               </div>

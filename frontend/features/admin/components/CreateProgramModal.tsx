@@ -17,6 +17,7 @@ import Image from "next/image";
 import { createEvent } from "@/features/citizen/community/api";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import {
@@ -308,35 +309,22 @@ export const CreateProgramModal: React.FC<CreateProgramModalProps> = ({
             </div>
 
             {/* Row 6: Description */}
-            <div className="space-y-2 w-full">
-              <label
-                htmlFor="description"
-                className="text-[14px] font-bold text-text ml-1 block"
-              >
-                Description
-              </label>
-              <textarea
-                id="description"
-                placeholder="Write a clear description of the program details, agenda, and target audience..."
-                rows={4}
-                disabled={formik.isSubmitting}
-                name="description"
-                value={formik.values.description}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className={cn(
-                  "w-full rounded-xl bg-bg border outline-none transition-all px-6 py-4 text-text text-[15px] resize-none hover:border-border-hover focus:border-primary focus:ring-1 focus:ring-primary/20",
-                  formik.touched.description && formik.errors.description
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-border focus:border-primary",
-                )}
-              />
-              {formik.touched.description && formik.errors.description && (
-                <p className="text-red-500 text-[12px] ml-1">
-                  {formik.errors.description}
-                </p>
-              )}
-            </div>
+            <Textarea
+              id="description"
+              label="Description"
+              placeholder="Write a clear description of the program details, agenda, and target audience..."
+              rows={4}
+              disabled={formik.isSubmitting}
+              name="description"
+              value={formik.values.description}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={
+                formik.touched.description && formik.errors.description
+                  ? (formik.errors.description as string)
+                  : undefined
+              }
+            />
 
             {/* Row 7: Program Image (Optional) */}
             <div className="space-y-2">
@@ -366,10 +354,11 @@ export const CreateProgramModal: React.FC<CreateProgramModalProps> = ({
                   </div>
                   <Button
                     type="button"
-                    variant="ghost"
+                    variant="ghost-danger"
                     size="icon"
+                    shape="square"
                     onClick={handleRemoveImage}
-                    className="shrink-0 text-danger hover:bg-danger/10 hover:text-danger rounded-lg transition-colors"
+                    className="shrink-0 transition-colors"
                   >
                     <X size={18} />
                   </Button>

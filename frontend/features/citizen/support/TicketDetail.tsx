@@ -80,7 +80,7 @@ export default function TicketDetail({ ticket, onBack, onUpdateTicket }: TicketD
             variant="ghost-muted"
             size="icon-sm"
             shape="circle"
-            className="md:hidden flex items-center justify-center p-0"
+            className="md:hidden"
             title="Back to Tickets"
           >
             <ArrowLeft size={16} />
@@ -157,7 +157,7 @@ export default function TicketDetail({ ticket, onBack, onUpdateTicket }: TicketD
               placeholder="Type your message here..."
               value={replyText}
               onChange={(e) => setReplyText(e.target.value)}
-              className="py-2.5 px-4 text-sm"
+              size="sm"
               disabled={submitting}
             />
           </div>
@@ -166,7 +166,8 @@ export default function TicketDetail({ ticket, onBack, onUpdateTicket }: TicketD
             disabled={!replyText.trim() || submitting}
             isLoading={submitting}
             startIcon={<Send size={12} />}
-            className="shrink-0 text-xs font-bold py-2.5 px-4 h-auto rounded-xl"
+            size="sm"
+            className="shrink-0"
           >
             Send
           </Button>

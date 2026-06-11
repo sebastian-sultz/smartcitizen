@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useAlert } from "@/components/ui/AlertProvider";
@@ -106,27 +107,20 @@ export const ContactForm = ({ helpAreas }: ContactFormProps) => {
               <p className="text-red-500 text-[12px] ml-1">{formik.errors.helpArea}</p>
             )}
           </div>
-          <div className="space-y-2">
-            <label className="text-[14px] font-bold text-text ml-1 block">Your Message / Description *</label>
-            <textarea 
-              rows={5} 
-              placeholder="How can we assist you?" 
-              name="message"
-              value={formik.values.message}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              className={`w-full px-6 py-4 rounded-xl bg-bg border outline-none transition-all resize-none ${
-                formik.touched.message && formik.errors.message ? "border-red-500" : "border-border focus:border-primary"
-              }`}
-            ></textarea>
-            {formik.touched.message && formik.errors.message && (
-              <p className="text-red-500 text-[12px] ml-1">{formik.errors.message}</p>
-            )}
-          </div>
+          <Textarea
+            label="Your Message / Description *"
+            rows={5} 
+            placeholder="How can we assist you?" 
+            name="message"
+            value={formik.values.message}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.message && formik.errors.message ? formik.errors.message : undefined}
+          />
           <Button 
             type="submit" 
             size="lg" 
-            className="w-full" 
+            fullWidth 
             isLoading={formik.isSubmitting}
           >
             Submit Request

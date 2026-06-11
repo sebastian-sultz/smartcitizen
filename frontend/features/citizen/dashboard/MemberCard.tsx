@@ -100,8 +100,10 @@ export default function MemberCard({ profile }: MemberCardProps) {
             <Dialog open={showQRModal} onOpenChange={setShowQRModal}>
               <DialogTrigger asChild>
                 <Button 
-                  variant="secondary"
-                  className="inline-flex items-center justify-center gap-2 px-4 py-2.5 w-full bg-bg hover:bg-primary/5 text-primary text-sm font-bold rounded-2xl border border-primary/15 transition-all shadow-sm group"
+                  variant="ghost-primary"
+                  size="sm"
+                  fullWidth
+                  className="border border-primary/15 bg-bg shadow-sm group"
                   aria-label="View Identification QR Code"
                 >
                   <QrCode size={16} className="group-hover:scale-110 transition-transform" />

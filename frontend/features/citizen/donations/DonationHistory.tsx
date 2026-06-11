@@ -157,7 +157,7 @@ export default function DonationHistory({
             placeholder="Search transaction ID..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-12 pr-4 py-2 text-sm"
+            size="sm"
             icon={<Search size={18} className="text-text-muted" />}
           />
         </div>

@@ -72,20 +72,23 @@ export const ProfessionalCard = (vol: VolunteerResponse) => {
       </div>
 
       <div className="mt-6 flex items-center gap-3 pt-6 border-t border-border">
-        <Button variant="success" className="flex-1">
-          <MessageCircle size={18} className="mr-2" />
-          WhatsApp
-        </Button>
+        <div className="flex-1">
+          <Button variant="success" fullWidth startIcon={<MessageCircle size={18} />}>
+            WhatsApp
+          </Button>
+        </div>
         {vol.ispublicconsent ? (
-          <Button variant="outline" className="flex-1">
-            <Phone size={18} className="mr-2" />
-            Call
-          </Button>
+          <div className="flex-1">
+            <Button variant="outline" fullWidth startIcon={<Phone size={18} />}>
+              Call
+            </Button>
+          </div>
         ) : (
-          <Button variant="outline" className="flex-1">
-            <MessageCircle size={18} className="mr-2" />
-            Request
-          </Button>
+          <div className="flex-1">
+            <Button variant="outline" fullWidth startIcon={<MessageCircle size={18} />}>
+              Request
+            </Button>
+          </div>
         )}
       </div>
     </Card>
