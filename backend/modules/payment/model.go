@@ -28,8 +28,25 @@ type Payment struct {
 	DonorName           string         `gorm:"type:varchar(255)" json:"donorName,omitempty"`
 	DonorEmail          string         `gorm:"type:varchar(255)" json:"donorEmail,omitempty"`
 	DonorPhone          string         `gorm:"type:varchar(50)" json:"donorPhone,omitempty"`
+	DonorPAN            string         `gorm:"type:varchar(20)" json:"donorPan,omitempty"`
+	DonorAddress        string         `gorm:"type:text" json:"donorAddress,omitempty"`
 	PhonepeResponse     datatypes.JSON `gorm:"type:jsonb" json:"phonepeResponse,omitempty"`
 	CreatedAt           time.Time      `json:"createdAt"`
 	UpdatedAt           time.Time      `json:"updatedAt"`
 	DeletedAt           gorm.DeletedAt `gorm:"index" json:"-"`
+}
+
+type Receipt struct {
+	ID            uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
+	PaymentID     uuid.UUID `gorm:"type:uuid;uniqueIndex;not null" json:"paymentId"`
+	ReceiptNumber string    `gorm:"type:varchar(100);uniqueIndex;not null" json:"receiptNumber"`
+	CloudinaryURL string    `gorm:"type:text" json:"cloudinaryUrl"`
+	CreatedAt     time.Time `json:"createdAt"`
+	UpdatedAt     time.Time `json:"updatedAt"`
+}
+
+type ReceiptSequence struct {
+	Year      int       `gorm:"primaryKey;autoIncrement:false"`
+	LastValue int64     `gorm:"not null;default:0"`
+	UpdatedAt time.Time
 }

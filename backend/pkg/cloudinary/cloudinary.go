@@ -35,3 +35,16 @@ func DeleteImage(ctx context.Context, publicID string) error {
 	_, err := cld.Upload.Destroy(ctx, uploader.DestroyParams{PublicID: publicID})
 	return err
 }
+
+// UploadPDF uploads a PDF file (raw bytes) to Cloudinary and returns the Secure URL and Public ID.
+func UploadPDF(ctx context.Context, fileBytes []byte, folder string, filename string) (string, string, error) {
+	resp, err := cld.Upload.Upload(ctx, fileBytes, uploader.UploadParams{
+		Folder:       folder,
+		PublicID:     filename,
+		ResourceType: "raw",
+	})
+	if err != nil {
+		return "", "", err
+	}
+	return resp.SecureURL, resp.PublicID, nil
+}

@@ -2,11 +2,13 @@ package payment
 
 import (
 	"context"
+	"fmt"
 	"time"
 	"backend/dto/response"
 	"backend/pkg/utils"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type Repository interface {
@@ -15,6 +17,10 @@ type Repository interface {
 	UpdatePayment(ctx context.Context, payment *Payment) error
 	ListPayments(ctx context.Context, userID *string, pagination *utils.Pagination) ([]Payment, error)
 	GetUserDonationStats(ctx context.Context, userID string) (*response.UserDonationStatsResponse, error)
+	GetNextReceiptNumber(ctx context.Context) (string, error)
+	CreateReceipt(ctx context.Context, receipt *Receipt) error
+	GetReceiptByPaymentID(ctx context.Context, paymentID string) (*Receipt, error)
+	UpdateReceiptURL(ctx context.Context, receiptID string, url string) error
 }
 
 type repository struct {
@@ -123,4 +129,50 @@ func (r *repository) GetUserDonationStats(ctx context.Context, userID string) (*
 	stats.AverageAmount = stats.LifetimeDonated / float64(stats.TotalTransactions)
 
 	return &stats, nil
+}
+
+func (r *repository) GetNextReceiptNumber(ctx context.Context) (string, error) {
+	loc, _ := time.LoadLocation("Asia/Kolkata")
+	now := time.Now().In(loc)
+	currentYear := now.Year()
+	if now.Month() < time.April {
+		currentYear = currentYear - 1
+	}
+
+	var seq ReceiptSequence
+	err := r.db.WithContext(ctx).Transaction(func(tx *gorm.DB) error {
+		if err := tx.Exec("INSERT INTO receipt_sequences (year, last_value, updated_at) VALUES (?, 0, ?) ON CONFLICT DO NOTHING", currentYear, time.Now()).Error; err != nil {
+			return err
+		}
+		
+		if err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).Where("year = ?", currentYear).First(&seq).Error; err != nil {
+			return err
+		}
+		
+		seq.LastValue++
+		seq.UpdatedAt = time.Now()
+		return tx.Save(&seq).Error
+	})
+	
+	if err != nil {
+		return "", err
+	}
+	
+	return fmt.Sprintf("SCF/%d/%06d", currentYear, seq.LastValue), nil
+}
+
+func (r *repository) CreateReceipt(ctx context.Context, receipt *Receipt) error {
+	return r.db.WithContext(ctx).Create(receipt).Error
+}
+
+func (r *repository) GetReceiptByPaymentID(ctx context.Context, paymentID string) (*Receipt, error) {
+	var receipt Receipt
+	if err := r.db.WithContext(ctx).Where("payment_id = ?", paymentID).First(&receipt).Error; err != nil {
+		return nil, err
+	}
+	return &receipt, nil
+}
+
+func (r *repository) UpdateReceiptURL(ctx context.Context, receiptID string, url string) error {
+	return r.db.WithContext(ctx).Model(&Receipt{}).Where("id = ?", receiptID).Update("cloudinary_url", url).Error
 }

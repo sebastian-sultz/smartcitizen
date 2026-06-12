@@ -8,11 +8,13 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	dtorequest "backend/dto/request"
 	dtoresponse "backend/dto/response"
 	"backend/modules/user"
+	"backend/pkg/cloudinary"
 	"backend/pkg/utils"
 
 	"github.com/PhonePe/phonepe-pg-sdk-go/common/models"
@@ -29,6 +31,7 @@ type Service interface {
 	CheckPaymentStatus(ctx context.Context, orderID string) (*Payment, error)
 	GetPaymentHistory(ctx context.Context, userID *string, pagination *utils.Pagination) ([]dtoresponse.Payment, error)
 	GetUserDonationStats(ctx context.Context, userID string) (*dtoresponse.UserDonationStatsResponse, error)
+	GetReceiptURL(ctx context.Context, transactionID string) (string, error)
 }
 
 type service struct {
@@ -94,6 +97,8 @@ func (s *service) InitiatePayment(ctx context.Context, req dtorequest.InitiatePa
 		DonorName:       req.DonorName,
 		DonorEmail:      req.DonorEmail,
 		DonorPhone:      req.DonorPhone,
+		DonorPAN:        req.DonorPAN,
+		DonorAddress:    req.DonorAddress,
 	}
 
 	log.Printf("Initiating payment for OrderID: %s, Amount: %d", merchantOrderID, req.Amount)
@@ -184,10 +189,7 @@ func (s *service) HandleWebhook(ctx context.Context, authHeader string, response
 	case "COMPLETED":
 		if payment.Status != PaymentStatusSuccess {
 			payment.Status = PaymentStatusSuccess
-			if payment.UserID != nil {
-				// Record the successful payment via user service (converts to INR float64)
-				_ = s.userService.RecordSuccessfulPayment(payment.UserID.String(), float64(payment.Amount)/100.0)
-			}
+			s.processSuccessfulPayment(ctx, payment)
 		}
 	case "FAILED":
 		payment.Status = PaymentStatusFailed
@@ -235,9 +237,7 @@ func (s *service) CheckPaymentStatus(ctx context.Context, orderID string) (*Paym
 		case "COMPLETED":
 			if payment.Status != PaymentStatusSuccess {
 				payment.Status = PaymentStatusSuccess
-				if payment.UserID != nil {
-					_ = s.userService.RecordSuccessfulPayment(payment.UserID.String(), float64(payment.Amount)/100.0)
-				}
+				s.processSuccessfulPayment(ctx, payment)
 				updated = true
 			}
 		case "FAILED":
@@ -291,4 +291,80 @@ func (s *service) GetUserDonationStats(ctx context.Context, userID string) (*dto
 		return nil, err
 	}
 	return stats, nil
+}
+
+func (s *service) processSuccessfulPayment(ctx context.Context, payment *Payment) {
+	if payment.UserID != nil {
+		_ = s.userService.RecordSuccessfulPayment(payment.UserID.String(), float64(payment.Amount)/100.0)
+	}
+
+	_, err := s.repo.GetReceiptByPaymentID(ctx, payment.ID.String())
+	if err == nil {
+		return // Receipt already exists
+	}
+
+	receiptNumber, err := s.repo.GetNextReceiptNumber(ctx)
+	if err != nil {
+		log.Printf("Failed to generate receipt number for OrderID %s: %v", payment.MerchantOrderID, err)
+		return
+	}
+
+	newReceipt := &Receipt{
+		PaymentID:     payment.ID,
+		ReceiptNumber: receiptNumber,
+		CloudinaryURL: "", 
+	}
+	if err := s.repo.CreateReceipt(ctx, newReceipt); err != nil {
+		log.Printf("Failed to create receipt record for OrderID %s: %v", payment.MerchantOrderID, err)
+		return
+	}
+
+	go func(p *Payment, rNum string, rID string) {
+		log.Printf("Generating PDF for Receipt: %s", rNum)
+		
+		receiptData := utils.ReceiptData{
+			ReceiptNum:    rNum,
+			CreatedAt:     p.CreatedAt,
+			DonorName:     p.DonorName,
+			DonorPAN:      p.DonorPAN,
+			DonorPhone:    p.DonorPhone,
+			DonorAddress:  p.DonorAddress,
+			Amount:        float64(p.Amount) / 100.0,
+			PaymentMethod: p.PaymentMethod,
+			TransactionID: p.ProviderReferenceID,
+		}
+
+		pdfBytes, err := utils.GenerateReceiptPDF(receiptData)
+		if err != nil {
+			log.Printf("PDF generation failed for %s: %v", rNum, err)
+			return
+		}
+
+		filename := fmt.Sprintf("receipts/%s", strings.ReplaceAll(rNum, "/", "-"))
+		url, _, err := cloudinary.UploadPDF(context.Background(), pdfBytes, "receipts", filename)
+		if err != nil {
+			log.Printf("Upload failed for %s: %v", rNum, err)
+			return
+		}
+
+		if err := s.repo.UpdateReceiptURL(context.Background(), rID, url); err != nil {
+			log.Printf("Failed to update Receipt URL for %s: %v", rNum, err)
+		} else {
+			log.Printf("Successfully generated and uploaded receipt: %s", url)
+		}
+	}(payment, receiptNumber, newReceipt.ID.String())
+}
+
+func (s *service) GetReceiptURL(ctx context.Context, transactionID string) (string, error) {
+	payment, err := s.repo.GetPaymentByOrderID(ctx, transactionID)
+	if err != nil {
+		return "", err
+	}
+	
+	receipt, err := s.repo.GetReceiptByPaymentID(ctx, payment.ID.String())
+	if err != nil {
+		return "", err
+	}
+	
+	return receipt.CloudinaryURL, nil
 }

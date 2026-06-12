@@ -34,7 +34,7 @@ func main() {
 	db := database.Connect(dsn)
 
 	// In Postgres, to use gen_random_uuid(), pgcrypto extension is often needed, but from PG 13 it is built-in.
-	err := db.AutoMigrate(&user.User{}, &event.Event{}, &event.EventRegistration{}, &volunteer.Volunteer{}, &report.AbuseReport{}, &report.ReportMessage{}, &payment.Payment{})
+	err := db.AutoMigrate(&user.User{}, &event.Event{}, &event.EventRegistration{}, &volunteer.Volunteer{}, &report.AbuseReport{}, &report.ReportMessage{}, &payment.Payment{}, &payment.Receipt{}, &payment.ReceiptSequence{})
 	if err != nil {
 		log.Fatalf("Failed to auto migrate: %v", err)
 	}

@@ -130,3 +130,24 @@ func (h *Handler) GetDonationStats(c *gin.Context) {
 
 	c.JSON(http.StatusOK, stats)
 }
+
+func (h *Handler) GetReceipt(c *gin.Context) {
+	transactionID := c.Param("transactionId")
+	if transactionID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing transactionId"})
+		return
+	}
+
+	url, err := h.service.GetReceiptURL(c.Request.Context(), transactionID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "receipt not found or payment incomplete"})
+		return
+	}
+
+	if url == "" {
+		c.JSON(http.StatusAccepted, gin.H{"status": "processing"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"url": url})
+}
