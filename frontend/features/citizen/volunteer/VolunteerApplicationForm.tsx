@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { 
   Select, 
@@ -261,23 +262,16 @@ export default function VolunteerApplicationForm({ user, onSubmitSuccess }: Volu
             error={formik.touched.experience ? formik.errors.experience : undefined}
           />
 
-          <div className="space-y-2">
-            <label className="text-[14px] font-bold text-text">Motivation Statement</label>
-            <textarea
-              name="motivation"
-              rows={4}
-              value={formik.values.motivation}
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              placeholder="Why do you want to become a verified citizen coordinator with GlobalSmart?"
-              className={`w-full rounded-xl border border-border bg-bg p-4 text-base transition-all outline-none focus:border-primary placeholder:text-text-muted ${
-                formik.touched.motivation && formik.errors.motivation ? "border-red-500" : ""
-              }`}
-            />
-            {formik.touched.motivation && formik.errors.motivation && (
-              <p className="text-red-500 text-xs font-semibold">{formik.errors.motivation}</p>
-            )}
-          </div>
+          <Textarea
+            label="Motivation Statement"
+            name="motivation"
+            rows={4}
+            value={formik.values.motivation}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            placeholder="Why do you want to become a verified citizen coordinator with GlobalSmart?"
+            error={formik.touched.motivation && formik.errors.motivation ? formik.errors.motivation : undefined}
+          />
 
           {/* Consent Checkbox */}
           <div className={`flex gap-3 items-start p-4 rounded-2xl border transition-colors ${
@@ -307,7 +301,8 @@ export default function VolunteerApplicationForm({ user, onSubmitSuccess }: Volu
             <Button
               type="submit"
               isLoading={formik.isSubmitting}
-              className="rounded-2xl px-6 py-2.5 h-auto font-bold w-full sm:w-auto"
+              fullWidth
+              className="sm:w-auto"
             >
               Submit Application
             </Button>

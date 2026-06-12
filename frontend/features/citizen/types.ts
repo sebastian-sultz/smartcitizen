@@ -119,7 +119,6 @@ export interface DonationStats {
   donatedLastMonth: number;
   totalTransactions: number;
   averageAmount: number;
-  donorLevel: 'Bronze' | 'Silver' | 'Gold' | 'Platinum';
 }
 
 export interface TaxCertificate {
@@ -157,11 +156,16 @@ export interface Payment {
   updatedAt: string;
 }
 
+export interface BackendPagination {
+  limit: number;
+  page: number;
+  total_rows: number;
+  total_pages: number;
+}
+
 export interface PaymentHistoryResponse {
   data: Payment[];
-  totalCount: number;
-  page: number;
-  limit: number;
+  pagination: BackendPagination;
 }
 
 export interface InitiatePaymentRequest {

@@ -2,73 +2,138 @@
 
 import { DonationStats as DonationStatsType } from "../types";
 import { Card } from "@/components/ui/Card";
-import { Heart, Calendar, CreditCard } from "lucide-react";
+import { Badge } from "@/components/ui/Badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getDonorLevel } from "../utils";
 
 interface DonationStatsProps {
   stats: DonationStatsType | null;
 }
 
 export default function DonationStats({ stats }: DonationStatsProps) {
-  if (!stats) return null;
+  if (!stats) {
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {[...Array(4)].map((_, idx) => (
+          <Card
+            key={idx}
+            className="bg-white border border-border/80 p-6 flex flex-col justify-between shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] h-[130px]"
+          >
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-8 w-36" />
+            </div>
+            <div className="mt-4 flex items-center gap-2">
+              <Skeleton className="h-5 w-16 rounded-full" />
+              <Skeleton className="h-3 w-20" />
+            </div>
+          </Card>
+        ))}
+      </div>
+    );
+  }
+
+  const formatRupeesParts = (val: number) => {
+    const rounded = val.toFixed(2);
+    const [whole, decimal] = rounded.split(".");
+    const formattedWhole = Number(whole).toLocaleString("en-IN");
+    return { whole: formattedWhole, decimal };
+  };
+
+  const totalParts = formatRupeesParts(stats.lifetimeDonated);
+  const avgParts = formatRupeesParts(stats.averageAmount);
+  const thisYearParts = formatRupeesParts(stats.donatedThisYear);
+  const lastMonthParts = formatRupeesParts(stats.donatedLastMonth);
+
+  const level = getDonorLevel(stats.lifetimeDonated);
+  const getLevelBadgeVariant = (lvl: string) => {
+    switch (lvl) {
+      case "Platinum": return "info";
+      case "Gold": return "warning";
+      case "Silver": return "secondary";
+      default: return "muted";
+    }
+  };
 
   const statsItems = [
     {
-      title: "Lifetime Support",
-      value: `₹${stats.lifetimeDonated.toLocaleString("en-IN")}`,
-      icon: Heart,
-      color: "from-accent/5 to-accent/15 border-accent/20 text-accent",
-      textColor: "text-text",
-      description: "Total direct impact funded",
+      title: "Total Donated",
+      whole: `₹${totalParts.whole}`,
+      decimal: `.${totalParts.decimal}`,
+      badge: (
+        <Badge variant={getLevelBadgeVariant(level)} size="sm">
+          {level}
+        </Badge>
+      ),
+      subtitle: `Avg. Contribution: ₹${avgParts.whole}.${avgParts.decimal}`,
     },
     {
-      title: "This Fiscal Year",
-      value: `₹${stats.donatedThisYear.toLocaleString("en-IN")}`,
-      icon: Calendar,
-      color: "from-primary/5 to-primary/15 border-primary/20 text-primary",
-      textColor: "text-primary",
-      description: "FY 2026-2027 contributions",
+      title: "Donated This Year",
+      whole: `₹${thisYearParts.whole}`,
+      decimal: `.${thisYearParts.decimal}`,
+      badge: (
+        <Badge variant="success" size="sm">
+          Yearly
+        </Badge>
+      ),
+      subtitle: "This fiscal year",
     },
     {
-      title: "Total Contributions",
-      value: stats.totalTransactions.toString(),
-      icon: CreditCard,
-      color: "from-success-bg to-success-bg/80 border-success/20 text-success",
-      textColor: "text-success",
-      description: "Successfully processed payments",
+      title: "Donated Last Month",
+      whole: `₹${lastMonthParts.whole}`,
+      decimal: `.${lastMonthParts.decimal}`,
+      badge: (
+        <Badge variant="info" size="sm">
+          Monthly
+        </Badge>
+      ),
+      subtitle: "Last calendar month",
+    },
+    {
+      title: "Total Donations",
+      whole: stats.totalTransactions.toLocaleString("en-IN"),
+      decimal: "",
+      badge: (
+        <Badge variant="neutral" size="sm">
+          Transactions
+        </Badge>
+      ),
+      subtitle: "Successful contributions",
     },
   ];
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {statsItems.map((item, idx) => {
-          const Icon = item.icon;
-          return (
-            <Card
-              key={idx}
-              className={`bg-gradient-to-br border shadow-sm p-6 flex flex-col justify-between rounded-3xl ${item.color} animate-fade-in-up hover:scale-[1.02] transition-transform duration-300`}
-              style={{ animationDelay: `${idx * 150}ms` }}
-            >
-              <div className="flex justify-between items-start">
-                <span className="text-xs font-bold uppercase tracking-wider opacity-85 text-text-muted">
-                  {item.title}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      {statsItems.map((item, idx) => (
+        <Card
+          key={idx}
+          className="bg-white border border-border/80 p-6 flex flex-col justify-between shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_24px_-8px_rgba(0,0,0,0.08)] transition-all duration-300"
+        >
+          <div className="space-y-1">
+            <span className="text-xs font-bold uppercase tracking-wider text-text-muted opacity-80">
+              {item.title}
+            </span>
+            <div className="flex items-baseline font-display">
+              <span className="text-3xl md:text-4xl font-black text-text tracking-tight">
+                {item.whole}
+              </span>
+              {item.decimal && (
+                <span className="text-xl md:text-2xl font-bold text-text-muted opacity-75 ml-0.5">
+                  {item.decimal}
                 </span>
-                <Icon size={20} className="shrink-0" />
-              </div>
-              <div className="mt-4">
-                <div
-                  className={`text-2xl md:text-3xl font-display font-black leading-none ${item.textColor}`}
-                >
-                  {item.value}
-                </div>
-                <p className="text-[11px] opacity-75 font-medium mt-1 text-text-muted">
-                  {item.description}
-                </p>
-              </div>
-            </Card>
-          );
-        })}
-      </div>
+              )}
+            </div>
+          </div>
+          
+          <div className="mt-4 flex items-center gap-2">
+            {item.badge}
+            <span className="text-[11px] font-medium text-text-muted">
+              {item.subtitle}
+            </span>
+          </div>
+        </Card>
+      ))}
     </div>
   );
 }
+

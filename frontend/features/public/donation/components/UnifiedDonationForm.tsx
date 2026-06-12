@@ -166,7 +166,7 @@ export default function UnifiedDonationForm({
                     size="sm"
                     noShadow
                     className={cn(
-                      "font-bold transition-all border border-transparent",
+                      "border border-transparent",
                       !isSelected && "border-border/80 text-text"
                     )}
                     onClick={() => {
@@ -195,8 +195,8 @@ export default function UnifiedDonationForm({
                 ? (formik.errors.amount as string)
                 : undefined
             }
-            className="py-3 px-4 text-sm"
-            icon={<span className="font-bold text-text-light text-sm">₹</span>}
+            size="sm"
+            icon="₹"
           />
 
           {/* Payment Method Selector */}
@@ -211,7 +211,7 @@ export default function UnifiedDonationForm({
                 variant={paymentType === "online" ? "primary" : "secondary"}
                 size="md"
                 className={cn(
-                  "font-bold rounded-2xl border",
+                  "border",
                   paymentType === "online"
                     ? "border-primary"
                     : "border-border"
@@ -225,7 +225,7 @@ export default function UnifiedDonationForm({
                 variant={paymentType === "manual" ? "primary" : "secondary"}
                 size="md"
                 className={cn(
-                  "font-bold rounded-2xl border",
+                  "border",
                   paymentType === "manual"
                     ? "border-primary"
                     : "border-border"
@@ -250,7 +250,7 @@ export default function UnifiedDonationForm({
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   error={formik.touched.donorName ? formik.errors.donorName : undefined}
-                  className="py-3 px-4 text-sm"
+                  size="sm"
                 />
               )}
 
@@ -302,7 +302,7 @@ export default function UnifiedDonationForm({
                     ? (formik.errors.transactionId as string)
                     : undefined
                 }
-                className="py-3 px-4 text-sm"
+                size="sm"
               />
 
               {/* Upload field */}
@@ -332,7 +332,7 @@ export default function UnifiedDonationForm({
                 ? (formik.errors.pan as string)
                 : undefined
             }
-            className="py-3 px-4 text-sm"
+            size="sm"
           />
 
           {/* Submit Action */}
@@ -342,7 +342,6 @@ export default function UnifiedDonationForm({
             size="lg"
             fullWidth
             startIcon={<Send size={16} />}
-            className="rounded-2xl font-black text-xs tracking-wider"
             isLoading={formik.isSubmitting}
           >
             {paymentType === "online" ? "Proceed to PhonePe" : "Submit Receipt Proof"}

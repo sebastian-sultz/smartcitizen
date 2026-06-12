@@ -76,12 +76,12 @@ export const getActivityTimeline = async (): Promise<ActivityItem[]> => {
 };
 
 export const getDonationHistory = async (
-  offset: number = 0,
+  page: number = 1,
   limit: number = 10
 ): Promise<PaymentHistoryResponse> => {
   try {
     const response = await api.get<PaymentHistoryResponse>(
-      `/payments/history?offset=${offset}&limit=${limit}`
+      `/payments/history?page=${page}&limit=${limit}`
     );
     return response.data;
   } catch (error: unknown) {

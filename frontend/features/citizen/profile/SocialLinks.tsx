@@ -109,7 +109,7 @@ export default function SocialLinks({ onSave }: SocialLinksProps) {
             <Button
               type="submit"
               isLoading={formik.isSubmitting}
-              className="rounded-2xl px-6 py-2.5 h-auto font-bold"
+              size="sm"
             >
               Update Links
             </Button>

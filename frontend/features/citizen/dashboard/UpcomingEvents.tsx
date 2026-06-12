@@ -139,7 +139,7 @@ export default function UpcomingEvents() {
         <Button
           asChild
           variant="link"
-          className="text-primary font-bold text-xs p-0 gap-1 hover:text-primary/80 transition-colors"
+          size="xs"
         >
           <Link href="/events" className="flex items-center gap-1">
             View All Events

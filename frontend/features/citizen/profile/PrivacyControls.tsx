@@ -57,8 +57,9 @@ export const PrivacyControls = () => {
             Foundation systems.
           </p>
           <Button
-            variant="outline"
-            className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300 rounded-2xl px-6 py-2.5 h-auto font-bold"
+            variant="ghost-danger"
+            size="sm"
+            className="border border-red-200"
             onClick={() => {
               showConfirm({
                 title: "Delete Profile",

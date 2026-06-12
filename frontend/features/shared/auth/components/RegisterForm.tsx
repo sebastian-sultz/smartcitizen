@@ -97,7 +97,8 @@ export const RegisterForm = () => {
               Keep this ID safe. You will need it to participate in awareness campaigns and volunteer programs.
             </p>
             <Button 
-              className="w-full mt-4" 
+              fullWidth
+              className="mt-4" 
               onClick={() => {
                 window.location.href = "/citizen";
               }}
@@ -175,7 +176,7 @@ export const RegisterForm = () => {
             <Button 
               type="submit" 
               size="lg" 
-              className="w-full" 
+              fullWidth 
               isLoading={formik.isSubmitting}
             >
               {step === "details" ? "Send OTP" : "Complete Registration"}

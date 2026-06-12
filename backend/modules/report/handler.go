@@ -5,6 +5,7 @@ import (
 
 	"backend/dto/request"
 	"backend/modules/user"
+	"backend/pkg/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -18,6 +19,21 @@ func NewHandler(service Service) *Handler {
 	return &Handler{service: service}
 }
 
+// helper to extract and handle userID context failures in reports handler
+func getAuthenticatedUserID(c *gin.Context) (uuid.UUID, bool) {
+	userID, err := utils.GetUserIDFromContext(c)
+	if err != nil {
+		// If error is due to missing userID, return 401 Unauthorized, otherwise return 500
+		if err.Error() == "userID not found in context" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+		return uuid.Nil, false
+	}
+	return userID, true
+}
+
 func (h *Handler) CreateReport(c *gin.Context) {
 	var req request.CreateReportReq
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -25,15 +41,8 @@ func (h *Handler) CreateReport(c *gin.Context) {
 		return
 	}
 
-	userIDRaw, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-		return
-	}
-
-	userID, ok := userIDRaw.(uuid.UUID)
+	userID, ok := getAuthenticatedUserID(c)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid user ID type in context"})
 		return
 	}
 
@@ -84,14 +93,8 @@ func (h *Handler) ResolveReport(c *gin.Context) {
 		return
 	}
 
-	userIDRaw, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-		return
-	}
-	adminID, ok := userIDRaw.(uuid.UUID)
+	adminID, ok := getAuthenticatedUserID(c)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid user ID type in context"})
 		return
 	}
 
@@ -106,12 +109,10 @@ func (h *Handler) ResolveReport(c *gin.Context) {
 
 func (h *Handler) GetReport(c *gin.Context) {
 	id := c.Param("id")
-	userIDRaw, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+	userID, ok := getAuthenticatedUserID(c)
+	if !ok {
 		return
 	}
-	userID := userIDRaw.(uuid.UUID)
 	userType, _ := c.Get("userType")
 	isAdmin := userType == string(user.Admin)
 
@@ -126,12 +127,10 @@ func (h *Handler) GetReport(c *gin.Context) {
 
 func (h *Handler) AddMessage(c *gin.Context) {
 	id := c.Param("id")
-	userIDRaw, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+	userID, ok := getAuthenticatedUserID(c)
+	if !ok {
 		return
 	}
-	userID := userIDRaw.(uuid.UUID)
 	userType, _ := c.Get("userType")
 	isAdmin := userType == string(user.Admin)
 
@@ -152,12 +151,10 @@ func (h *Handler) AddMessage(c *gin.Context) {
 
 func (h *Handler) GetMessages(c *gin.Context) {
 	id := c.Param("id")
-	userIDRaw, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+	userID, ok := getAuthenticatedUserID(c)
+	if !ok {
 		return
 	}
-	userID := userIDRaw.(uuid.UUID)
 	userType, _ := c.Get("userType")
 	isAdmin := userType == string(user.Admin)
 
@@ -171,15 +168,8 @@ func (h *Handler) GetMessages(c *gin.Context) {
 }
 
 func (h *Handler) GetUserReports(c *gin.Context) {
-	userIDRaw, exists := c.Get("userID")
-	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
-		return
-	}
-
-	userID, ok := userIDRaw.(uuid.UUID)
+	userID, ok := getAuthenticatedUserID(c)
 	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "invalid user ID type in context"})
 		return
 	}
 

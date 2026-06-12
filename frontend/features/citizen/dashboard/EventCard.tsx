@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { MapPin, Clock, CheckCircle, CalendarDays } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogTrigger,
@@ -111,11 +112,12 @@ export default function EventCard({ event, isRegistered, onRegister }: EventCard
                 variant={isRegistered ? "outline" : "primary"}
                 onClick={handleRegister}
                 disabled={isRegistered}
-                className={`w-full font-bold py-2.5 h-10 rounded-xl transition-all duration-200 ${
-                  isRegistered
-                    ? "border-green-200 text-green-700 bg-green-50/50 hover:bg-green-50 opacity-100"
-                    : ""
-                }`}
+                fullWidth
+                size="sm"
+                className={cn(
+                  "duration-200",
+                  isRegistered && "border-green-200 text-green-700 bg-green-50/50 hover:bg-green-50 opacity-100"
+                )}
               >
                 {isRegistered ? (
                   <span className="flex items-center justify-center gap-1.5">

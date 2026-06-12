@@ -74,14 +74,14 @@ function PaymentStatusContent() {
             <Button
               onClick={() => window.location.href = "/donation"}
               variant="outline"
-              className="rounded-xl text-xs font-bold gap-2"
+              size="sm"
             >
               <ArrowLeft size={14} />
               Try Again
             </Button>
             <Button
               onClick={() => window.location.href = "/"}
-              className="rounded-xl text-xs font-bold gap-2"
+              size="sm"
             >
               <Home size={14} />
               Back to Home
@@ -163,7 +163,7 @@ function PaymentStatusContent() {
             <Button
               onClick={handleDownloadReceipt}
               variant="outline"
-              className="flex items-center gap-2 rounded-xl text-xs font-bold"
+              size="sm"
             >
               <Download size={14} />
               Download Receipt
@@ -171,7 +171,7 @@ function PaymentStatusContent() {
           )}
           <Button
             onClick={() => window.location.href = isSuccess ? "/citizen/donations" : "/donation"}
-            className="flex items-center gap-2 rounded-xl text-xs font-bold"
+            size="sm"
           >
             {isSuccess ? "Go to Dashboard" : "Back to Donation"}
           </Button>

@@ -271,8 +271,9 @@ export default function Header() {
                 asChild
                 variant="outline"
                 shape="pill"
+                size="sm"
                 className={cn(
-                  "px-5 py-2.5 text-[14px] border-2 font-bold transition-all h-auto",
+                  "border-2",
                   isScrolled || isHome
                     ? "border-primary/20 text-primary hover:bg-primary hover:text-white"
                     : "border-white/30 text-white hover:bg-white hover:text-primary",
@@ -291,8 +292,9 @@ export default function Header() {
                 asChild
                 variant="outline"
                 shape="pill"
+                size="sm"
                 className={cn(
-                  "px-5 py-2.5 text-[14px] border-2 font-bold transition-all h-auto",
+                  "border-2",
                   isScrolled || isHome
                     ? "border-primary/20 text-primary hover:bg-primary hover:text-white"
                     : "border-white/30 text-white hover:bg-white hover:text-primary",
@@ -308,7 +310,8 @@ export default function Header() {
               asChild
               variant="accent"
               shape="pill"
-              className="px-6 py-2.5 text-[14px] font-bold shadow-xl shadow-accent/20 active:scale-95 h-auto"
+              size="sm"
+              className="shadow-xl shadow-accent/20"
             >
               <Link href="/donation" className="flex items-center gap-2">
                 <Heart size={16} fill="currentColor" />
@@ -321,8 +324,9 @@ export default function Header() {
           <Button
             variant="ghost"
             size="icon"
+            shape="circle"
             className={cn(
-              "lg:hidden p-3 rounded-full transition-all active:scale-90",
+              "lg:hidden active:scale-90",
               isScrolled || isHome
                 ? "bg-primary/5 text-primary"
                 : "bg-white/10 text-white",
@@ -435,7 +439,8 @@ export default function Header() {
                 <Button
                   asChild
                   variant="accent"
-                  className="w-full py-3.5 rounded-2xl font-bold text-[14px] shadow-lg shadow-accent/20 h-auto"
+                  fullWidth
+                  className="shadow-lg shadow-accent/20"
                 >
                   <Link
                     href="/donation"
@@ -457,7 +462,7 @@ export default function Header() {
                       <Button
                         asChild
                         variant="outline"
-                        className="py-3.5 rounded-2xl font-bold text-[14px] h-auto border-2"
+                        className="border-2"
                       >
                         <Link
                           href={userType === "admin" ? "/admin" : "/citizen"}
@@ -471,7 +476,7 @@ export default function Header() {
                       <Button
                         asChild
                         variant="primary"
-                        className="py-3.5 rounded-2xl font-bold text-[14px] shadow-lg shadow-primary/20 h-auto"
+                        className="shadow-lg shadow-primary/20"
                       >
                         <Link
                           href="/need_help"
@@ -486,7 +491,7 @@ export default function Header() {
                       <Button
                         asChild
                         variant="outline"
-                        className="py-3.5 rounded-2xl font-bold text-[14px] h-auto border-2"
+                        className="border-2"
                       >
                         <Link
                           href="/member_login"
@@ -500,7 +505,7 @@ export default function Header() {
                       <Button
                         asChild
                         variant="primary"
-                        className="py-3.5 rounded-2xl font-bold text-[14px] shadow-lg shadow-primary/20 h-auto"
+                        className="shadow-lg shadow-primary/20"
                       >
                         <Link
                           href="/need_help"

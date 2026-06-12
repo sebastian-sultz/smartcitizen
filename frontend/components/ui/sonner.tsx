@@ -1,6 +1,5 @@
 "use client";
 
-import { useTheme } from "next-themes";
 import { Toaster as Sonner, type ToasterProps } from "sonner";
 import {
   CircleCheckIcon,
@@ -11,11 +10,9 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme();
-
   return (
     <Sonner
-      theme={theme as ToasterProps["theme"]}
+      theme="light"
       className="toaster group"
       icons={{
         success: <CircleCheckIcon className="size-5 text-success shrink-0" />,
@@ -31,6 +28,9 @@ const Toaster = ({ ...props }: ToasterProps) => {
           "--normal-border": "var(--color-border)",
           "--border-radius": "16px",
           "--font-sans": "var(--font-body)",
+          "--gray2": "var(--color-bg-alt)",
+          "--gray5": "var(--color-border)",
+          "--gray12": "var(--color-text)",
         } as React.CSSProperties
       }
       toastOptions={{

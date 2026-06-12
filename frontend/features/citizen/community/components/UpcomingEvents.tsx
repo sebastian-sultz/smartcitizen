@@ -67,7 +67,7 @@ export function UpcomingEvents() {
           <Button
             asChild
             variant="outline"
-            className="px-6 py-3 text-[15px] h-auto font-bold"
+            size="sm"
           >
             <Link
               href="/events"

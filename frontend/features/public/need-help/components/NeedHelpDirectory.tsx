@@ -126,7 +126,10 @@ export const NeedHelpDirectory = () => {
                 variant={selectedCategory === cat ? "primary" : "secondary"}
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className="rounded-full font-bold px-5 py-2 text-sm normal-case shadow-none"
+                shape="pill"
+                size="sm"
+                normalCase
+                noShadow
               >
                 {cat}
               </Button>

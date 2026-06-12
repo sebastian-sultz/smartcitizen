@@ -258,7 +258,8 @@ export function MediaPresence() {
               <Button
                 asChild
                 variant="primary"
-                className="w-full text-[14px] h-auto py-3.5"
+                size="lg"
+                fullWidth
               >
                 <a
                   href="https://facebook.com"

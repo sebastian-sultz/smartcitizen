@@ -56,7 +56,9 @@ export function Hero() {
               <Button
                 asChild
                 variant="primary"
-                className="w-full sm:w-auto px-8 py-4 rounded-2xl font-black shadow-xl shadow-primary/20 active:scale-95 overflow-hidden h-auto"
+                size="lg"
+                fullWidth
+                className="sm:w-auto overflow-hidden"
               >
                 <Link
                   href="/donation"
@@ -70,7 +72,9 @@ export function Hero() {
               <Button
                 asChild
                 variant="secondary"
-                className="w-full sm:w-auto px-8 py-4 rounded-2xl border-2 border-border hover:border-primary hover:text-primary text-text font-black active:scale-95 text-[15px] h-auto"
+                size="lg"
+                fullWidth
+                className="sm:w-auto"
               >
                 <Link
                   href="/need_help"
@@ -155,7 +159,9 @@ export function Hero() {
                     <Button
                       asChild
                       variant="primary"
-                      className="w-full relative overflow-hidden bg-primary hover:bg-primary-light text-white font-black rounded-2xl py-3 px-4 shadow-lg shadow-primary/15 transition-all duration-300 group/btn text-xs h-auto"
+                      size="sm"
+                      fullWidth
+                      className="relative overflow-hidden group/btn"
                     >
                       <Link
                         href="/join_us"

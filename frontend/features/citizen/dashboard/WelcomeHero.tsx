@@ -58,27 +58,27 @@ export default function WelcomeHero({ profile, onInviteClick }: WelcomeHeroProps
         <div className="flex flex-wrap gap-3 pt-2">
           <Button
             onClick={() => router.push("/citizen/donations")}
-            className="bg-accent hover:bg-accent/90 text-white font-bold gap-2 px-5 py-3 h-auto rounded-2xl shadow-md border-none"
+            variant="accent"
+            startIcon={<Heart size={16} fill="currentColor" />}
           >
-            <Heart size={16} fill="white" />
             Make Donation
           </Button>
 
           <Button
             onClick={onInviteClick}
             variant="outline"
-            className="border-white/20 bg-white/10 hover:bg-white/20 text-white font-bold gap-2 px-5 py-3 h-auto rounded-2xl"
+            startIcon={<UserPlus size={16} />}
+            className="border-white/20 bg-white/10 hover:bg-white/20 text-white"
           >
-            <UserPlus size={16} />
             Invite Friends
           </Button>
 
           <Button
             onClick={() => router.push("/citizen/donations?tab=tax")}
             variant="outline"
-            className="border-white/20 bg-white/10 hover:bg-white/20 text-white font-bold gap-2 px-5 py-3 h-auto rounded-2xl"
+            startIcon={<FileText size={16} />}
+            className="border-white/20 bg-white/10 hover:bg-white/20 text-white"
           >
-            <FileText size={16} />
             Download 80G Tax Receipt
           </Button>
         </div>

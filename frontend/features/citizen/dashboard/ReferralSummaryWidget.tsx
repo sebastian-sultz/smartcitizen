@@ -65,8 +65,10 @@ export default function ReferralSummaryWidget({ stats, onInviteClick }: Referral
 
         <Button 
           onClick={onInviteClick}
-          variant="outline" 
-          className="w-full text-xs font-bold py-2.5 h-auto rounded-xl gap-2 border-primary/20 hover:bg-primary/5 text-primary"
+          variant="ghost-primary" 
+          size="sm"
+          fullWidth
+          className="border border-primary/20"
         >
           <Share2 size={14} />
           Invite More Friends

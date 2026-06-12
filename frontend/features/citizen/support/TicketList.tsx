@@ -34,7 +34,7 @@ export default function TicketList({
           onClick={onCreateTrigger}
           size="sm"
           variant={isCreating ? "outline" : "primary"}
-          className="text-xs font-bold py-2 px-3 h-auto rounded-xl flex items-center gap-1 border-primary/20"
+          className="border-primary/20"
         >
           <Plus size={14} />
           New Issue
@@ -63,14 +63,17 @@ export default function TicketList({
               : ticket.description;
 
             return (
-              <button
+              <Button
                 key={ticket.id}
                 onClick={() => onSelectTicket(ticket)}
+                fullWidth
+                variant="ghost"
+                noShadow
                 className={cn(
-                  "w-full text-left p-3.5 rounded-2xl border transition-all flex flex-col gap-2 relative group focus:outline-none",
+                  "text-left p-3.5 border transition-all flex flex-col gap-2 relative group focus:outline-none h-auto block font-normal active:scale-[0.99] hover:bg-bg/40",
                   isActive
-                    ? "bg-primary/5 border-primary/30 shadow-sm ring-1 ring-primary/10"
-                    : "bg-white border-border/80 hover:border-primary/20 hover:bg-bg/40"
+                    ? "bg-primary/5 border-primary/30 ring-1 ring-primary/10"
+                    : "bg-white border-border/80 hover:border-primary/20"
                 )}
               >
                 {/* Header row: Date */}
@@ -96,7 +99,7 @@ export default function TicketList({
                     "{lastMessage}"
                   </p>
                 )}
-              </button>
+              </Button>
             );
           })
         )}

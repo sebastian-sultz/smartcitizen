@@ -57,8 +57,6 @@ export default function DonationHistory({
     return matchesSearch && matchesStatus;
   });
 
-  // getStatusColor is imported from helpers.ts
-
   const handleViewDetails = (donation: Payment) => {
     setSelectedDonation(donation);
     setIsModalOpen(true);
@@ -68,7 +66,7 @@ export default function DonationHistory({
     {
       label: "Date",
       render: (row) => (
-        <span className="font-semibold text-text">
+        <span className="font-bold text-text-light">
           {formatDate(row.createdAt, "short")}
         </span>
       ),
@@ -76,9 +74,14 @@ export default function DonationHistory({
     {
       label: "Transaction ID",
       render: (row) => (
-        <span className="font-mono text-xs font-bold text-text-muted">
-          {row.merchantOrderId}
-        </span>
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-bg border border-border flex items-center justify-center shrink-0">
+            <Heart size={14} className="text-accent" fill="currentColor" />
+          </div>
+          <span className="font-mono text-xs font-bold text-text-muted select-all">
+            {row.merchantOrderId}
+          </span>
+        </div>
       ),
     },
     {
@@ -86,20 +89,20 @@ export default function DonationHistory({
       render: (row) => (
         <span
           className={cn(
-            "font-display font-black",
+            "font-display font-black text-base",
             row.status.toLowerCase() === "success"
               ? "text-primary"
               : "text-text",
           )}
         >
-          ₹{(row.amount / 100).toLocaleString("en-IN")}
+          ₹{(row.amount / 100).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
         </span>
       ),
     },
     {
       label: "Status",
       render: (row) => (
-        <Badge variant={getStatusColor(row.status)} size="sm">
+        <Badge variant={getStatusColor(row.status)} size="md">
           {row.status}
         </Badge>
       ),
@@ -110,10 +113,10 @@ export default function DonationHistory({
         <div className="flex items-center gap-2">
           <Button
             onClick={() => handleViewDetails(row)}
-            variant="outline"
+            variant="secondary"
             size="sm"
             startIcon={<Eye size={12} />}
-            className="border-primary/20 text-primary hover:bg-primary/5"
+            className="text-xs font-bold border border-border py-1.5 px-3 h-auto"
           >
             Details
           </Button>
@@ -127,6 +130,7 @@ export default function DonationHistory({
               variant="primary"
               size="sm"
               startIcon={<Download size={12} />}
+              className="text-xs font-bold py-1.5 px-3 h-auto"
             >
               Receipt
             </Button>
@@ -151,25 +155,26 @@ export default function DonationHistory({
   return (
     <div className="space-y-6">
       {/* Filtering Header Panel */}
-      <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-bg/20 p-4 border border-border/60 rounded-3xl">
+      <div className="flex flex-col md:flex-row gap-4 justify-between items-center bg-white p-4 border border-border rounded-3xl shadow-[0_2px_8px_-3px_rgba(0,0,0,0.03)]">
         <div className="w-full md:max-w-xs relative">
           <Input
             placeholder="Search transaction ID..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-12 pr-4 py-2 text-sm"
-            icon={<Search size={18} className="text-text-muted" />}
+            size="sm"
+            icon={<Search size={16} className="text-text-light" />}
+            className="bg-bg/40 focus:bg-white"
           />
         </div>
 
-        <div className="w-full md:w-auto flex items-center gap-3">
+        <div className="w-full md:w-auto flex items-center justify-between md:justify-end gap-3 self-stretch md:self-auto">
           <div className="flex items-center gap-2 text-text-muted text-xs font-bold shrink-0">
             <Filter size={14} />
             Filter
           </div>
           <div className="w-40">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="px-4 py-2 text-xs rounded-xl h-auto border-border">
+              <SelectTrigger className="px-4 py-2 text-xs rounded-xl h-9 border-border bg-bg/50 focus:border-primary font-bold">
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
               <SelectContent position="popper">
@@ -184,7 +189,7 @@ export default function DonationHistory({
       </div>
 
       {/* Main TableComponent */}
-      <div className="bg-white rounded-3xl border border-border/80 overflow-hidden shadow-sm">
+      <div className="overflow-hidden">
         <TableComponent
           headers={tableHeaders}
           data={filteredDonations}

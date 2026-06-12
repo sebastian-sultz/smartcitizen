@@ -66,7 +66,8 @@ export function DonationCTA() {
               <Button
                 asChild
                 variant="accent"
-                className="px-10 py-4 h-auto rounded-2xl font-black text-xs uppercase tracking-wider transition-all transform hover:-translate-y-0.5 shadow-xl shadow-accent/20"
+                size="lg"
+                className="transition-all transform hover:-translate-y-0.5"
               >
                 <Link
                   href={

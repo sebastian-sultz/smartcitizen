@@ -144,14 +144,14 @@ export default function ProfileEditForm({ profile, volunteer, onSave, onCancel }
               type="button"
               variant="outline"
               onClick={onCancel}
-              className="rounded-2xl px-6 py-2.5 h-auto font-bold"
+              size="sm"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               isLoading={formik.isSubmitting}
-              className="rounded-2xl px-6 py-2.5 h-auto font-bold"
+              size="sm"
             >
               Save Changes
             </Button>

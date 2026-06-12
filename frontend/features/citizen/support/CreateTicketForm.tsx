@@ -4,6 +4,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
 
 import { Card } from "@/components/ui/Card";
 import { MessageSquare, ArrowLeft, CircleQuestionMark } from "lucide-react";
@@ -57,7 +58,6 @@ export default function CreateTicketForm({
           variant="ghost-muted"
           size="icon-sm"
           shape="circle"
-          className="w-7 h-7 flex items-center justify-center p-0"
           title="Cancel"
         >
           <ArrowLeft size={15} />
@@ -80,46 +80,34 @@ export default function CreateTicketForm({
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
           error={formik.touched.subject ? formik.errors.subject : undefined}
-          className="py-2.5 px-4 text-sm"
+          size="sm"
         />
 
-        <div className="space-y-1.5">
-          <label className="text-[12px] font-bold text-text ml-1 block">
-            Issue Description
-          </label>
-          <textarea
-            name="description"
-            rows={5}
-            value={formik.values.description}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            placeholder="Explain your problem in detail. Include transaction IDs, dates, or error contexts."
-            className={`w-full rounded-xl border border-border bg-bg p-3.5 text-sm transition-all outline-none focus:border-primary placeholder:text-text-muted ${
-              formik.touched.description && formik.errors.description
-                ? "border-red-500"
-                : ""
-            }`}
-          />
-          {formik.touched.description && formik.errors.description && (
-            <p className="text-red-500 text-[11px] font-semibold ml-1">
-              {formik.errors.description}
-            </p>
-          )}
-        </div>
+        <Textarea
+          label="Issue Description"
+          name="description"
+          rows={5}
+          value={formik.values.description}
+          onChange={formik.handleChange}
+          onBlur={formik.handleBlur}
+          placeholder="Explain your problem in detail. Include transaction IDs, dates, or error contexts."
+          error={formik.touched.description && formik.errors.description ? formik.errors.description : undefined}
+          size="sm"
+        />
 
         <div className="flex justify-end gap-3 pt-4 border-t border-border/60 shrink-0">
           <Button
             type="button"
             variant="outline"
             onClick={onCancel}
-            className="rounded-xl px-5 py-2 h-auto text-xs font-bold"
+            size="sm"
           >
             Cancel
           </Button>
           <Button
             type="submit"
             loading={formik.isSubmitting}
-            className="rounded-xl px-5 py-2 h-auto text-xs font-bold"
+            size="sm"
           >
             Report Issue
           </Button>
