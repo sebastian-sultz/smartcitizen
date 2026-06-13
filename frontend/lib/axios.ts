@@ -54,7 +54,14 @@ api.interceptors.response.use(
     const isTimeout = error.code === "ECONNABORTED";
     const isNetworkError = error.message === "Network Error";
 
-    if (status === 401 && originalRequest && !originalRequest._retry) {
+    const skipAuthRedirect =
+      originalRequest && (originalRequest as any).skipAuthRedirect;
+    if (
+      status === 401 &&
+      originalRequest &&
+      !originalRequest._retry &&
+      !skipAuthRedirect
+    ) {
       // Don't refresh token for auth routes
       const isAuthRoute =
         originalRequest.url?.includes("/auth/login") ||
@@ -93,7 +100,7 @@ api.interceptors.response.use(
                 window.dispatchEvent(
                   new CustomEvent("auth-session-expired", {
                     detail: { path: window.location.pathname },
-                  })
+                  }),
                 );
               }
               reject(err);
@@ -109,7 +116,7 @@ api.interceptors.response.use(
       const path = window.location.pathname;
 
       // Handle 401 Unauthorized (fallback if refresh failed or was an auth route)
-      if (status === 401) {
+      if (status === 401 && !skipAuthRedirect) {
         if (
           !path.includes("/member_login") &&
           !path.includes("/admin/login") &&
@@ -119,7 +126,7 @@ api.interceptors.response.use(
           window.dispatchEvent(
             new CustomEvent("auth-session-expired", {
               detail: { path },
-            })
+            }),
           );
         }
       } else if (isTimeout) {
@@ -129,8 +136,9 @@ api.interceptors.response.use(
           "Unable to connect to the server. Please check your connection.",
         );
       } else if (status >= 400) {
-        const skipGlobalErrorToast = (error.config as { skipGlobalErrorToast?: boolean })
-          ?.skipGlobalErrorToast;
+        const skipGlobalErrorToast = (
+          error.config as { skipGlobalErrorToast?: boolean }
+        )?.skipGlobalErrorToast;
         if (!skipGlobalErrorToast) {
           const message =
             error.response?.data?.error ||

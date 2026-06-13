@@ -142,7 +142,7 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 	// Payment Routes
 	payments := api.Group("/payments")
 	{
-		payments.POST("/initiate", paymentHandler.InitiatePayment)
+		payments.POST("/initiate", middleware.OptionalAuthMiddleware(), paymentHandler.InitiatePayment)
 		payments.POST("/webhook", paymentHandler.HandleWebhook)
 		payments.GET("/status/:transactionId", paymentHandler.CheckPaymentStatus)
 		payments.GET("/receipt/:transactionId", paymentHandler.GetReceipt)

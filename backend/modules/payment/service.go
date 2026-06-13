@@ -392,7 +392,15 @@ func (s *service) GetReceiptURL(ctx context.Context, transactionID string) (stri
 		return "", err
 	}
 	
-	return receipt.CloudinaryURL, nil
+	// Generate a temporary signed URL dynamically for private file
+	publicID := fmt.Sprintf("receipts/receipts/%s", strings.ReplaceAll(receipt.ReceiptNumber, "/", "-"))
+	signedURL, err := cloudinary.GetPrivateURL(publicID)
+	if err != nil {
+		log.Printf("Failed to generate signed URL for receipt %s: %v", receipt.ReceiptNumber, err)
+		return receipt.CloudinaryURL, nil // Fallback to raw stored URL
+	}
+	
+	return signedURL, nil
 }
 
 func (s *service) GetTaxCertificates(ctx context.Context, userID string) ([]dtoresponse.TaxCertificate, error) {
@@ -401,9 +409,9 @@ func (s *service) GetTaxCertificates(ctx context.Context, userID string) ([]dtor
 		return nil, err
 	}
 
-	receiptMap := make(map[string]string)
+	receiptMap := make(map[string]Receipt)
 	for _, r := range receipts {
-		receiptMap[r.PaymentID.String()] = r.CloudinaryURL
+		receiptMap[r.PaymentID.String()] = r
 	}
 
 	var certs []dtoresponse.TaxCertificate
@@ -421,10 +429,19 @@ func (s *service) GetTaxCertificates(ctx context.Context, userID string) ([]dtor
 			fy = fmt.Sprintf("%d-%d", year, year+1)
 		}
 
-		downloadURL := receiptMap[p.ID.String()]
+		downloadURL := ""
 		status := "pending"
-		if downloadURL != "" {
+		if r, ok := receiptMap[p.ID.String()]; ok && r.CloudinaryURL != "" {
 			status = "generated"
+			// Generate a temporary signed URL dynamically for private file
+			publicID := fmt.Sprintf("receipts/receipts/%s", strings.ReplaceAll(r.ReceiptNumber, "/", "-"))
+			signedURL, err := cloudinary.GetPrivateURL(publicID)
+			if err == nil {
+				downloadURL = signedURL
+			} else {
+				log.Printf("Failed to generate signed URL for receipt %s: %v", r.ReceiptNumber, err)
+				downloadURL = r.CloudinaryURL // Fallback to raw stored URL
+			}
 		}
 
 		certs = append(certs, dtoresponse.TaxCertificate{
