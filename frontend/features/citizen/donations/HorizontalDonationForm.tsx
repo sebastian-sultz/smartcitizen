@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/Input";
 import { Card, CardContent } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 import { useCitizenStore } from "@/store/citizenStore";
-import { PAN_REGEX, NAME_REGEX } from "@/lib/regex";
+import { nameSchema, panSchema, trimmedString } from "@/lib/validation";
 import ManualUploadField from "@/features/public/donation/components/ManualUploadField";
 
 const PRESET_AMOUNTS = [100, 500, 1000, 5000];
@@ -63,16 +63,11 @@ export default function HorizontalDonationForm({
         .required("Donation amount is required")
         .min(100, "Minimum contribution is ₹100")
         .max(10000000, "Maximum contribution is ₹10,000,000"),
-      donorName: Yup.string()
-        .matches(NAME_REGEX, { message: "Enter a valid name (letters, spaces, dots, hyphens only)", excludeEmptyString: true })
-        .max(100, "Name must be under 100 characters")
-        .nullable(),
-      pan: Yup.string()
-        .matches(PAN_REGEX, "Enter a valid 10-character PAN (e.g. ABCDE1234F)")
-        .nullable(),
+      donorName: nameSchema().max(100, "Name must be under 100 characters").nullable(),
+      pan: panSchema().nullable(),
       transactionId: Yup.string().when([], {
         is: () => paymentType === "manual" && step === 3,
-        then: () => Yup.string().required("Transaction Reference / UTR ID is required"),
+        then: () => trimmedString().required("Transaction Reference / UTR ID is required"),
         otherwise: () => Yup.string().notRequired(),
       }),
       receipt: Yup.mixed().when([], {
@@ -123,9 +118,14 @@ export default function HorizontalDonationForm({
   });
 
   const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (value === "" || /^\d+$/.test(value)) {
-      formik.setFieldValue("amount", value === "" ? "" : parseInt(value, 10));
+    const value = e.target.value.replace(/\D/g, "");
+    if (value === "") {
+      formik.setFieldValue("amount", "");
+    } else {
+      const parsed = parseInt(value, 10);
+      if (parsed <= 10000000) {
+        formik.setFieldValue("amount", parsed);
+      }
     }
   };
 
@@ -342,7 +342,10 @@ export default function HorizontalDonationForm({
                       placeholder="Enter name for receipt"
                       name="donorName"
                       value={formik.values.donorName}
-                      onChange={formik.handleChange}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\s{2,}/g, " ");
+                        formik.setFieldValue("donorName", val);
+                      }}
                       onBlur={formik.handleBlur}
                       error={formik.touched.donorName ? formik.errors.donorName : undefined}
                       size="sm"
@@ -354,7 +357,10 @@ export default function HorizontalDonationForm({
                     name="pan"
                     maxLength={10}
                     value={formik.values.pan}
-                    onChange={(e) => formik.setFieldValue("pan", e.target.value.toUpperCase())}
+                    onChange={(e) => {
+                      const val = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 10);
+                      formik.setFieldValue("pan", val);
+                    }}
                     onBlur={formik.handleBlur}
                     error={
                       formik.touched.pan && formik.errors.pan
@@ -389,7 +395,7 @@ export default function HorizontalDonationForm({
                       <div className="flex gap-3 items-start">
                         <Info size={16} className="text-primary mt-0.5 shrink-0" />
                         <p className="text-[11px] text-text-muted leading-relaxed font-semibold">
-                          Confirming below redirects you to PhonePe's secure portal where you can pay using UPI, cards, net banking, or popular wallet clients.
+                          Confirming below redirects you to PhonePe&apos;s secure portal where you can pay using UPI, cards, net banking, or popular wallet clients.
                         </p>
                       </div>
                     </div>

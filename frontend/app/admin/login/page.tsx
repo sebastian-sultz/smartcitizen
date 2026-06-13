@@ -9,13 +9,11 @@ import { Input } from "@/components/ui/Input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { loginUser, logoutUser } from "@/features/shared/auth";
 import { toast } from "sonner";
-import { PHONE_REGEX } from "@/lib/regex";
+import { phoneSchema, trimmedString } from "@/lib/validation";
 
 const loginSchema = Yup.object().shape({
-  phone: Yup.string()
-    .matches(PHONE_REGEX, "Enter a valid 10-digit mobile number")
-    .required("Mobile number is required"),
-  password: Yup.string()
+  phone: phoneSchema("Mobile number is required"),
+  password: trimmedString()
     .min(4, "Password too short")
     .required("Password is required"),
 });
@@ -75,8 +73,14 @@ export default function LoginPage() {
                 placeholder="10-digit mobile number"
                 icon={<Phone size={18} />}
                 value={formik.values.phone}
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                  formik.setFieldValue("phone", val);
+                }}
                 onBlur={formik.handleBlur}
+                maxLength={10}
+                inputMode="numeric"
+                pattern="[0-9]*"
                 error={formik.touched.phone && formik.errors.phone ? (formik.errors.phone as string) : undefined}
               />
 

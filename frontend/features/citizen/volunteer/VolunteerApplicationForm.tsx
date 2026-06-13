@@ -18,7 +18,15 @@ import { Heart, Mail, Phone, MapPin, Building, Hash } from "lucide-react";
 import { toast } from "sonner";
 import { createVolunteer } from "../api";
 import { UserResponse } from "@/features/shared/auth/types";
-import { PINCODE_REGEX, EMAIL_REGEX, PHONE_REGEX, NAME_REGEX, CITY_REGEX, ADDRESS_REGEX } from "@/lib/regex";
+import { 
+  nameSchema, 
+  emailSchema, 
+  phoneSchema, 
+  addressSchema, 
+  citySchema, 
+  pincodeSchema,
+  trimmedString
+} from "@/lib/validation";
 
 interface VolunteerApplicationFormProps {
   user: UserResponse;
@@ -43,33 +51,19 @@ export default function VolunteerApplicationForm({ user, onSubmitSuccess }: Volu
       pincode: "",
     },
     validationSchema: Yup.object().shape({
-      profession: Yup.string()
-        .matches(NAME_REGEX, "Enter a valid profession (letters, spaces, dots, hyphens only)")
-        .required("Profession or student status is required"),
-      experience: Yup.string().required("Brief description of volunteer experience is required"),
-      availability: Yup.string().required("Availability is required"),
-      interest: Yup.string().required("Primary area of interest is required"),
-      workType: Yup.string().required("Preferred work location is required"),
-      motivation: Yup.string().required("Please explain your motivation").min(20, "Please explain in at least 20 characters"),
-      consent: Yup.boolean(),
-      email: Yup.string()
-        .matches(EMAIL_REGEX, "Enter a valid email address")
-        .required("Email is required"),
-      alternate_phone: Yup.string()
-        .matches(PHONE_REGEX, { message: "Enter a valid 10-digit alternate phone number", excludeEmptyString: true })
-        .nullable(),
-      address: Yup.string()
-        .matches(ADDRESS_REGEX, "Enter a valid address (alphanumeric and standard punctuation only)")
-        .required("Address is required"),
-      city: Yup.string()
-        .matches(CITY_REGEX, "Enter a valid city (letters, spaces, dots, hyphens only)")
-        .required("City is required"),
-      district: Yup.string()
-        .matches(CITY_REGEX, "Enter a valid district (letters, spaces, dots, hyphens only)")
-        .required("District is required"),
-      pincode: Yup.string()
-        .matches(PINCODE_REGEX, "Enter a valid 6-digit Pincode")
-        .required("Pincode is required"),
+      profession: nameSchema("Profession or student status is required"),
+      experience: trimmedString().required("Brief description of volunteer experience is required"),
+      availability: trimmedString().required("Availability is required"),
+      interest: trimmedString().required("Primary area of interest is required"),
+      workType: trimmedString().required("Preferred work location is required"),
+      motivation: trimmedString().required("Please explain your motivation").min(20, "Please explain in at least 20 characters"),
+      consent: Yup.boolean().oneOf([true], "You must agree to the volunteer guidelines").required("You must agree to the volunteer guidelines"),
+      email: emailSchema("Email is required"),
+      alternate_phone: phoneSchema().nullable(),
+      address: addressSchema("Address is required"),
+      city: citySchema("City is required"),
+      district: citySchema("District is required"),
+      pincode: pincodeSchema("Pincode is required"),
     }),
     onSubmit: async (values, { setSubmitting }) => {
       setSubmitting(true);
@@ -125,7 +119,10 @@ export default function VolunteerApplicationForm({ user, onSubmitSuccess }: Volu
               placeholder="e.g. Software Engineer / Student"
               name="profession"
               value={formik.values.profession}
-              onChange={formik.handleChange}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\s{2,}/g, " ");
+                formik.setFieldValue("profession", val);
+              }}
               onBlur={formik.handleBlur}
               error={formik.touched.profession ? formik.errors.profession : undefined}
             />
@@ -144,12 +141,18 @@ export default function VolunteerApplicationForm({ user, onSubmitSuccess }: Volu
 
             <Input
               label="Alternate Phone (Optional)"
-              placeholder="e.g. +919876543210"
+              placeholder="10-digit phone number"
               icon={<Phone size={16} />}
               name="alternate_phone"
               value={formik.values.alternate_phone}
-              onChange={formik.handleChange}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                formik.setFieldValue("alternate_phone", val);
+              }}
               onBlur={formik.handleBlur}
+              maxLength={10}
+              inputMode="numeric"
+              pattern="[0-9]*"
               error={formik.touched.alternate_phone ? formik.errors.alternate_phone : undefined}
             />
 
@@ -159,8 +162,14 @@ export default function VolunteerApplicationForm({ user, onSubmitSuccess }: Volu
               icon={<Hash size={16} />}
               name="pincode"
               value={formik.values.pincode}
-              onChange={formik.handleChange}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, "").slice(0, 6);
+                formik.setFieldValue("pincode", val);
+              }}
               onBlur={formik.handleBlur}
+              maxLength={6}
+              inputMode="numeric"
+              pattern="[0-9]*"
               error={formik.touched.pincode ? formik.errors.pincode : undefined}
             />
 

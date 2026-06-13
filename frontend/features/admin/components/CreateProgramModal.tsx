@@ -36,7 +36,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { PHONE_REGEX, NAME_REGEX, CITY_REGEX, ADDRESS_REGEX } from "@/lib/regex";
+import { nameSchema, phoneSchema, addressSchema, futureDateSchema, citySchema, trimmedString } from "@/lib/validation";
 
 interface CreateProgramModalProps {
   open: boolean;
@@ -45,25 +45,15 @@ interface CreateProgramModalProps {
 }
 
 const programSchema = Yup.object().shape({
-  event_name: Yup.string()
-    .matches(ADDRESS_REGEX, "Enter a valid program name")
-    .required("Program name is required"),
-  event_type: Yup.string().oneOf(["Event", "Initiative"]).required("Program type is required"),
-  event_date: Yup.string().required("Program date & time is required"),
-  event_address: Yup.string()
-    .matches(ADDRESS_REGEX, "Enter a valid address (alphanumeric and standard punctuation only)")
-    .required("Program location is required"),
-  organizer_name: Yup.string()
-    .matches(NAME_REGEX, "Enter a valid organizer name (letters, spaces, dots, hyphens only)")
-    .required("Organizer name is required"),
-  organizer_phone: Yup.string()
-    .matches(PHONE_REGEX, "Enter a valid 10-digit mobile number")
-    .required("Organizer phone is required"),
-  description: Yup.string(),
-  category: Yup.string()
-    .matches(CITY_REGEX, { message: "Enter a valid category (letters and spaces only)", excludeEmptyString: true })
-    .nullable(),
-  cta_text: Yup.string(),
+  event_name: addressSchema("Program name is required"),
+  event_type: trimmedString().oneOf(["Event", "Initiative"]).required("Program type is required"),
+  event_date: futureDateSchema("Program date & time is required"),
+  event_address: addressSchema("Program location is required"),
+  organizer_name: nameSchema("Organizer name is required"),
+  organizer_phone: phoneSchema("Organizer phone is required"),
+  description: trimmedString().nullable(),
+  category: citySchema().nullable(),
+  cta_text: trimmedString().nullable(),
 });
 
 const initialValues = {
@@ -85,6 +75,8 @@ export const CreateProgramModal: React.FC<CreateProgramModalProps> = ({
 }) => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const minDateTime = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -195,7 +187,7 @@ export const CreateProgramModal: React.FC<CreateProgramModalProps> = ({
               />
             </div>
 
-            {/* Row 2: Date & CTA Text */}
+             {/* Row 2: Date & CTA Text */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <Input
                 label="Program Date & Time"
@@ -203,6 +195,7 @@ export const CreateProgramModal: React.FC<CreateProgramModalProps> = ({
                 icon={<Calendar size={18} />}
                 disabled={formik.isSubmitting}
                 name="event_date"
+                min={minDateTime}
                 value={formik.values.event_date}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -254,7 +247,10 @@ export const CreateProgramModal: React.FC<CreateProgramModalProps> = ({
                 disabled={formik.isSubmitting}
                 name="organizer_name"
                 value={formik.values.organizer_name}
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\s{2,}/g, " ");
+                  formik.setFieldValue("organizer_name", val);
+                }}
                 onBlur={formik.handleBlur}
                 error={
                   formik.touched.organizer_name
@@ -270,8 +266,14 @@ export const CreateProgramModal: React.FC<CreateProgramModalProps> = ({
                 disabled={formik.isSubmitting}
                 name="organizer_phone"
                 value={formik.values.organizer_phone}
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                  formik.setFieldValue("organizer_phone", val);
+                }}
                 onBlur={formik.handleBlur}
+                maxLength={10}
+                inputMode="numeric"
+                pattern="[0-9]*"
                 error={
                   formik.touched.organizer_phone
                     ? (formik.errors.organizer_phone as string)

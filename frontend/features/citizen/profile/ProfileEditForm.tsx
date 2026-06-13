@@ -9,7 +9,13 @@ import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { User, Mail, MapPin, Building, Hash } from "lucide-react";
 import { toast } from "sonner";
-import { PINCODE_REGEX, EMAIL_REGEX, NAME_REGEX, CITY_REGEX, ADDRESS_REGEX } from "@/lib/regex";
+import { 
+  nameSchema, 
+  emailSchema, 
+  addressSchema, 
+  citySchema, 
+  pincodeSchema 
+} from "@/lib/validation";
 
 interface ProfileEditFormProps {
   profile: UserResponse;
@@ -29,25 +35,12 @@ export default function ProfileEditForm({ profile, volunteer, onSave, onCancel }
       pincode: volunteer?.pincode || "",
     },
     validationSchema: Yup.object().shape({
-      name: Yup.string()
-        .matches(NAME_REGEX, "Enter a valid name (letters, spaces, dots, hyphens only)")
-        .required("Full name is required")
-        .min(3, "Name must be at least 3 characters"),
-      email: Yup.string()
-        .matches(EMAIL_REGEX, "Enter a valid email address")
-        .required("Email is required"),
-      address: Yup.string()
-        .matches(ADDRESS_REGEX, "Enter a valid address (alphanumeric and standard punctuation only)")
-        .required("Address is required"),
-      city: Yup.string()
-        .matches(CITY_REGEX, "Enter a valid city (letters, spaces, dots, hyphens only)")
-        .required("City is required"),
-      district: Yup.string()
-        .matches(CITY_REGEX, "Enter a valid district (letters, spaces, dots, hyphens only)")
-        .required("District is required"),
-      pincode: Yup.string()
-        .matches(PINCODE_REGEX, "Enter a valid 6-digit Pincode")
-        .required("Pincode is required"),
+      name: nameSchema("Full name is required"),
+      email: emailSchema("Email is required"),
+      address: addressSchema("Address is required"),
+      city: citySchema("City is required"),
+      district: citySchema("District is required"),
+      pincode: pincodeSchema("Pincode is required"),
     }),
     onSubmit: async (values, { setSubmitting }) => {
       setSubmitting(true);
@@ -77,7 +70,10 @@ export default function ProfileEditForm({ profile, volunteer, onSave, onCancel }
               icon={<User size={18} className="text-text-muted" />}
               name="name"
               value={formik.values.name}
-              onChange={formik.handleChange}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\s{2,}/g, " ");
+                formik.setFieldValue("name", val);
+              }}
               onBlur={formik.handleBlur}
               error={formik.touched.name ? formik.errors.name : undefined}
             />
@@ -133,8 +129,14 @@ export default function ProfileEditForm({ profile, volunteer, onSave, onCancel }
               icon={<Hash size={18} className="text-text-muted" />}
               name="pincode"
               value={formik.values.pincode}
-              onChange={formik.handleChange}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, "").slice(0, 6);
+                formik.setFieldValue("pincode", val);
+              }}
               onBlur={formik.handleBlur}
+              maxLength={6}
+              inputMode="numeric"
+              pattern="[0-9]*"
               error={formik.touched.pincode ? formik.errors.pincode : undefined}
             />
           </div>

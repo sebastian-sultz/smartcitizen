@@ -10,7 +10,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Link from "next/link";
 import { loginUser, forgetPassword, logoutUser } from "../api";
 import { toast } from "sonner";
-import { PHONE_REGEX } from "@/lib/regex";
+import { phoneSchema, trimmedString } from "@/lib/validation";
 
 export const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -24,17 +24,17 @@ export const LoginForm = () => {
       newPassword: "",
     },
     validationSchema: Yup.object().shape({
-      mobileNumber: Yup.string()
-        .matches(PHONE_REGEX, "Enter a valid 10-digit mobile number")
-        .required("Mobile number is required"),
-      password: Yup.string().when((_, schema) => 
-        view === "login" ? schema.required("Password is required") : schema
+      mobileNumber: phoneSchema("Mobile number is required"),
+      password: trimmedString().when((_, schema) => 
+        view === "login" ? schema.required("Password is required") : schema.optional()
       ),
-      otp: Yup.string().when((_, schema) => 
-        view === "otp" ? schema.length(4, "OTP must be 4 digits").required("OTP is required") : schema
+      otp: trimmedString().when((_, schema) => 
+        view === "otp" 
+          ? schema.matches(/^[0-9]{4}$/, "OTP must be 4 digits").required("OTP is required") 
+          : schema.optional()
       ),
-      newPassword: Yup.string().when((_, schema) => 
-        view === "reset" ? schema.min(6, "Password must be at least 6 characters").required("New password is required") : schema
+      newPassword: trimmedString().when((_, schema) => 
+        view === "reset" ? schema.min(6, "Password must be at least 6 characters").required("New password is required") : schema.optional()
       ),
     }),
     onSubmit: async (values, { setSubmitting }) => {
@@ -94,8 +94,14 @@ export const LoginForm = () => {
               icon={<Phone size={20} />}
               name="mobileNumber"
               value={formik.values.mobileNumber}
-              onChange={formik.handleChange}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                formik.setFieldValue("mobileNumber", val);
+              }}
               onBlur={formik.handleBlur}
+              maxLength={10}
+              inputMode="numeric"
+              pattern="[0-9]*"
               error={formik.touched.mobileNumber ? (formik.errors.mobileNumber as string) : undefined}
             />
           )}
@@ -148,9 +154,14 @@ export const LoginForm = () => {
                 placeholder="4-digit code"
                 type="text"
                 maxLength={4}
+                inputMode="numeric"
+                pattern="[0-9]*"
                 name="otp"
                 value={formik.values.otp}
-                onChange={formik.handleChange}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "").slice(0, 4);
+                  formik.setFieldValue("otp", val);
+                }}
                 onBlur={formik.handleBlur}
                 error={formik.touched.otp ? (formik.errors.otp as string) : undefined}
               />

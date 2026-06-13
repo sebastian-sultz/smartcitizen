@@ -10,7 +10,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Link from "next/link";
 import { registerUser } from "../api";
 import { toast } from "sonner";
-import { PHONE_REGEX, NAME_REGEX } from "@/lib/regex";
+import { nameSchema, phoneSchema, trimmedString } from "@/lib/validation";
 
 export const RegisterForm = () => {
   const [step, setStep] = useState<"details" | "otp" | "success">("details");
@@ -24,21 +24,19 @@ export const RegisterForm = () => {
       password: "",
     },
     validationSchema: Yup.object().shape({
-      fullName: Yup.string()
-        .matches(NAME_REGEX, "Enter a valid name (letters, spaces, dots, hyphens only)")
-        .when((_, schema) => 
-          step === "details" ? schema.required("Full Name is required") : schema
-        ),
-      mobileNumber: Yup.string()
-        .matches(PHONE_REGEX, "Enter a valid 10-digit mobile number")
-        .when((_, schema) => 
-          step === "details" ? schema.required("Mobile number is required") : schema
-        ),
-      otp: Yup.string().when((_, schema) => 
-        step === "otp" ? schema.length(4, "OTP must be 4 digits").required("OTP is required") : schema
+      fullName: nameSchema("Full Name is required").when((_, schema) => 
+        step === "details" ? schema.required("Full Name is required") : schema.optional()
       ),
-      password: Yup.string().when((_, schema) => 
-        step === "otp" ? schema.min(6, "Password must be at least 6 characters").required("Password is required") : schema
+      mobileNumber: phoneSchema("Mobile number is required").when((_, schema) => 
+        step === "details" ? schema.required("Mobile number is required") : schema.optional()
+      ),
+      otp: trimmedString().when((_, schema) => 
+        step === "otp" 
+          ? schema.matches(/^[0-9]{4}$/, "OTP must be 4 digits").required("OTP is required") 
+          : schema.optional()
+      ),
+      password: trimmedString().when((_, schema) => 
+        step === "otp" ? schema.min(6, "Password must be at least 6 characters").required("Password is required") : schema.optional()
       ),
     }),
     onSubmit: async (values, { setSubmitting }) => {
@@ -116,7 +114,10 @@ export const RegisterForm = () => {
                   icon={<User size={20} />}
                   name="fullName"
                   value={formik.values.fullName}
-                  onChange={formik.handleChange}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\s{2,}/g, " ");
+                    formik.setFieldValue("fullName", val);
+                  }}
                   onBlur={formik.handleBlur}
                   error={formik.touched.fullName ? (formik.errors.fullName as string) : undefined}
                 />
@@ -127,8 +128,14 @@ export const RegisterForm = () => {
                   icon={<Phone size={20} />}
                   name="mobileNumber"
                   value={formik.values.mobileNumber}
-                  onChange={formik.handleChange}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                    formik.setFieldValue("mobileNumber", val);
+                  }}
                   onBlur={formik.handleBlur}
+                  maxLength={10}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   error={formik.touched.mobileNumber ? (formik.errors.mobileNumber as string) : undefined}
                 />
               </>
@@ -153,9 +160,14 @@ export const RegisterForm = () => {
                   placeholder="4-digit code"
                   type="text"
                   maxLength={4}
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   name="otp"
                   value={formik.values.otp}
-                  onChange={formik.handleChange}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, "").slice(0, 4);
+                    formik.setFieldValue("otp", val);
+                  }}
                   onBlur={formik.handleBlur}
                   error={formik.touched.otp ? (formik.errors.otp as string) : undefined}
                 />

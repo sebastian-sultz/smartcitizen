@@ -8,8 +8,7 @@ import { Textarea } from "@/components/ui/Textarea";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { useAlert } from "@/components/ui/AlertProvider";
-
-import { PHONE_REGEX, EMAIL_REGEX, NAME_REGEX } from "@/lib/regex";
+import { nameSchema, phoneSchema, emailSchema, trimmedString } from "@/lib/validation";
 
 interface ContactFormProps {
   helpAreas: { title: string }[];
@@ -26,17 +25,11 @@ export const ContactForm = ({ helpAreas }: ContactFormProps) => {
       message: "",
     },
     validationSchema: Yup.object({
-      fullName: Yup.string()
-        .matches(NAME_REGEX, "Enter a valid name (letters, spaces, dots, hyphens only)")
-        .required("Full name is required"),
-      mobileNumber: Yup.string()
-        .matches(PHONE_REGEX, "Enter a valid 10-digit mobile number")
-        .required("Mobile number is required"),
-      email: Yup.string()
-        .matches(EMAIL_REGEX, { message: "Invalid email address", excludeEmptyString: true })
-        .nullable(),
-      helpArea: Yup.string().required("Please select an area of help"),
-      message: Yup.string().required("Please describe how we can assist you"),
+      fullName: nameSchema("Full name is required"),
+      mobileNumber: phoneSchema("Mobile number is required"),
+      email: emailSchema().nullable(),
+      helpArea: trimmedString().required("Please select an area of help"),
+      message: trimmedString().required("Please describe how we can assist you"),
     }),
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       await new Promise((resolve) => setTimeout(resolve, 1500));
@@ -62,7 +55,10 @@ export const ContactForm = ({ helpAreas }: ContactFormProps) => {
             placeholder="Enter your name"
             name="fullName"
             value={formik.values.fullName}
-            onChange={formik.handleChange}
+            onChange={(e) => {
+              const val = e.target.value.replace(/\s{2,}/g, " ");
+              formik.setFieldValue("fullName", val);
+            }}
             onBlur={formik.handleBlur}
             error={formik.touched.fullName ? (formik.errors.fullName as string) : undefined}
           />
@@ -73,8 +69,14 @@ export const ContactForm = ({ helpAreas }: ContactFormProps) => {
               placeholder="Your phone number"
               name="mobileNumber"
               value={formik.values.mobileNumber}
-              onChange={formik.handleChange}
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                formik.setFieldValue("mobileNumber", val);
+              }}
               onBlur={formik.handleBlur}
+              maxLength={10}
+              inputMode="numeric"
+              pattern="[0-9]*"
               error={formik.touched.mobileNumber ? (formik.errors.mobileNumber as string) : undefined}
             />
             <Input
