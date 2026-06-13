@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 
 import { Payment } from "../types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -16,6 +17,8 @@ import {
   Share2,
 } from "lucide-react";
 import { toast } from "sonner";
+import { getReceiptStatus } from "../api";
+import { downloadBlob } from "@/lib/utils";
 
 interface DonationDetailModalProps {
   donation: Payment | null;
@@ -32,13 +35,32 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
   });
 
   // getStatusColor is imported from helpers.ts
+  const [downloading, setDownloading] = useState(false);
+
+  const fetchAndOpenReceipt = async () => {
+    try {
+      setDownloading(true);
+      const res = await getReceiptStatus(donation.merchantOrderId);
+      if (res && res.url) {
+        downloadBlob(res.url, `80G_Receipt_${donation.merchantOrderId}.pdf`);
+      } else if (res && res.status === "processing") {
+        toast.info("Your tax receipt is still being compiled. Please wait a moment...");
+      } else {
+        toast.error("Receipt is currently unavailable.");
+      }
+    } catch (err) {
+      toast.error("Failed to fetch receipt. Please try again.");
+    } finally {
+      setDownloading(false);
+    }
+  };
 
   const handleDownloadReceipt = () => {
-    toast.success("Receipt PDF compilation initiated.");
+    fetchAndOpenReceipt();
   };
 
   const handleDownloadCertificate = () => {
-    toast.success("80G tax certificate PDF download initiated.");
+    fetchAndOpenReceipt();
   };
 
   const handleShare = () => {
@@ -170,19 +192,21 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
                   variant="primary"
                   size="sm"
                   fullWidth
+                  isLoading={downloading}
                   startIcon={<Download size={14} />}
                 >
                   Donation Receipt
                 </Button>
               </div>
 
-              {isSuccess && (
+              {isSuccess && donation.donorPan && donation.donorAddress && (
                 <div className="flex-1">
                   <Button
                     onClick={handleDownloadCertificate}
                     variant="accent"
                     size="sm"
                     fullWidth
+                    isLoading={downloading}
                     startIcon={<FileText size={14} />}
                   >
                     80G Tax Slip

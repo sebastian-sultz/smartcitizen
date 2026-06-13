@@ -152,5 +152,6 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 		protected.Use(middleware.AuthMiddleware())
 		protected.GET("/history", paymentHandler.GetPaymentHistory)
 		protected.GET("/stats", paymentHandler.GetDonationStats)
+		protected.GET("/certificates", paymentHandler.GetTaxCertificates)
 	}
 }

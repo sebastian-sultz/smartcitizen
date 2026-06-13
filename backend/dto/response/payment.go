@@ -35,3 +35,11 @@ type UserDonationStatsResponse struct {
 	TotalTransactions int64   `json:"totalTransactions"`
 	AverageAmount     float64 `json:"averageAmount"`
 }
+
+type TaxCertificate struct {
+	ID          string  `json:"id"`
+	FiscalYear  string  `json:"fiscalYear"`
+	Amount      float64 `json:"amount"`
+	Status      string  `json:"status"` // generated, pending
+	DownloadURL string  `json:"downloadUrl"`
+}

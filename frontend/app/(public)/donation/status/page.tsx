@@ -7,10 +7,11 @@ import { Card, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Spinner } from "@/components/ui/spinner";
-import { getPaymentStatus } from "@/features/citizen/api";
+import { getPaymentStatus, getReceiptStatus } from "@/features/citizen/api";
 import { Payment } from "@/features/citizen/types";
 import PageHero from "@/components/layout/PageHero";
 import { toast } from "sonner";
+import { downloadBlob } from "@/lib/utils";
 
 function PaymentStatusContent() {
   const searchParams = useSearchParams();
@@ -18,6 +19,9 @@ function PaymentStatusContent() {
   const [payment, setPayment] = useState<Payment | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
+  const [receiptLoading, setReceiptLoading] = useState(false);
+  const [receiptError, setReceiptError] = useState(false);
 
   useEffect(() => {
     if (!transactionId) {
@@ -46,8 +50,64 @@ function PaymentStatusContent() {
     checkStatus();
   }, [transactionId]);
 
+  useEffect(() => {
+    if (!transactionId || !payment || payment.status !== "SUCCESS") return;
+
+    let timeoutId: NodeJS.Timeout;
+    let isMounted = true;
+    let retries = 0;
+
+    const pollReceipt = async () => {
+      try {
+        setReceiptLoading(true);
+        const res = await getReceiptStatus(transactionId);
+        if (!isMounted) return;
+
+        if (res && res.url) {
+          setReceiptUrl(res.url);
+          setReceiptLoading(false);
+        } else if (res && res.status === "processing") {
+          // Retry after 3 seconds
+          timeoutId = setTimeout(pollReceipt, 3000);
+        } else {
+          if (retries < 5) {
+            retries++;
+            timeoutId = setTimeout(pollReceipt, 3000);
+          } else {
+            setReceiptLoading(false);
+            setReceiptError(true);
+          }
+        }
+      } catch (err) {
+        if (!isMounted) return;
+        if (retries < 5) {
+          retries++;
+          timeoutId = setTimeout(pollReceipt, 3000);
+        } else {
+          setReceiptLoading(false);
+          setReceiptError(true);
+        }
+      }
+    };
+
+    pollReceipt();
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timeoutId);
+    };
+  }, [transactionId, payment]);
+
   const handleDownloadReceipt = () => {
-    toast.success("Receipt PDF compilation initiated.");
+    if (receiptUrl) {
+      downloadBlob(receiptUrl, `80G_Receipt_${transactionId || "donation"}.pdf`);
+    } else if (receiptLoading) {
+      toast.info("Your tax receipt is still being compiled. Please wait a moment...");
+    } else if (receiptError) {
+      toast.error("Tax receipt is currently unavailable. Please try again from your dashboard.");
+    } else {
+      toast.error("Tax receipt link not compiled yet. Try again shortly.");
+    }
   };
 
   if (loading) {
@@ -164,9 +224,10 @@ function PaymentStatusContent() {
               onClick={handleDownloadReceipt}
               variant="outline"
               size="sm"
+              isLoading={receiptLoading}
             >
               <Download size={14} />
-              Download Receipt
+              {receiptLoading ? "Generating Receipt..." : "Download Receipt"}
             </Button>
           )}
           <Button

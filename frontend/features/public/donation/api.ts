@@ -6,6 +6,8 @@ export interface InitiatePaymentRequest {
   donorName: string;
   donorEmail?: string;
   donorPhone?: string;
+  donorPan?: string;
+  donorAddress?: string;
 }
 
 export const initiatePublicPayment = async (

@@ -16,9 +16,10 @@ import {
 import EmptyState from "@/components/ui/EmptyState";
 import { Search, Eye, Filter, Download, Heart } from "lucide-react";
 import DonationDetailModal from "./DonationDetailModal";
-import { cn, formatDate } from "@/lib/utils";
+import { cn, formatDate, downloadBlob } from "@/lib/utils";
 import { getStatusColor } from "./helpers";
 import { toast } from "sonner";
+import { getReceiptStatus } from "../api";
 
 interface DonationHistoryProps {
   donations: Payment[];
@@ -43,6 +44,25 @@ export default function DonationHistory({
     null,
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [downloadingReceiptId, setDownloadingReceiptId] = useState<string | null>(null);
+
+  const handleDownloadReceipt = async (transactionId: string) => {
+    try {
+      setDownloadingReceiptId(transactionId);
+      const res = await getReceiptStatus(transactionId);
+      if (res && res.url) {
+        downloadBlob(res.url, `80G_Receipt_${transactionId}.pdf`);
+      } else if (res && res.status === "processing") {
+        toast.info("Your tax receipt is still being compiled. Please wait a moment...");
+      } else {
+        toast.error("Receipt is currently unavailable.");
+      }
+    } catch (err) {
+      toast.error("Failed to fetch receipt. Please try again.");
+    } finally {
+      setDownloadingReceiptId(null);
+    }
+  };
 
   // Filter Logic
   const filteredDonations = donations.filter((item) => {
@@ -108,6 +128,20 @@ export default function DonationHistory({
       ),
     },
     {
+      label: "Tax Status",
+      render: (row) => {
+        if (row.status.toLowerCase() !== "success") {
+          return <span className="text-text-muted text-xs font-semibold">-</span>;
+        }
+        const isEligible = !!(row.donorPan && row.donorAddress);
+        return (
+          <Badge variant={isEligible ? "success" : "warning"} size="md">
+            {isEligible ? "Tax Eligible" : "Pending Details"}
+          </Badge>
+        );
+      },
+    },
+    {
       label: "Action",
       render: (row) => (
         <div className="flex items-center gap-2">
@@ -122,13 +156,10 @@ export default function DonationHistory({
           </Button>
           {row.status.toLowerCase() === "success" && (
             <Button
-              onClick={() => {
-                toast.success(
-                  `Downloading receipt for transaction ${row.merchantOrderId}`,
-                );
-              }}
+              onClick={() => handleDownloadReceipt(row.merchantOrderId)}
               variant="primary"
               size="sm"
+              isLoading={downloadingReceiptId === row.merchantOrderId}
               startIcon={<Download size={12} />}
               className="text-xs font-bold py-1.5 px-3 h-auto"
             >

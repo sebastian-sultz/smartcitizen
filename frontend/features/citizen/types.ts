@@ -152,6 +152,8 @@ export interface Payment {
   donorName?: string;
   donorEmail?: string;
   donorPhone?: string;
+  donorPan?: string;
+  donorAddress?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -173,6 +175,8 @@ export interface InitiatePaymentRequest {
   donorName: string;
   donorEmail?: string;
   donorPhone?: string;
+  donorPan?: string;
+  donorAddress?: string;
 }
 
 

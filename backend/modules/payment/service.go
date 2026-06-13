@@ -32,6 +32,7 @@ type Service interface {
 	GetPaymentHistory(ctx context.Context, userID *string, pagination *utils.Pagination) ([]dtoresponse.Payment, error)
 	GetUserDonationStats(ctx context.Context, userID string) (*dtoresponse.UserDonationStatsResponse, error)
 	GetReceiptURL(ctx context.Context, transactionID string) (string, error)
+	GetTaxCertificates(ctx context.Context, userID string) ([]dtoresponse.TaxCertificate, error)
 }
 
 type service struct {
@@ -237,6 +238,10 @@ func (s *service) CheckPaymentStatus(ctx context.Context, orderID string) (*Paym
 		case "COMPLETED":
 			if payment.Status != PaymentStatusSuccess {
 				payment.Status = PaymentStatusSuccess
+				if len(statusResp.PaymentDetails) > 0 {
+					payment.PaymentMethod = string(statusResp.PaymentDetails[0].PaymentMode)
+					payment.ProviderReferenceID = statusResp.PaymentDetails[0].TransactionID
+				}
 				s.processSuccessfulPayment(ctx, payment)
 				updated = true
 			}
@@ -296,6 +301,27 @@ func (s *service) GetUserDonationStats(ctx context.Context, userID string) (*dto
 func (s *service) processSuccessfulPayment(ctx context.Context, payment *Payment) {
 	if payment.UserID != nil {
 		_ = s.userService.RecordSuccessfulPayment(payment.UserID.String(), float64(payment.Amount)/100.0)
+	}
+
+	// Fetch status from PhonePe if PaymentMethod or ProviderReferenceID is missing,
+	// because webhooks might not contain them or might have failed to parse them.
+	if payment.PaymentMethod == "" || payment.ProviderReferenceID == "" {
+		log.Printf("Payment details missing for OrderID %s, fetching from PhonePe...", payment.MerchantOrderID)
+		reqCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
+		defer cancel()
+		statusResp, err := s.client.GetOrderStatus(reqCtx, payment.MerchantOrderID)
+		if err == nil && statusResp != nil {
+			if len(statusResp.PaymentDetails) > 0 {
+				payment.PaymentMethod = string(statusResp.PaymentDetails[0].PaymentMode)
+				payment.ProviderReferenceID = statusResp.PaymentDetails[0].TransactionID
+				// Save/update the payment in the DB so these are persisted
+				if err := s.repo.UpdatePayment(ctx, payment); err != nil {
+					log.Printf("Failed to update payment details from processSuccessfulPayment: %v", err)
+				}
+			}
+		} else {
+			log.Printf("Failed to fetch order status from PhonePe for details: %v", err)
+		}
 	}
 
 	_, err := s.repo.GetReceiptByPaymentID(ctx, payment.ID.String())
@@ -367,4 +393,48 @@ func (s *service) GetReceiptURL(ctx context.Context, transactionID string) (stri
 	}
 	
 	return receipt.CloudinaryURL, nil
+}
+
+func (s *service) GetTaxCertificates(ctx context.Context, userID string) ([]dtoresponse.TaxCertificate, error) {
+	payments, receipts, err := s.repo.GetSuccessfulPaymentsWithReceipts(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	receiptMap := make(map[string]string)
+	for _, r := range receipts {
+		receiptMap[r.PaymentID.String()] = r.CloudinaryURL
+	}
+
+	var certs []dtoresponse.TaxCertificate
+	for _, p := range payments {
+		loc, _ := time.LoadLocation("Asia/Kolkata")
+		if loc == nil {
+			loc = time.Local
+		}
+		createdAtInIndia := p.CreatedAt.In(loc)
+		year := createdAtInIndia.Year()
+		var fy string
+		if createdAtInIndia.Month() < time.April {
+			fy = fmt.Sprintf("%d-%d", year-1, year)
+		} else {
+			fy = fmt.Sprintf("%d-%d", year, year+1)
+		}
+
+		downloadURL := receiptMap[p.ID.String()]
+		status := "pending"
+		if downloadURL != "" {
+			status = "generated"
+		}
+
+		certs = append(certs, dtoresponse.TaxCertificate{
+			ID:          p.ID.String(),
+			FiscalYear:  fy,
+			Amount:      float64(p.Amount) / 100.0,
+			Status:      status,
+			DownloadURL: downloadURL,
+		})
+	}
+
+	return certs, nil
 }

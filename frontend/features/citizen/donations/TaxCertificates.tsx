@@ -7,15 +7,21 @@ import { Button } from "@/components/ui/Button";
 import EmptyState from "@/components/ui/EmptyState";
 import { FileText, Download, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
+import { cn, downloadBlob } from "@/lib/utils";
 
 interface TaxCertificatesProps {
   certificates: TaxCertificate[];
 }
 
-export default function TaxCertificates({ certificates }: TaxCertificatesProps) {
-  const handleDownload = (fy: string) => {
-    toast.success(`80G tax benefit receipt for ${fy} downloaded.`);
+export default function TaxCertificates({
+  certificates,
+}: TaxCertificatesProps) {
+  const handleDownload = async (url: string, fy: string) => {
+    if (!url) {
+      toast.error("Download URL is not available.");
+      return;
+    }
+    downloadBlob(url, `80G_Tax_Slip_${fy}.pdf`);
   };
 
   if (certificates.length === 0) {
@@ -75,7 +81,9 @@ export default function TaxCertificates({ certificates }: TaxCertificatesProps) 
               </div>
 
               <Button
-                onClick={() => handleDownload(cert.fiscalYear)}
+                onClick={() =>
+                  handleDownload(cert.downloadUrl, cert.fiscalYear)
+                }
                 disabled={cert.status !== "generated"}
                 variant={cert.status === "generated" ? "primary" : "outline"}
                 size="sm"

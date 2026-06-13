@@ -1,4 +1,5 @@
 import api from "@/lib/axios";
+import { AxiosRequestConfig } from "axios";
 import { handleApiError } from "@/lib/api-helpers";
 import { UserResponse } from "../shared/auth/types";
 import {
@@ -138,5 +139,26 @@ export const getReferredMembers = async (userId: string): Promise<UserResponse[]
     return response.data.users || [];
   } catch (error: unknown) {
     handleApiError(error, "Failed to load referred members");
+  }
+};
+
+interface CustomRequestConfig extends AxiosRequestConfig {
+  skipGlobalErrorToast?: boolean;
+}
+
+export const getReceiptStatus = async (
+  transactionId: string
+): Promise<{ url?: string; status?: string }> => {
+  try {
+    const config: CustomRequestConfig = {
+      skipGlobalErrorToast: true,
+    };
+    const response = await api.get<{ url?: string; status?: string }>(
+      `/payments/receipt/${transactionId}`,
+      config
+    );
+    return response.data;
+  } catch (error: unknown) {
+    throw error;
   }
 };

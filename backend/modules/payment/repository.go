@@ -21,6 +21,7 @@ type Repository interface {
 	CreateReceipt(ctx context.Context, receipt *Receipt) error
 	GetReceiptByPaymentID(ctx context.Context, paymentID string) (*Receipt, error)
 	UpdateReceiptURL(ctx context.Context, receiptID string, url string) error
+	GetSuccessfulPaymentsWithReceipts(ctx context.Context, userID string) ([]Payment, []Receipt, error)
 }
 
 type repository struct {
@@ -176,4 +177,29 @@ func (r *repository) GetReceiptByPaymentID(ctx context.Context, paymentID string
 
 func (r *repository) UpdateReceiptURL(ctx context.Context, receiptID string, url string) error {
 	return r.db.WithContext(ctx).Model(&Receipt{}).Where("id = ?", receiptID).Update("cloudinary_url", url).Error
+}
+
+func (r *repository) GetSuccessfulPaymentsWithReceipts(ctx context.Context, userID string) ([]Payment, []Receipt, error) {
+	var payments []Payment
+	if err := r.db.WithContext(ctx).
+		Where("user_id = ? AND status = ? AND donor_pan IS NOT NULL AND donor_pan <> '' AND donor_address IS NOT NULL AND donor_address <> ''", userID, PaymentStatusSuccess).
+		Order("created_at desc").Find(&payments).Error; err != nil {
+		return nil, nil, err
+	}
+
+	if len(payments) == 0 {
+		return nil, nil, nil
+	}
+
+	var paymentIDs []string
+	for _, p := range payments {
+		paymentIDs = append(paymentIDs, p.ID.String())
+	}
+
+	var receipts []Receipt
+	if err := r.db.WithContext(ctx).Where("payment_id IN ?", paymentIDs).Find(&receipts).Error; err != nil {
+		return nil, nil, err
+	}
+
+	return payments, receipts, nil
 }

@@ -26,6 +26,8 @@ interface UnifiedDonationFormProps {
     donorName: string; 
     donorEmail?: string; 
     donorPhone?: string; 
+    donorPan?: string;
+    donorAddress?: string;
   }) => Promise<{
     redirectUrl: string;
     merchantOrderId: string;
@@ -49,6 +51,7 @@ export default function UnifiedDonationForm({
       amount: 1000 as number | "",
       donorName: "", // Optional for anonymous users
       pan: "",
+      donorAddress: "",
       transactionId: "",
       receipt: null as File | null,
     },
@@ -64,6 +67,9 @@ export default function UnifiedDonationForm({
         .nullable(),
       pan: Yup.string()
         .matches(PAN_REGEX, "Enter a valid 10-character PAN (e.g. ABCDE1234F)")
+        .nullable(),
+      donorAddress: Yup.string()
+        .max(200, "Address must be under 200 characters")
         .nullable(),
       transactionId: Yup.string().when([], {
         is: () => paymentType === "manual",
@@ -96,6 +102,8 @@ export default function UnifiedDonationForm({
           const payload = {
             amount: Number(values.amount),
             donorName: finalDonorName,
+            donorPan: values.pan || undefined,
+            donorAddress: values.donorAddress || undefined,
             ...(finalDonorPhone ? { donorPhone: finalDonorPhone } : {})
           };
 
@@ -330,6 +338,22 @@ export default function UnifiedDonationForm({
             error={
               formik.touched.pan && formik.errors.pan
                 ? (formik.errors.pan as string)
+                : undefined
+            }
+            size="sm"
+          />
+
+          {/* Address Input (Optional) */}
+          <Input
+            label="Address (Optional - Required for 80G Tax Rebate)"
+            placeholder="Enter your address"
+            name="donorAddress"
+            value={formik.values.donorAddress}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={
+              formik.touched.donorAddress && formik.errors.donorAddress
+                ? (formik.errors.donorAddress as string)
                 : undefined
             }
             size="sm"

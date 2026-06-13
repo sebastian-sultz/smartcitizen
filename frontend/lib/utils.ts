@@ -52,3 +52,20 @@ export function formatDate(
     return String(dateVal);
   }
 }
+
+export const downloadBlob = (blob: Blob | string, filename: string) => {
+  if (typeof window === "undefined") return;
+  const isString = typeof blob === "string";
+  const url = isString ? blob : window.URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  if (!isString) {
+    window.URL.revokeObjectURL(url);
+  }
+};

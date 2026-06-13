@@ -151,3 +151,24 @@ func (h *Handler) GetReceipt(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"url": url})
 }
+
+func (h *Handler) GetTaxCertificates(c *gin.Context) {
+	userIDVal, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	userID, ok := userIDVal.(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	certs, err := h.service.GetTaxCertificates(c.Request.Context(), userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"certificates": certs})
+}

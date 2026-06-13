@@ -68,10 +68,15 @@ func GenerateReceiptPDF(data ReceiptData) ([]byte, error) {
 	)
 
 	// Receipt Title
+	titleText := "DONATION RECEIPT"
+	if data.DonorPAN != "" {
+		titleText = "80G TAX EXEMPTION RECEIPT"
+	}
+
 	m.AddRows(
 		row.New(20).Add(
 			col.New(12).Add(
-				text.New("DONATION RECEIPT", props.Text{
+				text.New(titleText, props.Text{
 					Top:   5,
 					Style: fontstyle.Bold,
 					Align: align.Center,
@@ -97,6 +102,21 @@ func GenerateReceiptPDF(data ReceiptData) ([]byte, error) {
 	)
 
 	// Donor Information
+	panText := "PAN : Not Provided"
+	if data.DonorPAN != "" {
+		panText = fmt.Sprintf("PAN : %s", data.DonorPAN)
+	}
+
+	addressText := "Address : Not Provided"
+	if data.DonorAddress != "" {
+		addressText = fmt.Sprintf("Address : %s", data.DonorAddress)
+	}
+
+	phoneText := "Mobile No. : Not Provided"
+	if data.DonorPhone != "" {
+		phoneText = fmt.Sprintf("Mobile No. : %s", data.DonorPhone)
+	}
+
 	m.AddRows(
 		row.New(10).Add(
 			col.New(12).Add(
@@ -111,15 +131,15 @@ func GenerateReceiptPDF(data ReceiptData) ([]byte, error) {
 				text.New(fmt.Sprintf("Donor Name : %s", data.DonorName), props.Text{Size: 10}),
 			),
 			col.New(6).Add(
-				text.New(fmt.Sprintf("PAN : %s", data.DonorPAN), props.Text{Size: 10}),
+				text.New(panText, props.Text{Size: 10}),
 			),
 		),
 		row.New(10).Add(
 			col.New(6).Add(
-				text.New(fmt.Sprintf("Mobile No. : %s", data.DonorPhone), props.Text{Size: 10}),
+				text.New(phoneText, props.Text{Size: 10}),
 			),
 			col.New(6).Add(
-				text.New(fmt.Sprintf("Address : %s", data.DonorAddress), props.Text{Size: 10}),
+				text.New(addressText, props.Text{Size: 10}),
 			),
 		),
 	)
@@ -150,10 +170,17 @@ func GenerateReceiptPDF(data ReceiptData) ([]byte, error) {
 	)
 
 	// Declaration
+	var declaration string
+	if data.DonorPAN != "" {
+		declaration = fmt.Sprintf("DECLARATION\nReceived with thanks a voluntary donation of Rs. %.2f from the above donor towards the charitable and social welfare activities of Smart Citizens Foundation.\nDonations are eligible for deduction u/s 80G(5)(vi) of the Income Tax Act, 1961.\nThis is a system-generated receipt and does not require a physical signature.", data.Amount)
+	} else {
+		declaration = fmt.Sprintf("DECLARATION\nReceived with thanks a voluntary donation of Rs. %.2f from the above donor towards the charitable and social welfare activities of Smart Citizens Foundation.\nThis is a system-generated receipt and does not require a physical signature.", data.Amount)
+	}
+
 	m.AddRows(
 		row.New(30).Add(
 			col.New(12).Add(
-				text.New(fmt.Sprintf("DECLARATION\nReceived with thanks a voluntary donation of Rs. %.2f from the above donor towards the charitable and social welfare activities of Smart Citizens Foundation.\nThis is a system-generated receipt and does not require a physical signature.", data.Amount), props.Text{
+				text.New(declaration, props.Text{
 					Top:  5,
 					Size: 10,
 				}),
