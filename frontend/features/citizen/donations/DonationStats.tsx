@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getDonorLevel } from "../utils";
+import { cn } from "@/lib/utils";
 
 interface DonationStatsProps {
   stats: DonationStatsType | null;
@@ -17,7 +18,7 @@ export default function DonationStats({ stats }: DonationStatsProps) {
         {[...Array(4)].map((_, idx) => (
           <Card
             key={idx}
-            className="bg-white border border-border/80 p-6 flex flex-col justify-between shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] h-[130px]"
+            className="bg-white border border-border/80 p-6 flex flex-col justify-between shadow-sm rounded-[32px] h-[130px]"
           >
             <div className="space-y-2">
               <Skeleton className="h-4 w-24" />
@@ -66,6 +67,10 @@ export default function DonationStats({ stats }: DonationStatsProps) {
         </Badge>
       ),
       subtitle: `Avg. Contribution: ₹${avgParts.whole}.${avgParts.decimal}`,
+      bgGradient: "from-rose-50 to-rose-100/40 border-rose-100",
+      valueClass: "text-rose-900",
+      titleClass: "text-rose-800/80",
+      subtitleClass: "text-rose-700/95",
     },
     {
       title: "Donated This Year",
@@ -77,6 +82,10 @@ export default function DonationStats({ stats }: DonationStatsProps) {
         </Badge>
       ),
       subtitle: "This fiscal year",
+      bgGradient: "from-green-50 to-emerald-100/40 border-green-100",
+      valueClass: "text-green-900",
+      titleClass: "text-green-800/80",
+      subtitleClass: "text-green-700/95",
     },
     {
       title: "Donated Last Month",
@@ -88,6 +97,10 @@ export default function DonationStats({ stats }: DonationStatsProps) {
         </Badge>
       ),
       subtitle: "Last calendar month",
+      bgGradient: "from-sky-50 to-blue-100/40 border-sky-100",
+      valueClass: "text-blue-900",
+      titleClass: "text-blue-800/80",
+      subtitleClass: "text-blue-700/95",
     },
     {
       title: "Total Donations",
@@ -99,6 +112,10 @@ export default function DonationStats({ stats }: DonationStatsProps) {
         </Badge>
       ),
       subtitle: "Successful contributions",
+      bgGradient: "from-violet-50 to-purple-100/40 border-violet-100",
+      valueClass: "text-purple-900",
+      titleClass: "text-purple-800/80",
+      subtitleClass: "text-purple-700/95",
     },
   ];
 
@@ -107,27 +124,30 @@ export default function DonationStats({ stats }: DonationStatsProps) {
       {statsItems.map((item, idx) => (
         <Card
           key={idx}
-          className="bg-white border border-border/80 p-6 flex flex-col justify-between shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_24px_-8px_rgba(0,0,0,0.08)] transition-all duration-300"
+          className={cn(
+            "border p-6 flex flex-col justify-between shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-300 rounded-[32px] bg-gradient-to-br",
+            item.bgGradient
+          )}
         >
           <div className="space-y-1">
-            <span className="text-xs font-bold uppercase tracking-wider text-text-muted opacity-80">
+            <span className={cn("text-xs font-bold uppercase tracking-wider opacity-80", item.titleClass)}>
               {item.title}
             </span>
             <div className="flex items-baseline font-display">
-              <span className="text-3xl md:text-4xl font-black text-text tracking-tight">
+              <span className={cn("text-3xl md:text-4xl font-black tracking-tight", item.valueClass)}>
                 {item.whole}
               </span>
               {item.decimal && (
-                <span className="text-xl md:text-2xl font-bold text-text-muted opacity-75 ml-0.5">
+                <span className={cn("text-xl md:text-2xl font-bold opacity-75 ml-0.5", item.valueClass)}>
                   {item.decimal}
                 </span>
               )}
             </div>
           </div>
           
-          <div className="mt-4 flex items-center gap-2">
+          <div className="mt-4 flex flex-col items-start gap-1.5">
             {item.badge}
-            <span className="text-[11px] font-medium text-text-muted">
+            <span className={cn("text-[11px] font-semibold leading-none", item.subtitleClass)}>
               {item.subtitle}
             </span>
           </div>

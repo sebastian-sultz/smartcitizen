@@ -1,11 +1,16 @@
 "use client";
-import { useState } from "react";
 
+import { useState, useEffect } from "react";
 import { Payment } from "../types";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Separator } from "@/components/ui/separator";
+import { Input } from "@/components/ui/Input";
 import { getStatusColor } from "./helpers";
 import {
   Download,
@@ -14,41 +19,67 @@ import {
   Heart,
   FileText,
   CheckCircle2,
-  Share2,
+  Info,
 } from "lucide-react";
 import { toast } from "sonner";
-import { getReceiptStatus } from "../api";
+import { getReceiptStatus, updateDonationTaxDetails } from "../api";
 import { downloadBlob } from "@/lib/utils";
 
 interface DonationDetailModalProps {
   donation: Payment | null;
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
+  onRefresh?: () => void;
 }
 
-export default function DonationDetailModal({ donation, isOpen, onOpenChange }: DonationDetailModalProps) {
-  if (!donation) return null;
-
-  const formattedDate = new Date(donation.createdAt).toLocaleString("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
-
-  // getStatusColor is imported from helpers.ts
+export default function DonationDetailModal({
+  donation,
+  isOpen,
+  onOpenChange,
+  onRefresh,
+}: DonationDetailModalProps) {
+  const [localDonation, setLocalDonation] = useState<Payment | null>(null);
+  const [pan, setPan] = useState("");
+  const [address, setAddress] = useState("");
+  const [updating, setUpdating] = useState(false);
   const [downloading, setDownloading] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLocalDonation(donation);
+    if (donation) {
+      setPan(donation.donorPan || "");
+      setAddress(donation.donorAddress || "");
+    }
+  }, [donation, isOpen]);
+
+  if (!localDonation) return null;
+
+  const formattedDate = new Date(localDonation.createdAt).toLocaleString(
+    "en-IN",
+    {
+      dateStyle: "medium",
+      timeStyle: "short",
+    },
+  );
 
   const fetchAndOpenReceipt = async () => {
     try {
       setDownloading(true);
-      const res = await getReceiptStatus(donation.merchantOrderId);
+      const res = await getReceiptStatus(localDonation.merchantOrderId);
       if (res && res.url) {
-        downloadBlob(res.url, `80G_Receipt_${donation.merchantOrderId}.pdf`);
+        downloadBlob(
+          res.url,
+          `80G_Receipt_${localDonation.merchantOrderId}.pdf`,
+        );
       } else if (res && res.status === "processing") {
-        toast.info("Your tax receipt is still being compiled. Please wait a moment...");
+        toast.info(
+          "Your tax receipt is still being compiled. Please wait a moment...",
+        );
       } else {
         toast.error("Receipt is currently unavailable.");
       }
-    } catch (err) {
+    } catch {
       toast.error("Failed to fetch receipt. Please try again.");
     } finally {
       setDownloading(false);
@@ -63,23 +94,55 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
     fetchAndOpenReceipt();
   };
 
-  const handleShare = () => {
-    const text = `I just contributed ₹${(donation.amount / 100).toLocaleString("en-IN")} to SmartCitizen! Join me in empowering our city.`;
-    navigator.clipboard
-      .writeText(text)
-      .then(() => {
-        toast.success("Share message copied to clipboard!");
-      })
-      .catch(() => {
-        toast.error("Could not copy message automatically.");
+
+  const handleUpdateTaxDetails = async () => {
+    const trimmedPan = pan.trim().toUpperCase();
+    const trimmedAddress = address.trim();
+
+    if (!trimmedPan || trimmedPan.length !== 10) {
+      toast.error("Please enter a valid 10-character PAN number.");
+      return;
+    }
+    if (!trimmedAddress) {
+      toast.error("Please enter a billing address.");
+      return;
+    }
+
+    try {
+      setUpdating(true);
+      await updateDonationTaxDetails(localDonation.merchantOrderId, {
+        donorPan: trimmedPan,
+        donorAddress: trimmedAddress,
       });
+
+      toast.success(
+        "Tax details updated successfully! Compiling your receipt...",
+      );
+
+      setLocalDonation({
+        ...localDonation,
+        donorPan: trimmedPan,
+        donorAddress: trimmedAddress,
+      });
+
+      if (onRefresh) {
+        onRefresh();
+      }
+    } catch {
+      toast.error("Failed to update tax details. Please try again.");
+    } finally {
+      setUpdating(false);
+    }
   };
 
-  const isSuccess = donation.status.toLowerCase() === "success";
+  const isSuccess = localDonation.status.toLowerCase() === "success";
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent size="md" className="p-6">
+      <DialogContent
+        size="md"
+        className="max-h-[90vh] flex flex-col overflow-hidden"
+      >
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Heart size={18} className="text-rose-500" fill="currentColor" />
@@ -87,7 +150,8 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6 pt-4">
+        {/* Scrollable Middle Content */}
+        <div className="flex-1 overflow-y-auto space-y-6 pr-3 -mr-3">
           {/* Main Transaction Header with Gradient */}
           <div className="bg-gradient-to-br from-primary to-primary-light text-white p-6 rounded-3xl border-none text-center space-y-2 relative overflow-hidden shadow-md">
             <div className="absolute top-0 right-0 w-24 h-24 bg-white/5 rounded-full blur-xl pointer-events-none" />
@@ -95,11 +159,11 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
               Amount Supporting Foundation
             </span>
             <h3 className="text-3xl font-display font-black text-white">
-              ₹{(donation.amount / 100).toLocaleString("en-IN")}
+              ₹{(localDonation.amount / 100).toLocaleString("en-IN")}
             </h3>
             <div className="inline-block pt-1">
-              <Badge variant={getStatusColor(donation.status)} size="sm">
-                {isSuccess ? "Success (Verified)" : donation.status}
+              <Badge variant={getStatusColor(localDonation.status)} size="sm">
+                {isSuccess ? "Success (Verified)" : localDonation.status}
               </Badge>
             </div>
           </div>
@@ -111,7 +175,7 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
                 Transaction ID
               </span>
               <span className="font-mono text-xs text-text font-bold">
-                {donation.merchantOrderId}
+                {localDonation.merchantOrderId}
               </span>
             </div>
 
@@ -120,11 +184,11 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
                 Payment Method
               </span>
               <span className="font-semibold text-text">
-                {donation.paymentMethod || "Online Gateway"}
+                {localDonation.paymentMethod || "Online Gateway"}
               </span>
             </div>
 
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center pb-2 border-b border-border/50">
               <span className="text-text-muted font-bold text-xs uppercase tracking-wider">
                 Date & Time
               </span>
@@ -133,7 +197,73 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
                 {formattedDate}
               </span>
             </div>
+
+            {localDonation.donorPan && (
+              <div className="flex justify-between items-center pb-2 border-b border-border/50">
+                <span className="text-text-muted font-bold text-xs uppercase tracking-wider">
+                  Donor PAN
+                </span>
+                <span className="font-semibold text-text font-mono uppercase">
+                  {localDonation.donorPan}
+                </span>
+              </div>
+            )}
+
+            {localDonation.donorAddress && (
+              <div className="flex justify-between items-start">
+                <span className="text-text-muted font-bold text-xs uppercase tracking-wider pt-0.5">
+                  Billing Address
+                </span>
+                <span className="font-semibold text-text text-right text-xs max-w-[200px] break-words">
+                  {localDonation.donorAddress}
+                </span>
+              </div>
+            )}
           </div>
+
+          {/* Complete Tax Details Form if Success but details are missing */}
+          {isSuccess &&
+            (!localDonation.donorPan || !localDonation.donorAddress) && (
+              <div className="bg-amber-50/50 border border-amber-100/70 p-5 rounded-2xl space-y-3.5">
+                <div className="flex gap-2 items-center text-amber-800 text-xs font-bold uppercase tracking-wider">
+                  <Info size={14} className="text-amber-600 shrink-0" />
+                  <span>Complete Tax Details</span>
+                </div>
+                <p className="text-[11px] text-amber-700/80 leading-relaxed font-semibold">
+                  Submit your PAN and Address to make this contribution eligible
+                  for an 80G tax rebate slip.
+                </p>
+
+                <div className="space-y-3 pt-1">
+                  <Input
+                    label="PAN Number"
+                    placeholder="Enter 10-character PAN"
+                    value={pan}
+                    onChange={(e) =>
+                      setPan(e.target.value.toUpperCase().slice(0, 10))
+                    }
+                    size="sm"
+                  />
+                  <Input
+                    label="Billing Address"
+                    placeholder="Enter address for tax receipt"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    size="sm"
+                  />
+                  <Button
+                    onClick={handleUpdateTaxDetails}
+                    variant="accent"
+                    size="sm"
+                    fullWidth
+                    isLoading={updating}
+                    className="font-bold text-xs uppercase tracking-wider"
+                  >
+                    Submit Details
+                  </Button>
+                </div>
+              </div>
+            )}
 
           {/* Status Verification Timeline Graphics */}
           <div className="space-y-3">
@@ -168,7 +298,9 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
               <div className="relative">
                 <span
                   className={`absolute -left-[31px] top-0.5 flex h-4 w-4 items-center justify-center rounded-full ${
-                    isSuccess
+                    isSuccess &&
+                    localDonation.donorPan &&
+                    localDonation.donorAddress
                       ? "bg-primary text-white"
                       : "bg-slate-200 text-slate-400"
                   }`}
@@ -181,51 +313,33 @@ export default function DonationDetailModal({ donation, isOpen, onOpenChange }: 
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Action Row & Share */}
-          <div className="w-full pt-4 flex flex-col gap-3">
-            <Separator className="bg-border/80" />
-            <div className="flex gap-3">
-              <div className="flex-1">
-                <Button
-                  onClick={handleDownloadReceipt}
-                  variant="primary"
-                  size="sm"
-                  fullWidth
-                  isLoading={downloading}
-                  startIcon={<Download size={14} />}
-                >
-                  Donation Receipt
-                </Button>
-              </div>
-
-              {isSuccess && donation.donorPan && donation.donorAddress && (
-                <div className="flex-1">
-                  <Button
-                    onClick={handleDownloadCertificate}
-                    variant="accent"
-                    size="sm"
-                    fullWidth
-                    isLoading={downloading}
-                    startIcon={<FileText size={14} />}
-                  >
-                    80G Tax Slip
-                  </Button>
-                </div>
-              )}
-            </div>
-
+        {/* Fixed Footer Actions */}
+        <div className="shrink-0 w-full flex flex-col gap-3">
+          {isSuccess && localDonation.donorPan && localDonation.donorAddress ? (
             <Button
-              onClick={handleShare}
-              variant="outline"
+              onClick={handleDownloadCertificate}
+              variant="accent"
               size="sm"
               fullWidth
-              className="border-primary/20 hover:bg-primary/5"
-              startIcon={<Share2 size={14} />}
+              isLoading={downloading}
+              startIcon={<FileText size={14} />}
             >
-              Share Your Support
+              80G Tax Slip (PDF)
             </Button>
-          </div>
+          ) : (
+            <Button
+              onClick={handleDownloadReceipt}
+              variant="primary"
+              size="sm"
+              fullWidth
+              isLoading={downloading}
+              startIcon={<Download size={14} />}
+            >
+              Donation Receipt (PDF)
+            </Button>
+          )}
         </div>
       </DialogContent>
     </Dialog>

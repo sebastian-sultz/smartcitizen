@@ -23,6 +23,8 @@ type Payment struct {
 	DonorName           string     `json:"donorName,omitempty"`
 	DonorEmail          string         `json:"donorEmail,omitempty"`
 	DonorPhone          string         `json:"donorPhone,omitempty"`
+	DonorPAN            string         `json:"donorPan,omitempty"`
+	DonorAddress        string         `json:"donorAddress,omitempty"`
 	PhonepeResponse     datatypes.JSON `json:"phonepeResponse,omitempty"`
 	CreatedAt           time.Time      `json:"createdAt"`
 	UpdatedAt           time.Time      `json:"updatedAt"`

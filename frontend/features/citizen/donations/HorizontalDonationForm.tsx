@@ -51,7 +51,7 @@ export default function HorizontalDonationForm({
 
   const formik = useFormik({
     initialValues: {
-      amount: 1000 as number | "",
+      amount: "" as number | "",
       donorName: "", 
       pan: "",
       transactionId: "",
@@ -211,7 +211,17 @@ export default function HorizontalDonationForm({
 
       {/* Content Area - Designed to maintain consistent height to avoid UI shifts */}
       <CardContent className="p-6 md:p-8 min-h-[360px] flex flex-col justify-between">
-        <form onSubmit={formik.handleSubmit} className="flex-1 flex flex-col justify-between">
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (step < 3) {
+              nextStep();
+            } else {
+              formik.handleSubmit(e);
+            }
+          }}
+          className="flex-1 flex flex-col justify-between"
+        >
           
           <div className="flex-1 flex flex-col justify-center py-2">
             
@@ -235,7 +245,7 @@ export default function HorizontalDonationForm({
                           size="md"
                           noShadow
                           className={cn(
-                            "py-3.5 h-auto text-sm font-bold border transition-all duration-300 relative",
+                            "transition-all duration-300 relative border",
                             isSelected 
                               ? "border-primary shadow-sm" 
                               : "border-border/80 text-text hover:border-primary/40 hover:scale-[1.02]"
@@ -479,7 +489,6 @@ export default function HorizontalDonationForm({
                   size="sm"
                   onClick={prevStep}
                   startIcon={<ChevronLeft size={16} />}
-                  className="font-bold text-xs border border-border py-2.5 px-4 h-auto"
                 >
                   Back
                 </Button>
@@ -489,23 +498,24 @@ export default function HorizontalDonationForm({
             <div>
               {step < 3 ? (
                 <Button
+                  key="btn-next"
                   type="button"
                   variant="primary"
                   size="sm"
                   onClick={nextStep}
                   endIcon={<ChevronRight size={16} />}
-                  className="font-bold text-xs py-2.5 px-4 h-auto"
                 >
                   Continue
                 </Button>
               ) : (
                 <Button
+                  key="btn-submit"
                   type="submit"
                   variant="accent"
                   size="sm"
                   startIcon={<Send size={14} />}
                   isLoading={formik.isSubmitting}
-                  className="font-black text-xs uppercase tracking-wider py-2.5 px-5 h-auto shadow-[0_4px_16px_rgba(235,94,85,0.25)]"
+                  className="uppercase tracking-wider shadow-[0_4px_16px_rgba(235,94,85,0.25)]"
                 >
                   {paymentType === "online" ? "Proceed to Checkout" : "Verify Slip Proof"}
                 </Button>

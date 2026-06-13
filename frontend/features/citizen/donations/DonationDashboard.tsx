@@ -85,12 +85,14 @@ function DonationDashboardContent() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadInitialData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (!loading && activeTab === "history") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       loadHistoryOnly();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -159,6 +161,7 @@ function DonationDashboardContent() {
               setPage(p);
               setLimit(l);
             }}
+            onRefresh={refreshDonationData}
           />
         </TabsContent>
 

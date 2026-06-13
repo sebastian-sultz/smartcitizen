@@ -50,8 +50,10 @@ export function TableComponent<T>({
   // Reset page when total records changes to ensure proper alignment
   React.useEffect(() => {
     if (pagination?.page === undefined) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setInternalPage(1);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [totalRecords]);
 
   const handlePageChange = (newPage: number) => {
@@ -221,14 +223,17 @@ export function TableComponent<T>({
   return (
     <div className="w-full flex flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-card">
       <div className="w-full overflow-x-auto">
-        <Table className={className}>
+        <Table className={className} noWrapper>
           <ShadcnTableHeader>
             <TableRow className="hover:bg-transparent border-b border-border bg-bg/50">
               {headers.map((h, i) => (
                 <TableHead
                   key={i}
                   style={{ width: h.width }}
-                  className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-text-light"
+                  className={cn(
+                    "px-6 py-4 text-xs font-bold uppercase tracking-wider text-text-light",
+                    i === 0 ? "text-left" : "text-center"
+                  )}
                 >
                   {h.label}
                 </TableHead>
@@ -241,15 +246,21 @@ export function TableComponent<T>({
               Array.from({ length: 5 }).map((_, rIdx) => (
                 <TableRow key={rIdx} className="hover:bg-transparent">
                   {headers.map((_, cIdx) => (
-                    <TableCell key={cIdx} className="px-6 py-4">
+                    <TableCell 
+                      key={cIdx} 
+                      className={cn(
+                        "px-6 py-4",
+                        cIdx === 0 ? "text-left" : "text-center"
+                      )}
+                    >
                       <Skeleton
                         className={cn(
                           "h-5 rounded-md animate-pulse bg-border/60",
                           cIdx === 0
                             ? "w-1/2"
                             : cIdx === headers.length - 1
-                            ? "w-2/3 ml-auto"
-                            : "w-3/4"
+                            ? "w-2/3 mx-auto"
+                            : "w-3/4 mx-auto"
                         )}
                       />
                     </TableCell>
@@ -274,7 +285,13 @@ export function TableComponent<T>({
               data.map((row, rowIndex) => (
                 <TableRow key={rowIndex} className="hover:bg-bg/40 transition-colors border-b border-border/50 [&:last-child]:border-0">
                   {headers.map((h, colIndex) => (
-                    <TableCell key={colIndex} className="px-6 py-4.5 align-middle text-sm text-text font-medium">
+                    <TableCell 
+                      key={colIndex} 
+                      className={cn(
+                        "px-6 py-4.5 align-middle text-sm text-text font-medium",
+                        colIndex === 0 ? "text-left" : "text-center"
+                      )}
+                    >
                       {h.render(row)}
                     </TableCell>
                   ))}

@@ -31,7 +31,7 @@ export function DonationMain() {
             </div>
           </div>
 
-          <div className="flex flex-col lg:flex-row gap-16 items-start">
+          <div className="flex flex-col lg:flex-row gap-16 items-stretch">
             <DonationForm />
             <PaymentInfo />
           </div>

@@ -162,3 +162,18 @@ export const getReceiptStatus = async (
     throw error;
   }
 };
+
+export const updateDonationTaxDetails = async (
+  transactionId: string,
+  payload: { donorPan: string; donorAddress: string }
+): Promise<{ status: string }> => {
+  try {
+    const response = await api.put<{ status: string }>(
+      `/payments/tax-details/${transactionId}`,
+      payload
+    );
+    return response.data;
+  } catch (error: unknown) {
+    handleApiError(error, "Failed to update tax details");
+  }
+};

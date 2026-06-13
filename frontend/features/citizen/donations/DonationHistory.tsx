@@ -28,6 +28,7 @@ interface DonationHistoryProps {
   limit: number;
   total: number;
   onPaginationChange: (page: number, limit: number) => void;
+  onRefresh?: () => void;
 }
 
 export default function DonationHistory({
@@ -37,6 +38,7 @@ export default function DonationHistory({
   limit,
   total,
   onPaginationChange,
+  onRefresh,
 }: DonationHistoryProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
@@ -57,7 +59,7 @@ export default function DonationHistory({
       } else {
         toast.error("Receipt is currently unavailable.");
       }
-    } catch (err) {
+    } catch {
       toast.error("Failed to fetch receipt. Please try again.");
     } finally {
       setDownloadingReceiptId(null);
@@ -240,6 +242,7 @@ export default function DonationHistory({
         donation={selectedDonation}
         isOpen={isModalOpen}
         onOpenChange={setIsModalOpen}
+        onRefresh={onRefresh}
       />
     </div>
   );

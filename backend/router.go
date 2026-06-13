@@ -153,5 +153,6 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 		protected.GET("/history", paymentHandler.GetPaymentHistory)
 		protected.GET("/stats", paymentHandler.GetDonationStats)
 		protected.GET("/certificates", paymentHandler.GetTaxCertificates)
+		protected.PUT("/tax-details/:transactionId", paymentHandler.UpdateTaxDetails)
 	}
 }

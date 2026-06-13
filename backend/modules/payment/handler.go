@@ -172,3 +172,28 @@ func (h *Handler) GetTaxCertificates(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"certificates": certs})
 }
+
+func (h *Handler) UpdateTaxDetails(c *gin.Context) {
+	transactionID := c.Param("transactionId")
+	if transactionID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing transactionId"})
+		return
+	}
+
+	var req struct {
+		DonorPAN     string `json:"donorPan" binding:"required"`
+		DonorAddress string `json:"donorAddress" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := h.service.UpdateTaxDetails(c.Request.Context(), transactionID, req.DonorPAN, req.DonorAddress)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "success"})
+}

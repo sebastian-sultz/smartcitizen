@@ -45,6 +45,7 @@ func UploadPDF(ctx context.Context, fileBytes []byte, folder string, filename st
 		PublicID:     filename,
 		ResourceType: "image",
 		Type:         "private",
+		Invalidate:   api.Bool(true),
 	})
 	if err != nil {
 		return "", "", err

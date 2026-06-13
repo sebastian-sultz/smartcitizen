@@ -33,6 +33,7 @@ type Service interface {
 	GetUserDonationStats(ctx context.Context, userID string) (*dtoresponse.UserDonationStatsResponse, error)
 	GetReceiptURL(ctx context.Context, transactionID string) (string, error)
 	GetTaxCertificates(ctx context.Context, userID string) ([]dtoresponse.TaxCertificate, error)
+	UpdateTaxDetails(ctx context.Context, transactionID string, donorPAN string, donorAddress string) error
 }
 
 type service struct {
@@ -282,6 +283,8 @@ func (s *service) GetPaymentHistory(ctx context.Context, userID *string, paginat
 			DonorName:           p.DonorName,
 			DonorEmail:          p.DonorEmail,
 			DonorPhone:          p.DonorPhone,
+			DonorPAN:            p.DonorPAN,
+			DonorAddress:        p.DonorAddress,
 			PhonepeResponse:     p.PhonepeResponse,
 			CreatedAt:           p.CreatedAt,
 			UpdatedAt:           p.UpdatedAt,
@@ -454,4 +457,82 @@ func (s *service) GetTaxCertificates(ctx context.Context, userID string) ([]dtor
 	}
 
 	return certs, nil
+}
+
+func (s *service) UpdateTaxDetails(ctx context.Context, transactionID string, donorPAN string, donorAddress string) error {
+	payment, err := s.repo.GetPaymentByOrderID(ctx, transactionID)
+	if err != nil {
+		return fmt.Errorf("payment record not found: %w", err)
+	}
+
+	payment.DonorPAN = donorPAN
+	payment.DonorAddress = donorAddress
+
+	if err := s.repo.UpdatePayment(ctx, payment); err != nil {
+		return fmt.Errorf("failed to update payment record: %w", err)
+	}
+
+	if payment.Status == PaymentStatusSuccess {
+		if err := s.regenerateReceipt(ctx, payment); err != nil {
+			return fmt.Errorf("failed to compile tax receipt: %w", err)
+		}
+	}
+
+	return nil
+}
+
+func (s *service) regenerateReceipt(ctx context.Context, payment *Payment) error {
+	receipt, err := s.repo.GetReceiptByPaymentID(ctx, payment.ID.String())
+	var receiptNumber string
+	var receiptID string
+
+	if err != nil {
+		receiptNumber, err = s.repo.GetNextReceiptNumber(ctx)
+		if err != nil {
+			return fmt.Errorf("failed to generate receipt number: %w", err)
+		}
+		newReceipt := &Receipt{
+			PaymentID:     payment.ID,
+			ReceiptNumber: receiptNumber,
+		}
+		if err := s.repo.CreateReceipt(ctx, newReceipt); err != nil {
+			return fmt.Errorf("failed to create receipt record: %w", err)
+		}
+		receiptID = newReceipt.ID.String()
+	} else {
+		receiptNumber = receipt.ReceiptNumber
+		receiptID = receipt.ID.String()
+	}
+
+	log.Printf("Regenerating PDF for Receipt: %s due to tax info update", receiptNumber)
+	
+	receiptData := utils.ReceiptData{
+		ReceiptNum:    receiptNumber,
+		CreatedAt:     payment.CreatedAt,
+		DonorName:     payment.DonorName,
+		DonorPAN:      payment.DonorPAN,
+		DonorPhone:    payment.DonorPhone,
+		DonorAddress:  payment.DonorAddress,
+		Amount:        float64(payment.Amount) / 100.0,
+		PaymentMethod: payment.PaymentMethod,
+		TransactionID: payment.ProviderReferenceID,
+	}
+
+	pdfBytes, err := utils.GenerateReceiptPDF(receiptData)
+	if err != nil {
+		return fmt.Errorf("PDF generation failed for %s: %w", receiptNumber, err)
+	}
+
+	filename := fmt.Sprintf("receipts/%s", strings.ReplaceAll(receiptNumber, "/", "-"))
+	url, _, err := cloudinary.UploadPDF(ctx, pdfBytes, "receipts", filename)
+	if err != nil {
+		return fmt.Errorf("upload failed for %s: %w", receiptNumber, err)
+	}
+
+	if err := s.repo.UpdateReceiptURL(ctx, receiptID, url); err != nil {
+		return fmt.Errorf("failed to update Receipt URL for %s: %w", receiptNumber, err)
+	}
+
+	log.Printf("Successfully regenerated and uploaded receipt: %s", url)
+	return nil
 }
