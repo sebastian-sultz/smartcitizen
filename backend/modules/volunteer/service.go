@@ -15,10 +15,11 @@ import (
 type Service interface {
 	CreateVolunteer(req *request.CreateVolunteer) (*Volunteer, error)
 	GetVolunteer(id string) (*Volunteer, error)
-	GetAllVolunteers(search string, pagination *utils.Pagination) ([]Volunteer, error)
+	GetAllVolunteers(search string, onlyApproved bool, pagination *utils.Pagination) ([]Volunteer, error)
 	UpdateVolunteer(id string, req *request.UpdateVolunteer) (*Volunteer, error)
 	UpdateVolunteerImage(ctx context.Context, id string, url string, publicID string) error
 	DeleteVolunteer(ctx context.Context, id string) error
+	UpdateVolunteerStatus(ctx context.Context, id string, status string) (*Volunteer, error)
 }
 
 type service struct {
@@ -62,6 +63,7 @@ func (s *service) CreateVolunteer(req *request.CreateVolunteer) (*Volunteer, err
 		Profession:     req.Profession,
 		Experience:     req.Experience,
 		IsPublicConsent: req.IsPublicConsent,
+		Status:          "PENDING",
 	}
 
 	if err := s.repo.Create(volunteer); err != nil {
@@ -75,8 +77,8 @@ func (s *service) GetVolunteer(id string) (*Volunteer, error) {
 	return s.repo.FindByID(id)
 }
 
-func (s *service) GetAllVolunteers(search string, pagination *utils.Pagination) ([]Volunteer, error) {
-	return s.repo.FindAll(search, pagination)
+func (s *service) GetAllVolunteers(search string, onlyApproved bool, pagination *utils.Pagination) ([]Volunteer, error) {
+	return s.repo.FindAll(search, onlyApproved, pagination)
 }
 
 func (s *service) UpdateVolunteer(id string, req *request.UpdateVolunteer) (*Volunteer, error) {
@@ -155,4 +157,25 @@ func (s *service) DeleteVolunteer(ctx context.Context, id string) error {
 	}
 
 	return s.repo.Delete(id)
+}
+
+func (s *service) UpdateVolunteerStatus(ctx context.Context, id string, status string) (*Volunteer, error) {
+	volunteer, err := s.repo.FindByID(id)
+	if err != nil {
+		return nil, errors.New("volunteer not found")
+	}
+
+	var targetUserType string
+	if status == "APPROVED" {
+		targetUserType = string(user.Volunteer)
+	} else {
+		targetUserType = string(user.Member)
+	}
+
+	if err := s.repo.UpdateStatus(id, status, volunteer.UserID.String(), targetUserType); err != nil {
+		return nil, err
+	}
+
+	volunteer.Status = status
+	return volunteer, nil
 }

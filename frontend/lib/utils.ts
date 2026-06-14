@@ -69,3 +69,11 @@ export const downloadBlob = (blob: Blob | string, filename: string) => {
     window.URL.revokeObjectURL(url);
   }
 };
+
+export function formatUserSlug(id?: string): string {
+  if (!id) return "";
+  if (id.length > 8) {
+    return `GSC-${id.substring(0, 8).toUpperCase()}`;
+  }
+  return id;
+}

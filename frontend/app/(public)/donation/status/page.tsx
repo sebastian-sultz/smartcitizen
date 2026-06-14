@@ -12,8 +12,10 @@ import { Payment } from "@/features/citizen/types";
 import PageHero from "@/components/layout/PageHero";
 import { toast } from "sonner";
 import { downloadBlob } from "@/lib/utils";
+import { useCitizenStore } from "@/store/citizenStore";
 
 function PaymentStatusContent() {
+  const { user } = useCitizenStore();
   const searchParams = useSearchParams();
   const transactionId = searchParams.get("transactionId");
   const [payment, setPayment] = useState<Payment | null>(null);
@@ -132,7 +134,7 @@ function PaymentStatusContent() {
           </p>
           <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
             <Button
-              onClick={() => window.location.href = "/donation"}
+              onClick={() => window.location.href = user ? "/citizen/donations" : "/"}
               variant="outline"
               size="sm"
             >
@@ -231,10 +233,10 @@ function PaymentStatusContent() {
             </Button>
           )}
           <Button
-            onClick={() => window.location.href = isSuccess ? "/citizen/donations" : "/donation"}
+            onClick={() => window.location.href = user ? "/citizen/donations" : "/"}
             size="sm"
           >
-            {isSuccess ? "Go to Dashboard" : "Back to Donation"}
+            {isSuccess ? (user ? "Go to Dashboard" : "Back to Home") : (user ? "Back to Dashboard" : "Back to Home")}
           </Button>
         </div>
       </CardContent>

@@ -13,7 +13,8 @@ type Repository interface {
 	Update(user *User) error
 	Delete(id string) error
 	GetSystemStats() (int64, int64, int64, float64, error)
-	FindNonAdminUsers(pagination *utils.Pagination) ([]User, error)
+	FindNonAdminUsers(search string, sort string, pagination *utils.Pagination) ([]User, error)
+	FindAllNonAdminUsers() ([]User, error)
 	FindByReferralID(referralID string) ([]User, error)
 	FindVolunteerByUserID(userID string) (*response.Volunteer, error)
 	RecordSuccessfulPayment(userID string, amount float64) error
@@ -68,32 +69,66 @@ func (r *repository) GetSystemStats() (int64, int64, int64, float64, error) {
 	var totalUsers int64
 	var totalPayments int64
 	var totalReferrals int64
-	var totalAmount float64
+	var totalAmountPaise int64
 
 	err := r.db.Model(&User{}).Count(&totalUsers).Error
 	if err != nil {
 		return 0, 0, 0, 0, err
 	}
 
-	row := r.db.Model(&User{}).Select("COALESCE(SUM(total_payments), 0) as total_payments, COALESCE(SUM(total_referrals), 0) as total_referrals, COALESCE(SUM(total_amount), 0) as total_amount").Row()
-	err = row.Scan(&totalPayments, &totalReferrals, &totalAmount)
+	err = r.db.Model(&User{}).Select("COALESCE(SUM(total_referrals), 0)").Row().Scan(&totalReferrals)
 	if err != nil {
 		return 0, 0, 0, 0, err
 	}
 
-	return totalUsers, totalPayments, totalReferrals, totalAmount, nil
+	err = r.db.Table("payments").Where("status = 'SUCCESS' AND deleted_at IS NULL").Count(&totalPayments).Error
+	if err != nil {
+		return 0, 0, 0, 0, err
+	}
+
+	err = r.db.Table("payments").Where("status = 'SUCCESS' AND deleted_at IS NULL").Select("COALESCE(SUM(amount), 0)").Row().Scan(&totalAmountPaise)
+	if err != nil {
+		return 0, 0, 0, 0, err
+	}
+
+	totalAmountFloat := float64(totalAmountPaise) / 100.0
+
+	return totalUsers, totalPayments, totalReferrals, totalAmountFloat, nil
 }
 
-func (r *repository) FindNonAdminUsers(pagination *utils.Pagination) ([]User, error) {
+
+func (r *repository) FindNonAdminUsers(search string, sort string, pagination *utils.Pagination) ([]User, error) {
 	var users []User
 	query := r.db.Model(&User{}).Where("user_type != ?", string(Admin))
+
+	if search != "" {
+		query = query.Where("name ILIKE ? OR phone ILIKE ?", "%"+search+"%", "%"+search+"%")
+	}
 
 	if err := query.Count(&pagination.TotalRows).Error; err != nil {
 		return nil, err
 	}
 	pagination.Calculate()
 
-	err := query.Order("created_at desc").Limit(pagination.Limit).Offset(pagination.Offset).Find(&users).Error
+	orderClause := "created_at desc"
+	if sort != "" {
+		switch sort {
+		case "name_asc":
+			orderClause = "name asc"
+		case "name_desc":
+			orderClause = "name desc"
+		case "newest":
+			orderClause = "created_at desc"
+		case "oldest":
+			orderClause = "created_at asc"
+		case "referrals_desc":
+			orderClause = "total_referrals desc"
+		case "donations_desc":
+			orderClause = "total_amount desc"
+		}
+	}
+
+	err := query.Order(orderClause).Limit(pagination.Limit).Offset(pagination.Offset).Find(&users).Error
 	return users, err
 }
 
@@ -144,3 +179,10 @@ func (r *repository) RecordSuccessfulPayment(userID string, amount float64) erro
 		return nil
 	})
 }
+
+func (r *repository) FindAllNonAdminUsers() ([]User, error) {
+	var users []User
+	err := r.db.Where("user_type != ?", string(Admin)).Find(&users).Error
+	return users, err
+}
+

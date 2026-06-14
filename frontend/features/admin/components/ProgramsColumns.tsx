@@ -53,16 +53,16 @@ export const getProgramsColumns = (
       <div className="flex items-center justify-end gap-2">
         <Button 
           variant="ghost-primary"
-          size="icon"
+          size="sm"
           shape="square"
           onClick={() => viewParticipants(program.id, program.event_name)}
-          title="View Participants"
+          startIcon={<Users size={16} />}
         >
-          <Users size={16} />
+          Participants
         </Button>
         <Button 
           variant="ghost-danger"
-          size="icon"
+          size="sm"
           shape="square"
           onClick={() => {
             showConfirm({
@@ -74,9 +74,9 @@ export const getProgramsColumns = (
               onConfirm: () => deleteProgram(program.id),
             });
           }}
-          title="Delete Program"
+          startIcon={<Trash2 size={16} />}
         >
-          <Trash2 size={16} />
+          Delete
         </Button>
       </div>
     ),

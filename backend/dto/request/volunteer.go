@@ -27,4 +27,5 @@ type UpdateVolunteer struct {
 	Profession     *string `json:"profession"`
 	Experience     *string `json:"experience"`
 	IsPublicConsent *bool  `json:"ispublicconsent"`
+	Status          *string `json:"status"`
 }

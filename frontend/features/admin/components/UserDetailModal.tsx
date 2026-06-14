@@ -2,7 +2,7 @@ import React from "react";
 import Image from "next/image";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { UserResponse } from "@/features/shared/auth/types";
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatUserSlug } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
 
 interface UserDetailModalProps {
@@ -24,13 +24,13 @@ export const UserDetailModal = ({ open, onOpenChange, user }: UserDetailModalPro
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto min-h-0 pt-4">
+        <div className="flex-1 overflow-y-auto min-h-0 py-4 space-y-6">
           {user && (
             <div className="space-y-6">
-              {/* Profile Header */}
-              <div className="flex flex-col sm:flex-row items-center gap-4 border-b border-border/40 pb-6">
+              {/* Header profile cards */}
+              <div className="flex flex-col sm:flex-row items-center gap-4 bg-bg/40 p-4 border border-border/60 rounded-2xl">
                 {user.profile_photo ? (
-                  <div className="relative w-20 h-20 rounded-full overflow-hidden border-2 border-primary/20 shrink-0 bg-muted">
+                  <div className="relative w-20 h-20 rounded-full overflow-hidden border border-border bg-bg shrink-0">
                     <Image
                       src={user.profile_photo}
                       alt={user.name}
@@ -47,7 +47,7 @@ export const UserDetailModal = ({ open, onOpenChange, user }: UserDetailModalPro
                   <h3 className="font-display font-bold text-lg text-text truncate">
                     {user.name}
                   </h3>
-                  <p className="text-xs text-text-muted mt-1">ID: {user.id}</p>
+                  <p className="text-xs text-text-muted mt-1">ID: {formatUserSlug(user.id)}</p>
                 </div>
               </div>
 

@@ -276,8 +276,11 @@ func (h *Handler) GetAllNonAdminUsers(c *gin.Context) {
 		return
 	}
 
+	search := c.Query("q")
+	sort := c.Query("sort")
+
 	pagination := utils.GetPaginationFromContext(c)
-	usersList, err := h.service.GetNonAdminUsers(&pagination)
+	usersList, err := h.service.GetNonAdminUsers(search, sort, &pagination)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch users"})
 		return
@@ -379,3 +382,39 @@ func (h *Handler) GetReferredUsers(c *gin.Context) {
 		"users": res,
 	})
 }
+
+func (h *Handler) GetDownlineNetwork(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user id is required"})
+		return
+	}
+
+	recursive := c.Query("recursive") == "true"
+	pagination := utils.GetPaginationFromContext(c)
+
+	res, err := h.service.GetDownlineNetwork(c.Request.Context(), id, recursive, &pagination)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (h *Handler) GetNetworkStats(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "user id is required"})
+		return
+	}
+
+	res, err := h.service.GetNetworkStats(c.Request.Context(), id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+

@@ -25,3 +25,26 @@ type User struct {
 	CreatedAt            time.Time `json:"created_at"`
 	UpdatedAt            time.Time `json:"updated_at"`
 }
+
+type ReferralInfo struct {
+	ID                    uuid.UUID `json:"id"`
+	Name                  string    `json:"name"`
+	Phone                 string    `json:"phone"`
+	Level                 int       `json:"level"`
+	TotalDirectDonations  float64   `json:"totalDirectDonations"`
+	TotalNetworkDonations float64   `json:"totalNetworkDonations"`
+	JoinedAt              time.Time `json:"joinedAt"`
+}
+
+type UserNetworkResponse struct {
+	UserID    string         `json:"userId"`
+	Referrals []ReferralInfo `json:"referrals"`
+}
+
+type UserNetworkStatsResponse struct {
+	DirectReferralsCount         int64   `json:"directReferralsCount"`
+	TotalDownlineCount           int64   `json:"totalDownlineCount"`
+	DirectReferralDonationAmount float64 `json:"directReferralDonationAmount"`
+	TotalNetworkDonationAmount   float64 `json:"totalNetworkDonationAmount"`
+}
+

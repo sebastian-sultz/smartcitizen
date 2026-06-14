@@ -1,6 +1,7 @@
 package payment
 
 import (
+	"fmt"
 	"io"
 	"net/http"
 
@@ -85,20 +86,64 @@ func (h *Handler) CheckPaymentStatus(c *gin.Context) {
 func (h *Handler) GetPaymentHistory(c *gin.Context) {
 	pagination := utils.GetPaginationFromContext(c)
 
-	var userID *string
-	// Optional filter by user
-	if val, exists := c.Get("userID"); exists {
-		if idStr, ok := val.(string); ok {
-			userID = &idStr
+	var filter dtorequest.PaymentFilter
+
+	userTypeVal, exists := c.Get("userType")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	userType, ok := userTypeVal.(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	userIDVal, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+	userIDStr, ok := userIDVal.(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	if userType == "admin" {
+		// Admin can view globally or filter by specific user
+		if qUserID := c.Query("userId"); qUserID != "" {
+			filter.UserID = &qUserID
 		}
+		// Admin search & filters
+		if search := c.Query("search"); search != "" {
+			filter.Search = &search
+		}
+		if status := c.Query("status"); status != "" {
+			filter.Status = &status
+		}
+		if taxExempt := c.Query("taxExemption"); taxExempt != "" {
+			val := taxExempt == "true"
+			filter.TaxExemption = &val
+		}
+		if start := c.Query("startDate"); start != "" {
+			filter.StartDate = &start
+		}
+		if end := c.Query("endDate"); end != "" {
+			filter.EndDate = &end
+		}
+		if sortBy := c.Query("sortBy"); sortBy != "" {
+			filter.SortBy = &sortBy
+		}
+		if sortOrder := c.Query("sortOrder"); sortOrder != "" {
+			filter.SortOrder = &sortOrder
+		}
+	} else {
+		// Non-admin can only view their own payment history
+		filter.UserID = &userIDStr
 	}
 
-	// Support admin queries
-	if qUserID := c.Query("userId"); qUserID != "" {
-		userID = &qUserID
-	}
-
-	payments, err := h.service.GetPaymentHistory(c.Request.Context(), userID, &pagination)
+	payments, err := h.service.GetPaymentHistory(c.Request.Context(), filter, &pagination)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -197,3 +242,68 @@ func (h *Handler) UpdateTaxDetails(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"status": "success"})
 }
+
+func (h *Handler) ExportCSV(c *gin.Context) {
+	var filter dtorequest.PaymentFilter
+
+	if search := c.Query("search"); search != "" {
+		filter.Search = &search
+	}
+	if status := c.Query("status"); status != "" {
+		filter.Status = &status
+	}
+	if taxExempt := c.Query("taxExemption"); taxExempt != "" {
+		val := taxExempt == "true"
+		filter.TaxExemption = &val
+	}
+	if start := c.Query("startDate"); start != "" {
+		filter.StartDate = &start
+	}
+	if end := c.Query("endDate"); end != "" {
+		filter.EndDate = &end
+	}
+
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Disposition", "attachment; filename=payments_export.csv")
+	c.Header("Content-Type", "text/csv")
+	c.Header("Content-Transfer-Encoding", "binary")
+
+	if err := h.service.ExportPaymentsCSV(c.Request.Context(), filter, c.Writer); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+}
+
+func (h *Handler) Export10BD(c *gin.Context) {
+	financialYear := c.Query("financialYear")
+	if financialYear == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing financialYear parameter"})
+		return
+	}
+
+	filename := fmt.Sprintf("form_10bd_%s.csv", financialYear)
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	c.Header("Content-Type", "text/csv")
+	c.Header("Content-Transfer-Encoding", "binary")
+
+	if err := h.service.ExportForm10BDCSV(c.Request.Context(), financialYear, c.Writer); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+}
+
+func (h *Handler) SyncPendingReceipts(c *gin.Context) {
+	count, err := h.service.SyncPendingReceipts(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  "success",
+		"message": fmt.Sprintf("Synchronized %d pending receipts in the background.", count),
+		"count":   count,
+	})
+}
+

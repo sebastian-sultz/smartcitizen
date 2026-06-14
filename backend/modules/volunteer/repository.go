@@ -10,9 +10,10 @@ import (
 type Repository interface {
 	Create(volunteer *Volunteer) error
 	FindByID(id string) (*Volunteer, error)
-	FindAll(search string, pagination *utils.Pagination) ([]Volunteer, error)
+	FindAll(search string, onlyApproved bool, pagination *utils.Pagination) ([]Volunteer, error)
 	Update(volunteer *Volunteer) error
 	Delete(id string) error
+	UpdateStatus(volunteerID string, status string, userID string, targetUserType string) error
 }
 
 type repository struct {
@@ -24,15 +25,7 @@ func NewRepository(db *gorm.DB) Repository {
 }
 
 func (r *repository) Create(volunteer *Volunteer) error {
-	return r.db.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Create(volunteer).Error; err != nil {
-			return err
-		}
-		if err := tx.Model(&user.User{}).Where("id = ?", volunteer.UserID).Update("user_type", user.Volunteer).Error; err != nil {
-			return err
-		}
-		return nil
-	})
+	return r.db.Create(volunteer).Error
 }
 
 func (r *repository) FindByID(id string) (*Volunteer, error) {
@@ -44,9 +37,13 @@ func (r *repository) FindByID(id string) (*Volunteer, error) {
 	return &volunteer, nil
 }
 
-func (r *repository) FindAll(search string, pagination *utils.Pagination) ([]Volunteer, error) {
+func (r *repository) FindAll(search string, onlyApproved bool, pagination *utils.Pagination) ([]Volunteer, error) {
 	var volunteers []Volunteer
 	query := r.db.Model(&Volunteer{})
+
+	if onlyApproved {
+		query = query.Where("status = ? AND is_public_consent = ?", "APPROVED", true)
+	}
 
 	if search != "" {
 		searchTerm := "%" + search + "%"
@@ -70,3 +67,16 @@ func (r *repository) Update(volunteer *Volunteer) error {
 func (r *repository) Delete(id string) error {
 	return r.db.Where("id = ?", id).Delete(&Volunteer{}).Error
 }
+
+func (r *repository) UpdateStatus(volunteerID string, status string, userID string, targetUserType string) error {
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Model(&Volunteer{}).Where("id = ?", volunteerID).Update("status", status).Error; err != nil {
+			return err
+		}
+		if err := tx.Model(&user.User{}).Where("id = ?", userID).Update("user_type", targetUserType).Error; err != nil {
+			return err
+		}
+		return nil
+	})
+}
+

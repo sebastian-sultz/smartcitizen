@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"time"
+	dtorequest "backend/dto/request"
 	"backend/dto/response"
 	"backend/pkg/utils"
 
@@ -15,13 +16,14 @@ type Repository interface {
 	CreatePayment(ctx context.Context, payment *Payment) error
 	GetPaymentByOrderID(ctx context.Context, orderID string) (*Payment, error)
 	UpdatePayment(ctx context.Context, payment *Payment) error
-	ListPayments(ctx context.Context, userID *string, pagination *utils.Pagination) ([]Payment, error)
+	ListPayments(ctx context.Context, filter dtorequest.PaymentFilter, pagination *utils.Pagination) ([]PaymentWithReceipt, error)
 	GetUserDonationStats(ctx context.Context, userID string) (*response.UserDonationStatsResponse, error)
 	GetNextReceiptNumber(ctx context.Context) (string, error)
 	CreateReceipt(ctx context.Context, receipt *Receipt) error
 	GetReceiptByPaymentID(ctx context.Context, paymentID string) (*Receipt, error)
 	UpdateReceiptURL(ctx context.Context, receiptID string, url string) error
 	GetSuccessfulPaymentsWithReceipts(ctx context.Context, userID string) ([]Payment, []Receipt, error)
+	GetPaymentsMissingReceipts(ctx context.Context) ([]Payment, error)
 }
 
 type repository struct {
@@ -59,25 +61,118 @@ func (r *repository) UpdatePayment(ctx context.Context, payment *Payment) error 
 	})
 }
 
-func (r *repository) ListPayments(ctx context.Context, userID *string, pagination *utils.Pagination) ([]Payment, error) {
-	var payments []Payment
+func (r *repository) ListPayments(ctx context.Context, filter dtorequest.PaymentFilter, pagination *utils.Pagination) ([]PaymentWithReceipt, error) {
+	var payments []PaymentWithReceipt
 
-	query := r.db.WithContext(ctx).Model(&Payment{})
-	if userID != nil {
-		query = query.Where("user_id = ?", *userID)
+	query := r.db.WithContext(ctx).Model(&Payment{}).
+		Select("payments.*, receipts.receipt_number").
+		Joins("LEFT JOIN receipts ON receipts.payment_id = payments.id")
+
+	if filter.UserID != nil && *filter.UserID != "" {
+		query = query.Where("payments.user_id = ?", *filter.UserID)
 	}
 
-	if err := query.Count(&pagination.TotalRows).Error; err != nil {
+	if filter.Search != nil && *filter.Search != "" {
+		searchPattern := "%" + *filter.Search + "%"
+		query = query.Where("payments.merchant_order_id ILIKE ? OR payments.provider_reference_id ILIKE ? OR payments.donor_name ILIKE ?", searchPattern, searchPattern, searchPattern)
+	}
+
+	if filter.Status != nil && *filter.Status != "" {
+		query = query.Where("payments.status = ?", *filter.Status)
+	}
+
+	if filter.TaxExemption != nil {
+		if *filter.TaxExemption {
+			query = query.Where("payments.donor_pan IS NOT NULL AND payments.donor_pan <> ''")
+		} else {
+			query = query.Where("payments.donor_pan IS NULL OR payments.donor_pan = ''")
+		}
+	}
+
+	if filter.StartDate != nil && *filter.StartDate != "" {
+		if st, err := time.Parse(time.RFC3339, *filter.StartDate); err == nil {
+			query = query.Where("payments.created_at >= ?", st)
+		} else if st, err := time.Parse("2006-01-02", *filter.StartDate); err == nil {
+			query = query.Where("payments.created_at >= ?", st)
+		}
+	}
+
+	if filter.EndDate != nil && *filter.EndDate != "" {
+		if et, err := time.Parse(time.RFC3339, *filter.EndDate); err == nil {
+			query = query.Where("payments.created_at <= ?", et)
+		} else if et, err := time.Parse("2006-01-02", *filter.EndDate); err == nil {
+			query = query.Where("payments.created_at <= ?", et)
+		}
+	}
+
+	countQuery := r.db.WithContext(ctx).Model(&Payment{})
+	if filter.UserID != nil && *filter.UserID != "" {
+		countQuery = countQuery.Where("user_id = ?", *filter.UserID)
+	}
+	if filter.Search != nil && *filter.Search != "" {
+		searchPattern := "%" + *filter.Search + "%"
+		countQuery = countQuery.Where("merchant_order_id ILIKE ? OR provider_reference_id ILIKE ? OR donor_name ILIKE ?", searchPattern, searchPattern, searchPattern)
+	}
+	if filter.Status != nil && *filter.Status != "" {
+		countQuery = countQuery.Where("status = ?", *filter.Status)
+	}
+	if filter.TaxExemption != nil {
+		if *filter.TaxExemption {
+			countQuery = countQuery.Where("donor_pan IS NOT NULL AND donor_pan <> ''")
+		} else {
+			countQuery = countQuery.Where("donor_pan IS NULL OR donor_pan = ''")
+		}
+	}
+	if filter.StartDate != nil && *filter.StartDate != "" {
+		if st, err := time.Parse(time.RFC3339, *filter.StartDate); err == nil {
+			countQuery = countQuery.Where("created_at >= ?", st)
+		} else if st, err := time.Parse("2006-01-02", *filter.StartDate); err == nil {
+			countQuery = countQuery.Where("created_at >= ?", st)
+		}
+	}
+	if filter.EndDate != nil && *filter.EndDate != "" {
+		if et, err := time.Parse(time.RFC3339, *filter.EndDate); err == nil {
+			countQuery = countQuery.Where("created_at <= ?", et)
+		} else if et, err := time.Parse("2006-01-02", *filter.EndDate); err == nil {
+			countQuery = countQuery.Where("created_at <= ?", et)
+		}
+	}
+
+	if err := countQuery.Count(&pagination.TotalRows).Error; err != nil {
 		return nil, err
 	}
 	pagination.Calculate()
 
-	if err := query.Order("created_at desc").Offset(pagination.Offset).Limit(pagination.Limit).Find(&payments).Error; err != nil {
+	sortBy := "payments.created_at"
+	sortOrder := "desc"
+	if filter.SortBy != nil && *filter.SortBy != "" {
+		val := *filter.SortBy
+		if val == "created_at" || val == "amount" || val == "status" || val == "donor_name" {
+			sortBy = "payments." + val
+		}
+	}
+	if filter.SortOrder != nil && *filter.SortOrder != "" {
+		val := *filter.SortOrder
+		if val == "asc" || val == "desc" || val == "ASC" || val == "DESC" {
+			sortOrder = val
+		}
+	}
+	query = query.Order(fmt.Sprintf("%s %s", sortBy, sortOrder))
+
+	var err error
+	if pagination.Limit > 0 {
+		err = query.Offset(pagination.Offset).Limit(pagination.Limit).Find(&payments).Error
+	} else {
+		err = query.Find(&payments).Error
+	}
+
+	if err != nil {
 		return nil, err
 	}
 
 	return payments, nil
 }
+
 
 func (r *repository) GetUserDonationStats(ctx context.Context, userID string) (*response.UserDonationStatsResponse, error) {
 	var stats response.UserDonationStatsResponse
@@ -202,4 +297,13 @@ func (r *repository) GetSuccessfulPaymentsWithReceipts(ctx context.Context, user
 	}
 
 	return payments, receipts, nil
+}
+
+func (r *repository) GetPaymentsMissingReceipts(ctx context.Context) ([]Payment, error) {
+	var payments []Payment
+	err := r.db.WithContext(ctx).
+		Where("status = ? AND id NOT IN (SELECT payment_id FROM receipts WHERE cloudinary_url IS NOT NULL AND cloudinary_url <> '')", PaymentStatusSuccess).
+		Order("created_at desc").
+		Find(&payments).Error
+	return payments, err
 }

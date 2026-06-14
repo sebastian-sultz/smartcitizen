@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Eye, Ban, UserCheck, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { UserResponse } from "@/features/shared/auth/types";
+import { formatUserSlug } from "@/lib/utils";
 
 export const getUsersColumns = (
   onViewDetails: (user: UserResponse) => void,
@@ -41,7 +42,7 @@ export const getUsersColumns = (
           )}
           <div className="flex flex-col min-w-0">
             <span className="text-[14px] font-bold text-text truncate">{user.name}</span>
-            <span className="text-[11px] font-mono text-text-muted truncate">{user.id}</span>
+            <span className="text-[11px] font-mono text-text-muted truncate">{formatUserSlug(user.id)}</span>
           </div>
         </div>
       );

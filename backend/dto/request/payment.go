@@ -8,3 +8,15 @@ type InitiatePaymentRequest struct {
 	DonorPAN     string `json:"donorPan,omitempty"`
 	DonorAddress string `json:"donorAddress,omitempty"`
 }
+
+type PaymentFilter struct {
+	UserID       *string `json:"userId"`
+	Search       *string `json:"search"`
+	Status       *string `json:"status"`
+	TaxExemption *bool   `json:"taxExemption"`
+	StartDate    *string `json:"startDate"`
+	EndDate      *string `json:"endDate"`
+	SortBy       *string `json:"sortBy"`
+	SortOrder    *string `json:"sortOrder"`
+}
+

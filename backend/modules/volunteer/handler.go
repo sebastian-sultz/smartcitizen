@@ -34,6 +34,7 @@ func mapToResponse(v *Volunteer) response.Volunteer {
 		Profession:     v.Profession,
 		Experience:     v.Experience,
 		IsPublicConsent: v.IsPublicConsent,
+		Status:          v.Status,
 		Image:          v.Image,
 		CreatedAt:      v.CreatedAt,
 		UpdatedAt:      v.UpdatedAt,
@@ -60,7 +61,14 @@ func (h *Handler) GetAllVolunteers(c *gin.Context) {
 	pagination := utils.GetPaginationFromContext(c)
 	search := c.Query("q") // search by name, profession, experience, location
 
-	volunteers, err := h.service.GetAllVolunteers(search, &pagination)
+	onlyApproved := true
+	if val, exists := c.Get("userType"); exists {
+		if uType, ok := val.(string); ok && uType == "admin" {
+			onlyApproved = false
+		}
+	}
+
+	volunteers, err := h.service.GetAllVolunteers(search, onlyApproved, &pagination)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -149,4 +157,34 @@ func (h *Handler) DeleteVolunteer(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "volunteer deleted successfully"})
+}
+
+func (h *Handler) UpdateVolunteerStatus(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "volunteer id is required"})
+		return
+	}
+
+	var req struct {
+		Status string `json:"status" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	status := req.Status
+	if status != "PENDING" && status != "APPROVED" && status != "REJECTED" && status != "SUSPENDED" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid status value"})
+		return
+	}
+
+	volunteer, err := h.service.UpdateVolunteerStatus(c.Request.Context(), id, status)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "volunteer status updated", "volunteer": mapToResponse(volunteer)})
 }

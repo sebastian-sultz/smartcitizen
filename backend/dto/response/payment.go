@@ -26,6 +26,7 @@ type Payment struct {
 	DonorPAN            string         `json:"donorPan,omitempty"`
 	DonorAddress        string         `json:"donorAddress,omitempty"`
 	PhonepeResponse     datatypes.JSON `json:"phonepeResponse,omitempty"`
+	ReceiptNumber       string         `json:"receiptNumber,omitempty"`
 	CreatedAt           time.Time      `json:"createdAt"`
 	UpdatedAt           time.Time      `json:"updatedAt"`
 }

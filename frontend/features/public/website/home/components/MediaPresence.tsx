@@ -8,6 +8,8 @@ import {
   ThumbsUp,
   MessageCircle,
   ExternalLink,
+  Heart,
+  Send,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
@@ -63,10 +65,8 @@ const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
 );
 
 export function MediaPresence() {
-  const [playVideo, setPlayVideo] = useState(false);
-
   return (
-    <section className="py-12 md:py-16 bg-surface border-b border-border/40 relative overflow-hidden">
+    <section className="py-16 md:py-24 bg-surface border-b border-border/40 relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-[0.2]">
         <div className="absolute top-[20%] -left-[10%] w-[35%] h-[35%] bg-primary/10 rounded-full blur-[100px]" />
@@ -75,7 +75,7 @@ export function MediaPresence() {
 
       <div className="max-content relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-4 mb-8 md:mb-12">
+        <div className="text-center max-w-3xl mx-auto space-y-4 mb-12 md:mb-16">
           <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-accent">
             Media & Community
           </span>
@@ -90,124 +90,118 @@ export function MediaPresence() {
         </div>
 
         {/* Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-          {/* YouTube Video Showcase - 7 Cols */}
-          <div className="lg:col-span-7 flex flex-col bg-bg/50 rounded-3xl border border-border/45 overflow-hidden p-6 md:p-8 justify-between shadow-card">
-            <div className="space-y-4 mb-6">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-50 border border-red-200 text-red-600 text-[11px] font-bold uppercase tracking-wider">
-                <YoutubeIcon className="w-3.5 h-3.5" fill="currentColor" />{" "}
-                Featured Video
-              </span>
-              <h3 className="font-display text-2xl font-bold text-text">
-                GlobalSmart Citizens Awareness & Literacy Initiative
-              </h3>
-              <p className="text-[14px] text-text-muted">
-                Watch a summary of our grassroot campaigns, volunteer
-                experiences, and local community guidance programs from across
-                Delhi & NCR.
-              </p>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+          {/* Card 1: YouTube Featured Video */}
+          <div className="group/card flex flex-col bg-bg/60 backdrop-blur-md rounded-3xl border border-red-500/10 hover:border-red-500/25 overflow-hidden p-6 md:p-8 justify-between shadow-card hover:shadow-[0_20px_50px_rgba(239,68,68,0.08)] hover:-translate-y-1.5 transition-all duration-500 relative">
+            {/* Top decorative glow */}
+            <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/5 rounded-full blur-xl pointer-events-none group-hover/card:bg-red-500/10 transition-all duration-500" />
+            
+            <div className="space-y-4">
+              <div className="space-y-4">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/5 border border-red-500/10 text-red-500 text-[11px] font-bold uppercase tracking-wider">
+                  <YoutubeIcon className="w-3.5 h-3.5" fill="currentColor" /> Featured Video
+                </span>
+                <h3 className="font-display text-xl font-bold text-text">
+                  Awareness & Literacy Campaign
+                </h3>
+                <p className="text-[14px] text-text-muted">
+                  Watch a summary of our grassroots campaigns, volunteer experiences, and local community guidance programs.
+                </p>
+              </div>
+
+              {/* Video Player Container (acting as link to YouTube channel) */}
+              <a
+                href="https://www.youtube.com/@globalsmartcitizensfoundation"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-md border border-border/20 bg-dark group/video block mt-4"
+              >
+                <Image
+                  src="/assets/vision34.jpeg"
+                  alt="GlobalSmart Awareness Drive"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 33vw"
+                  className="object-cover group-hover/video:scale-103 transition-transform duration-500 opacity-90"
+                />
+                {/* Play Button Overlay */}
+                <div className="absolute inset-0 bg-black/20 flex items-center justify-center transition-colors group-hover/video:bg-black/30">
+                  <div className="w-14 h-14 rounded-full bg-red-600 text-white flex items-center justify-center shadow-xl transition-all duration-300 group-hover/video:scale-110 group-hover/video:bg-red-700 shadow-red-600/40 relative">
+                    <span className="absolute inset-0 rounded-full bg-red-600/25 animate-ping opacity-75" />
+                    <Play size={20} className="translate-x-0.5 fill-white text-white" />
+                  </div>
+                </div>
+                <div className="absolute bottom-3 left-3 right-3 bg-black/70 backdrop-blur-md px-3 py-1.5 rounded-lg text-white text-[10px] font-semibold flex items-center justify-between border border-white/10">
+                  <span>Go to YouTube Channel</span>
+                  <span className="hover:underline flex items-center gap-1 font-bold text-red-400">
+                    Watch <ExternalLink size={10} />
+                  </span>
+                </div>
+              </a>
             </div>
 
-            {/* Video Player Container */}
-            <div className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-lg border border-border/20 bg-dark group">
-              {playVideo ? (
-                <iframe
-                  src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1"
-                  title="GlobalSmart Citizens Awareness Campaign"
-                  className="w-full h-full border-0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              ) : (
-                <>
-                  <Image
-                    src="/assets/vision34.jpeg"
-                    alt="GlobalSmart Awareness Drive"
-                    fill
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                    className="object-cover group-hover:scale-102 transition-transform duration-500 opacity-90"
-                  />
-                  {/* Play Button Overlay */}
-                  <div className="absolute inset-0 bg-dark/25 flex items-center justify-center transition-colors group-hover:bg-dark/35">
-                    <Button
-                      variant="accent"
-                      size="icon"
-                      shape="circle"
-                      onClick={() => setPlayVideo(true)}
-                      className="w-16 h-16 shadow-xl active:scale-95 duration-300"
-                      aria-label="Play Featured Video"
-                    >
-                      <Play size={28} className="translate-x-0.5 fill-white" />
-                    </Button>
-                  </div>
-                  <div className="absolute bottom-4 left-4 right-4 bg-dark/65 backdrop-blur-md px-4 py-2 rounded-xl text-white text-[12px] font-semibold flex items-center justify-between border border-white/10">
-                    <span>Duration: 4 mins • Watch on YouTube</span>
-                    <a
-                      href="https://www.youtube.com"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline flex items-center gap-1 font-bold text-accent-light"
-                    >
-                      Watch <ExternalLink size={12} />
-                    </a>
-                  </div>
-                </>
-              )}
+            <div className="pt-6 mt-6 border-t border-border/40">
+              <Button
+                asChild
+                variant="primary"
+                size="lg"
+                fullWidth
+                className="group-hover/card:bg-red-600 group-hover/card:hover:bg-red-700 group-hover/card:shadow-red-600/10 transition-colors"
+              >
+                <a
+                  href="https://www.youtube.com/@globalsmartcitizensfoundation"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <YoutubeIcon className="w-4 h-4" fill="currentColor" />
+                  YouTube Channel
+                </a>
+              </Button>
             </div>
           </div>
 
-          {/* Facebook/Community Showcase - 5 Cols */}
-          <div className="lg:col-span-5 bg-bg/50 rounded-3xl border border-border/45 p-6 md:p-8 flex flex-col justify-between shadow-card">
-            <div className="space-y-6">
-              {/* FB Brand Header */}
+          {/* Card 2: Facebook Community */}
+          <div className="group/card flex flex-col bg-bg/60 backdrop-blur-md rounded-3xl border border-blue-500/10 hover:border-blue-500/25 overflow-hidden p-6 md:p-8 justify-between shadow-card hover:shadow-[0_20px_50px_rgba(59,130,246,0.08)] hover:-translate-y-1.5 transition-all duration-500 relative">
+            {/* Top decorative glow */}
+            <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full blur-xl pointer-events-none group-hover/card:bg-blue-500/10 transition-all duration-500" />
+            
+            <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary font-bold text-lg">
-                    GS
-                  </div>
-                  <div>
-                    <h3 className="font-display font-bold text-text text-lg flex items-center gap-1.5">
-                      GlobalSmart Citizens
-                      <span
-                        className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center text-white text-[9px] font-black"
-                        title="Verified Community"
-                      >
-                        ✓
-                      </span>
-                    </h3>
-                    <p className="text-[12px] text-text-muted font-medium">
-                      Facebook Community • 12K members
-                    </p>
-                  </div>
-                </div>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/5 border border-blue-500/10 text-blue-500 text-[11px] font-bold uppercase tracking-wider">
+                  <FacebookIcon className="w-3.5 h-3.5" fill="currentColor" /> Community Feed
+                </span>
                 <a
-                  href="https://www.facebook.com"
+                  href="https://www.facebook.com/people/Dhirendra-Verma/61582196091523/?rdid=yNB82mSR51N964m4&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1DG2h5JHRw%2F%3Fref%3D1"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-text-muted hover:text-primary transition-colors"
+                  className="text-text-muted hover:text-blue-500 transition-colors"
                   aria-label="View Facebook Page"
                 >
-                  <ExternalLink size={18} />
+                  <ExternalLink size={16} />
                 </a>
               </div>
 
-              {/* Storytelling Post Card Mock */}
-              <div className="bg-white rounded-2xl border border-border/30 p-5 space-y-4 shadow-sm">
+              {/* Storytelling Post Card Mock acting as link */}
+              <a
+                href="https://www.facebook.com/people/Dhirendra-Verma/61582196091523/?rdid=yNB82mSR51N964m4&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1DG2h5JHRw%2F%3Fref%3D1"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block bg-white rounded-2xl border border-border/30 p-4 space-y-3 shadow-sm hover:shadow-md hover:border-blue-500/20 transition-all duration-300 mt-4 group/fb"
+              >
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-xs">
+                  <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center text-white font-bold text-[10px]">
                     GS
                   </div>
                   <div>
-                    <span className="block text-[13px] font-bold text-text">
+                    <span className="block text-[12px] font-bold text-text leading-none group-hover/fb:text-blue-600 transition-colors">
                       GlobalSmart Citizens Foundation
                     </span>
-                    <span className="block text-[10px] text-text-light font-medium">
+                    <span className="block text-[9px] text-text-light font-medium mt-0.5">
                       Yesterday at 3:45 PM • Public Group
                     </span>
                   </div>
                 </div>
 
-                <p className="text-[13px] leading-relaxed text-text">
+                <p className="text-[12px] leading-relaxed text-text">
                   Yesterday, our volunteer team successfully organized a legal
                   and digital literacy drive! Thank you to the 50+ local
                   volunteers who joined us. Together we are bringing positive
@@ -215,13 +209,13 @@ export function MediaPresence() {
                 </p>
 
                 {/* Mock Image Grid inside Facebook Post */}
-                <div className="grid grid-cols-2 gap-2 rounded-xl overflow-hidden border border-border/20">
+                <div className="grid grid-cols-2 gap-1.5 rounded-xl overflow-hidden border border-border/20 group-hover/fb:opacity-95 transition-opacity">
                   <div className="relative w-full aspect-[4/3]">
                     <Image
                       src="/assets/a1.png"
                       alt="Awareness drive photo 1"
                       fill
-                      sizes="(max-width: 768px) 50vw, 25vw"
+                      sizes="150px"
                       className="object-cover"
                     />
                   </div>
@@ -230,45 +224,137 @@ export function MediaPresence() {
                       src="/assets/a2.png"
                       alt="Awareness drive photo 2"
                       fill
-                      sizes="(max-width: 768px) 50vw, 25vw"
+                      sizes="150px"
                       className="object-cover"
                     />
                   </div>
                 </div>
 
                 {/* Engagement Bar */}
-                <div className="flex items-center justify-between text-[11px] text-text-muted pt-2 border-t border-border/20">
-                  <div className="flex items-center gap-4">
-                    <span className="flex items-center gap-1 hover:text-primary cursor-pointer transition-colors font-medium">
-                      <ThumbsUp size={13} /> 142 Likes
+                <div className="flex items-center justify-between text-[10px] text-text-muted pt-2 border-t border-border/20">
+                  <div className="flex items-center gap-3">
+                    <span className="flex items-center gap-1 hover:text-blue-500 cursor-pointer transition-colors font-medium">
+                      <ThumbsUp size={11} className="group-hover/fb:text-blue-500 transition-colors" /> 142
                     </span>
-                    <span className="flex items-center gap-1 hover:text-primary cursor-pointer transition-colors font-medium">
-                      <MessageCircle size={13} /> 36 Comments
+                    <span className="flex items-center gap-1 hover:text-blue-500 cursor-pointer transition-colors font-medium">
+                      <MessageCircle size={11} className="group-hover/fb:text-blue-500 transition-colors" /> 36
                     </span>
                   </div>
-                  <span className="flex items-center gap-1 hover:text-primary cursor-pointer transition-colors font-medium">
-                    <Share2 size={13} /> 18 Shares
+                  <span className="flex items-center gap-1 hover:text-blue-500 cursor-pointer transition-colors font-medium">
+                    <Share2 size={11} className="group-hover/fb:text-blue-500 transition-colors" /> 18
                   </span>
                 </div>
-              </div>
+              </a>
             </div>
 
-            {/* CTA */}
             <div className="pt-6 mt-6 border-t border-border/40">
               <Button
                 asChild
                 variant="primary"
                 size="lg"
                 fullWidth
+                className="group-hover/card:bg-blue-600 group-hover/card:hover:bg-blue-700 group-hover/card:shadow-blue-600/10 transition-colors"
               >
                 <a
-                  href="https://facebook.com"
+                  href="https://www.facebook.com/people/Dhirendra-Verma/61582196091523/?rdid=yNB82mSR51N964m4&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1DG2h5JHRw%2F%3Fref%3D1"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2"
                 >
                   <FacebookIcon className="w-4 h-4" fill="currentColor" />
-                  Join Our Facebook Community
+                  Facebook Group
+                </a>
+              </Button>
+            </div>
+          </div>
+
+          {/* Card 3: Instagram Highlights */}
+          <div className="group/card flex flex-col bg-bg/60 backdrop-blur-md rounded-3xl border border-pink-500/10 hover:border-pink-500/25 overflow-hidden p-6 md:p-8 justify-between shadow-card hover:shadow-[0_20px_50px_rgba(236,72,153,0.08)] hover:-translate-y-1.5 transition-all duration-500 relative">
+            {/* Top decorative glow */}
+            <div className="absolute top-0 right-0 w-24 h-24 bg-pink-500/5 rounded-full blur-xl pointer-events-none group-hover/card:bg-pink-500/10 transition-all duration-500" />
+            
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-pink-500/5 border border-pink-500/10 text-pink-500 text-[11px] font-bold uppercase tracking-wider">
+                  <InstagramIcon className="w-3.5 h-3.5" /> Instagram Stories
+                </span>
+                <a
+                  href="https://www.instagram.com/global_smartcitizen_foundation?utm_source=qr&igsh=NXk4MnE4OG51YWR6"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-text-muted hover:text-pink-500 transition-colors"
+                  aria-label="View Instagram Profile"
+                >
+                  <ExternalLink size={16} />
+                </a>
+              </div>
+
+              {/* Instagram Card Mock acting as link */}
+              <a
+                href="https://www.instagram.com/global_smartcitizen_foundation?utm_source=qr&igsh=NXk4MnE4OG51YWR6"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block bg-white rounded-2xl border border-border/30 p-4 space-y-3 shadow-sm hover:shadow-md hover:border-pink-500/20 transition-all duration-300 mt-4 group/ig"
+              >
+                <div className="flex items-center gap-2">
+                  <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-yellow-500 via-red-500 to-purple-600 p-[1.5px] shrink-0">
+                    <div className="w-full h-full rounded-full bg-white p-[1.5px]">
+                      <div className="w-full h-full rounded-full bg-primary flex items-center justify-center text-white font-bold text-[9px]">
+                        GS
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <span className="block text-[12px] font-bold text-text leading-none group-hover/ig:text-pink-600 transition-colors">
+                      global_smartcitizen_foundation
+                    </span>
+                    <span className="block text-[9px] text-text-light font-medium mt-0.5">
+                      Teliarganj, Allahabad
+                    </span>
+                  </div>
+                </div>
+
+                <div className="relative w-full aspect-square rounded-xl overflow-hidden border border-border/20 group-hover/ig:opacity-95 transition-opacity">
+                  <Image
+                    src="/assets/vision34.jpeg"
+                    alt="Instagram campaign highlight"
+                    fill
+                    sizes="300px"
+                    className="object-cover"
+                  />
+                </div>
+
+                {/* IG Action icons */}
+                <div className="flex justify-between items-center text-text-muted pt-1">
+                  <div className="flex items-center gap-3">
+                    <Heart size={16} className="text-red-500 fill-red-500 hover:scale-110 transition-transform cursor-pointer" />
+                    <MessageCircle size={16} className="hover:text-pink-500 transition-colors cursor-pointer" />
+                    <Send size={16} className="hover:text-pink-500 transition-colors cursor-pointer" />
+                  </div>
+                  <span className="text-[10px] font-bold text-text">98 Likes</span>
+                </div>
+                {/* Caption */}
+                <p className="text-[11px] leading-relaxed text-text line-clamp-1">
+                  <span className="font-bold mr-1">global_smartcitizen_foundation</span>
+                  Empowering local leaders for cleanliness drives and assemblies! 🌱💪 #Community
+                </p>
+              </a>
+            </div>
+
+            <div className="pt-6 mt-6 border-t border-border/40">
+              <Button
+                asChild
+                variant="primary"
+                size="lg"
+                fullWidth
+                className="group-hover/card:bg-pink-600 group-hover/card:hover:bg-pink-700 group-hover/card:shadow-pink-600/10 transition-colors"
+              >
+                <a
+                  href="https://www.instagram.com/global_smartcitizen_foundation?utm_source=qr&igsh=NXk4MnE4OG51YWR6"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <InstagramIcon className="w-4 h-4" />
+                  Instagram Page
                 </a>
               </Button>
             </div>

@@ -40,9 +40,13 @@ export const ContactInfo = () => {
       <div className="space-y-6 pt-8 border-t border-border">
         <p className="font-bold text-text uppercase tracking-widest text-[13px]">Follow Us</p>
         <div className="flex gap-4">
-          {[Facebook, Instagram, Twitter, Youtube].map((Icon, i) => (
-            <a key={i} href="#" className="w-12 h-12 rounded-full border border-border flex items-center justify-center text-text-muted hover:bg-primary hover:text-white hover:border-primary transition-all">
-              <Icon size={20} />
+          {[
+            { Icon: Facebook, href: "https://www.facebook.com/people/Dhirendra-Verma/61582196091523/?rdid=yNB82mSR51N964m4&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1DG2h5JHRw%2F%3Fref%3D1" },
+            { Icon: Instagram, href: "https://www.instagram.com/global_smartcitizen_foundation?utm_source=qr&igsh=NXk4MnE4OG51YWR6" },
+            { Icon: Youtube, href: "https://www.youtube.com/@globalsmartcitizensfoundation" },
+          ].map((social, i) => (
+            <a key={i} href={social.href} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-border flex items-center justify-center text-text-muted hover:bg-primary hover:text-white hover:border-primary transition-all">
+              <social.Icon size={20} />
             </a>
           ))}
         </div>

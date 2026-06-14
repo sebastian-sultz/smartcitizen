@@ -2,9 +2,11 @@ package payment
 
 import (
 	"context"
+	"encoding/csv"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"strconv"
@@ -29,11 +31,14 @@ type Service interface {
 	InitiatePayment(ctx context.Context, req dtorequest.InitiatePaymentRequest, userID *uuid.UUID) (*dtoresponse.InitiatePaymentResponse, error)
 	HandleWebhook(ctx context.Context, authHeader string, responseBody []byte) error
 	CheckPaymentStatus(ctx context.Context, orderID string) (*Payment, error)
-	GetPaymentHistory(ctx context.Context, userID *string, pagination *utils.Pagination) ([]dtoresponse.Payment, error)
+	GetPaymentHistory(ctx context.Context, filter dtorequest.PaymentFilter, pagination *utils.Pagination) ([]dtoresponse.Payment, error)
 	GetUserDonationStats(ctx context.Context, userID string) (*dtoresponse.UserDonationStatsResponse, error)
 	GetReceiptURL(ctx context.Context, transactionID string) (string, error)
 	GetTaxCertificates(ctx context.Context, userID string) ([]dtoresponse.TaxCertificate, error)
 	UpdateTaxDetails(ctx context.Context, transactionID string, donorPAN string, donorAddress string) error
+	ExportPaymentsCSV(ctx context.Context, filter dtorequest.PaymentFilter, w io.Writer) error
+	ExportForm10BDCSV(ctx context.Context, financialYear string, w io.Writer) error
+	SyncPendingReceipts(ctx context.Context) (int, error)
 }
 
 type service struct {
@@ -264,8 +269,8 @@ func (s *service) CheckPaymentStatus(ctx context.Context, orderID string) (*Paym
 	return payment, nil
 }
 
-func (s *service) GetPaymentHistory(ctx context.Context, userID *string, pagination *utils.Pagination) ([]dtoresponse.Payment, error) {
-	payments, err := s.repo.ListPayments(ctx, userID, pagination)
+func (s *service) GetPaymentHistory(ctx context.Context, filter dtorequest.PaymentFilter, pagination *utils.Pagination) ([]dtoresponse.Payment, error) {
+	payments, err := s.repo.ListPayments(ctx, filter, pagination)
 	if err != nil {
 		return nil, err
 	}
@@ -286,6 +291,7 @@ func (s *service) GetPaymentHistory(ctx context.Context, userID *string, paginat
 			DonorPAN:            p.DonorPAN,
 			DonorAddress:        p.DonorAddress,
 			PhonepeResponse:     p.PhonepeResponse,
+			ReceiptNumber:       p.ReceiptNumber,
 			CreatedAt:           p.CreatedAt,
 			UpdatedAt:           p.UpdatedAt,
 		})
@@ -535,4 +541,148 @@ func (s *service) regenerateReceipt(ctx context.Context, payment *Payment) error
 
 	log.Printf("Successfully regenerated and uploaded receipt: %s", url)
 	return nil
+}
+
+func (s *service) ExportPaymentsCSV(ctx context.Context, filter dtorequest.PaymentFilter, w io.Writer) error {
+	pagination := utils.Pagination{Limit: -1}
+	payments, err := s.repo.ListPayments(ctx, filter, &pagination)
+	if err != nil {
+		return err
+	}
+
+	writer := csv.NewWriter(w)
+	defer writer.Flush()
+
+	headers := []string{
+		"Transaction ID", "Order ID", "Donor Name", "Email", "Phone", "PAN", "Address", "Amount (INR)", "Status", "Payment Mode", "Date Created", "Receipt Number",
+	}
+	if err := writer.Write(headers); err != nil {
+		return err
+	}
+
+	for _, p := range payments {
+		amountINR := fmt.Sprintf("%.2f", float64(p.Amount)/100.0)
+		row := []string{
+			p.ProviderReferenceID,
+			p.MerchantOrderID,
+			p.DonorName,
+			p.DonorEmail,
+			p.DonorPhone,
+			p.DonorPAN,
+			p.DonorAddress,
+			amountINR,
+			string(p.Status),
+			p.PaymentMethod,
+			p.CreatedAt.Format(time.RFC3339),
+			p.ReceiptNumber,
+		}
+		if err := writer.Write(row); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *service) ExportForm10BDCSV(ctx context.Context, financialYear string, w io.Writer) error {
+	parts := strings.Split(financialYear, "-")
+	if len(parts) != 2 {
+		return errors.New("invalid financial year format, expected YYYY-YYYY")
+	}
+
+	startYear, err := strconv.Atoi(parts[0])
+	if err != nil {
+		return fmt.Errorf("invalid start year: %w", err)
+	}
+	endYear, err := strconv.Atoi(parts[1])
+	if err != nil {
+		return fmt.Errorf("invalid end year: %w", err)
+	}
+
+	loc, _ := time.LoadLocation("Asia/Kolkata")
+	if loc == nil {
+		loc = time.UTC
+	}
+
+	startDate := time.Date(startYear, time.April, 1, 0, 0, 0, 0, loc)
+	endDate := time.Date(endYear, time.March, 31, 23, 59, 59, 999999999, loc)
+
+	statusSuccess := "SUCCESS"
+	taxExemptTrue := true
+	startStr := startDate.Format(time.RFC3339)
+	endStr := endDate.Format(time.RFC3339)
+
+	filter := dtorequest.PaymentFilter{
+		Status:       &statusSuccess,
+		TaxExemption: &taxExemptTrue,
+		StartDate:    &startStr,
+		EndDate:      &endStr,
+	}
+
+	pagination := utils.Pagination{Limit: -1}
+	payments, err := s.repo.ListPayments(ctx, filter, &pagination)
+	if err != nil {
+		return err
+	}
+
+	writer := csv.NewWriter(w)
+	defer writer.Flush()
+
+	headers := []string{
+		"Serial Number", "Pre-acknowledgement Number", "ID Code", "Unique Identification Number", "Section Code", "Donation Type", "Mode of Receipt", "Amount of Donation (INR)",
+	}
+	if err := writer.Write(headers); err != nil {
+		return err
+	}
+
+	for i, p := range payments {
+		modeOfReceipt := "Others"
+		pmLower := strings.ToLower(p.PaymentMethod)
+		if strings.Contains(pmLower, "upi") || strings.Contains(pmLower, "card") || strings.Contains(pmLower, "netbanking") || strings.Contains(pmLower, "electronic") || strings.Contains(pmLower, "online") || strings.Contains(pmLower, "net banking") {
+			modeOfReceipt = "Electronic"
+		} else if strings.Contains(pmLower, "cash") {
+			modeOfReceipt = "Cash"
+		}
+
+		amountINR := fmt.Sprintf("%.2f", float64(p.Amount)/100.0)
+
+		row := []string{
+			strconv.Itoa(i + 1),
+			"",
+			"1", // ID Code: 1 (PAN)
+			p.DonorPAN,
+			"Section 80G",
+			"Others",
+			modeOfReceipt,
+			amountINR,
+		}
+		if err := writer.Write(row); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *service) SyncPendingReceipts(ctx context.Context) (int, error) {
+	payments, err := s.repo.GetPaymentsMissingReceipts(ctx)
+	if err != nil {
+		return 0, fmt.Errorf("failed to fetch payments missing receipts: %w", err)
+	}
+
+	if len(payments) == 0 {
+		return 0, nil
+	}
+
+	successCount := 0
+	for _, p := range payments {
+		paymentCopy := p
+		if err := s.regenerateReceipt(ctx, &paymentCopy); err != nil {
+			log.Printf("Failed to sync receipt for OrderID %s: %v", p.MerchantOrderID, err)
+		} else {
+			successCount++
+		}
+	}
+
+	return successCount, nil
 }

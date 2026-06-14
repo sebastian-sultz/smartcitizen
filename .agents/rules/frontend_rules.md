@@ -76,5 +76,17 @@ Do not use raw HTML tags if a corresponding custom UI component is available in 
 * **No Mapped Responses**: The frontend must consume API responses directly in their raw, flat format as returned by the backend.
 * **No Local Mappings or Wrappers**: Do not use mapping functions, local wrapper adapter types, or "tricks" to reshape data. Add the exact response structure to the features' types file, and use those backend types directly to populate UI tables, components, and state.
 
+### 12. File Download Utility Helper
+* **Always** use the `downloadBlob` utility function from `@/lib/utils` when downloading/fetching files (such as PDF receipts, certificates, CSV exports) in the frontend.
+* **Never** use `window.open(res.url, "_blank")` or raw anchor click redirects to open download URLs directly.
+
+### 13. Feature-Based and Modular Component Architecture
+* **Component Modularity**: UI components must be completely modular and follow a clear separation of concerns. Do not bundle table column definitions, dialog modals, or other sub-sections directly in a monolithic main page file.
+* **Separation of Files**:
+  - Table columns configurations (e.g., `<Header>[]`) must be written in a separate `*Columns.tsx` file.
+  - Dialog modals (e.g., `<Dialog>`) must be extracted into their own descriptive component files (e.g., `*Dialog.tsx` or `*Modal.tsx`).
+  - The main page component should only manage parent states and orchestrate the clean layout.
+* **Folder Location**: Place these modular sub-components in the same directory as the main view (under the respective feature directory, e.g. `frontend/features/<feature-name>/components/`).
+
 
 

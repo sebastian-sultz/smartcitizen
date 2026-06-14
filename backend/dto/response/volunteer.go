@@ -20,6 +20,7 @@ type Volunteer struct {
 	Profession     string    `json:"profession"`
 	Experience     string    `json:"experience"`
 	IsPublicConsent bool     `json:"ispublicconsent"`
+	Status          string   `json:"status"`
 	Image          *string   `json:"image"`
 	CreatedAt      time.Time `json:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at"`

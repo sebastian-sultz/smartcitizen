@@ -26,15 +26,16 @@ export default function Footer() {
             </div>
             <div className="flex items-center gap-4">
               {[
-                { icon: Facebook, href: "#" },
-                { icon: Instagram, href: "#" },
-                { icon: Twitter, href: "#" },
-                { icon: Youtube, href: "#" },
-                { icon: MessageCircle, href: "#" },
+                { icon: Facebook, href: "https://www.facebook.com/people/Dhirendra-Verma/61582196091523/?rdid=yNB82mSR51N964m4&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1DG2h5JHRw%2F%3Fref%3D1" },
+                { icon: Instagram, href: "https://www.instagram.com/global_smartcitizen_foundation?utm_source=qr&igsh=NXk4MnE4OG51YWR6" },
+                { icon: Youtube, href: "https://www.youtube.com/@globalsmartcitizensfoundation" },
+                { icon: MessageCircle, href: "https://wa.me/918429696969" },
               ].map((social, i) => (
                 <a 
                   key={i} 
                   href={social.href} 
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center hover:bg-accent hover:border-accent transition-all duration-300"
                 >
                   <social.icon size={18} />

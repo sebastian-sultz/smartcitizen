@@ -2,6 +2,7 @@ package main
 
 import (
 	"backend/infrastructure/middleware"
+	"backend/modules/analytics"
 	"backend/modules/event"
 	"backend/modules/payment"
 	"backend/modules/report"
@@ -54,6 +55,10 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 	paymentRepo := payment.NewRepository(db)
 	paymentService := payment.NewService(paymentRepo, userService)
 	paymentHandler := payment.NewHandler(paymentService)
+
+	analyticsRepo := analytics.NewRepository(db)
+	analyticsService := analytics.NewService(analyticsRepo)
+	analyticsHandler := analytics.NewHandler(analyticsService)
 
 	// ==========================================
 	// ALL ROUTES REGISTRATION
@@ -134,9 +139,24 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 
 		// Admin routes
 		admin := api.Group("/admin")
-		admin.Use(middleware.AuthMiddleware())
+		admin.Use(middleware.AuthMiddleware(), middleware.AdminMiddleware())
 		admin.GET("/reports", reportHandler.GetReports)
 		admin.PUT("/reports/:id/resolve", reportHandler.ResolveReport)
+
+		// Donation Management admin routes
+		admin.GET("/payments/export", paymentHandler.ExportCSV)
+		admin.GET("/payments/export-10bd", paymentHandler.Export10BD)
+
+		// Network Hierarchy admin routes
+		admin.GET("/users/:id/network", userHandler.GetDownlineNetwork)
+		admin.GET("/users/:id/network-stats", userHandler.GetNetworkStats)
+
+		// Volunteer Lifecycle admin routes
+		admin.PUT("/volunteers/:id/status", volunteerHandler.UpdateVolunteerStatus)
+
+		// Analytics dashboard admin route
+		admin.GET("/analytics", analyticsHandler.GetOperationalSummary)
+		admin.POST("/payments/sync-receipts", paymentHandler.SyncPendingReceipts)
 	}
 
 	// Payment Routes

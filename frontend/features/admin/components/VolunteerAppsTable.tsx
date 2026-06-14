@@ -7,7 +7,8 @@ import { TableComponent } from "@/components/ui/TableComponent";
 import { Spinner } from "@/components/ui/spinner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { getVolunteerAppsColumns } from "./VolunteerAppsColumns";
-import { getAllVolunteers, deleteVolunteer, VolunteerResponse } from "@/features/public/volunteer";
+import { getAllVolunteers, VolunteerResponse } from "@/features/public/volunteer";
+import { updateVolunteerStatus } from "@/features/admin/api";
 import { Badge } from "@/components/ui/Badge";
 
 export const VolunteerAppsTable = () => {
@@ -42,11 +43,12 @@ export const VolunteerAppsTable = () => {
     fetchVolunteers();
   }, [page, limit]);
 
-  const updateVolunteerAppStatus = async (id: string, status: 'Approved' | 'Rejected') => {
+  const updateVolunteerAppStatus = async (id: string, status: "APPROVED" | "REJECTED" | "SUSPENDED" | "PENDING") => {
     try {
-      if (status === 'Rejected') {
-        await deleteVolunteer(id);
-        setVolunteers(prev => prev.filter(a => a.id !== id));
+      await updateVolunteerStatus(id, status);
+      setVolunteers(prev => prev.map(a => a.id === id ? { ...a, status } : a));
+      if (selectedVolunteer && selectedVolunteer.id === id) {
+        setSelectedVolunteer(prev => prev ? { ...prev, status } : null);
       }
     } catch (err) {
       console.error("Failed to update status:", err);
@@ -125,8 +127,19 @@ export const VolunteerAppsTable = () => {
                 {/* Grid Details */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
                   <div>
-                    <span className="block text-xs font-semibold text-text-muted mb-1">Profession / Status</span>
+                    <span className="block text-xs font-semibold text-text-muted mb-1">Profession</span>
                     <span className="font-bold text-text">{selectedVolunteer.profession || "N/A"}</span>
+                  </div>
+                  <div>
+                    <span className="block text-xs font-semibold text-text-muted mb-1">Status</span>
+                    <Badge variant={
+                      selectedVolunteer.status === 'APPROVED' ? 'success' :
+                      selectedVolunteer.status === 'PENDING' ? 'warning' :
+                      selectedVolunteer.status === 'REJECTED' ? 'danger' :
+                      selectedVolunteer.status === 'SUSPENDED' ? 'neutral' : 'warning'
+                    }>
+                      {selectedVolunteer.status || 'PENDING'}
+                    </Badge>
                   </div>
                   <div>
                     <span className="block text-xs font-semibold text-text-muted mb-1">Email Address</span>

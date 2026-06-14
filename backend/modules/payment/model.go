@@ -36,6 +36,12 @@ type Payment struct {
 	DeletedAt           gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
+type PaymentWithReceipt struct {
+	Payment
+	ReceiptNumber string `gorm:"column:receipt_number" json:"receiptNumber,omitempty"`
+}
+
+
 type Receipt struct {
 	ID            uuid.UUID `gorm:"type:uuid;default:gen_random_uuid();primaryKey" json:"id"`
 	PaymentID     uuid.UUID `gorm:"type:uuid;uniqueIndex;not null" json:"paymentId"`

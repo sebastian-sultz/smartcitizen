@@ -49,22 +49,22 @@ export const getModerationColumns = (
       <div className="flex items-center gap-2">
         <Button
           variant="ghost-primary"
-          size="icon"
+          size="sm"
           shape="square"
           onClick={() => openChat(report)}
-          title="Open Chat with Reporter"
+          startIcon={<MessageSquare size={16} />}
         >
-          <MessageSquare size={18} />
+          Chat
         </Button>
         {report.status === "Open" && (
           <Button
             variant="ghost-success"
-            size="icon"
+            size="sm"
             shape="square"
             onClick={() => resolveReport(report.id)}
-            title="Mark as Resolved"
+            startIcon={<CheckCircle2 size={16} />}
           >
-            <CheckCircle2 size={18} />
+            Resolve
           </Button>
         )}
       </div>

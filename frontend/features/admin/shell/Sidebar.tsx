@@ -16,7 +16,9 @@ import {
   ChevronRight,
   Menu,
   X,
-  LogOut
+  LogOut,
+  CreditCard,
+  GitFork
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
@@ -33,6 +35,8 @@ const navItems: NavItem[] = [
   { title: "Dashboard Overview", href: "/admin", icon: <Home className="w-5 h-5" /> },
   { title: "User Management", href: "/admin/users", icon: <Users className="w-5 h-5" /> },
   { title: "Volunteer Applications", href: "/admin/volunteers", icon: <HeartHandshake className="w-5 h-5" /> },
+  { title: "Donation Audit", href: "/admin/donations", icon: <CreditCard className="w-5 h-5" /> },
+  { title: "Network Tree", href: "/admin/networks", icon: <GitFork className="w-5 h-5" /> },
   { title: "Program Management", href: "/admin/events", icon: <Activity className="w-5 h-5" /> },
   { title: "Abuse & Moderation", href: "/admin/moderation", icon: <HelpCircle className="w-5 h-5" /> },
   // {
