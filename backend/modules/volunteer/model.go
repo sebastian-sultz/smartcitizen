@@ -9,6 +9,15 @@ import (
 	"gorm.io/gorm"
 )
 
+type VolunteerStatus string
+
+const (
+	VolunteerStatusPending   VolunteerStatus = "PENDING"
+	VolunteerStatusApproved  VolunteerStatus = "APPROVED"
+	VolunteerStatusRejected  VolunteerStatus = "REJECTED"
+	VolunteerStatusSuspended VolunteerStatus = "SUSPENDED"
+)
+
 type Volunteer struct {
 	ID             uuid.UUID      `gorm:"type:uuid;primaryKey" json:"id"`
 	UserID         uuid.UUID      `gorm:"type:uuid;not null;uniqueIndex" json:"user_id"`
@@ -25,7 +34,7 @@ type Volunteer struct {
 	Profession     string         `json:"profession"`
 	Experience     string         `json:"experience"`
 	IsPublicConsent bool          `gorm:"default:false" json:"ispublicconsent"`
-	Status          string         `gorm:"type:varchar(50);not null;default:'PENDING'" json:"status"`
+	Status          VolunteerStatus `gorm:"type:varchar(50);not null;default:'PENDING'" json:"status"`
 	Image          *string        `json:"image"`
 	ImagePublicID  *string        `json:"-"`
 	CreatedAt      time.Time      `json:"created_at"`

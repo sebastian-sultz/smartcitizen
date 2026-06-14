@@ -17,3 +17,7 @@ type ForgetPassword struct {
 	Phone       string `json:"phone" binding:"required"`
 	NewPassword string `json:"new_password" binding:"required,min=6"`
 }
+
+type SuspendUserRequest struct {
+	IsSuspended bool `json:"is_suspended"`
+}

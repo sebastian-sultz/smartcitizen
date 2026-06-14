@@ -318,9 +318,7 @@ func (h *Handler) SuspendUser(c *gin.Context) {
 		return
 	}
 
-	var req struct {
-		IsSuspended bool `json:"is_suspended"`
-	}
+	var req request.SuspendUserRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

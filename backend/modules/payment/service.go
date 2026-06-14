@@ -354,6 +354,12 @@ func (s *service) processSuccessfulPayment(ctx context.Context, payment *Payment
 		return
 	}
 
+	receiptIDStr := newReceipt.ID.String()
+	payment.ReceiptID = &receiptIDStr
+	if err := s.repo.UpdatePayment(ctx, payment); err != nil {
+		log.Printf("Failed to update payment with receipt ID: %v", err)
+	}
+
 	go func(p *Payment, rNum string, rID string) {
 		log.Printf("Generating PDF for Receipt: %s", rNum)
 		
@@ -505,6 +511,11 @@ func (s *service) regenerateReceipt(ctx context.Context, payment *Payment) error
 			return fmt.Errorf("failed to create receipt record: %w", err)
 		}
 		receiptID = newReceipt.ID.String()
+
+		payment.ReceiptID = &receiptID
+		if err := s.repo.UpdatePayment(ctx, payment); err != nil {
+			log.Printf("Failed to update payment with receipt ID: %v", err)
+		}
 	} else {
 		receiptNumber = receipt.ReceiptNumber
 		receiptID = receipt.ID.String()

@@ -87,6 +87,10 @@ func (h *Handler) GetPaymentHistory(c *gin.Context) {
 	pagination := utils.GetPaginationFromContext(c)
 
 	var filter dtorequest.PaymentFilter
+	if err := c.ShouldBindQuery(&filter); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	userTypeVal, exists := c.Get("userType")
 	if !exists {
@@ -110,35 +114,7 @@ func (h *Handler) GetPaymentHistory(c *gin.Context) {
 		return
 	}
 
-	if userType == "admin" {
-		// Admin can view globally or filter by specific user
-		if qUserID := c.Query("userId"); qUserID != "" {
-			filter.UserID = &qUserID
-		}
-		// Admin search & filters
-		if search := c.Query("search"); search != "" {
-			filter.Search = &search
-		}
-		if status := c.Query("status"); status != "" {
-			filter.Status = &status
-		}
-		if taxExempt := c.Query("taxExemption"); taxExempt != "" {
-			val := taxExempt == "true"
-			filter.TaxExemption = &val
-		}
-		if start := c.Query("startDate"); start != "" {
-			filter.StartDate = &start
-		}
-		if end := c.Query("endDate"); end != "" {
-			filter.EndDate = &end
-		}
-		if sortBy := c.Query("sortBy"); sortBy != "" {
-			filter.SortBy = &sortBy
-		}
-		if sortOrder := c.Query("sortOrder"); sortOrder != "" {
-			filter.SortOrder = &sortOrder
-		}
-	} else {
+	if userType != "admin" {
 		// Non-admin can only view their own payment history
 		filter.UserID = &userIDStr
 	}
@@ -225,10 +201,7 @@ func (h *Handler) UpdateTaxDetails(c *gin.Context) {
 		return
 	}
 
-	var req struct {
-		DonorPAN     string `json:"donorPan" binding:"required"`
-		DonorAddress string `json:"donorAddress" binding:"required"`
-	}
+	var req dtorequest.UpdateTaxDetailsRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -245,22 +218,9 @@ func (h *Handler) UpdateTaxDetails(c *gin.Context) {
 
 func (h *Handler) ExportCSV(c *gin.Context) {
 	var filter dtorequest.PaymentFilter
-
-	if search := c.Query("search"); search != "" {
-		filter.Search = &search
-	}
-	if status := c.Query("status"); status != "" {
-		filter.Status = &status
-	}
-	if taxExempt := c.Query("taxExemption"); taxExempt != "" {
-		val := taxExempt == "true"
-		filter.TaxExemption = &val
-	}
-	if start := c.Query("startDate"); start != "" {
-		filter.StartDate = &start
-	}
-	if end := c.Query("endDate"); end != "" {
-		filter.EndDate = &end
+	if err := c.ShouldBindQuery(&filter); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
 	c.Header("Content-Description", "File Transfer")

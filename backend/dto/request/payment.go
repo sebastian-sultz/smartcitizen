@@ -10,13 +10,17 @@ type InitiatePaymentRequest struct {
 }
 
 type PaymentFilter struct {
-	UserID       *string `json:"userId"`
-	Search       *string `json:"search"`
-	Status       *string `json:"status"`
-	TaxExemption *bool   `json:"taxExemption"`
-	StartDate    *string `json:"startDate"`
-	EndDate      *string `json:"endDate"`
-	SortBy       *string `json:"sortBy"`
-	SortOrder    *string `json:"sortOrder"`
+	UserID       *string `json:"userId" form:"userId"`
+	Search       *string `json:"search" form:"search"`
+	Status       *string `json:"status" form:"status"`
+	TaxExemption *bool   `json:"taxExemption" form:"taxExemption"`
+	StartDate    *string `json:"startDate" form:"startDate"`
+	EndDate      *string `json:"endDate" form:"endDate"`
+	SortBy       *string `json:"sortBy" form:"sortBy"`
+	SortOrder    *string `json:"sortOrder" form:"sortOrder"`
 }
 
+type UpdateTaxDetailsRequest struct {
+	DonorPAN     string `json:"donorPan" binding:"required"`
+	DonorAddress string `json:"donorAddress" binding:"required"`
+}

@@ -21,23 +21,23 @@ func NewHandler(service Service) *Handler {
 
 func mapToResponse(v *Volunteer) response.Volunteer {
 	return response.Volunteer{
-		ID:             v.ID,
-		UserID:         v.UserID,
-		Name:           v.Name,
-		Email:          v.Email,
-		Phone:          v.Phone,
-		AlternatePhone: v.AlternatePhone,
-		Address:        v.Address,
-		City:           v.City,
-		District:       v.District,
-		Pincode:        v.Pincode,
-		Profession:     v.Profession,
-		Experience:     v.Experience,
+		ID:              v.ID,
+		UserID:          v.UserID,
+		Name:            v.Name,
+		Email:           v.Email,
+		Phone:           v.Phone,
+		AlternatePhone:  v.AlternatePhone,
+		Address:         v.Address,
+		City:            v.City,
+		District:        v.District,
+		Pincode:         v.Pincode,
+		Profession:      v.Profession,
+		Experience:      v.Experience,
 		IsPublicConsent: v.IsPublicConsent,
-		Status:          v.Status,
-		Image:          v.Image,
-		CreatedAt:      v.CreatedAt,
-		UpdatedAt:      v.UpdatedAt,
+		Status:          string(v.Status),
+		Image:           v.Image,
+		CreatedAt:       v.CreatedAt,
+		UpdatedAt:       v.UpdatedAt,
 	}
 }
 
@@ -166,16 +166,14 @@ func (h *Handler) UpdateVolunteerStatus(c *gin.Context) {
 		return
 	}
 
-	var req struct {
-		Status string `json:"status" binding:"required"`
-	}
+	var req request.UpdateVolunteerStatus
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	status := req.Status
-	if status != "PENDING" && status != "APPROVED" && status != "REJECTED" && status != "SUSPENDED" {
+	status := VolunteerStatus(req.Status)
+	if status != VolunteerStatusPending && status != VolunteerStatusApproved && status != VolunteerStatusRejected && status != VolunteerStatusSuspended {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid status value"})
 		return
 	}

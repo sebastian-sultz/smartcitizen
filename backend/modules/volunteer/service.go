@@ -19,7 +19,7 @@ type Service interface {
 	UpdateVolunteer(id string, req *request.UpdateVolunteer) (*Volunteer, error)
 	UpdateVolunteerImage(ctx context.Context, id string, url string, publicID string) error
 	DeleteVolunteer(ctx context.Context, id string) error
-	UpdateVolunteerStatus(ctx context.Context, id string, status string) (*Volunteer, error)
+	UpdateVolunteerStatus(ctx context.Context, id string, status VolunteerStatus) (*Volunteer, error)
 }
 
 type service struct {
@@ -63,7 +63,7 @@ func (s *service) CreateVolunteer(req *request.CreateVolunteer) (*Volunteer, err
 		Profession:     req.Profession,
 		Experience:     req.Experience,
 		IsPublicConsent: req.IsPublicConsent,
-		Status:          "PENDING",
+		Status:          VolunteerStatusPending,
 	}
 
 	if err := s.repo.Create(volunteer); err != nil {
@@ -159,20 +159,20 @@ func (s *service) DeleteVolunteer(ctx context.Context, id string) error {
 	return s.repo.Delete(id)
 }
 
-func (s *service) UpdateVolunteerStatus(ctx context.Context, id string, status string) (*Volunteer, error) {
+func (s *service) UpdateVolunteerStatus(ctx context.Context, id string, status VolunteerStatus) (*Volunteer, error) {
 	volunteer, err := s.repo.FindByID(id)
 	if err != nil {
 		return nil, errors.New("volunteer not found")
 	}
 
 	var targetUserType string
-	if status == "APPROVED" {
+	if status == VolunteerStatusApproved {
 		targetUserType = string(user.Volunteer)
 	} else {
 		targetUserType = string(user.Member)
 	}
 
-	if err := s.repo.UpdateStatus(id, status, volunteer.UserID.String(), targetUserType); err != nil {
+	if err := s.repo.UpdateStatus(id, string(status), volunteer.UserID.String(), targetUserType); err != nil {
 		return nil, err
 	}
 

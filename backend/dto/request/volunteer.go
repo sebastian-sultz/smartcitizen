@@ -29,3 +29,7 @@ type UpdateVolunteer struct {
 	IsPublicConsent *bool  `json:"ispublicconsent"`
 	Status          *string `json:"status"`
 }
+
+type UpdateVolunteerStatus struct {
+	Status string `json:"status" binding:"required"`
+}
