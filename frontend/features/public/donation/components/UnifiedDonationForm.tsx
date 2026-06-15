@@ -12,7 +12,8 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  Info
+  Info,
+  Check
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -107,11 +108,15 @@ export default function UnifiedDonationForm({
 
           const response = await submitApiCall(payload);
           if (response?.redirectUrl) {
+            if (response.merchantOrderId) {
+              sessionStorage.setItem(`payment_auth_${response.merchantOrderId}`, "true");
+            }
             // Redirect browser directly to secure PhonePe hosted page
             window.location.href = response.redirectUrl;
           } else {
             // Fallback mock transaction ID for sandbox testing
             const generatedTxId = response?.merchantOrderId || "TXN" + Math.floor(10000000 + Math.random() * 90000000);
+            sessionStorage.setItem(`payment_auth_${generatedTxId}`, "true");
             onSuccess({
               transactionId: generatedTxId,
               amount: Number(values.amount),
@@ -166,7 +171,7 @@ export default function UnifiedDonationForm({
   };
 
   return (
-    <Card className="w-full h-full rounded-[32px] border border-border shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] overflow-hidden bg-white flex flex-col justify-between">
+    <Card className="w-full h-full rounded-card-lg border border-border shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] overflow-hidden bg-white flex flex-col justify-between">
       {/* Header and Step Tracker Panel */}
       <div className="border-b border-border/40 bg-gradient-to-r from-bg to-white p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
         
@@ -182,34 +187,34 @@ export default function UnifiedDonationForm({
         </div>
 
         {/* Wizard Progress Line */}
-        <div className="flex items-center gap-2 text-xs font-bold text-text-muted select-none self-center md:self-auto">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-bold text-text-muted select-none self-center md:self-auto">
+          <div className="flex items-center gap-1 sm:gap-2">
             <span className={cn(
-              "w-6 h-6 rounded-lg flex items-center justify-center font-display transition-colors",
-              step === 1 ? "bg-primary text-white" : "bg-primary/10 text-primary"
+              "w-5 h-5 sm:w-6 sm:h-6 rounded-lg flex items-center justify-center font-display transition-colors text-[10px] sm:text-xs",
+              step === 1 ? "bg-primary text-white" : step > 1 ? "bg-green-600 text-white" : "bg-primary/10 text-primary"
             )}>
-              1
+              {step > 1 ? <Check size={12} className="stroke-[3]" /> : "1"}
             </span>
-            <span className={step === 1 ? "text-text font-black" : "font-semibold"}>Amount</span>
+            <span className={step === 1 ? "text-text font-black" : step > 1 ? "text-green-600 font-bold" : "font-semibold"}>Amount</span>
           </div>
 
-          <div className="w-8 h-[2px] bg-border" />
+          <div className={cn("w-3 sm:w-8 h-[2px] transition-colors duration-300", step > 1 ? "bg-green-600" : "bg-border")} />
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <span className={cn(
-              "w-6 h-6 rounded-lg flex items-center justify-center font-display transition-colors",
-              step === 2 ? "bg-primary text-white" : "bg-primary/10 text-primary"
+              "w-5 h-5 sm:w-6 sm:h-6 rounded-lg flex items-center justify-center font-display transition-colors text-[10px] sm:text-xs",
+              step === 2 ? "bg-primary text-white" : step > 2 ? "bg-green-600 text-white" : "bg-primary/10 text-primary"
             )}>
-              2
+              {step > 2 ? <Check size={12} className="stroke-[3]" /> : "2"}
             </span>
-            <span className={step === 2 ? "text-text font-black" : "font-semibold"}>Payment</span>
+            <span className={step === 2 ? "text-text font-black" : step > 2 ? "text-green-600 font-bold" : "font-semibold"}>Payment</span>
           </div>
 
-          <div className="w-8 h-[2px] bg-border" />
+          <div className={cn("w-3 sm:w-8 h-[2px] transition-colors duration-300", step > 2 ? "bg-green-600" : "bg-border")} />
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <span className={cn(
-              "w-6 h-6 rounded-lg flex items-center justify-center font-display transition-colors",
+              "w-5 h-5 sm:w-6 sm:h-6 rounded-lg flex items-center justify-center font-display transition-colors text-[10px] sm:text-xs",
               step === 3 ? "bg-primary text-white" : "bg-primary/10 text-primary"
             )}>
               3
@@ -246,7 +251,7 @@ export default function UnifiedDonationForm({
                 </div>
 
                 <div className="space-y-5">
-                  <div className="grid grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
                     {PRESET_AMOUNTS.map((amount) => {
                       const isSelected = formik.values.amount === amount;
                       return (

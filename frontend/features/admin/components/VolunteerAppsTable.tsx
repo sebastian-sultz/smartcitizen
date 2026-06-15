@@ -6,6 +6,8 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { TableComponent } from "@/components/ui/TableComponent";
 import { Spinner } from "@/components/ui/spinner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/Input";
+import { Search } from "lucide-react";
 import { getVolunteerAppsColumns } from "./VolunteerAppsColumns";
 import { getAllVolunteers, VolunteerResponse } from "@/features/public/volunteer";
 import { updateVolunteerStatus } from "@/features/admin/api";
@@ -18,14 +20,29 @@ export const VolunteerAppsTable = () => {
   const [limit, setLimit] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
 
+  // Search states
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
   // Modal States
   const [selectedVolunteer, setSelectedVolunteer] = useState<VolunteerResponse | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch]);
+
   const fetchVolunteers = async () => {
     try {
       setIsLoading(true);
-      const res = await getAllVolunteers(undefined, page, limit);
+      const res = await getAllVolunteers(debouncedSearch, page, limit);
       if (res && res.volunteers) {
         setVolunteers(res.volunteers);
         if (res.pagination) {
@@ -41,7 +58,7 @@ export const VolunteerAppsTable = () => {
 
   useEffect(() => {
     fetchVolunteers();
-  }, [page, limit]);
+  }, [page, limit, debouncedSearch]);
 
   const updateVolunteerAppStatus = async (id: string, status: "APPROVED" | "REJECTED" | "SUSPENDED" | "PENDING") => {
     try {
@@ -64,8 +81,18 @@ export const VolunteerAppsTable = () => {
 
   return (
     <Card className="w-full">
-      <CardHeader>
+      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <CardTitle>Volunteer Applications</CardTitle>
+        <div className="w-full sm:w-72">
+          <Input 
+            placeholder="Search name, phone, city..." 
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            icon={<Search size={16} />}
+            size="sm"
+            shape="pill"
+          />
+        </div>
       </CardHeader>
       <CardContent>
         <TableComponent 

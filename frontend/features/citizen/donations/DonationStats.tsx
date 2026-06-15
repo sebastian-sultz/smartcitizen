@@ -18,7 +18,7 @@ export default function DonationStats({ stats }: DonationStatsProps) {
         {[...Array(4)].map((_, idx) => (
           <Card
             key={idx}
-            className="bg-white border border-border/80 p-6 flex flex-col justify-between shadow-sm rounded-[32px] h-[130px]"
+            className="bg-white border border-border/80 p-6 flex flex-col justify-between shadow-sm rounded-[32px] min-h-[130px] h-auto"
           >
             <div className="space-y-2">
               <Skeleton className="h-4 w-24" />
@@ -125,7 +125,7 @@ export default function DonationStats({ stats }: DonationStatsProps) {
         <Card
           key={idx}
           className={cn(
-            "border p-6 flex flex-col justify-between shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-300 rounded-[32px] bg-gradient-to-br",
+            "border p-6 flex flex-col justify-between shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-300 rounded-[32px] bg-gradient-to-br min-h-[130px] h-auto",
             item.bgGradient
           )}
         >

@@ -4,19 +4,19 @@ import Image from "next/image";
 
 export function AboutIntro() {
   return (
-    <section className="py-12 md:py-16 bg-surface">
+    <section className="py-8 md:py-16 bg-surface">
       <div className="max-content">
-        <div className="flex flex-col lg:flex-row items-center gap-16">
+        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
           {/* Left - Text */}
-          <div className="flex-1 space-y-8">
-            <div className="space-y-4">
+          <div className="flex-1 space-y-6 lg:space-y-8">
+            <div className="space-y-3 lg:space-y-4">
               <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-accent">ABOUT US</span>
               <h2 className="font-display text-4xl md:text-5xl font-bold text-text leading-tight">
                 A People-Centric Foundation for Social Change
               </h2>
             </div>
             
-            <div className="space-y-6 text-text-muted text-[17px] leading-relaxed">
+            <div className="space-y-4 lg:space-y-6 text-text-muted text-[17px] leading-relaxed">
               <p>
                 We are a registered non-profit organization committed to building
                 an aware, informed, and responsible society. Working at the grassroots
@@ -41,7 +41,7 @@ export function AboutIntro() {
           </div>
 
           {/* Right - Image */}
-          <div className="flex-1 relative">
+          <div className="flex-1 relative w-full">
             <div className="relative rounded-[40px] overflow-hidden shadow-2xl border-8 border-white aspect-[4/3] w-full">
               <Image 
                 src="/assets/about_us.jpg" 

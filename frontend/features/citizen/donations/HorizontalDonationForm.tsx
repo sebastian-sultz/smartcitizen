@@ -12,14 +12,15 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
-  Info
+  Info,
+  Check
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardContent } from "@/components/ui/Card";
 import { cn } from "@/lib/utils";
 import { useCitizenStore } from "@/store/citizenStore";
-import { nameSchema, panSchema, trimmedString } from "@/lib/validation";
+import { nameSchema, panSchema, addressSchema, trimmedString } from "@/lib/validation";
 import ManualUploadField from "@/features/public/donation/components/ManualUploadField";
 
 const PRESET_AMOUNTS = [100, 500, 1000, 5000];
@@ -30,6 +31,8 @@ interface HorizontalDonationFormProps {
     donorName: string; 
     donorEmail?: string; 
     donorPhone?: string; 
+    donorPan?: string;
+    donorAddress?: string;
   }) => Promise<{
     redirectUrl: string;
     merchantOrderId: string;
@@ -54,6 +57,7 @@ export default function HorizontalDonationForm({
       amount: "" as number | "",
       donorName: "", 
       pan: "",
+      donorAddress: "",
       transactionId: "",
       receipt: null as File | null,
     },
@@ -65,6 +69,7 @@ export default function HorizontalDonationForm({
         .max(10000000, "Maximum contribution is ₹10,000,000"),
       donorName: nameSchema().max(100, "Name must be under 100 characters").nullable(),
       pan: panSchema().nullable(),
+      donorAddress: addressSchema().max(200, "Address must be under 200 characters").nullable(),
       transactionId: Yup.string().when([], {
         is: () => paymentType === "manual" && step === 3,
         then: () => trimmedString().required("Transaction Reference / UTR ID is required"),
@@ -94,14 +99,20 @@ export default function HorizontalDonationForm({
           const payload = {
             amount: Number(values.amount),
             donorName: finalDonorName,
+            donorPan: values.pan || undefined,
+            donorAddress: values.donorAddress || undefined,
             ...(finalDonorPhone ? { donorPhone: finalDonorPhone } : {})
           };
 
           const response = await submitApiCall(payload);
           if (response?.redirectUrl) {
+            if (response.merchantOrderId) {
+              sessionStorage.setItem(`payment_auth_${response.merchantOrderId}`, "true");
+            }
             window.location.href = response.redirectUrl;
           } else {
             const generatedTxId = response?.merchantOrderId || "TXN" + Math.floor(10000000 + Math.random() * 90000000);
+            sessionStorage.setItem(`payment_auth_${generatedTxId}`, "true");
             onSuccess({
               transactionId: generatedTxId,
               amount: Number(values.amount),
@@ -155,7 +166,7 @@ export default function HorizontalDonationForm({
   };
 
   return (
-    <Card className="w-full rounded-[32px] border border-border shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] overflow-hidden bg-white">
+    <Card className="w-full rounded-card-lg border border-border shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] overflow-hidden bg-white">
       {/* Header and Step Tracker Panel */}
       <div className="border-b border-border/40 bg-gradient-to-r from-bg to-white p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
         
@@ -171,34 +182,34 @@ export default function HorizontalDonationForm({
         </div>
 
         {/* Wizard Progress Line */}
-        <div className="flex items-center gap-2 text-xs font-bold text-text-muted select-none self-center md:self-auto">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-bold text-text-muted select-none self-center md:self-auto">
+          <div className="flex items-center gap-1 sm:gap-2">
             <span className={cn(
-              "w-6 h-6 rounded-lg flex items-center justify-center font-display transition-colors",
-              step === 1 ? "bg-primary text-white" : "bg-primary/10 text-primary"
+              "w-5 h-5 sm:w-6 sm:h-6 rounded-lg flex items-center justify-center font-display transition-colors text-[10px] sm:text-xs",
+              step === 1 ? "bg-primary text-white" : step > 1 ? "bg-green-600 text-white" : "bg-primary/10 text-primary"
             )}>
-              1
+              {step > 1 ? <Check size={12} className="stroke-[3]" /> : "1"}
             </span>
-            <span className={step === 1 ? "text-text font-black" : "font-semibold"}>Amount</span>
+            <span className={step === 1 ? "text-text font-black" : step > 1 ? "text-green-600 font-bold" : "font-semibold"}>Amount</span>
           </div>
 
-          <div className="w-8 h-[2px] bg-border" />
+          <div className={cn("w-3 sm:w-8 h-[2px] transition-colors duration-300", step > 1 ? "bg-green-600" : "bg-border")} />
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <span className={cn(
-              "w-6 h-6 rounded-lg flex items-center justify-center font-display transition-colors",
-              step === 2 ? "bg-primary text-white" : "bg-primary/10 text-primary"
+              "w-5 h-5 sm:w-6 sm:h-6 rounded-lg flex items-center justify-center font-display transition-colors text-[10px] sm:text-xs",
+              step === 2 ? "bg-primary text-white" : step > 2 ? "bg-green-600 text-white" : "bg-primary/10 text-primary"
             )}>
-              2
+              {step > 2 ? <Check size={12} className="stroke-[3]" /> : "2"}
             </span>
-            <span className={step === 2 ? "text-text font-black" : "font-semibold"}>Payment</span>
+            <span className={step === 2 ? "text-text font-black" : step > 2 ? "text-green-600 font-bold" : "font-semibold"}>Payment</span>
           </div>
 
-          <div className="w-8 h-[2px] bg-border" />
+          <div className={cn("w-3 sm:w-8 h-[2px] transition-colors duration-300", step > 2 ? "bg-green-600" : "bg-border")} />
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             <span className={cn(
-              "w-6 h-6 rounded-lg flex items-center justify-center font-display transition-colors",
+              "w-5 h-5 sm:w-6 sm:h-6 rounded-lg flex items-center justify-center font-display transition-colors text-[10px] sm:text-xs",
               step === 3 ? "bg-primary text-white" : "bg-primary/10 text-primary"
             )}>
               3
@@ -234,7 +245,7 @@ export default function HorizontalDonationForm({
                 </div>
 
                 <div className="space-y-5">
-                  <div className="grid grid-cols-4 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
                     {PRESET_AMOUNTS.map((amount) => {
                       const isSelected = formik.values.amount === amount;
                       return (
@@ -377,6 +388,16 @@ export default function HorizontalDonationForm({
                         ? (formik.errors.pan as string)
                         : undefined
                     }
+                    size="sm"
+                  />
+                  <Input
+                    label="Billing Address (Optional)"
+                    placeholder="Enter address for tax receipt"
+                    name="donorAddress"
+                    value={formik.values.donorAddress}
+                    onChange={(e) => formik.setFieldValue("donorAddress", e.target.value)}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.donorAddress ? formik.errors.donorAddress : undefined}
                     size="sm"
                   />
                 </div>

@@ -176,10 +176,8 @@ export default function ProfileView() {
         </CardContent>
       </Card>
 
-      {/* Main Grid split */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left/Center Column */}
-        <div className="lg:col-span-2 space-y-8">
+      {/* Centered single-column layout stack */}
+      <div className="max-w-4xl mx-auto w-full space-y-8">
           {isEditing ? (
             <ProfileEditForm
               profile={profile}
@@ -267,7 +265,6 @@ export default function ProfileView() {
               <PrivacyControls />
             </div>
           )}
-        </div>
       </div>
     </div>
   );

@@ -28,6 +28,9 @@
   --radius-xl: 12px;
   --radius-lg: 8px;
   --radius-md: 4px;
+  --radius-card: 24px;
+  --radius-card-lg: 32px;
+  --radius-card-xl: 40px;
 
   --shadow-card: 0 2px 16px rgba(0, 0, 0, 0.07);
 
@@ -236,12 +239,10 @@ h1, h2, h3, .font-display {
   
   .animate-pulse-slow {
     animation: pulse-slow 15s ease-in-out infinite;
-    will-change: opacity;
   }
   
   .animate-pulse-slower {
     animation: pulse-slower 20s ease-in-out infinite;
-    will-change: opacity;
   }
 
   .animate-marquee {

@@ -37,7 +37,15 @@ function PaymentStatusContent() {
         setLoading(true);
         const data = await getPaymentStatus(transactionId);
         if (data) {
-          setPayment(data);
+          const isOwner = data.userId ? (user?.id === data.userId) : false;
+          const isAdmin = user?.user_type === "admin";
+          const isSessionAuthorized = sessionStorage.getItem(`payment_auth_${transactionId}`) === "true";
+
+          if (!isAdmin && !isSessionAuthorized && (!data.userId || !isOwner)) {
+            setError("Access Denied: You are not authorized to view this payment status.");
+          } else {
+            setPayment(data);
+          }
         } else {
           setError("Payment record not found.");
         }
@@ -201,7 +209,7 @@ function PaymentStatusContent() {
         <div className="bg-bg p-6 rounded-3xl border border-border inline-block text-left w-full mt-4 space-y-3 shadow-sm">
           <div className="flex justify-between items-center text-xs pb-2 border-b border-border/50">
             <span className="text-text-muted font-bold uppercase tracking-wider">Transaction ID</span>
-            <span className="font-mono font-bold text-text">{payment.merchantOrderId}</span>
+            <span className="font-mono font-bold text-text">{payment.providerReferenceId || payment.merchantOrderId}</span>
           </div>
           <div className="flex justify-between items-center text-xs pb-2 border-b border-border/50">
             <span className="text-text-muted font-bold uppercase tracking-wider">Donor Name</span>

@@ -96,39 +96,19 @@ export function TableComponent<T>({
     const endRange = Math.min(currentPage * pageSize, totalRecords);
 
     return (
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-6 py-4 border-t border-border/80 bg-white select-none">
+      <div className="grid grid-cols-1 md:grid-cols-3 items-center justify-between gap-4 px-6 py-4 border border-border/70 md:border-none md:border-t md:border-border/80 bg-white rounded-card md:rounded-none select-none shadow-sm md:shadow-none mt-4 md:mt-0">
         {/* Total records display */}
-        <div className="text-xs text-text-muted font-medium">
+        <div className="text-xs text-text-muted font-medium text-center md:text-left">
           Showing <span className="font-semibold text-text">{startRange}</span> to{" "}
           <span className="font-semibold text-text">{endRange}</span> of{" "}
           <span className="font-semibold text-text">{totalRecords}</span> entries
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-          {/* Rows per page selector */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-text-muted font-medium">Rows per page:</span>
-            <Select
-              value={pageSize.toString()}
-              onValueChange={(val) => handleLimitChange(Number(val))}
-            >
-              <SelectTrigger className="w-[75px] px-3 py-1.5 text-xs rounded-xl h-9 border-border bg-bg/50 font-semibold focus:border-primary">
-                <SelectValue placeholder={pageSize} />
-              </SelectTrigger>
-              <SelectContent position="popper" className="min-w-[75px]">
-                {pageSizeOptions.map((opt) => (
-                  <SelectItem key={opt} value={opt.toString()} className="text-xs font-semibold">
-                    {opt}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Pagination Controls */}
+        {/* Pagination Controls */}
+        <div className="flex justify-center w-full">
           {totalPages > 1 && (
             <Pagination className="w-auto mx-0">
-              <PaginationContent className="flex items-center gap-1">
+              <PaginationContent className="flex items-center gap-1 justify-center">
                 {/* First Page */}
                 <PaginationItem>
                   <Button
@@ -158,32 +138,34 @@ export function TableComponent<T>({
                 </PaginationItem>
 
                 {/* Page List */}
-                {getPagesList(totalPages, currentPage).map((p, idx) => {
-                  if (p === "ellipsis") {
+                <div className="hidden sm:flex items-center gap-1">
+                  {getPagesList(totalPages, currentPage).map((p, idx) => {
+                    if (p === "ellipsis") {
+                      return (
+                        <PaginationItem key={`ellipsis-${idx}`}>
+                          <PaginationEllipsis className="size-8 text-text-muted flex items-center justify-center" />
+                        </PaginationItem>
+                      );
+                    }
                     return (
-                      <PaginationItem key={`ellipsis-${idx}`}>
-                        <PaginationEllipsis className="size-8 text-text-muted flex items-center justify-center" />
+                      <PaginationItem key={p}>
+                        <Button
+                          variant={currentPage === p ? "outline" : "ghost"}
+                          size="icon"
+                          onClick={() => handlePageChange(p as number)}
+                          className={cn(
+                            "size-8 p-0 rounded-lg font-bold text-xs transition-colors",
+                            currentPage === p
+                              ? "border-2 border-primary text-primary hover:bg-primary/5"
+                              : "text-text-muted hover:text-primary hover:bg-bg"
+                          )}
+                        >
+                          {p}
+                        </Button>
                       </PaginationItem>
                     );
-                  }
-                  return (
-                    <PaginationItem key={p}>
-                      <Button
-                        variant={currentPage === p ? "outline" : "ghost"}
-                        size="icon"
-                        onClick={() => handlePageChange(p as number)}
-                        className={cn(
-                          "size-8 p-0 rounded-lg font-bold text-xs transition-colors",
-                          currentPage === p
-                            ? "border-2 border-primary text-primary hover:bg-primary/5"
-                            : "text-text-muted hover:text-primary hover:bg-bg"
-                        )}
-                      >
-                        {p}
-                      </Button>
-                    </PaginationItem>
-                  );
-                })}
+                  })}
+                </div>
 
                 {/* Next Page */}
                 <PaginationItem>
@@ -216,13 +198,34 @@ export function TableComponent<T>({
             </Pagination>
           )}
         </div>
+
+        {/* Rows per page selector */}
+        <div className="hidden md:flex items-center gap-2 justify-end w-full">
+          <span className="text-xs text-text-muted font-medium">Rows per page:</span>
+          <Select
+            value={pageSize.toString()}
+            onValueChange={(val) => handleLimitChange(Number(val))}
+          >
+            <SelectTrigger className="w-[75px] px-3 py-1.5 text-xs rounded-xl h-9 border-border bg-bg/50 font-semibold focus:border-primary">
+              <SelectValue placeholder={pageSize} />
+            </SelectTrigger>
+            <SelectContent position="popper" className="min-w-[75px]">
+              {pageSizeOptions.map((opt) => (
+                <SelectItem key={opt} value={opt.toString()} className="text-xs font-semibold">
+                  {opt}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
     );
   };
 
   return (
-    <div className="w-full flex flex-col overflow-hidden rounded-2xl border border-border bg-white shadow-card">
-      <div className="w-full overflow-x-auto">
+    <div className="w-full flex flex-col md:overflow-hidden md:rounded-2xl md:border md:border-border md:bg-white md:shadow-card">
+      {/* Desktop View (Table Layout) */}
+      <div className="w-full overflow-x-auto hidden md:block">
         <Table className={className} noWrapper>
           <ShadcnTableHeader>
             <TableRow className="hover:bg-transparent border-b border-border bg-bg/50">
@@ -301,6 +304,90 @@ export function TableComponent<T>({
           </ShadcnTableBody>
         </Table>
       </div>
+
+      {/* Mobile View (Card List Fallback Layout) */}
+      <div className="md:hidden space-y-4">
+        {loading ? (
+          <div className="space-y-4">
+            {Array.from({ length: 3 }).map((_, rIdx) => (
+              <div key={rIdx} className="bg-white rounded-[24px] border border-border/70 p-5 space-y-4 animate-pulse">
+                {headers.slice(0, Math.min(headers.length, 4)).map((h, cIdx) => (
+                  <div key={cIdx} className="flex justify-between items-center">
+                    <Skeleton className="h-3.5 w-16 bg-border/60" />
+                    <Skeleton className="h-5 w-24 bg-border/60" />
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        ) : data.length === 0 ? (
+          <div className="p-8 bg-white rounded-[24px] border border-border/70">
+            <div className="max-w-md mx-auto py-4">
+              <EmptyState
+                icon={Inbox}
+                title="No Records Available"
+                description={emptyMessage || "There are no entries to display in this list at the moment."}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {data.map((row, rowIndex) => {
+              const primaryHeader = headers[0];
+              const actionHeader = headers.find((h) => h.label === "Actions");
+              const statusHeader = headers.find((h) => h.label === "Status");
+              const metadataHeaders = headers.filter(
+                (h, idx) => idx > 0 && h.label !== "Actions" && h.label !== "Status"
+              );
+
+              return (
+                <div
+                  key={rowIndex}
+                  className="bg-white rounded-card border border-border/70 shadow-sm hover:shadow-md transition-all p-5 space-y-4"
+                >
+                  {/* Card Top Row: Primary Identity and Status */}
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="flex-1 min-w-0">
+                      {primaryHeader.render(row)}
+                    </div>
+                    {statusHeader && (
+                      <div className="shrink-0">
+                        {statusHeader.render(row)}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Card Metadata Stack */}
+                  {metadataHeaders.length > 0 && (
+                    <div className="space-y-3 pt-3.5 border-t border-border/30">
+                      {metadataHeaders.map((h, colIdx) => (
+                        <div key={colIdx} className="flex justify-between items-start gap-4 text-xs py-0.5 min-w-0">
+                          <span className="font-semibold text-text-muted uppercase tracking-wider text-[10px] shrink-0 pt-0.5">
+                            {h.label}
+                          </span>
+                          <div className="text-text font-bold break-all text-right min-w-0">
+                            {h.render(row)}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Card Actions Footer */}
+                  {actionHeader && (
+                    <div className="pt-3.5 border-t border-border/50 flex justify-end">
+                      <div className="flex flex-wrap gap-2.5 w-full justify-center [&>div]:contents">
+                        {actionHeader.render(row)}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
       {renderPagination()}
     </div>
   );

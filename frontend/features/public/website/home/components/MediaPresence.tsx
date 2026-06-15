@@ -215,7 +215,7 @@ export function MediaPresence() {
                       src="/assets/a1.png"
                       alt="Awareness drive photo 1"
                       fill
-                      sizes="150px"
+                      sizes="(max-width: 768px) 45vw, 150px"
                       className="object-cover"
                     />
                   </div>
@@ -224,7 +224,7 @@ export function MediaPresence() {
                       src="/assets/a2.png"
                       alt="Awareness drive photo 2"
                       fill
-                      sizes="150px"
+                      sizes="(max-width: 768px) 45vw, 150px"
                       className="object-cover"
                     />
                   </div>

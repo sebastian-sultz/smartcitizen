@@ -29,12 +29,16 @@ export const DonationDetailsDialog = ({
           <div className="space-y-6 text-sm mt-4">
             <div className="grid grid-cols-2 gap-6 border-b border-border/40 pb-5">
               <div>
-                <span className="text-xs font-semibold text-text-muted block mb-0.5">Transaction ID</span>
-                <span className="font-mono font-bold text-text break-all">{payment.id}</span>
+                <span className="text-xs font-semibold text-text-muted block mb-0.5">Gateway Transaction ID</span>
+                <span className="font-mono font-bold text-text break-all">{payment.providerReferenceId || "Pending/N/A"}</span>
               </div>
               <div>
                 <span className="text-xs font-semibold text-text-muted block mb-0.5">Merchant Order ID</span>
                 <span className="font-mono font-bold text-text break-all">{payment.merchantOrderId}</span>
+              </div>
+              <div>
+                <span className="text-xs font-semibold text-text-muted block mb-0.5">Database Record ID</span>
+                <span className="font-mono font-bold text-text break-all">{payment.id}</span>
               </div>
               <div>
                 <span className="text-xs font-semibold text-text-muted block mb-0.5">Donor Contact Info</span>

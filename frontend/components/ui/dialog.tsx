@@ -120,7 +120,7 @@ function DialogFooter({
     <div
       data-slot="dialog-footer"
       className={cn(
-        "-mx-6 -mb-6 sm:-mx-8 sm:-mb-8 mt-6 flex flex-col-reverse gap-3 border-t border-border bg-bg-alt/30 p-6 sm:px-8 sm:py-5 sm:flex-row rounded-b-3xl shrink-0",
+        "-mx-6 -mb-6 -mt-5 sm:-mx-8 sm:-mb-8 flex flex-col-reverse gap-3 border-t border-border bg-bg-alt/30 p-6 sm:px-8 sm:py-5 sm:flex-row rounded-b-3xl shrink-0",
         childCount === 1 ? "justify-center text-center" : "sm:justify-between items-center",
         className
       )}

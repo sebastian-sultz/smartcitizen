@@ -3,7 +3,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { Search, Filter, MapPin } from "lucide-react";
 import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/Button";
 import { ProfessionalCard } from "./ProfessionalCard";
 import { NeedHelpHeader } from "./NeedHelpHeader";
 import { NeedHelpGate } from "./NeedHelpGate";
@@ -11,10 +10,7 @@ import EmptyState from "@/components/ui/EmptyState";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useAuthStore } from "@/store/authStore";
-import { getAllVolunteers } from "@/features/public/volunteer/api";
-import { VolunteerResponse } from "@/features/public/volunteer/types";
-
-const categories = ["All", "Lawyer", "Doctor", "Counselor", "Financial Advisor", "IT Professional", "Teacher", "Social Worker"];
+import { getAllVolunteers, VolunteerResponse, VOLUNTEER_PROFESSIONS } from "@/features/public/volunteer";
 
 export const NeedHelpDirectory = () => {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
@@ -86,22 +82,41 @@ export const NeedHelpDirectory = () => {
       {/* Search and Filters */}
       <div className="bg-white rounded-2xl p-6 border border-border shadow-sm space-y-6 relative overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-1 bg-primary" />
-        <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1">
+        <div className="flex flex-col md:flex-row gap-4 items-end">
+          <div className="flex-1 w-full">
             <Input
               placeholder="Search by name, expertise, or location..."
-              icon={<Search size={20} />}
+              icon={<Search size={16} />}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              size="sm"
             />
           </div>
-          <div className="md:w-[250px] relative">
-            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-text-light z-10">
-              <MapPin size={20} />
-            </div>
+          <div className="w-full md:w-[220px]">
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger size="sm">
+                <span className="flex items-center gap-2 text-text">
+                  <Filter size={16} className="text-text-light shrink-0" />
+                  <SelectValue placeholder="All Professions" />
+                </span>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="All">All Professions</SelectItem>
+                {VOLUNTEER_PROFESSIONS.map((prof) => (
+                  <SelectItem key={prof} value={prof}>
+                    {prof}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="w-full md:w-[220px]">
             <Select value={selectedLocation} onValueChange={setSelectedLocation}>
-              <SelectTrigger className="w-full h-14 pl-12 text-[15px]">
-                <SelectValue placeholder="All Locations" />
+              <SelectTrigger size="sm">
+                <span className="flex items-center gap-2 text-text">
+                  <MapPin size={16} className="text-text-light shrink-0" />
+                  <SelectValue placeholder="All Locations" />
+                </span>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Locations</SelectItem>
@@ -112,28 +127,6 @@ export const NeedHelpDirectory = () => {
                 ))}
               </SelectContent>
             </Select>
-          </div>
-        </div>
-
-        <div>
-          <div className="flex items-center gap-2 mb-3">
-            <Filter size={16} className="text-text-muted" />
-            <span className="text-[14px] font-bold text-text-muted uppercase tracking-wider">Categories</span>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((cat) => (
-              <Button
-                variant={selectedCategory === cat ? "primary" : "secondary"}
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                shape="pill"
-                size="sm"
-                normalCase
-                noShadow
-              >
-                {cat}
-              </Button>
-            ))}
           </div>
         </div>
       </div>

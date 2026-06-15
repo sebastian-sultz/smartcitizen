@@ -118,7 +118,7 @@ export default function LegalViewer() {
             </div>
           </div>
 
-          <div className="relative rounded-[40px] overflow-hidden bg-white border-8 border-bg shadow-2xl aspect-[1/1.4] md:aspect-auto md:h-[800px] group">
+          <div className="relative rounded-[40px] overflow-hidden bg-white border-8 border-bg shadow-2xl aspect-[1/1.4] md:aspect-auto md:h-[calc(100vh-220px)] group">
             <iframe 
               src={`${activeDoc.file}#toolbar=0&navpanes=0&scrollbar=0`} 
               className="w-full h-full border-none"

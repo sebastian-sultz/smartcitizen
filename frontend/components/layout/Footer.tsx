@@ -101,7 +101,7 @@ export default function Footer() {
               </div>
               <div className="flex gap-3">
                 <Mail className="text-accent shrink-0" size={18} />
-                <p className="break-all">globalsmartcitizensfoundation@gmail.com</p>
+                <p className="break-words">globalsmartcitizensfoundation@gmail.com</p>
               </div>
               <div className="flex gap-3">
                 <Globe className="text-accent shrink-0" size={18} />

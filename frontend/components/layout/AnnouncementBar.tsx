@@ -28,7 +28,7 @@ export default function AnnouncementBar() {
           variant="ghost"
           size="icon"
           onClick={() => setIsVisible(false)}
-          className="p-1 hover:bg-white/10 text-white rounded-full transition-colors"
+          className="hover:bg-white/10 text-white rounded-full transition-colors"
           aria-label="Dismiss announcement"
         >
           <X size={16} />

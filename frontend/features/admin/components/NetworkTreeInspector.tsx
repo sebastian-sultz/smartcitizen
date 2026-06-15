@@ -13,7 +13,7 @@ import {
   ReferralNetworkMember, 
   UserNetworkStats 
 } from "../types";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
+import { Card, CardContent } from "@/components/ui/Card";
 import { TableComponent, Header } from "@/components/ui/TableComponent";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -217,9 +217,9 @@ export const NetworkTreeInspector = () => {
       ),
     },
     {
-      label: "Network Audit",
+      label: "Actions",
+
       render: (u) => (
-        <div className="flex items-center justify-center">
           <Button 
             variant="ghost-primary" 
             size="sm"
@@ -229,7 +229,6 @@ export const NetworkTreeInspector = () => {
           >
             Inspect
           </Button>
-        </div>
       ),
     },
   ];
@@ -347,7 +346,7 @@ export const NetworkTreeInspector = () => {
       />
 
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
-        <DialogContent size="xl" className="max-h-[85vh] flex flex-col overflow-hidden">
+        <DialogContent size="xl" className="h-[90vh] md:h-auto md:max-h-[85vh] md:max-w-4xl flex flex-col overflow-hidden">
           <DialogHeader className="border-b border-border/60 pb-4 shrink-0">
             <DialogTitle>Referral Network Audit</DialogTitle>
             <DialogDescription>Audit coordinator referral links, downline members, and fundraising amounts</DialogDescription>
@@ -356,11 +355,11 @@ export const NetworkTreeInspector = () => {
           {selectedUser && (
             <>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden min-h-0 pt-4">
-              <TabsList className="shrink-0 w-full mb-4">
-                <TabsTrigger value="profile">Profile Details</TabsTrigger>
-                <TabsTrigger value="donations">Direct Donations</TabsTrigger>
-                <TabsTrigger value="downline">Downline Referrals</TabsTrigger>
-                <TabsTrigger value="stats">Network Metrics</TabsTrigger>
+              <TabsList className="shrink-0 w-full mb-4 grid grid-cols-2 gap-2 h-auto p-0 bg-transparent md:flex md:h-12 md:bg-bg md:p-1.5 md:rounded-xl md:mb-6">
+                <TabsTrigger value="profile" className="text-xs md:text-sm px-2 md:px-3 py-2.5 bg-bg/80 border border-border/30 data-[state=active]:bg-surface data-[state=active]:border-transparent md:py-2 md:bg-transparent md:border-none md:data-[state=active]:bg-surface">Profile Details</TabsTrigger>
+                <TabsTrigger value="donations" className="text-xs md:text-sm px-2 md:px-3 py-2.5 bg-bg/80 border border-border/30 data-[state=active]:bg-surface data-[state=active]:border-transparent md:py-2 md:bg-transparent md:border-none md:data-[state=active]:bg-surface">Direct Donations</TabsTrigger>
+                <TabsTrigger value="downline" className="text-xs md:text-sm px-2 md:px-3 py-2.5 bg-bg/80 border border-border/30 data-[state=active]:bg-surface data-[state=active]:border-transparent md:py-2 md:bg-transparent md:border-none md:data-[state=active]:bg-surface">Downline Referrals</TabsTrigger>
+                <TabsTrigger value="stats" className="text-xs md:text-sm px-2 md:px-3 py-2.5 bg-bg/80 border border-border/30 data-[state=active]:bg-surface data-[state=active]:border-transparent md:py-2 md:bg-transparent md:border-none md:data-[state=active]:bg-surface">Network Metrics</TabsTrigger>
               </TabsList>
 
               <div className="flex-1 overflow-y-auto min-h-0 pr-1">
@@ -533,7 +532,7 @@ export const NetworkTreeInspector = () => {
               </div>
 
             </Tabs>
-            <DialogFooter className="pt-4 border-t border-border/60 shrink-0">
+            <DialogFooter >
               <Button variant="secondary" onClick={() => setDetailsOpen(false)}>Close Inspector</Button>
             </DialogFooter>
           </>

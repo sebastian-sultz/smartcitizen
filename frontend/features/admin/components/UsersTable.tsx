@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { TableComponent } from "@/components/ui/TableComponent";
 import { Spinner } from "@/components/ui/spinner";
+import { Input } from "@/components/ui/Input";
+import { Search } from "lucide-react";
 import { getUsersColumns } from "./UsersColumns";
 import { getNonAdminUsers, suspendUser, deleteUser } from "../api";
 import { UserResponse } from "@/features/shared/auth/types";
@@ -18,14 +20,29 @@ export const UsersTable = () => {
   const [limit, setLimit] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
 
+  // Search states
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
   // Modal States
   const [selectedUser, setSelectedUser] = useState<UserResponse | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch]);
+
   const fetchUsers = async () => {
     try {
       setIsLoading(true);
-      const res = await getNonAdminUsers(page, limit);
+      const res = await getNonAdminUsers(page, limit, debouncedSearch);
       if (res && res.users) {
         setUsers(res.users);
         if (res.pagination) {
@@ -41,7 +58,7 @@ export const UsersTable = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, [page, limit]);
+  }, [page, limit, debouncedSearch]);
 
   const handleViewDetails = (user: UserResponse) => {
     setSelectedUser(user);
@@ -93,6 +110,16 @@ export const UsersTable = () => {
     <Card className="w-full">
       <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <CardTitle>User Management</CardTitle>
+        <div className="w-full sm:w-72">
+          <Input 
+            placeholder="Search by name or phone..." 
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            icon={<Search size={16} />}
+            size="sm"
+            shape="pill"
+          />
+        </div>
       </CardHeader>
       <CardContent>
         <TableComponent 

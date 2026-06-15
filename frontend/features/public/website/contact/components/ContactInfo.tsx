@@ -31,7 +31,7 @@ export const ContactInfo = () => {
             </div>
             <div>
               <p className="text-[14px] font-bold text-text uppercase tracking-wider mb-1">Email</p>
-              <p className="text-text-muted break-all">globalsmartcitizensfoundation@gmail.com</p>
+              <p className="text-text-muted break-words">globalsmartcitizensfoundation@gmail.com</p>
             </div>
           </div>
         </div>

@@ -18,6 +18,7 @@ import { Heart, Mail, Phone, MapPin, Building, Hash } from "lucide-react";
 import { toast } from "sonner";
 import { createVolunteer } from "../api";
 import { UserResponse } from "@/features/shared/auth/types";
+import { VOLUNTEER_PROFESSIONS } from "@/features/public/volunteer/constants";
 import { 
   nameSchema, 
   emailSchema, 
@@ -35,6 +36,7 @@ interface VolunteerApplicationFormProps {
 
 export default function VolunteerApplicationForm({ user, onSubmitSuccess }: VolunteerApplicationFormProps) {
   const formik = useFormik({
+    validateOnMount: true,
     initialValues: {
       profession: "",
       experience: "",
@@ -114,18 +116,29 @@ export default function VolunteerApplicationForm({ user, onSubmitSuccess }: Volu
       <CardContent>
         <form onSubmit={formik.handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <Input
-              label="Profession / Study"
-              placeholder="e.g. Software Engineer / Student"
-              name="profession"
-              value={formik.values.profession}
-              onChange={(e) => {
-                const val = e.target.value.replace(/\s{2,}/g, " ");
-                formik.setFieldValue("profession", val);
-              }}
-              onBlur={formik.handleBlur}
-              error={formik.touched.profession ? formik.errors.profession : undefined}
-            />
+            <div className="space-y-2">
+              <label htmlFor="profession-select" className="text-[14px] font-bold text-text ml-1 block">
+                Profession / Study
+              </label>
+              <Select
+                value={formik.values.profession}
+                onValueChange={(val) => formik.setFieldValue("profession", val)}
+              >
+                <SelectTrigger id="profession-select">
+                  <SelectValue placeholder="Select Profession" />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  {VOLUNTEER_PROFESSIONS.map((prof) => (
+                    <SelectItem key={prof} value={prof}>
+                      {prof}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {formik.touched.profession && formik.errors.profession && (
+                <p className="text-red-500 text-[12px] ml-1">{formik.errors.profession}</p>
+              )}
+            </div>
 
             <Input
               label="Email Address"
@@ -310,6 +323,7 @@ export default function VolunteerApplicationForm({ user, onSubmitSuccess }: Volu
             <Button
               type="submit"
               isLoading={formik.isSubmitting}
+              disabled={!formik.isValid || !formik.values.consent}
               fullWidth
               className="sm:w-auto"
             >

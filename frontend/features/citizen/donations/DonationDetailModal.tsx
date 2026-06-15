@@ -175,7 +175,7 @@ export default function DonationDetailModal({
                 Transaction ID
               </span>
               <span className="font-mono text-xs text-text font-bold">
-                {localDonation.merchantOrderId}
+                {localDonation.providerReferenceId || localDonation.merchantOrderId}
               </span>
             </div>
 

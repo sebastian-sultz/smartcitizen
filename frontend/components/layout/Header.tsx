@@ -63,9 +63,9 @@ export default function Header() {
           className={cn(
             "relative flex items-center justify-between px-4 md:px-6 py-2 md:py-3 rounded-[20px] md:rounded-[24px] transition-all duration-500 border",
             isScrolled
-              ? "bg-white/95 backdrop-blur-md shadow-2xl border-primary/10"
+              ? "bg-white/95 backdrop-blur-md shadow-2xl border-primary/10 text-text"
               : isHome
-                ? "bg-primary/5 backdrop-blur-sm border-primary/10 text-text"
+                ? "bg-primary/5 backdrop-blur-sm border-primary/10 text-white md:text-text"
                 : "bg-primary/10 backdrop-blur-sm border-white/20 text-white",
           )}
         >
@@ -74,30 +74,29 @@ export default function Header() {
             href="/"
             className="flex items-center gap-2 md:gap-3 group relative z-10"
           >
-            <div className="relative w-8 h-8 md:w-10 md:h-10">
+            <div className="relative w-9 h-9 md:w-10 md:h-10">
               <div className="absolute inset-0 bg-white rounded-full blur-md opacity-20 group-hover:opacity-40 transition-opacity" />
               <Image
                 src="/assets/logo.png"
                 alt="GlobalSmart Logo"
                 fill
                 priority
-                sizes="(max-width: 768px) 32px, 40px"
-                className="object-contain relative z-10"
+                sizes="(max-width: 768px) 40px, 40px"
               />
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col gap-0">
               <span
                 className={cn(
-                  "font-display text-2xl font-black leading-none transition-colors",
-                  isScrolled || isHome ? "text-primary" : "text-white",
+                  "font-display text-lg md:text-2xl font-black leading-none transition-colors",
+                  isScrolled ? "text-primary" : isHome ? "text-white md:text-primary" : "text-white",
                 )}
               >
                 GlobalSmart
               </span>
               <span
                 className={cn(
-                  "font-body text-[10px] uppercase tracking-[0.2em] font-bold opacity-70",
-                  isScrolled || isHome ? "text-text-muted" : "text-white/80",
+                  "font-body text-[8px] md:text-[10px] uppercase tracking-[0.2em] font-bold opacity-70",
+                  isScrolled ? "text-text-muted" : isHome ? "text-white/70 md:text-text-muted" : "text-white/80",
                 )}
               >
                 Citizens Foundation
@@ -322,14 +321,16 @@ export default function Header() {
 
           {/* Mobile Menu Toggle */}
           <Button
-            variant="ghost"
+            variant={isScrolled ? "ghost" : isHome ? "ghost-white" : "ghost-white"}
             size="icon"
             shape="circle"
             className={cn(
               "lg:hidden active:scale-90",
-              isScrolled || isHome
+              isScrolled
                 ? "bg-primary/5 text-primary"
-                : "bg-white/10 text-white",
+                : isHome
+                  ? "bg-white/10 text-white md:bg-primary/5 md:text-primary"
+                  : "bg-white/10 text-white",
             )}
             onClick={() => setMobileMenuOpen(true)}
           >
@@ -346,7 +347,7 @@ export default function Header() {
             onClick={() => setMobileMenuOpen(false)}
           />
           <div
-            className="animate-slide-in-right fixed top-4 right-4 bottom-4 w-[320px] bg-white rounded-[40px] z-[60] lg:hidden overflow-hidden flex flex-col shadow-2xl shadow-black/50"
+            className="animate-slide-in-right fixed top-4 right-4 bottom-4 w-[calc(100vw-2rem)] max-w-[320px] bg-white rounded-[40px] z-[60] lg:hidden overflow-hidden flex flex-col shadow-2xl shadow-black/50"
           >
               <div className="p-8 flex items-center justify-between bg-bg border-b border-border">
                 <div className="flex flex-col">

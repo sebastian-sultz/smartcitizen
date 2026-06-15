@@ -65,15 +65,17 @@ export function Sidebar() {
   return (
     <>
       {/* Mobile Toggle */}
-      <Button
-        variant="primary"
-        size="icon"
-        shape="square"
-        onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-        className="fixed top-4 left-4 z-50 lg:hidden"
-      >
-        {isSidebarOpen ? <X size={20} /> : <Menu size={20} />}
-      </Button>
+      {!isSidebarOpen && (
+        <Button
+          variant="primary"
+          size="icon"
+          shape="square"
+          onClick={() => setIsSidebarOpen(true)}
+          className="fixed top-4 left-4 z-50 lg:hidden"
+        >
+          <Menu size={20} />
+        </Button>
+      )}
 
       {/* Sidebar Overlay */}
       {isSidebarOpen && (
@@ -130,6 +132,7 @@ export function Sidebar() {
                   ) : (
                     <Link
                       href={item.href || "#"}
+                      onClick={() => setIsSidebarOpen(false)}
                       className={cn(
                         "flex items-center p-3 text-sm font-medium rounded-lg hover:bg-white/10 transition-colors group",
                         isActive && "bg-accent text-white"
@@ -148,6 +151,7 @@ export function Sidebar() {
                          <Link
                           key={child.title}
                           href={child.href || "#"}
+                          onClick={() => setIsSidebarOpen(false)}
                           className={cn(
                             "flex items-center p-2 text-xs font-medium rounded-lg hover:bg-white/10 transition-colors",
                             pathname === child.href && "text-accent"

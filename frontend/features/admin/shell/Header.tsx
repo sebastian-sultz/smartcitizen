@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Bell, Search, User } from "lucide-react";
+import { Search, User } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -14,8 +14,14 @@ export function Header() {
   const breadcrumbs = segments.map(s => s.charAt(0).toUpperCase() + s.slice(1).replace("-", " "));
 
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between px-6 py-4 bg-surface/80 backdrop-blur-md border-b border-border ml-0 lg:ml-72 transition-all">
+    <header className="sticky top-0 z-30 flex items-center justify-between pl-16 pr-6 py-4 lg:px-6 bg-surface/80 backdrop-blur-md border-b border-border ml-0 lg:ml-72 transition-all">
       <div className="flex items-center">
+        {/* Mobile Page Title */}
+        <div className="lg:hidden text-sm font-bold text-primary">
+          {breadcrumbs[breadcrumbs.length - 1] || "Dashboard"}
+        </div>
+
+        {/* Desktop Breadcrumbs */}
         <div className="hidden lg:flex items-center space-x-2 text-sm text-text-muted">
           {breadcrumbs.map((crumb, index) => (
             <React.Fragment key={crumb}>
@@ -40,11 +46,7 @@ export function Header() {
           />
         </div>
 
-        {/* Notifications */}
-        <Button variant="ghost" size="icon" className="relative text-text-muted hover:bg-bg">
-          <Bell size={20} />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-accent rounded-full border-2 border-surface"></span>
-        </Button>
+
 
         {/* User Profile */}
         <div className="flex items-center space-x-3 pl-4 border-l border-border">

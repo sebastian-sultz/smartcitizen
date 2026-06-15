@@ -16,9 +16,6 @@ export const NeedHelpHeader = () => {
           <h2 className="font-display text-3xl sm:text-4xl font-black text-text tracking-tight">
             Public Directory of Verified Support
           </h2>
-          <p className="text-text-muted text-[16px] leading-relaxed max-w-2xl">
-            Connect with verified volunteers, licensed specialists, and community leaders who have registered to assist citizens under the Smart Citizen welfare scheme.
-          </p>
         </div>
 
         {/* Status Widget */}

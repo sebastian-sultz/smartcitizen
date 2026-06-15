@@ -121,7 +121,7 @@ export default function SupportDashboard() {
   }
 
   return (
-    <Card className="w-full bg-white/60 backdrop-blur-md p-4 md:p-6 flex flex-col md:flex-row gap-6 h-[620px]">
+    <Card className="w-full bg-white/60 backdrop-blur-md p-4 md:p-6 flex flex-col md:flex-row gap-6 h-auto min-h-[500px] md:h-[620px]">
       {/* Sidebar List (Left) */}
       <div className={`w-full md:w-[300px] lg:w-[340px] shrink-0 flex flex-col h-full ${mobileActivePane === "list" ? "flex" : "hidden md:flex"}`}>
         <TicketList

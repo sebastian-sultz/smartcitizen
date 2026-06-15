@@ -80,6 +80,30 @@ func (h *Handler) CheckPaymentStatus(c *gin.Context) {
 		return
 	}
 
+	// Access control check:
+	// If payment is linked to a registered user, they must be authenticated and match.
+	if payment.UserID != nil {
+		var authedUserID string
+		if val, exists := c.Get("userID"); exists {
+			if idStr, ok := val.(string); ok {
+				authedUserID = idStr
+			}
+		}
+
+		var userType string
+		if val, exists := c.Get("userType"); exists {
+			if typeStr, ok := val.(string); ok {
+				userType = typeStr
+			}
+		}
+
+		if userType != "admin" && authedUserID != payment.UserID.String() {
+			c.JSON(http.StatusForbidden, gin.H{"error": "unauthorized to view this payment status"})
+			c.Abort()
+			return
+		}
+	}
+
 	c.JSON(http.StatusOK, payment)
 }
 
