@@ -28,9 +28,21 @@ export interface AuthResponse {
 export interface RegisterPayload {
   name: string;
   phone: string;
-  password: string;
+  password?: string;
   profile_photo?: string;
   referral_id?: string;
+}
+
+export interface CheckRolePayload {
+  phone: string;
+}
+
+export interface CheckRoleResponse {
+  message: string;
+  authenticated: boolean;
+  password_required: boolean;
+  role: string;
+  user?: UserResponse;
 }
 
 export interface LoginPayload {

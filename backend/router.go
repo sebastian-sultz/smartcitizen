@@ -69,6 +69,7 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 	{
 		auth.POST("/register", userHandler.Register)
 		auth.POST("/login", userHandler.Login)
+		auth.POST("/check-role", userHandler.CheckRole)
 		auth.POST("/forget-password", userHandler.ForgetPassword)
 		auth.POST("/refresh", userHandler.Refresh)
 

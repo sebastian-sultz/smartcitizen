@@ -8,6 +8,8 @@ import {
   ForgetPasswordResponse,
   UserResponse,
   SystemStatsResponse,
+  CheckRolePayload,
+  CheckRoleResponse,
 } from "./types";
 
 export const loginUser = async (
@@ -19,6 +21,18 @@ export const loginUser = async (
     return data;
   } catch (error: unknown) {
     handleApiError(error, "Login failed");
+  }
+};
+
+export const checkRole = async (
+  payload: CheckRolePayload,
+): Promise<CheckRoleResponse> => {
+  try {
+    const response = await api.post<CheckRoleResponse>("/auth/check-role", payload);
+    return response.data;
+  } catch (error: unknown) {
+    handleApiError(error, "Account verification failed");
+    throw error;
   }
 };
 

@@ -45,6 +45,11 @@ func (s *service) CreateVolunteer(req *request.CreateVolunteer) (*Volunteer, err
 		return nil, errors.New("not eligible yet: at least 10 referred payments are required")
 	}
 
+	// Secure user profile immediately with the provided password
+	if err := s.userService.SetPassword(req.UserID, req.Password); err != nil {
+		return nil, err
+	}
+
 	userID, err := uuid.Parse(req.UserID)
 	if err != nil {
 		return nil, errors.New("invalid user id format")

@@ -35,6 +35,7 @@ export interface CreateVolunteerPayload {
   profession: string;
   experience: string;
   ispublicconsent?: boolean;
+  password?: string;
 }
 
 export interface UpdateVolunteerPayload {

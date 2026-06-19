@@ -104,6 +104,56 @@ func (h *Handler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "logged in successfully", "user": mapToResponse(user, nil, nil)})
 }
 
+func (h *Handler) CheckRole(c *gin.Context) {
+	var req request.CheckRoleRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	user, err := h.service.GetUserByPhone(req.Phone)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Mobile number is not registered. Please sign up first."})
+		return
+	}
+
+	if user.IsSuspended {
+		c.JSON(http.StatusForbidden, gin.H{"error": "your account has been suspended"})
+		return
+	}
+
+	if user.UserType == Member {
+		secret := os.Getenv("JWT_SECRET")
+		if secret == "" {
+			secret = "supersecret"
+		}
+		accessToken, refreshToken, err := jwt.GenerateTokens(user.ID, string(user.UserType), secret)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate tokens"})
+			return
+		}
+
+		c.SetCookie("access_token", accessToken, 15*60, "/", "", false, true)
+		c.SetCookie("refresh_token", refreshToken, 7*24*60*60, "/", "", false, true)
+
+		c.JSON(http.StatusOK, gin.H{
+			"message":           "logged in successfully",
+			"authenticated":     true,
+			"password_required": false,
+			"role":              string(user.UserType),
+			"user":              mapToResponse(user, nil, nil),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":           "password required",
+		"authenticated":     false,
+		"password_required": true,
+		"role":              string(user.UserType),
+	})
+}
+
 func (h *Handler) ForgetPassword(c *gin.Context) {
 	var req request.ForgetPassword
 	if err := c.ShouldBindJSON(&req); err != nil {

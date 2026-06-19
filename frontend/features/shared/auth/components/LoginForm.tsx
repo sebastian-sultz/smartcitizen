@@ -8,13 +8,13 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import Link from "next/link";
-import { loginUser, forgetPassword, logoutUser } from "../api";
+import { loginUser, forgetPassword, logoutUser, checkRole } from "../api";
 import { toast } from "sonner";
 import { phoneSchema, trimmedString } from "@/lib/validation";
 
 export const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [view, setView] = useState<"login" | "forgot" | "otp" | "reset">("login");
+  const [view, setView] = useState<"phone_entry" | "password_entry" | "forgot" | "otp" | "reset">("phone_entry");
 
   const formik = useFormik({
     initialValues: {
@@ -26,7 +26,7 @@ export const LoginForm = () => {
     validationSchema: Yup.object().shape({
       mobileNumber: phoneSchema("Mobile number is required"),
       password: trimmedString().when((_, schema) => 
-        view === "login" ? schema.required("Password is required") : schema.optional()
+        view === "password_entry" ? schema.required("Password is required") : schema.optional()
       ),
       otp: trimmedString().when((_, schema) => 
         view === "otp" 
@@ -40,7 +40,17 @@ export const LoginForm = () => {
     onSubmit: async (values, { setSubmitting }) => {
       setSubmitting(true);
       try {
-        if (view === "login") {
+        if (view === "phone_entry") {
+          const res = await checkRole({ phone: values.mobileNumber });
+          if (res.authenticated) {
+            toast.success(res.message || "Login successful!");
+            // Wait briefly for toast
+            await new Promise((resolve) => setTimeout(resolve, 800));
+            window.location.href = "/citizen";
+          } else if (res.password_required) {
+            setView("password_entry");
+          }
+        } else if (view === "password_entry") {
           const res = await loginUser({
             phone: values.mobileNumber,
             password: values.password,
@@ -64,7 +74,7 @@ export const LoginForm = () => {
             new_password: values.newPassword,
           });
           toast.success("Password reset successfully. Please log in.");
-          setView("login");
+          setView("phone_entry");
         }
       } catch (err: unknown) {
         console.error("Login/Auth action failed:", err);
@@ -78,7 +88,8 @@ export const LoginForm = () => {
     <Card className="w-full max-w-[450px]">
       <CardHeader>
         <CardTitle className="text-3xl text-center">
-          {view === "login" && "Smart Citizen Login"}
+          {view === "phone_entry" && "Smart Citizen Login"}
+          {view === "password_entry" && "Enter Password"}
           {view === "forgot" && "Forgot Password"}
           {view === "otp" && "Verify OTP"}
           {view === "reset" && "Reset Password"}
@@ -86,7 +97,22 @@ export const LoginForm = () => {
       </CardHeader>
       <CardContent>
         <form onSubmit={formik.handleSubmit} className="space-y-6">
-          {(view === "login" || view === "forgot") && (
+          {view === "password_entry" && (
+            <div className="bg-blue-50 border border-blue-100 text-blue-800 p-3 rounded-lg text-sm text-center flex flex-col items-center gap-1.5">
+              <span>Logging in for <strong>{formik.values.mobileNumber}</strong></span>
+              <Button 
+                type="button" 
+                variant="link"
+                size="xs"
+                onClick={() => setView("phone_entry")}
+                className="p-0 h-auto font-bold"
+              >
+                Change mobile number
+              </Button>
+            </div>
+          )}
+
+          {(view === "phone_entry" || view === "forgot") && (
             <Input
               label="Mobile Number"
               placeholder="10-digit mobile number"
@@ -106,7 +132,7 @@ export const LoginForm = () => {
             />
           )}
           
-          {view === "login" && (
+          {view === "password_entry" && (
             <div className="space-y-2">
               <div className="flex justify-between items-center px-1">
                 <label className="text-[14px] font-bold text-text">Password</label>
@@ -188,14 +214,15 @@ export const LoginForm = () => {
             fullWidth
             isLoading={formik.isSubmitting}
           >
-            {view === "login" && "Log In"}
+            {view === "phone_entry" && "Continue"}
+            {view === "password_entry" && "Log In"}
             {view === "forgot" && "Send OTP"}
             {view === "otp" && "Verify OTP"}
             {view === "reset" && "Reset Password"}
             <ArrowRight size={20} className="ml-2" />
           </Button>
 
-          {view === "login" ? (
+          {view === "phone_entry" ? (
             <div className="pt-4 text-center">
               <p className="text-[14px] text-text-muted">
                 Don&apos;t have an account? <Link href="/join_us" className="text-primary font-bold hover:underline">Become a Smart Citizen</Link>
@@ -206,7 +233,7 @@ export const LoginForm = () => {
               <Button 
                 type="button"
                 variant="text"
-                onClick={() => setView("login")}
+                onClick={() => setView("phone_entry")}
                 className="text-[14px] p-0 h-auto"
               >
                 Back to Login

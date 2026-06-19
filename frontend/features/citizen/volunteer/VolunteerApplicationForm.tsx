@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Button } from "@/components/ui/Button";
@@ -14,7 +15,7 @@ import {
   SelectValue 
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Heart, Mail, Phone, MapPin, Building, Hash } from "lucide-react";
+import { Heart, Mail, Phone, MapPin, Building, Hash, Lock, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { createVolunteer } from "../api";
 import { UserResponse } from "@/features/shared/auth/types";
@@ -35,6 +36,8 @@ interface VolunteerApplicationFormProps {
 }
 
 export default function VolunteerApplicationForm({ user, onSubmitSuccess }: VolunteerApplicationFormProps) {
+  const [showPassword, setShowPassword] = useState(false);
+
   const formik = useFormik({
     validateOnMount: true,
     initialValues: {
@@ -51,6 +54,8 @@ export default function VolunteerApplicationForm({ user, onSubmitSuccess }: Volu
       city: "",
       district: "",
       pincode: "",
+      password: "",
+      confirmPassword: "",
     },
     validationSchema: Yup.object().shape({
       profession: nameSchema("Profession or student status is required"),
@@ -66,6 +71,12 @@ export default function VolunteerApplicationForm({ user, onSubmitSuccess }: Volu
       city: citySchema("City is required"),
       district: citySchema("District is required"),
       pincode: pincodeSchema("Pincode is required"),
+      password: Yup.string()
+        .min(6, "Password must be at least 6 characters")
+        .required("Password is required to protect your profile information"),
+      confirmPassword: Yup.string()
+        .oneOf([Yup.ref("password")], "Passwords must match")
+        .required("Please confirm your password"),
     }),
     onSubmit: async (values, { setSubmitting }) => {
       setSubmitting(true);
@@ -83,6 +94,7 @@ export default function VolunteerApplicationForm({ user, onSubmitSuccess }: Volu
           profession: values.profession,
           experience: values.experience,
           ispublicconsent: values.consent,
+          password: values.password,
         });
         if (res.volunteer) {
           toast.success("Volunteer Application Submitted Successfully!");
@@ -294,6 +306,51 @@ export default function VolunteerApplicationForm({ user, onSubmitSuccess }: Volu
             placeholder="Why do you want to become a verified citizen coordinator with GlobalSmart?"
             error={formik.touched.motivation && formik.errors.motivation ? formik.errors.motivation : undefined}
           />
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 bg-bg-alt/50 border border-border p-6 rounded-[30px]">
+            <div className="sm:col-span-2 space-y-1">
+              <h4 className="text-sm font-bold text-primary flex items-center gap-2">
+                <Lock size={18} />
+                Secure Coordinator Profile
+              </h4>
+              <p className="text-xs text-text-muted leading-relaxed">
+                Applying for Volunteer status adds sensitive contact and address information to your profile. Please set a password to protect your account.
+              </p>
+            </div>
+            <div className="relative">
+              <Input
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                icon={<Lock size={16} />}
+                name="password"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.password ? formik.errors.password : undefined}
+              />
+              <Button
+                type="button"
+                variant="ghost-muted"
+                size="icon"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-4 top-[42px] -translate-y-1/2 p-1 w-auto h-auto"
+              >
+                {showPassword ? <Eye size={16} /> : <EyeOff size={16} />}
+              </Button>
+            </div>
+            <Input
+              label="Confirm Password"
+              type={showPassword ? "text" : "password"}
+              placeholder="••••••••"
+              icon={<Lock size={16} />}
+              name="confirmPassword"
+              value={formik.values.confirmPassword}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.confirmPassword ? formik.errors.confirmPassword : undefined}
+            />
+          </div>
 
           {/* Consent Checkbox */}
           <div className={`flex gap-3 items-start p-4 rounded-2xl border transition-colors ${

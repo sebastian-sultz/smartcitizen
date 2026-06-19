@@ -27,6 +27,8 @@ type Service interface {
 	RecordSuccessfulPayment(userID string, amount float64) error
 	GetDownlineNetwork(ctx context.Context, userID string, recursive bool, pagination *utils.Pagination) (*response.UserNetworkResponse, error)
 	GetNetworkStats(ctx context.Context, userID string) (*response.UserNetworkStatsResponse, error)
+	GetUserByPhone(phone string) (*User, error)
+	SetPassword(userID string, plainPassword string) error
 }
 
 type service struct {
@@ -41,21 +43,31 @@ func (s *service) GetUser(id string) (*User, error) {
 	return s.repo.FindByID(id)
 }
 
+func (s *service) GetUserByPhone(phone string) (*User, error) {
+	return s.repo.FindByPhone(phone)
+}
+
 func (s *service) Register(req *request.RegisterUser) (*User, error) {
 	existingUser, _ := s.repo.FindByPhone(req.Phone)
 	if existingUser != nil {
 		return nil, errors.New("phone number already registered")
 	}
 
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return nil, err
+	var passwordHash string
+	if req.Password != "" {
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+		if err != nil {
+			return nil, err
+		}
+		passwordHash = string(hashedPassword)
+	} else {
+		passwordHash = ""
 	}
 
 	user := &User{
 		Name:         req.Name,
 		Phone:        req.Phone,
-		Password:     string(hashedPassword),
+		Password:     passwordHash,
 		ProfilePhoto: req.ProfilePhoto,
 		ReferralID:   req.ReferralID,
 		UserType:     Member,
@@ -99,6 +111,21 @@ func (s *service) ForgetPassword(req *request.ForgetPassword) error {
 
 	user.Password = string(hashedPassword)
 
+	return s.repo.Update(user)
+}
+
+func (s *service) SetPassword(userID string, plainPassword string) error {
+	user, err := s.repo.FindByID(userID)
+	if err != nil {
+		return errors.New("user not found")
+	}
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(plainPassword), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	user.Password = string(hashedPassword)
 	return s.repo.Update(user)
 }
 
