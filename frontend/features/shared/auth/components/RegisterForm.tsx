@@ -22,25 +22,27 @@ export const RegisterForm = () => {
       mobileNumber: "",
     },
     validationSchema: Yup.object().shape({
-      fullName: nameSchema("Full Name is required").required("Full Name is required"),
-      mobileNumber: phoneSchema("Mobile number is required").required("Mobile number is required"),
+      fullName: nameSchema("Full Name is required").required(
+        "Full Name is required",
+      ),
+      mobileNumber: phoneSchema("Mobile number is required").required(
+        "Mobile number is required",
+      ),
     }),
     onSubmit: async (values, { setSubmitting }) => {
       setSubmitting(true);
       try {
-        const referralId = sessionStorage.getItem("gsc_referral_id") || undefined;
+        const referralId =
+          sessionStorage.getItem("gsc_referral_id") || undefined;
         const res = await registerUser({
           name: values.fullName,
           phone: values.mobileNumber,
           referral_id: referralId,
         });
-        
+
         toast.success(res?.message || "Registration successful!");
         sessionStorage.removeItem("gsc_referral_id");
-        // Use the first 8 characters of UUID for display ID
-        const displayId = res?.user?.id 
-          ? `GSC-${res.user.id.substring(0, 8).toUpperCase()}` 
-          : "GSC-MEMBER";
+        const displayId = res?.user?.member_id || "GSC-MEMBER";
         setGeneratedId(displayId);
         setStep("success");
       } catch (err: unknown) {
@@ -65,17 +67,24 @@ export const RegisterForm = () => {
             <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 size={40} />
             </div>
-            <h3 className="text-2xl font-bold text-text">Registration Complete!</h3>
+            <h3 className="text-2xl font-bold text-text">
+              Registration Complete!
+            </h3>
             <div className="bg-bg-alt p-4 rounded-xl border border-border">
-              <p className="text-text-muted text-sm mb-1">Your Smart Citizen ID</p>
-              <p className="text-2xl font-bold text-primary tracking-widest">{generatedId}</p>
+              <p className="text-text-muted text-sm mb-1">
+                Your Smart Citizen ID
+              </p>
+              <p className="text-2xl font-bold text-primary tracking-widest">
+                {generatedId}
+              </p>
             </div>
             <p className="text-text-muted text-[15px] leading-relaxed">
-              Keep this ID safe. You will need it to participate in awareness campaigns and volunteer programs.
+              Keep this ID safe. You will need it to participate in awareness
+              campaigns and volunteer programs.
             </p>
-            <Button 
+            <Button
               fullWidth
-              className="mt-4" 
+              className="mt-4"
               onClick={() => {
                 window.location.href = "/citizen";
               }}
@@ -96,7 +105,11 @@ export const RegisterForm = () => {
                 formik.setFieldValue("fullName", val);
               }}
               onBlur={formik.handleBlur}
-              error={formik.touched.fullName ? (formik.errors.fullName as string) : undefined}
+              error={
+                formik.touched.fullName
+                  ? (formik.errors.fullName as string)
+                  : undefined
+              }
             />
             <Input
               label="Mobile Number"
@@ -113,13 +126,17 @@ export const RegisterForm = () => {
               maxLength={10}
               inputMode="numeric"
               pattern="[0-9]*"
-              error={formik.touched.mobileNumber ? (formik.errors.mobileNumber as string) : undefined}
+              error={
+                formik.touched.mobileNumber
+                  ? (formik.errors.mobileNumber as string)
+                  : undefined
+              }
             />
 
-            <Button 
-              type="submit" 
-              size="lg" 
-              fullWidth 
+            <Button
+              type="submit"
+              size="lg"
+              fullWidth
               isLoading={formik.isSubmitting}
             >
               Become a Smart Citizen
@@ -128,7 +145,13 @@ export const RegisterForm = () => {
 
             <div className="pt-4 text-center">
               <p className="text-[14px] text-text-muted">
-                Already a Smart Citizen? <Link href="/member_login" className="text-primary font-bold hover:underline">Log In</Link>
+                Already a Smart Citizen?{" "}
+                <Link
+                  href="/member_login"
+                  className="text-primary font-bold hover:underline"
+                >
+                  Log In
+                </Link>
               </p>
             </div>
           </form>

@@ -29,6 +29,7 @@ type Service interface {
 	GetNetworkStats(ctx context.Context, userID string) (*response.UserNetworkStatsResponse, error)
 	GetUserByPhone(phone string) (*User, error)
 	SetPassword(userID string, plainPassword string) error
+	UpdateName(userID string, name string) error
 }
 
 type service struct {
@@ -126,6 +127,15 @@ func (s *service) SetPassword(userID string, plainPassword string) error {
 	}
 
 	user.Password = string(hashedPassword)
+	return s.repo.Update(user)
+}
+
+func (s *service) UpdateName(userID string, name string) error {
+	user, err := s.repo.FindByID(userID)
+	if err != nil {
+		return err
+	}
+	user.Name = name
 	return s.repo.Update(user)
 }
 
@@ -304,4 +314,3 @@ func (s *service) GetNetworkStats(ctx context.Context, userID string) (*response
 		TotalNetworkDonationAmount:   totalNetworkDonationAmount,
 	}, nil
 }
-

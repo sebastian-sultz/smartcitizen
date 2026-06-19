@@ -104,15 +104,19 @@ export const UsersTable = () => {
     });
   };
 
-  const columns = getUsersColumns(handleViewDetails, handleSuspendToggle, handleDeleteUser);
+  const columns = getUsersColumns(
+    handleViewDetails,
+    handleSuspendToggle,
+    handleDeleteUser,
+  );
 
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <CardTitle>User Management</CardTitle>
         <div className="w-full sm:w-72">
-          <Input 
-            placeholder="Search by name or phone..." 
+          <Input
+            placeholder="Search by name, phone or ID..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             icon={<Search size={16} />}
@@ -122,12 +126,12 @@ export const UsersTable = () => {
         </div>
       </CardHeader>
       <CardContent>
-        <TableComponent 
-          headers={columns} 
-          data={users} 
+        <TableComponent
+          headers={columns}
+          data={users}
           loading={isLoading}
-          emptyMessage="No users found" 
-          className="shadow-none border-0" 
+          emptyMessage="No users found"
+          className="shadow-none border-0"
           pagination={{
             page,
             limit,
@@ -135,15 +139,15 @@ export const UsersTable = () => {
             onChange: (p, l) => {
               setPage(p);
               setLimit(l);
-            }
+            },
           }}
         />
       </CardContent>
 
-      <UserDetailModal 
-        open={detailsOpen} 
-        onOpenChange={setDetailsOpen} 
-        user={selectedUser} 
+      <UserDetailModal
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
+        user={selectedUser}
       />
     </Card>
   );

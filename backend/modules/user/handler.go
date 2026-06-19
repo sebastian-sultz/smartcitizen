@@ -22,11 +22,10 @@ func NewHandler(service Service) *Handler {
 	return &Handler{service: service}
 }
 
-
-
 func mapToResponse(u *User, refName *string, vol *response.Volunteer) response.User {
 	return response.User{
 		ID:                    u.ID,
+		MemberID:              u.MemberID,
 		Name:                  u.Name,
 		Phone:                 u.Phone,
 		ProfilePhoto:          u.ProfilePhoto,
@@ -465,4 +464,3 @@ func (h *Handler) GetNetworkStats(c *gin.Context) {
 
 	c.JSON(http.StatusOK, res)
 }
-

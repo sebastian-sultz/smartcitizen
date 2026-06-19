@@ -1,6 +1,8 @@
 package user
 
 import (
+	"fmt"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -32,19 +34,30 @@ func (base *Base) BeforeCreate(tx *gorm.DB) error {
 
 type User struct {
 	Base
-	Name                 string   `gorm:"not null" json:"name"`
-	Phone                string   `gorm:"uniqueIndex;not null" json:"phone"`
-	Password             string   `gorm:"not null" json:"-"`
-	ProfilePhoto         *string  `json:"profile_photo"`
-	ProfilePhotoPublicID *string  `json:"-"`
-	UserType             UserType `gorm:"type:varchar(20);not null;default:'member'" json:"user_type"`
-	TotalPayments        int64    `gorm:"default:0" json:"total_payments"`
-	TotalAmount          float64  `gorm:"default:0.0" json:"total_amount"`
-	ReferralPaymentCount int64    `gorm:"default:0" json:"referral_payment_count"`
-	ReferralPaymentAmount float64 `gorm:"default:0.0" json:"referral_payment_amount"`
-	TotalReferrals       int64    `gorm:"default:0" json:"total_referrals"`
-	TotalEventsRegistered int64   `gorm:"default:0" json:"total_events_registered"`
-	ReferralID           *string  `json:"referral_id"`
-	IsPhoneVerified      bool     `gorm:"default:false" json:"is_phone_verified"` // For future OTP implementation
-	IsSuspended          bool     `gorm:"default:false" json:"is_suspended"`
+	Name                  string   `gorm:"not null" json:"name"`
+	Phone                 string   `gorm:"uniqueIndex;not null" json:"phone"`
+	Password              string   `gorm:"not null" json:"-"`
+	MemberID              string   `gorm:"uniqueIndex;not null" json:"member_id"`
+	ProfilePhoto          *string  `json:"profile_photo"`
+	ProfilePhotoPublicID  *string  `json:"-"`
+	UserType              UserType `gorm:"type:varchar(20);not null;default:'member'" json:"user_type"`
+	TotalPayments         int64    `gorm:"default:0" json:"total_payments"`
+	TotalAmount           float64  `gorm:"default:0.0" json:"total_amount"`
+	ReferralPaymentCount  int64    `gorm:"default:0" json:"referral_payment_count"`
+	ReferralPaymentAmount float64  `gorm:"default:0.0" json:"referral_payment_amount"`
+	TotalReferrals        int64    `gorm:"default:0" json:"total_referrals"`
+	TotalEventsRegistered int64    `gorm:"default:0" json:"total_events_registered"`
+	ReferralID            *string  `json:"referral_id"`
+	IsPhoneVerified       bool     `gorm:"default:false" json:"is_phone_verified"` // For future OTP implementation
+	IsSuspended           bool     `gorm:"default:false" json:"is_suspended"`
+}
+
+func (u *User) BeforeCreate(tx *gorm.DB) error {
+	if u.ID == uuid.Nil {
+		u.ID = uuid.New()
+	}
+	if u.MemberID == "" {
+		u.MemberID = fmt.Sprintf("GSC-%s", strings.ToUpper(u.ID.String()[:8]))
+	}
+	return nil
 }

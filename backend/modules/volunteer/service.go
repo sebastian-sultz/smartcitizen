@@ -56,19 +56,26 @@ func (s *service) CreateVolunteer(req *request.CreateVolunteer) (*Volunteer, err
 	}
 
 	volunteer := &Volunteer{
-		UserID:         userID,
-		Name:           req.Name,
-		Email:          req.Email,
-		Phone:          req.Phone,
-		AlternatePhone: req.AlternatePhone,
-		Address:        req.Address,
-		City:           req.City,
-		District:       req.District,
-		Pincode:        req.Pincode,
-		Profession:     req.Profession,
-		Experience:     req.Experience,
+		UserID:          userID,
+		Name:            req.Name,
+		Email:           req.Email,
+		Phone:           req.Phone,
+		AlternatePhone:  req.AlternatePhone,
+		Address:         req.Address,
+		City:            req.City,
+		District:        req.District,
+		Pincode:         req.Pincode,
+		Profession:      req.Profession,
+		Experience:      req.Experience,
 		IsPublicConsent: req.IsPublicConsent,
 		Status:          VolunteerStatusPending,
+	}
+
+	if u.ProfilePhoto != nil {
+		volunteer.Image = u.ProfilePhoto
+	}
+	if u.ProfilePhotoPublicID != nil {
+		volunteer.ImagePublicID = u.ProfilePhotoPublicID
 	}
 
 	if err := s.repo.Create(volunteer); err != nil {
@@ -94,6 +101,9 @@ func (s *service) UpdateVolunteer(id string, req *request.UpdateVolunteer) (*Vol
 
 	if req.Name != nil {
 		volunteer.Name = *req.Name
+		if err := s.userService.UpdateName(volunteer.UserID.String(), *req.Name); err != nil {
+			return nil, err
+		}
 	}
 	if req.Email != nil {
 		volunteer.Email = *req.Email
@@ -139,15 +149,7 @@ func (s *service) UpdateVolunteerImage(ctx context.Context, id string, url strin
 		return errors.New("volunteer not found")
 	}
 
-	// Delete from Cloudinary if an old image exists
-	if volunteer.ImagePublicID != nil && *volunteer.ImagePublicID != "" {
-		_ = cloudinary.DeleteImage(ctx, *volunteer.ImagePublicID)
-	}
-
-	volunteer.Image = &url
-	volunteer.ImagePublicID = &publicID
-
-	return s.repo.Update(volunteer)
+	return s.userService.UpdateProfilePhoto(ctx, volunteer.UserID.String(), url, publicID)
 }
 
 func (s *service) DeleteVolunteer(ctx context.Context, id string) error {

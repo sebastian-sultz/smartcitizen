@@ -1,6 +1,12 @@
 import React from "react";
 import Image from "next/image";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { UserResponse } from "@/features/shared/auth/types";
 import { formatDate, formatUserSlug } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
@@ -11,14 +17,19 @@ interface UserDetailModalProps {
   user: UserResponse | null;
 }
 
-export const UserDetailModal = ({ open, onOpenChange, user }: UserDetailModalProps) => {
+export const UserDetailModal = ({
+  open,
+  onOpenChange,
+  user,
+}: UserDetailModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent size="xl" className="max-h-[85vh] flex flex-col p-6 overflow-hidden">
+      <DialogContent
+        size="xl"
+        className="max-h-[85vh] flex flex-col p-6 overflow-hidden"
+      >
         <DialogHeader className="border-b border-border/60 pb-4 shrink-0">
-          <DialogTitle>
-            User Profile Details
-          </DialogTitle>
+          <DialogTitle>User Profile Details</DialogTitle>
           <DialogDescription>
             Detailed metadata and engagement stats for this member
           </DialogDescription>
@@ -47,68 +58,108 @@ export const UserDetailModal = ({ open, onOpenChange, user }: UserDetailModalPro
                   <h3 className="font-display font-bold text-lg text-text truncate">
                     {user.name}
                   </h3>
-                  <p className="text-xs text-text-muted mt-1">ID: {formatUserSlug(user.id)}</p>
+                  <p className="text-xs text-text-muted mt-1">
+                    Citizen ID: {user.member_id || "GSC-MEMBER"}
+                  </p>
                 </div>
               </div>
 
               {/* Grid Details */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
                 <div>
-                  <span className="block text-xs font-semibold text-text-muted mb-1">Mobile / Phone</span>
+                  <span className="block text-xs font-semibold text-text-muted mb-1">
+                    Mobile / Phone
+                  </span>
                   <span className="font-bold text-text">{user.phone}</span>
                 </div>
                 <div>
-                  <span className="block text-xs font-semibold text-text-muted mb-1">Role / User Type</span>
+                  <span className="block text-xs font-semibold text-text-muted mb-1">
+                    Role / User Type
+                  </span>
                   <span className="font-bold text-text">
-                    {user.user_type === "volunteer" 
-                      ? "Volunteer" 
-                      : user.user_type === "admin" 
-                        ? "Coordinator Admin" 
+                    {user.user_type === "volunteer"
+                      ? "Volunteer"
+                      : user.user_type === "admin"
+                        ? "Coordinator Admin"
                         : "Smart Citizen"}
                   </span>
                 </div>
                 <div>
-                  <span className="block text-xs font-semibold text-text-muted mb-1">Total Amount Contributed</span>
-                  <span className="font-bold text-text">₹{(user.total_amount ?? 0).toLocaleString("en-IN")}</span>
-                </div>
-                <div>
-                  <span className="block text-xs font-semibold text-text-muted mb-1">Total Payments</span>
-                  <span className="font-bold text-text">{user.total_payments ?? 0} transactions</span>
-                </div>
-                <div>
-                  <span className="block text-xs font-semibold text-text-muted mb-1">Referrals Count</span>
-                  <span className="font-bold text-text">{user.total_referrals ?? 0} referred members</span>
-                </div>
-                <div>
-                  <span className="block text-xs font-semibold text-text-muted mb-1">Referred Payments Generated</span>
-                  <span className="font-bold text-text">{user.referral_payment_count ?? 0} paid</span>
-                </div>
-                <div>
-                  <span className="block text-xs font-semibold text-text-muted mb-1">Events Registered</span>
-                  <span className="font-bold text-text">{user.total_events_registered ?? 0} events</span>
-                </div>
-                <div>
-                  <span className="block text-xs font-semibold text-text-muted mb-1">Joined Date</span>
+                  <span className="block text-xs font-semibold text-text-muted mb-1">
+                    Total Amount Contributed
+                  </span>
                   <span className="font-bold text-text">
-                    {user.created_at ? formatDate(user.created_at, "long-in") : "N/A"}
+                    ₹{(user.total_amount ?? 0).toLocaleString("en-IN")}
                   </span>
                 </div>
                 <div>
-                  <span className="block text-xs font-semibold text-text-muted mb-1">Account Status</span>
+                  <span className="block text-xs font-semibold text-text-muted mb-1">
+                    Total Payments
+                  </span>
+                  <span className="font-bold text-text">
+                    {user.total_payments ?? 0} transactions
+                  </span>
+                </div>
+                <div>
+                  <span className="block text-xs font-semibold text-text-muted mb-1">
+                    Referrals Count
+                  </span>
+                  <span className="font-bold text-text">
+                    {user.total_referrals ?? 0} referred members
+                  </span>
+                </div>
+                <div>
+                  <span className="block text-xs font-semibold text-text-muted mb-1">
+                    Referred Payments Generated
+                  </span>
+                  <span className="font-bold text-text">
+                    {user.referral_payment_count ?? 0} paid
+                  </span>
+                </div>
+                <div>
+                  <span className="block text-xs font-semibold text-text-muted mb-1">
+                    Events Registered
+                  </span>
+                  <span className="font-bold text-text">
+                    {user.total_events_registered ?? 0} events
+                  </span>
+                </div>
+                <div>
+                  <span className="block text-xs font-semibold text-text-muted mb-1">
+                    Joined Date
+                  </span>
+                  <span className="font-bold text-text">
+                    {user.created_at
+                      ? formatDate(user.created_at, "long-in")
+                      : "N/A"}
+                  </span>
+                </div>
+                <div>
+                  <span className="block text-xs font-semibold text-text-muted mb-1">
+                    Account Status
+                  </span>
                   <Badge variant={user.is_suspended ? "danger" : "success"}>
                     {user.is_suspended ? "Suspended" : "Active"}
                   </Badge>
                 </div>
                 {user.referral_id && (
                   <div>
-                    <span className="block text-xs font-semibold text-text-muted mb-1">Referral ID / Code Used</span>
-                    <span className="font-bold text-text font-mono">{user.referral_id}</span>
+                    <span className="block text-xs font-semibold text-text-muted mb-1">
+                      Referral ID / Code Used
+                    </span>
+                    <span className="font-bold text-text font-mono">
+                      {user.referral_id}
+                    </span>
                   </div>
                 )}
                 {user.referral_name && (
                   <div>
-                    <span className="block text-xs font-semibold text-text-muted mb-1">Referred By</span>
-                    <span className="font-bold text-text">{user.referral_name}</span>
+                    <span className="block text-xs font-semibold text-text-muted mb-1">
+                      Referred By
+                    </span>
+                    <span className="font-bold text-text">
+                      {user.referral_name}
+                    </span>
                   </div>
                 )}
               </div>

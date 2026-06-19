@@ -2,6 +2,7 @@ import { Volunteer } from "@/features/citizen/types";
 
 export interface UserResponse {
   id: string;
+  member_id: string;
   name: string;
   phone: string;
   profile_photo: string | null;
@@ -65,4 +66,3 @@ export interface SystemStatsResponse {
   total_amount: number;
   total_referrals: number;
 }
-

@@ -3,6 +3,7 @@ package user
 import (
 	"backend/dto/response"
 	"backend/pkg/utils"
+
 	"gorm.io/gorm"
 )
 
@@ -33,7 +34,7 @@ func (r *repository) Create(user *User) error {
 		if err := tx.Create(user).Error; err != nil {
 			return err
 		}
-		
+
 		if user.ReferralID != nil && *user.ReferralID != "" {
 			if err := tx.Model(&User{}).Where("id = ?", *user.ReferralID).UpdateColumn("total_referrals", gorm.Expr("total_referrals + ?", 1)).Error; err != nil {
 				return err
@@ -62,7 +63,34 @@ func (r *repository) FindByID(id string) (*User, error) {
 }
 
 func (r *repository) Update(user *User) error {
-	return r.db.Save(user).Error
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Save(user).Error; err != nil {
+			return err
+		}
+
+		// Check if volunteer record exists for this UserID
+		var count int64
+		tx.Table("volunteers").Where("user_id = ? AND deleted_at IS NULL", user.ID).Count(&count)
+		if count > 0 {
+			updates := map[string]interface{}{
+				"name": user.Name,
+			}
+			if user.ProfilePhoto != nil {
+				updates["image"] = user.ProfilePhoto
+			} else {
+				updates["image"] = nil
+			}
+			if user.ProfilePhotoPublicID != nil {
+				updates["image_public_id"] = *user.ProfilePhotoPublicID
+			} else {
+				updates["image_public_id"] = nil
+			}
+			if err := tx.Table("volunteers").Where("user_id = ?", user.ID).Updates(updates).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
 
 func (r *repository) GetSystemStats() (int64, int64, int64, float64, error) {
@@ -96,13 +124,12 @@ func (r *repository) GetSystemStats() (int64, int64, int64, float64, error) {
 	return totalUsers, totalPayments, totalReferrals, totalAmountFloat, nil
 }
 
-
 func (r *repository) FindNonAdminUsers(search string, sort string, pagination *utils.Pagination) ([]User, error) {
 	var users []User
 	query := r.db.Model(&User{}).Where("user_type != ?", string(Admin))
 
 	if search != "" {
-		query = query.Where("name ILIKE ? OR phone ILIKE ?", "%"+search+"%", "%"+search+"%")
+		query = query.Where("name ILIKE ? OR phone ILIKE ? OR member_id ILIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%")
 	}
 
 	if err := query.Count(&pagination.TotalRows).Error; err != nil {
@@ -185,4 +212,3 @@ func (r *repository) FindAllNonAdminUsers() ([]User, error) {
 	err := r.db.Where("user_type != ?", string(Admin)).Find(&users).Error
 	return users, err
 }
-

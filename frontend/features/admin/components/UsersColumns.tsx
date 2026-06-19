@@ -10,7 +10,7 @@ import { formatUserSlug } from "@/lib/utils";
 export const getUsersColumns = (
   onViewDetails: (user: UserResponse) => void,
   onSuspendToggle: (user: UserResponse) => void,
-  onDeleteUser: (user: UserResponse) => void
+  onDeleteUser: (user: UserResponse) => void,
 ): Header<UserResponse>[] => [
   {
     label: "User",
@@ -27,11 +27,11 @@ export const getUsersColumns = (
         <div className="flex items-center gap-3">
           {user.profile_photo ? (
             <div className="relative w-9 h-9 rounded-full overflow-hidden border border-border bg-bg shrink-0">
-              <Image 
-                src={user.profile_photo} 
-                alt={user.name} 
-                fill 
-                className="object-cover" 
+              <Image
+                src={user.profile_photo}
+                alt={user.name}
+                fill
+                className="object-cover"
                 sizes="36px"
               />
             </div>
@@ -41,8 +41,12 @@ export const getUsersColumns = (
             </div>
           )}
           <div className="flex flex-col min-w-0">
-            <span className="text-[14px] font-bold text-text truncate">{user.name}</span>
-            <span className="text-[11px] font-mono text-text-muted truncate">{formatUserSlug(user.id)}</span>
+            <span className="text-[14px] font-bold text-text truncate">
+              {user.name}
+            </span>
+            <span className="text-[11px] font-mono text-text-muted truncate">
+              {user.member_id || "GSC-MEMBER"}
+            </span>
           </div>
         </div>
       );
@@ -50,7 +54,9 @@ export const getUsersColumns = (
   },
   {
     label: "Mobile",
-    render: (user) => <span className="text-[14px] text-text-muted">{user.phone}</span>,
+    render: (user) => (
+      <span className="text-[14px] text-text-muted">{user.phone}</span>
+    ),
   },
   {
     label: "Role",
@@ -58,8 +64,16 @@ export const getUsersColumns = (
       const isVolunteer = user.user_type === "volunteer";
       const isAdmin = user.user_type === "admin";
       return (
-        <Badge variant={isAdmin ? "primary-light" : isVolunteer ? "success" : "secondary"}>
-          {isAdmin ? "Coordinator Admin" : isVolunteer ? "Volunteer" : "Smart Citizen"}
+        <Badge
+          variant={
+            isAdmin ? "primary-light" : isVolunteer ? "success" : "secondary"
+          }
+        >
+          {isAdmin
+            ? "Coordinator Admin"
+            : isVolunteer
+              ? "Volunteer"
+              : "Smart Citizen"}
         </Badge>
       );
     },
@@ -68,8 +82,12 @@ export const getUsersColumns = (
     label: "Donations",
     render: (user) => (
       <div className="flex flex-col">
-        <span className="text-[13px] font-semibold text-text">₹{(user.total_amount ?? 0).toLocaleString("en-IN")}</span>
-        <span className="text-[11px] text-text-muted">{user.total_payments ?? 0} payments</span>
+        <span className="text-[13px] font-semibold text-text">
+          ₹{(user.total_amount ?? 0).toLocaleString("en-IN")}
+        </span>
+        <span className="text-[11px] text-text-muted">
+          {user.total_payments ?? 0} payments
+        </span>
       </div>
     ),
   },
@@ -77,8 +95,12 @@ export const getUsersColumns = (
     label: "Referrals",
     render: (user) => (
       <div className="flex flex-col">
-        <span className="text-[13px] font-semibold text-text">{user.total_referrals ?? 0} referred</span>
-        <span className="text-[11px] text-text-muted">{user.referral_payment_count ?? 0} paid</span>
+        <span className="text-[13px] font-semibold text-text">
+          {user.total_referrals ?? 0} referred
+        </span>
+        <span className="text-[11px] text-text-muted">
+          {user.referral_payment_count ?? 0} paid
+        </span>
       </div>
     ),
   },
@@ -102,7 +124,7 @@ export const getUsersColumns = (
     label: "Actions",
     render: (user) => (
       <div className="flex items-center gap-2">
-        <Button 
+        <Button
           variant="ghost-primary"
           size="sm"
           shape="square"
@@ -111,16 +133,18 @@ export const getUsersColumns = (
         >
           View
         </Button>
-        <Button 
+        <Button
           variant={user.is_suspended ? "ghost-success" : "ghost-danger"}
           size="sm"
           shape="square"
           onClick={() => onSuspendToggle(user)}
-          startIcon={user.is_suspended ? <UserCheck size={16} /> : <Ban size={16} />}
+          startIcon={
+            user.is_suspended ? <UserCheck size={16} /> : <Ban size={16} />
+          }
         >
           {user.is_suspended ? "Activate" : "Suspend"}
         </Button>
-        <Button 
+        <Button
           variant="ghost-danger"
           size="sm"
           shape="square"
