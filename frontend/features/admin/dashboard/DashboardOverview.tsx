@@ -210,10 +210,10 @@ export function DashboardOverview() {
   });
 
   const volunteerActivity = analyticsData?.volunteerActivity || [];
-  const activeVolunteers = volunteerActivity.filter(v => v.status === "APPROVED").reduce((acc, v) => acc + v.count, 0);
-  const pendingVolunteers = volunteerActivity.filter(v => v.status === "PENDING").reduce((acc, v) => acc + v.count, 0);
-  const suspendedVolunteers = volunteerActivity.filter(v => v.status === "SUSPENDED").reduce((acc, v) => acc + v.count, 0);
-  const rejectedVolunteers = volunteerActivity.filter(v => v.status === "REJECTED").reduce((acc, v) => acc + v.count, 0);
+  const activeVolunteers = volunteerActivity.filter(v => v.status?.toUpperCase() === "APPROVED").reduce((acc, v) => acc + v.count, 0);
+  const pendingVolunteers = volunteerActivity.filter(v => v.status?.toUpperCase() === "PENDING").reduce((acc, v) => acc + v.count, 0);
+  const suspendedVolunteers = volunteerActivity.filter(v => v.status?.toUpperCase() === "SUSPENDED").reduce((acc, v) => acc + v.count, 0);
+  const rejectedVolunteers = volunteerActivity.filter(v => v.status?.toUpperCase() === "REJECTED").reduce((acc, v) => acc + v.count, 0);
   const totalVolunteers = activeVolunteers + pendingVolunteers + suspendedVolunteers + rejectedVolunteers;
 
   return (
