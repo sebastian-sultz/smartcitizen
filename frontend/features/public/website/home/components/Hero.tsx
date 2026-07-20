@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Heart, ArrowRight, CheckCircle2, ArrowUpRight } from "lucide-react";
+import {
+  Heart,
+  ArrowRight,
+  CheckCircle2,
+  ArrowUpRight,
+  LogIn,
+} from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -49,7 +55,7 @@ export function Hero() {
       <div className="max-content relative z-10 hidden md:block w-full">
         <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
           {/* Left Side - Content */}
-          <div className="flex-1 space-y-8 text-center lg:text-left">
+          <div className="flex-1 space-y-5 text-center lg:text-left">
             <div className="animate-fade-in-right inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 border border-primary/10 text-primary text-[12px] font-black uppercase tracking-[0.2em]">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
@@ -58,7 +64,7 @@ export function Hero() {
               Empowering India&apos;s Future
             </div>
 
-            <div className="animate-fade-in-up-delay-1 space-y-6">
+            <div className="animate-fade-in-up-delay-1 space-y-5">
               <h1 className="font-display text-5xl md:text-7xl xl:text-[80px] font-black text-text leading-[1.05] tracking-tight">
                 Building a <span className="text-primary italic">Smarter</span>{" "}
                 & Safer Society.
@@ -70,41 +76,72 @@ export function Hero() {
               </p>
             </div>
 
-            <div className="animate-fade-in-up-delay-2 flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start">
-              <Button
-                asChild
-                variant="primary"
-                size="lg"
-                fullWidth
-                className="sm:w-auto overflow-hidden"
-              >
-                <Link
-                  href="/donation"
-                  className="group relative flex items-center justify-center gap-3"
+            <div className="w-full animate-fade-in-up-delay-2 space-y-4">
+              {isInitialized && (
+                <div className="animate-fade-in-up-delay-3 rounded-2xl bg-primary/[0.03] border border-primary/10 p-3 flex items-center justify-between gap-4 hover:bg-primary/5 hover:border-primary/25 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
+                  <div className="flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                      <LogIn size={16} />
+                    </div>
+                    <div className="space-y-0 text-left">
+                      <p className="text-xs text-primary/70 font-black uppercase ">
+                        Member Portal
+                      </p>
+                      <p className="text-[12px] text-text-muted font-semibold">
+                        {isLoggedIn
+                          ? "Manage your dashboard"
+                          : "Access your citizen account"}
+                      </p>
+                    </div>
+                  </div>
+                  <Link
+                    href={isLoggedIn ? "/citizen" : "/member_login"}
+                    className="text-xs text-primary font-black hover:text-primary-light transition-colors inline-flex items-center gap-1 group whitespace-nowrap shrink-0 border border-primary/20 hover:border-primary/40 px-5 py-2 rounded-xl bg-white/50 hover:bg-white/80"
+                  >
+                    <span>{isLoggedIn ? "Dashboard" : "Sign In"}</span>
+                    <ArrowRight
+                      size={12}
+                      className="group-hover:translate-x-0.5 transition-transform"
+                    />
+                  </Link>
+                </div>
+              )}
+              <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-between">
+                <Button
+                  asChild
+                  variant="primary"
+                  size="medium"
+                  fullWidth
+                  className="sm:w-full overflow-hidden"
                 >
-                  <Heart size={18} fill="currentColor" />
-                  Support Mission
-                  <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="secondary"
-                size="lg"
-                fullWidth
-                className="sm:w-auto"
-              >
-                <Link
-                  href="/need_help"
-                  className="group flex items-center justify-center gap-2"
+                  <Link
+                    href="/donation"
+                    className="group relative flex items-center justify-center gap-3"
+                  >
+                    <Heart size={18} fill="currentColor" />
+                    Donate Now
+                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="secondary"
+                  size="medium"
+                  fullWidth
+                  className="sm:w-full"
                 >
-                  Need Help
-                  <ArrowRight
-                    size={18}
-                    className="group-hover:translate-x-1 transition-transform"
-                  />
-                </Link>
-              </Button>
+                  <Link
+                    href="/need_help"
+                    className="group flex items-center justify-center gap-2"
+                  >
+                    Need Help
+                    <ArrowRight
+                      size={18}
+                      className="group-hover:translate-x-1 transition-transform"
+                    />
+                  </Link>
+                </Button>
+              </div>
             </div>
           </div>
 
@@ -251,7 +288,7 @@ export function Hero() {
             </Badge>
 
             <h1 className="font-display text-center text-3xl font-black text-white leading-tight tracking-tight">
-              Building a <span className="text-accent italic">Smarter</span>{" "}&
+              Building a <span className="text-accent italic">Smarter</span> &
               Safer Society.
             </h1>
           </div>
@@ -265,7 +302,7 @@ export function Hero() {
 
         {/* MIDDLE FOLD: Transparent Blurred Card UI (Just below the text) */}
         <div className="animate-fade-in-up-delay-1 w-full">
-          <Card className="bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl p-5 rounded-3xl relative overflow-hidden text-white">
+          <Card className="bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl p-5 rounded-3xl relative overflow-hidden text-white">
             {/* Ambient accent background light inside card */}
             <div className="absolute -top-10 -right-10 w-24 h-24 bg-accent/25 rounded-full blur-xl -z-10" />
 
@@ -316,6 +353,32 @@ export function Hero() {
                     <ArrowRight size={16} />
                   </Link>
                 </Button>
+
+                <Button
+                  asChild
+                  variant="primary"
+                  size="md"
+                  fullWidth
+                  className="font-black uppercase tracking-wide"
+                >
+                  <Link href="/donation">
+                    <Heart size={16} fill="currentColor" />
+                    <span>Donate Now</span>
+                  </Link>
+                </Button>
+
+                <Button
+                  asChild
+                  variant="ghost-white"
+                  size="md"
+                  fullWidth
+                  className="border border-white/20 bg-white/5 hover:bg-white/10 text-white font-bold transition-all active:scale-95"
+                >
+                  <Link href="/member_login">
+                    <LogIn size={16} />
+                    <span>Signin</span>
+                  </Link>
+                </Button>
               </div>
 
               {/* Social proof pile inside Card */}
@@ -358,13 +421,29 @@ export function Hero() {
             href="/donation"
             className="text-[11px] text-white hover:text-accent-light transition-colors underline font-bold flex items-center gap-0.5 shrink-0"
           >
-            <span>Support Mission</span>
+            <span>Donate Now</span>
             <ArrowUpRight size={12} />
           </Link>
         </div>
       </div>
+
+      {/* Option 3: Floating Action Button (Desktop Only) */}
+      {isInitialized && (
+        <div className="fixed bottom-6 right-6 z-50 hidden md:block group">
+          <div className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-white/95 backdrop-blur-md border border-border px-3 py-1.5 rounded-xl shadow-xl text-[11px] text-text font-black uppercase tracking-wider opacity-0 scale-90 translate-x-2 group-hover:opacity-100 group-hover:scale-100 group-hover:translate-x-0 transition-all duration-300 pointer-events-none whitespace-nowrap">
+            {isLoggedIn ? "Go to Dashboard" : "Sign In to Portal"}
+          </div>
+          <Link
+            href={isLoggedIn ? "/citizen" : "/member_login"}
+            className="w-12 h-12 rounded-full bg-primary text-white shadow-2xl shadow-primary/30 flex items-center justify-center hover:bg-primary-light hover:scale-110 active:scale-95 transition-all duration-300 border border-white/20"
+          >
+            <LogIn
+              size={20}
+              className="group-hover:rotate-6 transition-transform"
+            />
+          </Link>
+        </div>
+      )}
     </section>
   );
 }
-
-

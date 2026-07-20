@@ -91,6 +91,7 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 		users.DELETE("/:id", userHandler.DeleteUser)
 		users.GET("/:id/events", eventHandler.GetEventsByUserID)
 		users.GET("/:id/referred", userHandler.GetReferredUsers)
+		users.POST("/direct", userHandler.AddDirectMember)
 	}
 
 	// Event Routes

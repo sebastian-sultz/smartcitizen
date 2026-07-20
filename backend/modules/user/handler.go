@@ -464,3 +464,29 @@ func (h *Handler) GetNetworkStats(c *gin.Context) {
 
 	c.JSON(http.StatusOK, res)
 }
+
+func (h *Handler) AddDirectMember(c *gin.Context) {
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
+		return
+	}
+
+	var req request.AddDirectMember
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	referrerID := fmt.Sprintf("%v", userID)
+	user, err := h.service.AddDirectMember(referrerID, &req)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "member enrolled successfully",
+		"user":    mapToResponse(user, nil, nil),
+	})
+}

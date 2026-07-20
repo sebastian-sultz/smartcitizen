@@ -52,7 +52,6 @@ export interface UpdateVolunteerPayload {
   ispublicconsent?: boolean;
 }
 
-
 export interface SocialLinksPayload {
   linkedin_url: string;
   twitter_url: string;
@@ -78,7 +77,6 @@ export interface Volunteer {
   updated_at: string;
 }
 
-
 // API Response interfaces
 export interface UserProfileResponse {
   user: UserResponse;
@@ -92,10 +90,15 @@ export interface VolunteerResponse {
   volunteer: Volunteer;
 }
 
-
 export interface ActivityItem {
   id: string;
-  type: 'donation' | 'referral_join' | 'referral_donate' | 'event_register' | 'volunteer_apply' | 'ticket_update';
+  type:
+    | "donation"
+    | "referral_join"
+    | "referral_donate"
+    | "event_register"
+    | "volunteer_apply"
+    | "ticket_update";
   title: string;
   description: string;
   date: string;
@@ -108,7 +111,7 @@ export interface DonationRecord {
   transactionId: string;
   amount: number;
   paymentMethod: string;
-  status: 'success' | 'pending' | 'failed';
+  status: "success" | "pending" | "failed";
   date: string;
   receiptUrl?: string;
   taxCertificateUrl?: string;
@@ -126,7 +129,7 @@ export interface TaxCertificate {
   id: string;
   fiscalYear: string;
   amount: number;
-  status: 'generated' | 'pending';
+  status: "generated" | "pending";
   downloadUrl: string;
 }
 
@@ -134,12 +137,12 @@ export interface ReferralMember {
   id: string;
   name: string;
   avatarUrl?: string;
-  status: 'invited' | 'registered' | 'active';
-  donationStatus: 'none' | 'donated';
+  status: "invited" | "registered" | "active";
+  donationStatus: "none" | "donated";
   totalDonated: number;
   registrationDate: string;
   lastActivityDate: string;
-  membershipStatus: 'active' | 'inactive';
+  membershipStatus: "active" | "inactive";
 }
 
 export interface Payment {
@@ -180,4 +183,7 @@ export interface InitiatePaymentRequest {
   donorAddress?: string;
 }
 
-
+export interface AddDirectMemberPayload {
+  name: string;
+  phone: string;
+}

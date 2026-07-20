@@ -30,6 +30,7 @@ type Service interface {
 	GetUserByPhone(phone string) (*User, error)
 	SetPassword(userID string, plainPassword string) error
 	UpdateName(userID string, name string) error
+	AddDirectMember(referrerUserID string, req *request.AddDirectMember) (*User, error)
 }
 
 type service struct {
@@ -313,4 +314,30 @@ func (s *service) GetNetworkStats(ctx context.Context, userID string) (*response
 		DirectReferralDonationAmount: directDonationsSum,
 		TotalNetworkDonationAmount:   totalNetworkDonationAmount,
 	}, nil
+}
+
+func (s *service) AddDirectMember(referrerUserID string, req *request.AddDirectMember) (*User, error) {
+	referrer, err := s.repo.FindByID(referrerUserID)
+	if err != nil {
+		return nil, errors.New("referrer user not found")
+	}
+
+	existingUser, _ := s.repo.FindByPhone(req.Phone)
+	if existingUser != nil {
+		return nil, errors.New("phone number already registered")
+	}
+
+	refID := referrer.ID.String()
+	user := &User{
+		Name:       req.Name,
+		Phone:      req.Phone,
+		ReferralID: &refID,
+		UserType:   Member,
+	}
+
+	if err := s.repo.Create(user); err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }

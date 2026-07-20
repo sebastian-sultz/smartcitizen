@@ -25,3 +25,8 @@ type ForgetPassword struct {
 type SuspendUserRequest struct {
 	IsSuspended bool `json:"is_suspended"`
 }
+
+type AddDirectMember struct {
+	Name  string `json:"name" binding:"required"`
+	Phone string `json:"phone" binding:"required"`
+}

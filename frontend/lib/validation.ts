@@ -1,17 +1,20 @@
 import * as Yup from "yup";
-import { 
-  PHONE_REGEX, 
-  EMAIL_REGEX, 
-  NAME_REGEX, 
-  PINCODE_REGEX, 
-  PAN_REGEX, 
+import {
+  PHONE_REGEX,
+  INDIAN_MOBILE_REGEX,
+  EMAIL_REGEX,
+  NAME_REGEX,
+  PINCODE_REGEX,
+  PAN_REGEX,
   ADDRESS_REGEX,
-  CITY_REGEX 
+  CITY_REGEX,
 } from "./regex";
 
 // Helper to trim leading/trailing whitespace before validation
-export const trimmedString = () => 
-  Yup.string().transform((value) => (typeof value === "string" ? value.trim() : value));
+export const trimmedString = () =>
+  Yup.string().transform((value) =>
+    typeof value === "string" ? value.trim() : value,
+  );
 
 // Reusable Name schema: rejects invalid chars, rejects consecutive spaces, enforces 3+ chars when required
 export const nameSchema = (requiredMessage?: string) => {
@@ -19,27 +22,28 @@ export const nameSchema = (requiredMessage?: string) => {
     .test(
       "valid-name",
       "Enter a valid name (letters, spaces, dots, hyphens only)",
-      (val) => !val || NAME_REGEX.test(val)
+      (val) => !val || NAME_REGEX.test(val),
     )
     .test(
       "no-consecutive-spaces",
       "Name cannot contain consecutive spaces",
-      (val) => !val || !/\s{2,}/.test(val)
+      (val) => !val || !/\s{2,}/.test(val),
     );
   if (requiredMessage) {
-    schema = schema.required(requiredMessage).min(3, "Name must be at least 3 characters");
+    schema = schema
+      .required(requiredMessage)
+      .min(3, "Name must be at least 3 characters");
   }
   return schema;
 };
 
-// Reusable Phone number schema: exactly 10 digits
+// Reusable Phone number schema: exactly 10 digits starting with 6, 7, 8, or 9
 export const phoneSchema = (requiredMessage?: string) => {
-  let schema = trimmedString()
-    .test(
-      "valid-phone",
-      "Enter a valid 10-digit mobile number",
-      (val) => !val || PHONE_REGEX.test(val)
-    );
+  let schema = trimmedString().test(
+    "valid-phone",
+    "Enter a valid 10-digit mobile number starting with 6, 7, 8, or 9",
+    (val) => !val || INDIAN_MOBILE_REGEX.test(val),
+  );
   if (requiredMessage) {
     schema = schema.required(requiredMessage);
   }
@@ -48,12 +52,11 @@ export const phoneSchema = (requiredMessage?: string) => {
 
 // Reusable Email schema
 export const emailSchema = (requiredMessage?: string) => {
-  let schema = trimmedString()
-    .test(
-      "valid-email",
-      "Enter a valid email address",
-      (val) => !val || EMAIL_REGEX.test(val)
-    );
+  let schema = trimmedString().test(
+    "valid-email",
+    "Enter a valid email address",
+    (val) => !val || EMAIL_REGEX.test(val),
+  );
   if (requiredMessage) {
     schema = schema.required(requiredMessage);
   }
@@ -62,12 +65,11 @@ export const emailSchema = (requiredMessage?: string) => {
 
 // Reusable Pincode schema (6-digit Indian Pincode)
 export const pincodeSchema = (requiredMessage?: string) => {
-  let schema = trimmedString()
-    .test(
-      "valid-pincode",
-      "Enter a valid 6-digit Pincode",
-      (val) => !val || PINCODE_REGEX.test(val)
-    );
+  let schema = trimmedString().test(
+    "valid-pincode",
+    "Enter a valid 6-digit Pincode",
+    (val) => !val || PINCODE_REGEX.test(val),
+  );
   if (requiredMessage) {
     schema = schema.required(requiredMessage);
   }
@@ -75,24 +77,23 @@ export const pincodeSchema = (requiredMessage?: string) => {
 };
 
 // Reusable PAN schema (10-character PAN)
-export const panSchema = (message = "Enter a valid 10-character PAN (e.g. ABCDE1234F)") => {
+export const panSchema = (
+  message = "Enter a valid 10-character PAN (e.g. ABCDE1234F)",
+) => {
   return trimmedString()
-    .transform((value) => (typeof value === "string" ? value.toUpperCase() : value))
-    .test(
-      "valid-pan",
-      message,
-      (val) => !val || PAN_REGEX.test(val)
-    );
+    .transform((value) =>
+      typeof value === "string" ? value.toUpperCase() : value,
+    )
+    .test("valid-pan", message, (val) => !val || PAN_REGEX.test(val));
 };
 
 // Reusable Address schema
 export const addressSchema = (requiredMessage?: string) => {
-  let schema = trimmedString()
-    .test(
-      "valid-address",
-      "Enter a valid address (alphanumeric and standard punctuation only)",
-      (val) => !val || ADDRESS_REGEX.test(val)
-    );
+  let schema = trimmedString().test(
+    "valid-address",
+    "Enter a valid address (alphanumeric and standard punctuation only)",
+    (val) => !val || ADDRESS_REGEX.test(val),
+  );
   if (requiredMessage) {
     schema = schema.required(requiredMessage);
   }
@@ -101,12 +102,11 @@ export const addressSchema = (requiredMessage?: string) => {
 
 // Reusable City/District schema
 export const citySchema = (requiredMessage?: string) => {
-  let schema = trimmedString()
-    .test(
-      "valid-city",
-      "Enter a valid city/district (letters, spaces, dots, hyphens only)",
-      (val) => !val || CITY_REGEX.test(val)
-    );
+  let schema = trimmedString().test(
+    "valid-city",
+    "Enter a valid city/district (letters, spaces, dots, hyphens only)",
+    (val) => !val || CITY_REGEX.test(val),
+  );
   if (requiredMessage) {
     schema = schema.required(requiredMessage);
   }
