@@ -46,7 +46,7 @@ export async function proxy(request: NextRequest) {
   if (!token && refreshToken && (isProtectedRoute || isAuthRoute)) {
     try {
       const apiUrl =
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api";
+        process.env.NEXT_PUBLIC_API_URL || "http://localhost:8090/api";
       const refreshResponse = await fetch(`${apiUrl}/auth/refresh`, {
         method: "POST",
         headers: {

@@ -13,7 +13,7 @@ interface AuthState {
   isInitialized: boolean;
   userType: string | null;
   setSession: (session: Session | null) => void;
-  logout: (onSuccess?: () => void) => Promise<void>;
+  logout: (redirectTo?: string, onSuccess?: () => void) => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -30,7 +30,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       userType: session?.userType || null,
     });
   },
-  logout: async (onSuccess) => {
+  logout: async (redirectTo = "/member_login", onSuccess) => {
     try {
       await logoutUser();
     } catch (err) {
@@ -41,7 +41,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       if (onSuccess) {
         onSuccess();
       } else if (typeof window !== "undefined") {
-        window.location.href = "/member_login";
+        window.location.href = redirectTo;
       }
     }
   },

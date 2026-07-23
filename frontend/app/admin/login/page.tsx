@@ -19,7 +19,6 @@ const loginSchema = Yup.object().shape({
 });
 
 export default function LoginPage() {
-
   const formik = useFormik({
     initialValues: { phone: "", password: "" },
     validationSchema: loginSchema,
@@ -81,7 +80,11 @@ export default function LoginPage() {
                 maxLength={10}
                 inputMode="numeric"
                 pattern="[0-9]*"
-                error={formik.touched.phone && formik.errors.phone ? (formik.errors.phone as string) : undefined}
+                error={
+                  formik.touched.phone && formik.errors.phone
+                    ? (formik.errors.phone as string)
+                    : undefined
+                }
               />
 
               <Input
@@ -93,21 +96,12 @@ export default function LoginPage() {
                 value={formik.values.password}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                error={formik.touched.password && formik.errors.password ? (formik.errors.password as string) : undefined}
+                error={
+                  formik.touched.password && formik.errors.password
+                    ? (formik.errors.password as string)
+                    : undefined
+                }
               />
-            </div>
-
-            <div className="flex items-center justify-between text-xs">
-              <label className="flex items-center cursor-pointer text-text-muted gap-2">
-                <Checkbox />
-                Remember me
-              </label>
-              <a
-                href="#"
-                className="text-primary font-bold hover:underline"
-              >
-                Forgot password?
-              </a>
             </div>
 
             <Button

@@ -106,6 +106,10 @@ func (s *service) ForgetPassword(req *request.ForgetPassword) error {
 		return errors.New("user not found")
 	}
 
+	if user.UserType == Admin {
+		return errors.New("admin password reset cannot be performed via unauthenticated request")
+	}
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.NewPassword), bcrypt.DefaultCost)
 	if err != nil {
 		return err

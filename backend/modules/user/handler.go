@@ -12,6 +12,7 @@ import (
 	"backend/pkg/utils"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type Handler struct {
@@ -20,6 +21,19 @@ type Handler struct {
 
 func NewHandler(service Service) *Handler {
 	return &Handler{service: service}
+}
+
+func (h *Handler) issueAuthTokens(c *gin.Context, userID uuid.UUID, userType string) error {
+	secret := os.Getenv("JWT_SECRET")
+	if secret == "" {
+		return fmt.Errorf("JWT_SECRET is not configured")
+	}
+	accessToken, refreshToken, err := jwt.GenerateTokens(userID, userType, secret)
+	if err != nil {
+		return err
+	}
+	utils.SetAuthCookies(c, accessToken, refreshToken)
+	return nil
 }
 
 func mapToResponse(u *User, refName *string, vol *response.Volunteer) response.User {
@@ -58,18 +72,10 @@ func (h *Handler) Register(c *gin.Context) {
 		return
 	}
 
-	secret := os.Getenv("JWT_SECRET")
-	if secret == "" {
-		secret = "supersecret"
-	}
-	accessToken, refreshToken, err := jwt.GenerateTokens(user.ID, string(user.UserType), secret)
-	if err != nil {
+	if err := h.issueAuthTokens(c, user.ID, string(user.UserType)); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate tokens"})
 		return
 	}
-
-	c.SetCookie("access_token", accessToken, 15*60, "/", "", false, true)
-	c.SetCookie("refresh_token", refreshToken, 7*24*60*60, "/", "", false, true)
 
 	c.JSON(http.StatusCreated, gin.H{"message": "registered successfully", "user": mapToResponse(user, nil, nil)})
 }
@@ -87,18 +93,10 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	secret := os.Getenv("JWT_SECRET")
-	if secret == "" {
-		secret = "supersecret"
-	}
-	accessToken, refreshToken, err := jwt.GenerateTokens(user.ID, string(user.UserType), secret)
-	if err != nil {
+	if err := h.issueAuthTokens(c, user.ID, string(user.UserType)); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate tokens"})
 		return
 	}
-
-	c.SetCookie("access_token", accessToken, 15*60, "/", "", false, true)
-	c.SetCookie("refresh_token", refreshToken, 7*24*60*60, "/", "", false, true)
 
 	c.JSON(http.StatusOK, gin.H{"message": "logged in successfully", "user": mapToResponse(user, nil, nil)})
 }
@@ -122,18 +120,10 @@ func (h *Handler) CheckRole(c *gin.Context) {
 	}
 
 	if user.UserType == Member {
-		secret := os.Getenv("JWT_SECRET")
-		if secret == "" {
-			secret = "supersecret"
-		}
-		accessToken, refreshToken, err := jwt.GenerateTokens(user.ID, string(user.UserType), secret)
-		if err != nil {
+		if err := h.issueAuthTokens(c, user.ID, string(user.UserType)); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate tokens"})
 			return
 		}
-
-		c.SetCookie("access_token", accessToken, 15*60, "/", "", false, true)
-		c.SetCookie("refresh_token", refreshToken, 7*24*60*60, "/", "", false, true)
 
 		c.JSON(http.StatusOK, gin.H{
 			"message":           "logged in successfully",
@@ -212,7 +202,8 @@ func (h *Handler) Refresh(c *gin.Context) {
 
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" {
-		secret = "supersecret"
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "JWT_SECRET is not configured"})
+		return
 	}
 
 	claims, err := jwt.ParseToken(refreshToken, secret)
@@ -221,16 +212,17 @@ func (h *Handler) Refresh(c *gin.Context) {
 		return
 	}
 
-	accessToken, newRefreshToken, err := jwt.GenerateTokens(claims.UserID, claims.UserType, secret)
-	if err != nil {
+	if err := h.issueAuthTokens(c, claims.UserID, claims.UserType); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate tokens"})
 		return
 	}
 
-	c.SetCookie("access_token", accessToken, 15*60, "/", "", false, true)
-	c.SetCookie("refresh_token", newRefreshToken, 7*24*60*60, "/", "", false, true)
-
 	c.JSON(http.StatusOK, gin.H{"message": "token refreshed successfully"})
+}
+
+func (h *Handler) Logout(c *gin.Context) {
+	utils.ClearAuthCookies(c)
+	c.JSON(http.StatusOK, gin.H{"message": "logged out successfully"})
 }
 
 func (h *Handler) GetProfile(c *gin.Context) {

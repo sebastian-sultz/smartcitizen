@@ -110,9 +110,8 @@ export const getSystemStats = async (): Promise<SystemStatsResponse> => {
 
 export const logoutUser = async (): Promise<void> => {
   try {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await api.post("/auth/logout");
   } catch (error: unknown) {
     console.error("Logout request failed:", error);
-    throw error;
   }
 };

@@ -19,7 +19,9 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		secret := os.Getenv("JWT_SECRET")
 		if secret == "" {
-			secret = "supersecret"
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "JWT_SECRET is not configured"})
+			c.Abort()
+			return
 		}
 
 		claims, err := jwt.ParseToken(tokenString, secret)
@@ -47,7 +49,9 @@ func OptionalAuthMiddleware() gin.HandlerFunc {
 
 		secret := os.Getenv("JWT_SECRET")
 		if secret == "" {
-			secret = "supersecret"
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "JWT_SECRET is not configured"})
+			c.Abort()
+			return
 		}
 
 		// If a token is provided, validate it strictly. If expired or invalid,
