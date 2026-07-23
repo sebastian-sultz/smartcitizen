@@ -15,11 +15,11 @@ PHONEPE_ENV=UAT
 ```
 
 ## Step 2: Expose your Localhost via Ngrok
-Since your backend is running on `localhost:8090`, PhonePe's servers **cannot** reach your machine to send the Server-to-Server Webhook. You need to use [Ngrok](https://ngrok.com/) to expose your local server to the internet.
+Since your backend is running on `localhost:8080`, PhonePe's servers **cannot** reach your machine to send the Server-to-Server Webhook. You need to use [Ngrok](https://ngrok.com/) to expose your local server to the internet.
 
 1. Install Ngrok and run:
    ```bash
-   ngrok http 8090
+   ngrok http 8080
    ```
 2. Ngrok will give you a public URL (e.g., `https://1a2b-3c4d.ngrok-free.app`).
 3. Temporarily update your `backend/.env` file so the Backend generates the webhook and frontend return URLs using this public address:
@@ -32,7 +32,7 @@ Since your backend is running on `localhost:8090`, PhonePe's servers **cannot** 
 Now, act as the Frontend to start a transaction.
 
 1. Open Postman and make a **POST** request to:
-   `http://localhost:8090/api/payments/initiate`
+   `http://localhost:8080/api/payments/initiate`
 2. **Body (Raw JSON):**
    ```json
    {
@@ -58,7 +58,7 @@ Now, act as the Frontend to start a transaction.
 ## Step 6: Verify the Status API
 Act as the Frontend checking the final status:
 1. Open Postman and make a **GET** request to:
-   `http://localhost:8090/api/payments/status/{merchantOrderId}`
+   `http://localhost:8080/api/payments/status/{merchantOrderId}`
 2. Ensure the response shows the updated `SUCCESS` status and contains the `providerReferenceId`.
 
 **Done!** If all these steps work, your backend integration is 100% solid and ready for the real frontend UI to be connected!
