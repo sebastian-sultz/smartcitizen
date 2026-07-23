@@ -1,4 +1,5 @@
 "use client";
+import { ASSETS } from "@/lib/assets";
 
 import Link from "next/link";
 import Image from "next/image";
@@ -23,7 +24,7 @@ export function Hero() {
       {/* 1. IMMERSIVE MOBILE BACKGROUND IMAGE (hidden on desktop) */}
       <div className="absolute inset-0 z-0 md:hidden overflow-hidden pointer-events-none">
         <Image
-          src="/assets/vision34.jpeg"
+          src={ASSETS.vision34}
           alt="Foundation Background"
           fill
           priority
@@ -186,14 +187,14 @@ export function Hero() {
                       {/* Small Volunteer Facepile inside Card */}
                       <div className="flex items-center gap-2 pt-1 border-t border-border/40">
                         <div className="flex -space-x-1.5 overflow-hidden">
-                          {["a17.jpeg", "a18.jpeg", "a23.jpeg"].map(
+                          {[ASSETS.a17, ASSETS.a18, ASSETS.a23].map(
                             (src, idx) => (
                               <div
                                 key={idx}
                                 className="inline-block h-5 w-5 rounded-full ring-2 ring-white overflow-hidden relative shrink-0"
                               >
                                 <Image
-                                  src={`/assets/${src}`}
+                                  src={src}
                                   alt="Citizen avatar"
                                   fill
                                   className="object-cover"
@@ -256,7 +257,7 @@ export function Hero() {
 
             <div className="relative aspect-[4/5] md:aspect-square rounded-[40px] md:rounded-[80px] overflow-hidden shadow-[0_40px_80px_-15px_rgba(0,0,0,0.2)]">
               <Image
-                src="/assets/vision34.jpeg"
+                src={ASSETS.vision34}
                 alt="Foundation Impact"
                 fill
                 priority
@@ -384,13 +385,13 @@ export function Hero() {
               {/* Social proof pile inside Card */}
               <div className="flex items-center gap-2 pt-3 border-t border-white/10">
                 <div className="flex -space-x-1.5 overflow-hidden">
-                  {["a17.jpeg", "a18.jpeg", "a23.jpeg"].map((src, idx) => (
+                  {[ASSETS.a17, ASSETS.a18, ASSETS.a23].map((src, idx) => (
                     <div
                       key={idx}
                       className="inline-block h-5 w-5 rounded-full ring-2 ring-white/10 overflow-hidden relative shrink-0"
                     >
                       <Image
-                        src={`/assets/${src}`}
+                        src={src}
                         alt="Citizen avatar"
                         fill
                         sizes="20px"

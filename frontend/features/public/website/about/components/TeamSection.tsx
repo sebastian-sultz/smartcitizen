@@ -1,10 +1,11 @@
+import { ASSETS } from "@/lib/assets";
 import Image from "next/image";
 
 const teamMembers = [
-  { name: "Dr. Anuj Singh", role: "Legal Advisor / Staff", img: "/assets/a4.png" },
-  { name: "Mrs. Kavita Rai", role: "Community Well-being Lead", img: "/assets/a1.png" },
-  { name: "Mr. Manoj Jain", role: "Financial Literacy Contributor", img: "/assets/a11.png" },
-  { name: "Mr. Neeraj Kumar", role: "Digital Safety Contributor", img: "/assets/a10.png" },
+  { name: "Dr. Anuj Singh", role: "Legal Advisor / Staff", img: ASSETS.a4 },
+  { name: "Mrs. Kavita Rai", role: "Community Well-being Lead", img: ASSETS.a1 },
+  { name: "Mr. Manoj Jain", role: "Financial Literacy Contributor", img: ASSETS.a11 },
+  { name: "Mr. Neeraj Kumar", role: "Digital Safety Contributor", img: ASSETS.a10 },
 ];
 
 export function TeamSection() {

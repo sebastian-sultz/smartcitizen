@@ -1,3 +1,4 @@
+import { ASSETS } from "@/lib/assets";
 import Link from "next/link";
 import { MoveRight } from "lucide-react";
 import Image from "next/image";
@@ -44,7 +45,7 @@ export function AboutIntro() {
           <div className="flex-1 relative w-full">
             <div className="relative rounded-[40px] overflow-hidden shadow-2xl border-8 border-white aspect-[4/3] w-full">
               <Image 
-                src="/assets/about_us.jpg" 
+                src={ASSETS.aboutUs} 
                 alt="Community Awareness Workshop" 
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"

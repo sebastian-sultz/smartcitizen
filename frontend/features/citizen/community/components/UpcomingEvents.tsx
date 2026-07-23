@@ -1,4 +1,5 @@
 "use client";
+import { ASSETS } from "@/lib/assets";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -104,7 +105,7 @@ export function UpcomingEvents() {
               >
                 <div className="relative aspect-[16/10] overflow-hidden bg-bg-alt">
                   <Image
-                    src={event.image || "/assets/a1.png"}
+                    src={event.image || ASSETS.a1}
                     alt={event.event_name}
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"

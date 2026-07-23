@@ -1,3 +1,4 @@
+import { ASSETS } from "@/lib/assets";
 import { TreePine, Zap, Droplets, Wind, CloudSun, Recycle } from "lucide-react";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/Card";
@@ -43,7 +44,7 @@ export const OurStory = () => (
         <div className="flex-1">
           <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3]">
             <Image
-              src="/assets/about_us.jpg"
+              src={ASSETS.aboutUs}
               alt="Foundation Work"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"

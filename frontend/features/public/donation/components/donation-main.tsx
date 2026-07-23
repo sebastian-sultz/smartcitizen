@@ -1,3 +1,4 @@
+import { ASSETS } from "@/lib/assets";
 import PageHero from "@/components/layout/PageHero";
 import { DonationForm } from "./DonationForm";
 import { PaymentInfo } from "./PaymentInfo";
@@ -5,7 +6,7 @@ import { PaymentInfo } from "./PaymentInfo";
 export function DonationMain() {
   return (
     <main className="min-h-screen">
-      <PageHero title="Support the Cause" image="/assets/a2.png" />
+      <PageHero title="Support the Cause" image={ASSETS.a2} />
 
       <section className="py-16 md:py-24 bg-white">
         <div className="max-content">

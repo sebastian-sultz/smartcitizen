@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
+import { ASSETS } from "@/lib/assets";
+
 const professionsPreview = [
   { icon: Scale, label: "Legal Guidance", color: "bg-blue-50 text-blue-600" },
   { icon: Stethoscope, label: "Health Support", color: "bg-green-50 text-green-600" },
@@ -123,13 +125,13 @@ export function NeedHelpGate() {
               {/* Social proof */}
               <div className="flex items-center justify-center gap-3 bg-bg rounded-2xl px-5 py-3.5">
                 <div className="flex -space-x-2">
-                  {["a17.jpeg", "a18.jpeg", "a23.jpeg"].map((src, i) => (
+                  {[ASSETS.a17, ASSETS.a18, ASSETS.a23].map((src, i) => (
                     <div
                       key={i}
                       className="w-8 h-8 rounded-full ring-2 ring-white overflow-hidden relative"
                     >
                       <Image
-                        src={`/assets/${src}`}
+                        src={src}
                         alt="Smart Citizen"
                         fill
                         sizes="32px"

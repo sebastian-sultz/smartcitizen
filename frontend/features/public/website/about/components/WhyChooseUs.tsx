@@ -1,3 +1,4 @@
+import { ASSETS } from "@/lib/assets";
 import { Check } from "lucide-react";
 import Image from "next/image";
 
@@ -33,7 +34,7 @@ export function WhyChooseUs() {
           <div className="flex-1">
             <div className="relative rounded-2xl overflow-hidden shadow-2xl h-full min-h-[400px]">
               <Image
-                src="/assets/a9.png"
+                src={ASSETS.a9}
                 alt="Foundation Seminar"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"

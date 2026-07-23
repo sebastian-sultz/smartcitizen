@@ -21,9 +21,9 @@ export default function PageHero({ title, image }: PageHeroProps) {
             fill
             sizes="100vw"
             priority
-            className="object-cover opacity-20 filter grayscale contrast-125"
+            className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-primary/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/80 to-primary/40" />
         </div>
       )}
 
@@ -31,8 +31,18 @@ export default function PageHero({ title, image }: PageHeroProps) {
       <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
         <svg width="100%" height="100%" className="text-white">
           <defs>
-            <pattern id="hero-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" strokeWidth="1" />
+            <pattern
+              id="hero-grid"
+              width="40"
+              height="40"
+              patternUnits="userSpaceOnUse"
+            >
+              <path
+                d="M 40 0 L 0 0 0 40"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1"
+              />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#hero-grid)" />
@@ -51,7 +61,9 @@ export default function PageHero({ title, image }: PageHeroProps) {
             <Landmark size={12} className="text-accent" />
             <span>Official Civic Portal</span>
             <span className="w-1 h-1 rounded-full bg-accent/80" />
-            <span className="text-white/70 font-semibold">Smart Citizen Registry</span>
+            <span className="text-white/70 font-semibold">
+              Smart Citizen Registry
+            </span>
           </div>
 
           <div className="space-y-3">
@@ -93,4 +105,3 @@ export default function PageHero({ title, image }: PageHeroProps) {
     </section>
   );
 }
-

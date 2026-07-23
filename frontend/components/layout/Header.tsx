@@ -1,4 +1,5 @@
 "use client";
+import { ASSETS } from "@/lib/assets";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -77,7 +78,7 @@ export default function Header() {
             <div className="relative w-9 h-9 md:w-10 md:h-10">
               <div className="absolute inset-0 bg-white rounded-full blur-md opacity-20 group-hover:opacity-40 transition-opacity" />
               <Image
-                src="/assets/logo.png"
+                src={ASSETS.logo}
                 alt="GlobalSmart Logo"
                 fill
                 priority

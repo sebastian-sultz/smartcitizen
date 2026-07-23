@@ -1,3 +1,4 @@
+import { ASSETS } from "@/lib/assets";
 import PageHero from "@/components/layout/PageHero";
 import { BookOpen, Briefcase, UserCheck, Heart, Scale, Users } from "lucide-react";
 import { ContactForm } from "./ContactForm";
@@ -15,7 +16,7 @@ const helpAreas = [
 export function ContactUsMain() {
   return (
     <main className="min-h-screen">
-      <PageHero title="Get Help & Support" image="/assets/vision34.jpeg" />
+      <PageHero title="Get Help & Support" image={ASSETS.vision34} />
 
       <section className="py-16 md:py-24 bg-white">
         <div className="max-content">

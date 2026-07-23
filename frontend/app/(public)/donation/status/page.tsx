@@ -1,4 +1,5 @@
 "use client";
+import { ASSETS } from "@/lib/assets";
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
@@ -255,7 +256,7 @@ function PaymentStatusContent() {
 export default function PaymentStatusPage() {
   return (
     <main className="min-h-screen pb-24 bg-white">
-      <PageHero title="Transaction Status" image="/assets/a2.png" />
+      <PageHero title="Transaction Status" image={ASSETS.a2} />
       <section className="py-12 md:py-16">
         <div className="max-content">
           <Suspense fallback={

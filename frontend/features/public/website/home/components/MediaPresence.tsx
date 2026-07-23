@@ -1,4 +1,5 @@
 "use client";
+import { ASSETS } from "@/lib/assets";
 
 import { useState } from "react";
 import Image from "next/image";
@@ -117,7 +118,7 @@ export function MediaPresence() {
                 className="relative aspect-video w-full rounded-2xl overflow-hidden shadow-md border border-border/20 bg-dark group/video block mt-4"
               >
                 <Image
-                  src="/assets/vision34.jpeg"
+                  src={ASSETS.vision34}
                   alt="GlobalSmart Awareness Drive"
                   fill
                   sizes="(max-width: 1024px) 100vw, 33vw"
@@ -212,7 +213,7 @@ export function MediaPresence() {
                 <div className="grid grid-cols-2 gap-1.5 rounded-xl overflow-hidden border border-border/20 group-hover/fb:opacity-95 transition-opacity">
                   <div className="relative w-full aspect-[4/3]">
                     <Image
-                      src="/assets/a1.png"
+                      src={ASSETS.a1}
                       alt="Awareness drive photo 1"
                       fill
                       sizes="(max-width: 768px) 45vw, 150px"
@@ -221,7 +222,7 @@ export function MediaPresence() {
                   </div>
                   <div className="relative w-full aspect-[4/3]">
                     <Image
-                      src="/assets/a2.png"
+                      src={ASSETS.a2}
                       alt="Awareness drive photo 2"
                       fill
                       sizes="(max-width: 768px) 45vw, 150px"
@@ -315,7 +316,7 @@ export function MediaPresence() {
 
                 <div className="relative w-full aspect-square rounded-xl overflow-hidden border border-border/20 group-hover/ig:opacity-95 transition-opacity">
                   <Image
-                    src="/assets/vision34.jpeg"
+                    src={ASSETS.vision34}
                     alt="Instagram campaign highlight"
                     fill
                     sizes="300px"

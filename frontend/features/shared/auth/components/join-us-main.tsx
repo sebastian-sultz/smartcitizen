@@ -1,3 +1,4 @@
+import { ASSETS } from "@/lib/assets";
 import PageHero from "@/components/layout/PageHero";
 import { CheckCircle2 } from "lucide-react";
 import { RegisterForm } from "./RegisterForm";
@@ -5,7 +6,7 @@ import { RegisterForm } from "./RegisterForm";
 export function JoinUsMain() {
   return (
     <main className="min-h-screen">
-      <PageHero title="Become a Smart Citizen" image="/assets/s1.jpeg" />
+      <PageHero title="Become a Smart Citizen" image={ASSETS.s1} />
 
       <section className="py-16 md:py-24 bg-bg">
         <div className="max-content">

@@ -1,3 +1,4 @@
+import { ASSETS } from "@/lib/assets";
 import PageHero from "@/components/layout/PageHero";
 import { WhyChooseUs } from "@/features/public/website/about";
 import { ImpactStories } from "./ImpactStories";
@@ -5,7 +6,7 @@ import { ImpactStories } from "./ImpactStories";
 export function ImpactMain() {
   return (
     <main className="min-h-screen">
-      <PageHero title="Our Social Impact" image="/assets/vision34.jpeg" />
+      <PageHero title="Our Social Impact" image={ASSETS.vision34} />
 
       {/* Impact Statement */}
       <section className="py-24 bg-white">

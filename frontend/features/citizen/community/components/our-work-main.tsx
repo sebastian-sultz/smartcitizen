@@ -1,3 +1,4 @@
+import { ASSETS } from "@/lib/assets";
 import PageHero from "@/components/layout/PageHero";
 import { 
   Leaf, Heart, Shield, Scale, Baby, Vote, ShoppingBag, 
@@ -85,7 +86,7 @@ const programs = [
 export function OurWorkMain() {
   return (
     <main className="min-h-screen">
-      <PageHero title="Our Programs" image="/assets/vision34.jpeg" />
+      <PageHero title="Our Programs" image={ASSETS.vision34} />
 
       <section className="py-16 md:py-24 bg-bg">
         <div className="max-content">

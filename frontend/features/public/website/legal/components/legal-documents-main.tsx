@@ -1,3 +1,4 @@
+import { ASSETS } from "@/lib/assets";
 import PageHero from "@/components/layout/PageHero";
 import LegalViewer from "./LegalViewer";
 import { ShieldCheck, Info, FileCheck } from "lucide-react";
@@ -5,7 +6,7 @@ import { ShieldCheck, Info, FileCheck } from "lucide-react";
 export function LegalDocumentsMain() {
   return (
     <main className="min-h-screen">
-      <PageHero title="Official Legal Documents" image="/assets/a4.png" />
+      <PageHero title="Official Legal Documents" image={ASSETS.a4} />
 
       <section className="py-16 md:py-24 bg-white overflow-hidden">
         <div className="max-content">

@@ -1,4 +1,5 @@
 "use client";
+import { ASSETS } from "@/lib/assets";
 
 import { useEffect, useState } from "react";
 import PageHero from "@/components/layout/PageHero";
@@ -68,7 +69,7 @@ export function EventsMain() {
 
   return (
     <main className="min-h-screen">
-      <PageHero title="Events & Workshops" image="/assets/a1.png" />
+      <PageHero title="Events & Workshops" image={ASSETS.a1} />
 
       <section className="py-16 md:py-24 bg-white">
         <div className="max-content">

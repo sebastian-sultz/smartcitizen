@@ -1,4 +1,5 @@
 "use client";
+import { ASSETS } from "@/lib/assets";
 
 import { ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
@@ -73,7 +74,7 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
         <Link href="/citizen" className="flex items-center gap-3">
           <div className="relative w-10 h-10 shrink-0">
             <Image
-              src="/assets/logo.png"
+              src={ASSETS.logo}
               alt="GlobalSmart Logo"
               fill
               sizes="40px"
@@ -125,7 +126,7 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
           >
             <div className="relative w-10 h-10 shrink-0">
               <Image
-                src="/assets/logo.png"
+                src={ASSETS.logo}
                 alt="GlobalSmart Logo"
                 fill
                 sizes="40px"
@@ -228,7 +229,7 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
             {isCollapsed ? (
               <div className="relative w-9 h-9 shrink-0 transition-all duration-300">
                 <Image
-                  src="/assets/logo.png"
+                  src={ASSETS.logo}
                   alt="GlobalSmart Logo"
                   fill
                   sizes="36px"
@@ -240,7 +241,7 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
               <>
                 <div className="relative w-15 h-15 shrink-0 transition-all duration-300">
                   <Image
-                    src="/assets/logo.png"
+                    src={ASSETS.logo}
                     alt="GlobalSmart Logo"
                     fill
                     sizes="60px"

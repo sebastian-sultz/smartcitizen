@@ -1,3 +1,4 @@
+import { ASSETS } from "@/lib/assets";
 import { Trophy } from "lucide-react";
 import Image from "next/image";
 
@@ -51,7 +52,7 @@ export function CommunitySports() {
             <div className="space-y-4 pt-12">
                <div className="rounded-2xl overflow-hidden aspect-[3/4] shadow-2xl relative">
                   <Image 
-                    src="/assets/a23.jpeg" 
+                    src={ASSETS.a23} 
                     alt="Cricket Match" 
                     fill
                     sizes="(max-width: 768px) 50vw, 25vw"
@@ -62,7 +63,7 @@ export function CommunitySports() {
             <div className="space-y-4">
                <div className="rounded-2xl overflow-hidden aspect-[3/4] shadow-2xl relative">
                   <Image 
-                    src="/assets/a26.jpeg" 
+                    src={ASSETS.a26} 
                     alt="Team Trophy" 
                     fill
                     sizes="(max-width: 768px) 50vw, 25vw"
