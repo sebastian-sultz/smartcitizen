@@ -55,7 +55,10 @@ func NewService(repo Repository, userService user.Service) Service {
 	clientSecret := os.Getenv("PHONEPE_CLIENT_SECRET")
 	clientVerStr := os.Getenv("PHONEPE_CLIENT_VERSION")
 	envStr := os.Getenv("PHONEPE_ENV")
-	frontendURL := os.Getenv("FRONTEND_URL")
+	frontendURL := strings.TrimRight(strings.TrimSpace(os.Getenv("FRONTEND_URL")), "/")
+	if frontendURL == "" {
+		frontendURL = "http://localhost:3000"
+	}
 	webhookUser := os.Getenv("PHONEPE_WEBHOOK_USERNAME")
 	webhookPass := os.Getenv("PHONEPE_WEBHOOK_PASSWORD")
 
@@ -115,7 +118,7 @@ func (s *service) InitiatePayment(ctx context.Context, req dtorequest.InitiatePa
 		return nil, err
 	}
 
-	redirectURL := fmt.Sprintf("%s/donation/status?transactionId=%s", s.frontendURL, merchantOrderID)
+	redirectURL := fmt.Sprintf("%s/donation/status?transactionId=%s", strings.TrimRight(s.frontendURL, "/"), merchantOrderID)
 
 	msg := "Donation - " + merchantOrderID
 	exp := int64(1800)
