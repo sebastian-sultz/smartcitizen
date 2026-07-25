@@ -14,8 +14,11 @@ import (
 )
 
 func SetupRoutes(r *gin.Engine, db *gorm.DB) {
+	r.Use(gin.Recovery())
 	r.Use(middleware.GlobalLogger())
 	r.Use(middleware.CORSMiddleware())
+	r.Use(middleware.SecurityHeadersMiddleware())
+	r.Use(middleware.RateLimitMiddleware(120, 30)) // Global DDoS protection: 120 req/min per IP
 
 	// Health Check Route
 	r.GET("/health", func(c *gin.Context) {
@@ -64,13 +67,14 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 	// ALL ROUTES REGISTRATION
 	// ==========================================
 
-	// User & Auth Routes
+	// User & Auth Routes (strict rate limiting against brute force: 15 req/min per IP)
+	authStrictLimiter := middleware.RateLimitMiddleware(15, 5)
 	auth := api.Group("/auth")
 	{
-		auth.POST("/register", userHandler.Register)
-		auth.POST("/login", userHandler.Login)
-		auth.POST("/check-role", userHandler.CheckRole)
-		auth.POST("/forget-password", userHandler.ForgetPassword)
+		auth.POST("/register", authStrictLimiter, userHandler.Register)
+		auth.POST("/login", authStrictLimiter, userHandler.Login)
+		auth.POST("/check-role", authStrictLimiter, userHandler.CheckRole)
+		auth.POST("/forget-password", authStrictLimiter, userHandler.ForgetPassword)
 		auth.POST("/refresh", userHandler.Refresh)
 		auth.POST("/logout", userHandler.Logout)
 

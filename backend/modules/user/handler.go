@@ -212,7 +212,19 @@ func (h *Handler) Refresh(c *gin.Context) {
 		return
 	}
 
-	if err := h.issueAuthTokens(c, claims.UserID, claims.UserType); err != nil {
+	// Verify user exists and is active in database
+	user, err := h.service.GetUser(claims.UserID.String())
+	if err != nil || user == nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "user no longer exists"})
+		return
+	}
+
+	if user.IsSuspended {
+		c.JSON(http.StatusForbidden, gin.H{"error": "account suspended"})
+		return
+	}
+
+	if err := h.issueAuthTokens(c, user.ID, string(user.UserType)); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate tokens"})
 		return
 	}

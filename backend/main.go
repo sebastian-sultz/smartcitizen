@@ -22,6 +22,12 @@ func main() {
 		log.Println("No .env file found, relying on environment variables")
 	}
 
+	appEnv := os.Getenv("APP_ENV")
+	ginMode := os.Getenv("GIN_MODE")
+	if ginMode == "release" || appEnv == "production" {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	secret := os.Getenv("JWT_SECRET")
 	if secret == "" || secret == "supersecret" || len(secret) < 32 {
 		log.Fatalf("FATAL: JWT_SECRET environment variable must be set to a secure string (min 32 characters)")

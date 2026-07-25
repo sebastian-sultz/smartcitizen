@@ -11,7 +11,7 @@ import (
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString, err := c.Cookie("access_token")
-		if err != nil {
+		if err != nil || tokenString == "" {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "unauthorized"})
 			c.Abort()
 			return
@@ -42,7 +42,7 @@ func OptionalAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString, err := c.Cookie("access_token")
 		// If no token is provided, proceed as a guest (userID remains nil in handler)
-		if err != nil {
+		if err != nil || tokenString == "" {
 			c.Next()
 			return
 		}

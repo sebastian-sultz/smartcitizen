@@ -14,12 +14,17 @@ type Claims struct {
 }
 
 func GenerateTokens(userID uuid.UUID, userType string, secret string) (string, string, error) {
+	now := time.Now()
+
 	// Access token (15 minutes)
 	accessClaims := Claims{
 		UserID:   userID,
 		UserType: userType,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(15 * time.Minute)),
+			Issuer:    "smartcitizen",
+			IssuedAt:  jwt.NewNumericDate(now),
+			NotBefore: jwt.NewNumericDate(now),
+			ExpiresAt: jwt.NewNumericDate(now.Add(15 * time.Minute)),
 		},
 	}
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, accessClaims)
@@ -33,7 +38,10 @@ func GenerateTokens(userID uuid.UUID, userType string, secret string) (string, s
 		UserID:   userID,
 		UserType: userType,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(7 * 24 * time.Hour)),
+			Issuer:    "smartcitizen",
+			IssuedAt:  jwt.NewNumericDate(now),
+			NotBefore: jwt.NewNumericDate(now),
+			ExpiresAt: jwt.NewNumericDate(now.Add(7 * 24 * time.Hour)),
 		},
 	}
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims)
