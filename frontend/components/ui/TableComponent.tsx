@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Table, TableHeader as ShadcnTableHeader, TableBody as ShadcnTableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
