@@ -1,0 +1,72 @@
+name: Deploy Global Smart Citizen
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # 1. CI Validation: Compile backend and frontend BEFORE touching production server
+  build-and-test:
+    name: Build & Test Validation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+
+      - name: Verify Backend Build
+        run: |
+          cd backend
+          go build ./...
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Verify Frontend Build
+        run: |
+          cd frontend
+          npm ci
+          npm run build
+
+  # 2. CD Deployment: Only executes if build-and-test succeeds
+  deploy:
+    name: Deploy to AWS EC2
+    needs: build-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: ${{ secrets.EC2_PORT || 22 }}
+          script: |
+            set -e
+
+            echo "Starting Global Smart Citizen deployment..."
+
+            cd /opt/global-smart-citizen/smartcitizen
+
+            echo "Fetching latest code..."
+            git fetch origin main
+            git reset --hard origin/main
+
+            echo "Rebuilding and restarting containers..."
+            docker compose up -d --build
+
+            echo "Removing unused Docker images..."
+            docker image prune -f
+
+            echo "Checking running containers..."
+            docker compose ps
+
+            echo "Global Smart Citizen deployment completed successfully!"
