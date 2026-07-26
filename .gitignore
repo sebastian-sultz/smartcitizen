@@ -8,35 +8,50 @@
 # testing
 /coverage
 
-# next.js
-/.next/
+# Next.js
+.next/
 /out/
+frontend/.next/
 
-# production
+# Production
 /build
 
-# misc
+# macOS
 .DS_Store
+**/.DS_Store
+
+# Certificates
 *.pem
 
-# debug
+# Debug logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
+# Environment files
 .env*.local
 .env
+backend/.env
+frontend/.env
 
-# vercel
+# Vercel
 .vercel
 
-# typescript
+# TypeScript
 *.tsbuildinfo
 next-env.d.ts
 
-# graphify
+# Go Binaries
+backend/backend
+backend/server
+*.exe
+*.test
+*.out
+
+# Graphify & AI agents
 graphify-out/
 .code-review-graph/
-
-.agents
+.agents/
+.cursorrules
+.vscode/
