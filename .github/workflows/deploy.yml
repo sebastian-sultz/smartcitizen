@@ -6,49 +6,58 @@ on:
       - main
   workflow_dispatch:
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
-  # 1. CI Validation
-  build-and-test:
-    name: Build & Test Validation
+  # 1. CI Validation & Docker Image Build
+  build-and-push:
+    name: Build & Push Docker Images to GHCR
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
 
-      # Backend - Go
-      - name: Setup Go
-        uses: actions/setup-go@v6
+      - name: Log in to GitHub Container Registry (GHCR)
+        uses: docker/login-action@v3
         with:
-          go-version: "1.26.1"
-          cache: true
-          cache-dependency-path: backend/go.sum
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Verify Backend Build
-        working-directory: backend
-        run: |
-          go build ./...
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-      # Frontend - Next.js
-      - name: Setup Node.js
-        uses: actions/setup-node@v5
+      # Backend Build & Push
+      - name: Build & Push Backend Image
+        uses: docker/build-push-action@v6
         with:
-          node-version: "22"
-          cache: "npm"
-          cache-dependency-path: frontend/package-lock.json
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: ghcr.io/sebastian-sultz/smartcitizen-backend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      - name: Verify Frontend Build
-        working-directory: frontend
-        env:
-          NEXT_PUBLIC_API_URL: https://api.globalsmartcitizensfoundation.org/api
-        run: |
-          npm ci
-          npm run build
+      # Frontend Build & Push
+      - name: Build & Push Frontend Image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          build-args: |
+            NEXT_PUBLIC_API_URL=https://api.globalsmartcitizensfoundation.org/api
+          tags: ghcr.io/sebastian-sultz/smartcitizen-frontend:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-  # 2. CD Deployment
+  # 2. CD Deployment (Instant Pull on EC2)
   deploy:
     name: Deploy to AWS EC2
-    needs: build-and-test
+    needs: build-and-push
     runs-on: ubuntu-latest
 
     steps:
@@ -60,7 +69,7 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           timeout: 30s
-          command_timeout: 30m
+          command_timeout: 10m
 
           script: |
             set -e
@@ -71,20 +80,18 @@ jobs:
 
             cd /opt/global-smart-citizen/smartcitizen
 
-            echo "Fetching latest code..."
+            echo "Fetching latest repository code..."
             git fetch origin main
-
-            echo "Resetting to latest main branch..."
             git reset --hard origin/main
 
-            echo "Rebuilding and restarting containers..."
-            docker compose up -d --build
+            echo "Pulling pre-built Docker images from GHCR..."
+            docker compose pull
 
-            echo "Removing unused Docker images..."
+            echo "Restarting containers with zero downtime..."
+            docker compose up -d --remove-orphans
+
+            echo "Cleaning up unused Docker images..."
             docker image prune -f
-
-            echo "Removing unused Docker build cache..."
-            docker builder prune -af
 
             echo "Checking running containers..."
             docker compose ps
