@@ -14,7 +14,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func main() {
@@ -50,26 +49,26 @@ func main() {
 	}
 
 	// Seed admin user if none exists in the database
-	var adminCount int64
-	db.Model(&user.User{}).Where("user_type = ?", user.Admin).Count(&adminCount)
-	if adminCount == 0 {
-		log.Println("Seeding initial admin user...")
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte("Foundation@Global20"), bcrypt.DefaultCost)
-		if err != nil {
-			log.Fatalf("Failed to hash admin password: %v", err)
-		}
-		admin := user.User{
-			Name:     "Super Admin",
-			Phone:    "8429696969",
-			Password: string(hashedPassword),
-			UserType: user.Admin,
-		}
-		if err := db.Create(&admin).Error; err != nil {
-			log.Printf("Failed to seed admin user: %v", err)
-		} else {
-			log.Println("Seeding admin user complete (Phone: 9999999999, Password: admin123).")
-		}
-	}
+	// var adminCount int64
+	// db.Model(&user.User{}).Where("user_type = ?", user.Admin).Count(&adminCount)
+	// if adminCount == 0 {
+	// 	log.Println("Seeding initial admin user...")
+	// 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(""), bcrypt.DefaultCost)
+	// 	if err != nil {
+	// 		log.Fatalf("Failed to hash admin password: %v", err)
+	// 	}
+	// 	admin := user.User{
+	// 		Name:     "",
+	// 		Phone:    "",
+	// 		Password: string(hashedPassword),
+	// 		UserType: user.Admin,
+	// 	}
+	// 	if err := db.Create(&admin).Error; err != nil {
+	// 		log.Printf("Failed to seed admin user: %v", err)
+	// 	} else {
+	// 		log.Println("Seeding admin user complete (Phone: [PHONE], Password: [PASSWORD]).")
+	// 	}
+	// }
 
 	r := gin.Default()
 	SetupRoutes(r, db)

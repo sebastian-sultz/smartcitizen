@@ -99,7 +99,7 @@ func (r *repository) GetSystemStats() (int64, int64, int64, float64, error) {
 	var totalReferrals int64
 	var totalAmountPaise int64
 
-	err := r.db.Model(&User{}).Count(&totalUsers).Error
+	err := r.db.Model(&User{}).Where("user_type != ?", Admin).Count(&totalUsers).Error
 	if err != nil {
 		return 0, 0, 0, 0, err
 	}
