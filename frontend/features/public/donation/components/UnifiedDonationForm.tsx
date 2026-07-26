@@ -65,7 +65,7 @@ export default function UnifiedDonationForm({
       amount: Yup.number()
         .transform((value, originalValue) => (originalValue === "" ? undefined : value))
         .required("Donation amount is required")
-        .min(100, "Minimum contribution is ₹100")
+        .min(1, "Minimum contribution is ₹1")
         .max(10000000, "Maximum contribution is ₹10,000,000"),
       donorName: nameSchema().max(100, "Name must be under 100 characters").nullable(),
       pan: panSchema().nullable(),
@@ -282,7 +282,7 @@ export default function UnifiedDonationForm({
 
                   <Input
                     label="Custom Amount (₹) *"
-                    placeholder="Enter custom amount (Minimum ₹100)"
+                    placeholder="Enter custom amount (Minimum ₹1)"
                     value={formik.values.amount}
                     onChange={handleCustomAmountChange}
                     error={
