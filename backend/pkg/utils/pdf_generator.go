@@ -32,7 +32,7 @@ func GenerateReceiptPDF(data ReceiptData) ([]byte, error) {
 	m.AddRows(
 		row.New(20).Add(
 			col.New(12).Add(
-				text.New("SMART CITIZENS FOUNDATION", props.Text{
+				text.New("GLOBAL SMART CITIZENS FOUNDATION", props.Text{
 					Top:   5,
 					Style: fontstyle.Bold,
 					Align: align.Center,

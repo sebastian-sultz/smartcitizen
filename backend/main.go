@@ -54,13 +54,13 @@ func main() {
 	db.Model(&user.User{}).Where("user_type = ?", user.Admin).Count(&adminCount)
 	if adminCount == 0 {
 		log.Println("Seeding initial admin user...")
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte("admin123"), bcrypt.DefaultCost)
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte("Foundation@Global20"), bcrypt.DefaultCost)
 		if err != nil {
 			log.Fatalf("Failed to hash admin password: %v", err)
 		}
 		admin := user.User{
-			Name:     "System Admin",
-			Phone:    "9999999999",
+			Name:     "Super Admin",
+			Phone:    "8429696969",
 			Password: string(hashedPassword),
 			UserType: user.Admin,
 		}
