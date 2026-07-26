@@ -38,8 +38,8 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           tags: ghcr.io/sebastian-sultz/smartcitizen-backend:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=registry,ref=ghcr.io/sebastian-sultz/smartcitizen-backend:latest
+          cache-to: type=inline
 
       # Frontend Build & Push
       - name: Build & Push Frontend Image
@@ -51,8 +51,8 @@ jobs:
           build-args: |
             NEXT_PUBLIC_API_URL=https://api.globalsmartcitizensfoundation.org/api
           tags: ghcr.io/sebastian-sultz/smartcitizen-frontend:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=registry,ref=ghcr.io/sebastian-sultz/smartcitizen-frontend:latest
+          cache-to: type=inline
 
   # 2. CD Deployment (Instant Pull on EC2)
   deploy:
@@ -63,6 +63,9 @@ jobs:
     steps:
       - name: Deploy to EC2 via SSH
         uses: appleboy/ssh-action@v1.2.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
@@ -70,6 +73,7 @@ jobs:
           port: 22
           timeout: 30s
           command_timeout: 10m
+          envs: GITHUB_TOKEN,GITHUB_ACTOR
 
           script: |
             set -e
@@ -83,6 +87,9 @@ jobs:
             echo "Fetching latest repository code..."
             git fetch origin main
             git reset --hard origin/main
+
+            echo "Authenticating Docker with GHCR..."
+            echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
 
             echo "Pulling pre-built Docker images from GHCR..."
             docker compose pull
