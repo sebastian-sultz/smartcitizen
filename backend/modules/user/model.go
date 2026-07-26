@@ -40,7 +40,7 @@ type User struct {
 	MemberID              string   `gorm:"uniqueIndex;not null" json:"member_id"`
 	ProfilePhoto          *string  `json:"profile_photo"`
 	ProfilePhotoPublicID  *string  `json:"-"`
-	UserType              UserType `gorm:"type:varchar(20);not null;default:'member'" json:"user_type"`
+	UserType              UserType `gorm:"type:varchar(20);not null;default:'member';index:idx_single_admin,unique,where:user_type = 'admin' AND deleted_at IS NULL" json:"user_type"`
 	TotalPayments         int64    `gorm:"default:0" json:"total_payments"`
 	TotalAmount           float64  `gorm:"default:0.0" json:"total_amount"`
 	ReferralPaymentCount  int64    `gorm:"default:0" json:"referral_payment_count"`
@@ -58,6 +58,27 @@ func (u *User) BeforeCreate(tx *gorm.DB) error {
 	}
 	if u.MemberID == "" {
 		u.MemberID = fmt.Sprintf("GSC-%s", strings.ToUpper(u.ID.String()[:8]))
+	}
+	return u.validateSingleAdmin(tx)
+}
+
+func (u *User) BeforeSave(tx *gorm.DB) error {
+	return u.validateSingleAdmin(tx)
+}
+
+func (u *User) validateSingleAdmin(tx *gorm.DB) error {
+	if u.UserType == Admin {
+		var count int64
+		query := tx.Model(&User{}).Where("user_type = ? AND deleted_at IS NULL", Admin)
+		if u.ID != uuid.Nil {
+			query = query.Where("id != ?", u.ID)
+		}
+		if err := query.Count(&count).Error; err != nil {
+			return err
+		}
+		if count > 0 {
+			return fmt.Errorf("only one admin user is allowed in the system")
+		}
 	}
 	return nil
 }

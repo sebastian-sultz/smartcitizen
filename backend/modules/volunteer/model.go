@@ -24,7 +24,7 @@ type Volunteer struct {
 	User           user.User      `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"user"`
 	Name           string         `gorm:"not null" json:"name"`
 	Email          string         `gorm:"unique;not null" json:"email"`
-	Phone          string         `gorm:"not null" json:"phone"`
+	Phone          string         `gorm:"index;not null" json:"phone"`
 	AlternatePhone string         `json:"alternate_phone"`
 	Address        string         `json:"address"`
 	City           string         `json:"city"`

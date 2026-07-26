@@ -23,7 +23,7 @@ type Payment struct {
 	MerchantOrderID     string         `gorm:"type:varchar(255);uniqueIndex;not null" json:"merchantOrderId"`
 	ProviderReferenceID string         `gorm:"type:varchar(255);index" json:"providerReferenceId,omitempty"`
 	Amount              int64          `gorm:"not null" json:"amount"` // Amount in paise
-	Status              PaymentStatus  `gorm:"type:varchar(50);not null;default:'PENDING'" json:"status"`
+	Status              PaymentStatus  `gorm:"type:varchar(50);not null;default:'PENDING';index" json:"status"`
 	PaymentMethod       string         `gorm:"type:varchar(50)" json:"paymentMethod,omitempty"`
 	DonorName           string         `gorm:"type:varchar(255)" json:"donorName,omitempty"`
 	DonorEmail          string         `gorm:"type:varchar(255)" json:"donorEmail,omitempty"`

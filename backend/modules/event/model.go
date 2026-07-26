@@ -43,10 +43,10 @@ func (e *Event) BeforeCreate(tx *gorm.DB) error {
 
 type EventRegistration struct {
 	ID        uuid.UUID      `gorm:"type:uuid;primaryKey" json:"id"`
-	EventID   uuid.UUID      `gorm:"type:uuid;not null" json:"event_id"`
-	UserID    uuid.UUID      `gorm:"type:uuid;not null" json:"user_id"`
-	Event     *Event         `gorm:"foreignKey:EventID" json:"event,omitempty"`
-	User      *user.User     `gorm:"foreignKey:UserID" json:"user,omitempty"`
+	EventID   uuid.UUID      `gorm:"type:uuid;not null;index;uniqueIndex:idx_user_event_reg" json:"event_id"`
+	UserID    uuid.UUID      `gorm:"type:uuid;not null;index;uniqueIndex:idx_user_event_reg" json:"user_id"`
+	Event     *Event         `gorm:"foreignKey:EventID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"event,omitempty"`
+	User      *user.User     `gorm:"foreignKey:UserID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"user,omitempty"`
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedAt time.Time      `json:"updated_at"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"deleted_at,omitempty"`
