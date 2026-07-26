@@ -173,6 +173,10 @@ export default function DonationHistory({
     },
   ];
 
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   if (!loading && donations.length === 0) {
     return (
       <EmptyState
@@ -180,7 +184,7 @@ export default function DonationHistory({
         title="No Donations Found"
         description="You have not made any donations yet. Join hands with us to fund public assemblies, drives, and local community initiatives!"
         ctaText="Make Your First Donation"
-        ctaHref="/donation"
+        onClick={scrollToTop}
       />
     );
   }

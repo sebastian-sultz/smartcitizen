@@ -1,13 +1,13 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/Card";
-import { 
-  Heart, 
-  UserPlus, 
-  Award, 
-  HelpCircle, 
-  Calendar, 
-  User 
+import {
+  Heart,
+  UserPlus,
+  Award,
+  HelpCircle,
+  Calendar,
+  User,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -55,7 +55,7 @@ export default function QuickActions({ onInviteClick }: QuickActionsProps) {
       onClick: () => router.push("/citizen/profile"),
     },
     {
-      title: "Volunteer Events",
+      title: "Upcoming Events",
       description: "Browse and register for upcoming assemblies",
       icon: Calendar,
       iconColor: "text-indigo-500 bg-indigo-50",
@@ -65,18 +65,22 @@ export default function QuickActions({ onInviteClick }: QuickActionsProps) {
 
   return (
     <div className="space-y-4">
-      <h3 className="font-display text-lg font-bold text-text">Quick Actions</h3>
+      <h3 className="font-display text-lg font-bold text-text">
+        Quick Actions
+      </h3>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {actions.map((act, idx) => {
           const Icon = act.icon;
           return (
-            <Card 
+            <Card
               key={idx}
               className="h-full border-primary/5 hover:border-primary/20 hover:shadow-md hover:scale-[1.02] cursor-pointer transition-all duration-300 rounded-[32px] group"
               onClick={act.onClick}
             >
               <CardContent className="p-5 flex items-start gap-4">
-                <div className={`p-3 rounded-2xl ${act.iconColor} shrink-0 group-hover:scale-105 transition-transform`}>
+                <div
+                  className={`p-3 rounded-2xl ${act.iconColor} shrink-0 group-hover:scale-105 transition-transform`}
+                >
                   <Icon size={20} />
                 </div>
                 <div className="space-y-1">

@@ -1,4 +1,4 @@
-import { NetworkTreeInspector } from "@/features/admin/components/NetworkTreeInspector";
+import { NetworkUserList } from "@/features/admin/components/network/NetworkUserList";
 
 export default function AdminNetworksPage() {
   return (
@@ -6,10 +6,11 @@ export default function AdminNetworksPage() {
       <div>
         <h1 className="text-2xl font-bold text-text">Referral Network Tree</h1>
         <p className="text-text-muted mt-1 text-[14px]">
-          Auditing administrative referral networks, coordinator downline structures, and cumulative fundraising counts.
+          Auditing administrative referral networks, coordinator downline
+          structures, and cumulative fundraising counts.
         </p>
       </div>
-      <NetworkTreeInspector />
+      <NetworkUserList />
     </div>
   );
 }

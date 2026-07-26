@@ -2,8 +2,8 @@
 import { ASSETS } from "@/lib/assets";
 
 import { useEffect, useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import { CheckCircle2, XCircle, AlertCircle, Download, Home, ArrowLeft } from "lucide-react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { CheckCircle2, XCircle, AlertCircle, Download, Home, ArrowLeft, LayoutDashboard } from "lucide-react";
 import { Card, CardTitle, CardContent } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
@@ -16,6 +16,7 @@ import { downloadBlob } from "@/lib/utils";
 import { useCitizenStore } from "@/store/citizenStore";
 
 function PaymentStatusContent() {
+  const router = useRouter();
   const { user } = useCitizenStore();
   const searchParams = useSearchParams();
   const transactionId = searchParams.get("transactionId");
@@ -59,7 +60,7 @@ function PaymentStatusContent() {
     };
 
     checkStatus();
-  }, [transactionId]);
+  }, [transactionId, user]);
 
   useEffect(() => {
     if (!transactionId || !payment || payment.status !== "SUCCESS") return;
@@ -89,7 +90,7 @@ function PaymentStatusContent() {
             setReceiptError(true);
           }
         }
-      } catch (err) {
+      } catch {
         if (!isMounted) return;
         if (retries < 5) {
           retries++;
@@ -143,18 +144,18 @@ function PaymentStatusContent() {
           </p>
           <div className="pt-4 flex flex-col sm:flex-row gap-3 justify-center">
             <Button
-              onClick={() => window.location.href = user ? "/citizen/donations" : "/"}
+              onClick={() => router.push(user ? "/citizen/donations" : "/donation")}
               variant="outline"
               size="sm"
+              startIcon={<ArrowLeft size={14} />}
             >
-              <ArrowLeft size={14} />
               Try Again
             </Button>
             <Button
-              onClick={() => window.location.href = "/"}
+              onClick={() => router.push("/")}
               size="sm"
+              startIcon={<Home size={14} />}
             >
-              <Home size={14} />
               Back to Home
             </Button>
           </div>
@@ -236,17 +237,30 @@ function PaymentStatusContent() {
               variant="outline"
               size="sm"
               isLoading={receiptLoading}
+              startIcon={<Download size={14} />}
             >
-              <Download size={14} />
               {receiptLoading ? "Generating Receipt..." : "Download Receipt"}
             </Button>
           )}
-          <Button
-            onClick={() => window.location.href = user ? "/citizen/donations" : "/"}
-            size="sm"
-          >
-            {isSuccess ? (user ? "Go to Dashboard" : "Back to Home") : (user ? "Back to Dashboard" : "Back to Home")}
-          </Button>
+          
+          {user ? (
+            <Button
+              onClick={() => router.push("/citizen/donations")}
+              size="sm"
+              startIcon={<LayoutDashboard size={14} />}
+            >
+              Go to My Dashboard
+            </Button>
+          ) : (
+            <Button
+              onClick={() => router.push("/")}
+              variant="secondary"
+              size="sm"
+              startIcon={<Home size={14} />}
+            >
+              Back to Home
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>

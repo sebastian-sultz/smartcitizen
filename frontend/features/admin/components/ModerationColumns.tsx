@@ -19,12 +19,19 @@ export const getModerationColumns = (
     ),
   },
   {
-    label: "Issue",
+    label: "Contact Number",
     render: (report) => (
-      <div className="flex flex-col">
-        <span className="text-[14px] font-bold text-text leading-tight">{report.title}</span>
-        <span className="text-[12px] text-text-muted mt-1 line-clamp-2 leading-relaxed">{report.description}</span>
-      </div>
+      <span className="font-mono text-xs font-semibold text-text">
+        {report.user?.phone ? `+91 ${report.user.phone}` : "N/A"}
+      </span>
+    ),
+  },
+  {
+    label: "Subject",
+    render: (report) => (
+      <span className="text-[14px] font-bold text-text leading-tight">
+        {report.title}
+      </span>
     ),
   },
   {

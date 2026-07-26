@@ -2,6 +2,7 @@ package volunteer
 
 import (
 	"net/http"
+	"strings"
 
 	"backend/dto/request"
 	"backend/dto/response"
@@ -20,6 +21,11 @@ func NewHandler(service Service) *Handler {
 }
 
 func mapToResponse(v *Volunteer) response.Volunteer {
+	specs := make([]string, 0)
+	if v.Specialties != "" {
+		specs = strings.Split(v.Specialties, ",")
+	}
+
 	return response.Volunteer{
 		ID:              v.ID,
 		UserID:          v.UserID,
@@ -30,9 +36,11 @@ func mapToResponse(v *Volunteer) response.Volunteer {
 		Address:         v.Address,
 		City:            v.City,
 		District:        v.District,
+		State:           v.State,
 		Pincode:         v.Pincode,
 		Profession:      v.Profession,
 		Experience:      v.Experience,
+		Specialties:     specs,
 		IsPublicConsent: v.IsPublicConsent,
 		Status:          string(v.Status),
 		Image:           v.Image,
@@ -59,16 +67,23 @@ func (h *Handler) CreateVolunteer(c *gin.Context) {
 
 func (h *Handler) GetAllVolunteers(c *gin.Context) {
 	pagination := utils.GetPaginationFromContext(c)
-	search := c.Query("q") // search by name, profession, experience, location
 
-	onlyApproved := true
+	filter := VolunteerFilter{
+		Search:       c.Query("q"),
+		Profession:   c.Query("profession"),
+		State:        c.Query("state"),
+		City:         c.Query("city"),
+		Sort:         c.Query("sort"),
+		OnlyApproved: true,
+	}
+
 	if val, exists := c.Get("userType"); exists {
 		if uType, ok := val.(string); ok && uType == "admin" {
-			onlyApproved = false
+			filter.OnlyApproved = false
 		}
 	}
 
-	volunteers, err := h.service.GetAllVolunteers(search, onlyApproved, &pagination)
+	volunteers, err := h.service.GetAllVolunteers(filter, &pagination)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

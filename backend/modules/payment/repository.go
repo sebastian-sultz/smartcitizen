@@ -8,6 +8,7 @@ import (
 	"backend/dto/response"
 	"backend/pkg/utils"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -40,7 +41,15 @@ func (r *repository) CreatePayment(ctx context.Context, payment *Payment) error 
 
 func (r *repository) GetPaymentByOrderID(ctx context.Context, orderID string) (*Payment, error) {
 	var payment Payment
-	if err := r.db.WithContext(ctx).Where("merchant_order_id = ?", orderID).First(&payment).Error; err != nil {
+	query := r.db.WithContext(ctx)
+
+	if _, err := uuid.Parse(orderID); err == nil {
+		query = query.Where("id = ? OR merchant_order_id = ? OR provider_reference_id = ?", orderID, orderID, orderID)
+	} else {
+		query = query.Where("merchant_order_id = ? OR provider_reference_id = ?", orderID, orderID)
+	}
+
+	if err := query.First(&payment).Error; err != nil {
 		return nil, err
 	}
 	return &payment, nil

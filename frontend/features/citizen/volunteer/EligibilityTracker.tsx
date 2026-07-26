@@ -41,36 +41,36 @@ export default function EligibilityTracker({ eligibility }: EligibilityTrackerPr
   ];
 
   return (
-    <Card className="rounded-[40px] border-primary/5 shadow-sm max-w-2xl mx-auto">
-      <CardHeader className="text-center pb-2">
-        <CardTitle className="font-display text-2xl font-black text-text">
+    <Card className="rounded-[32px] border-border shadow-sm max-w-3xl w-full mx-auto">
+      <CardHeader className="text-center pb-2 p-6 md:p-8">
+        <CardTitle className="font-display text-xl md:text-2xl font-bold text-text">
           Volunteer Eligibility Gating
         </CardTitle>
-        <p className="text-text-muted text-sm max-w-md mx-auto mt-1 leading-relaxed">
+        <p className="text-text-muted text-xs md:text-sm max-w-md mx-auto mt-1 leading-relaxed">
           To maintain grassroots quality, coordinator roles are open to citizens who actively grow and verify their local network.
         </p>
       </CardHeader>
       
-      <CardContent className="space-y-6 pt-4">
+      <CardContent className="space-y-4 md:space-y-6 p-6 md:p-8 pt-0">
         {/* Step List */}
-        <div className="space-y-4">
+        <div className="space-y-3 md:space-y-4">
           {steps.map((step, idx) => {
             const Icon = step.icon;
             return (
               <div 
                 key={idx} 
-                className={`p-4 rounded-3xl border flex items-center justify-between gap-4 transition-all duration-300 ${
+                className={`p-4 md:p-5 rounded-2xl md:rounded-3xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 transition-all duration-300 ${
                   step.isDone 
                     ? "bg-emerald-50/20 border-emerald-100/50" 
                     : "bg-bg/40 border-border/80"
                 }`}
               >
-                <div className="flex gap-3.5 items-start">
-                  <div className={`p-2.5 rounded-2xl border ${step.color}`}>
+                <div className="flex gap-3 items-start">
+                  <div className={`p-2.5 rounded-xl md:rounded-2xl border shrink-0 ${step.color}`}>
                     <Icon size={16} />
                   </div>
                   <div>
-                    <h4 className={`text-sm font-bold leading-tight ${step.isDone ? "text-emerald-950" : "text-text"}`}>
+                    <h4 className={`text-xs md:text-sm font-bold leading-tight ${step.isDone ? "text-emerald-950" : "text-text"}`}>
                       {step.title}
                     </h4>
                     <p className="text-[11px] text-text-muted leading-relaxed font-medium mt-0.5">
@@ -79,7 +79,7 @@ export default function EligibilityTracker({ eligibility }: EligibilityTrackerPr
                   </div>
                 </div>
 
-                <div className="flex flex-col items-end gap-1.5 shrink-0">
+                <div className="flex items-center sm:flex-col sm:items-end justify-between w-full sm:w-auto gap-1.5 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/40">
                   <span className={`text-xs font-mono font-bold ${step.isDone ? "text-emerald-700" : "text-text-muted"}`}>
                     {step.current} / {step.target}
                   </span>
@@ -98,7 +98,7 @@ export default function EligibilityTracker({ eligibility }: EligibilityTrackerPr
           })}
         </div>
 
-        <div className="p-4 bg-primary/5 rounded-3xl border border-primary/10 text-center text-xs font-bold text-primary">
+        <div className="p-4 bg-primary/5 rounded-2xl md:rounded-3xl border border-primary/10 text-center text-xs font-bold text-primary">
           Checklist status: {eligibility.is_eligible ? "🔓 Gating Unlocked! Please fill out the application below." : "🔒 Complete the checklist above to unlock the volunteer coordinator form."}
         </div>
       </CardContent>

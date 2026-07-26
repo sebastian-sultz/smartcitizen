@@ -3,6 +3,7 @@ package volunteer
 import (
 	"context"
 	"errors"
+	"strings"
 
 	"backend/dto/request"
 	"backend/modules/user"
@@ -15,7 +16,7 @@ import (
 type Service interface {
 	CreateVolunteer(req *request.CreateVolunteer) (*Volunteer, error)
 	GetVolunteer(id string) (*Volunteer, error)
-	GetAllVolunteers(search string, onlyApproved bool, pagination *utils.Pagination) ([]Volunteer, error)
+	GetAllVolunteers(filter VolunteerFilter, pagination *utils.Pagination) ([]Volunteer, error)
 	UpdateVolunteer(id string, req *request.UpdateVolunteer) (*Volunteer, error)
 	UpdateVolunteerImage(ctx context.Context, id string, url string, publicID string) error
 	DeleteVolunteer(ctx context.Context, id string) error
@@ -55,6 +56,11 @@ func (s *service) CreateVolunteer(req *request.CreateVolunteer) (*Volunteer, err
 		return nil, errors.New("invalid user id format")
 	}
 
+	specialtiesStr := ""
+	if len(req.Specialties) > 0 {
+		specialtiesStr = strings.Join(req.Specialties, ",")
+	}
+
 	volunteer := &Volunteer{
 		UserID:          userID,
 		Name:            req.Name,
@@ -64,9 +70,11 @@ func (s *service) CreateVolunteer(req *request.CreateVolunteer) (*Volunteer, err
 		Address:         req.Address,
 		City:            req.City,
 		District:        req.District,
+		State:           req.State,
 		Pincode:         req.Pincode,
 		Profession:      req.Profession,
 		Experience:      req.Experience,
+		Specialties:     specialtiesStr,
 		IsPublicConsent: req.IsPublicConsent,
 		Status:          VolunteerStatusPending,
 	}
@@ -89,8 +97,8 @@ func (s *service) GetVolunteer(id string) (*Volunteer, error) {
 	return s.repo.FindByID(id)
 }
 
-func (s *service) GetAllVolunteers(search string, onlyApproved bool, pagination *utils.Pagination) ([]Volunteer, error) {
-	return s.repo.FindAll(search, onlyApproved, pagination)
+func (s *service) GetAllVolunteers(filter VolunteerFilter, pagination *utils.Pagination) ([]Volunteer, error) {
+	return s.repo.FindAll(filter, pagination)
 }
 
 func (s *service) UpdateVolunteer(id string, req *request.UpdateVolunteer) (*Volunteer, error) {

@@ -7,10 +7,19 @@ import (
 	"gorm.io/gorm"
 )
 
+type VolunteerFilter struct {
+	Search       string
+	Profession   string
+	State        string
+	City         string
+	Sort         string
+	OnlyApproved bool
+}
+
 type Repository interface {
 	Create(volunteer *Volunteer) error
 	FindByID(id string) (*Volunteer, error)
-	FindAll(search string, onlyApproved bool, pagination *utils.Pagination) ([]Volunteer, error)
+	FindAll(filter VolunteerFilter, pagination *utils.Pagination) ([]Volunteer, error)
 	Update(volunteer *Volunteer) error
 	Delete(id string) error
 	UpdateStatus(volunteerID string, status string, userID string, targetUserType string) error
@@ -37,18 +46,33 @@ func (r *repository) FindByID(id string) (*Volunteer, error) {
 	return &volunteer, nil
 }
 
-func (r *repository) FindAll(search string, onlyApproved bool, pagination *utils.Pagination) ([]Volunteer, error) {
+func (r *repository) FindAll(filter VolunteerFilter, pagination *utils.Pagination) ([]Volunteer, error) {
 	var volunteers []Volunteer
 	query := r.db.Model(&Volunteer{})
 
-	if onlyApproved {
+	if filter.OnlyApproved {
 		query = query.Where("status = ? AND is_public_consent = ?", "APPROVED", true)
 	}
 
-	if search != "" {
-		searchTerm := "%" + search + "%"
-		query = query.Where("name ILIKE ? OR profession ILIKE ? OR experience ILIKE ? OR city ILIKE ? OR district ILIKE ? OR address ILIKE ?",
-			searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm)
+	if filter.Search != "" {
+		searchTerm := "%" + filter.Search + "%"
+		query = query.Where(
+			"name ILIKE ? OR profession ILIKE ? OR specialties ILIKE ? OR experience ILIKE ? OR city ILIKE ? OR district ILIKE ? OR state ILIKE ? OR pincode ILIKE ? OR address ILIKE ?",
+			searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm,
+		)
+	}
+
+	if filter.Profession != "" && filter.Profession != "All" {
+		query = query.Where("profession ILIKE ?", filter.Profession)
+	}
+
+	if filter.State != "" && filter.State != "All" {
+		query = query.Where("state ILIKE ?", filter.State)
+	}
+
+	if filter.City != "" && filter.City != "All" {
+		cityTerm := filter.City
+		query = query.Where("city ILIKE ? OR district ILIKE ?", cityTerm, cityTerm)
 	}
 
 	if err := query.Count(&pagination.TotalRows).Error; err != nil {
@@ -56,7 +80,20 @@ func (r *repository) FindAll(search string, onlyApproved bool, pagination *utils
 	}
 	pagination.Calculate()
 
-	err := query.Order("created_at desc").Limit(pagination.Limit).Offset(pagination.Offset).Find(&volunteers).Error
+	// Ordering logic
+	orderClause := "created_at desc"
+	switch filter.Sort {
+	case "name_asc":
+		orderClause = "name asc"
+	case "name_desc":
+		orderClause = "name desc"
+	case "profession":
+		orderClause = "profession asc"
+	case "newest":
+		orderClause = "created_at desc"
+	}
+
+	err := query.Order(orderClause).Limit(pagination.Limit).Offset(pagination.Offset).Find(&volunteers).Error
 	return volunteers, err
 }
 

@@ -9,8 +9,10 @@ export interface VolunteerResponse {
   city: string;
   district: string;
   pincode: string;
+  state?: string;
   profession: string;
   experience: string;
+  specialties?: string[];
   ispublicconsent: boolean;
   status: string;
   image: string | null;
@@ -27,10 +29,13 @@ export interface CreateVolunteerPayload {
   address?: string;
   city?: string;
   district?: string;
+  state?: string;
   pincode?: string;
   profession?: string;
   experience?: string;
+  specialties?: string[];
   ispublicconsent?: boolean;
+  password?: string;
 }
 
 export interface UpdateVolunteerPayload {
@@ -41,8 +46,10 @@ export interface UpdateVolunteerPayload {
   address?: string;
   city?: string;
   district?: string;
+  state?: string;
   pincode?: string;
   profession?: string;
   experience?: string;
+  specialties?: string[];
   ispublicconsent?: boolean;
 }

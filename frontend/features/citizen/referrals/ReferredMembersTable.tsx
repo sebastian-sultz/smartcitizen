@@ -5,12 +5,12 @@ import { UserResponse } from "@/features/shared/auth/types";
 import { TableComponent, Header } from "@/components/ui/TableComponent";
 import { Badge } from "@/components/ui/Badge";
 import { Input } from "@/components/ui/Input";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Search, Filter } from "lucide-react";
 import Image from "next/image";
@@ -21,31 +21,41 @@ interface ReferredMembersTableProps {
   loading?: boolean;
 }
 
-export default function ReferredMembersTable({ members, loading = false }: ReferredMembersTableProps) {
+export default function ReferredMembersTable({
+  members,
+  loading = false,
+}: ReferredMembersTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
   const filteredMembers = members.filter((item) => {
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const term = searchTerm.toLowerCase().trim();
+    const matchesSearch =
+      !term ||
+      item.name.toLowerCase().includes(term) ||
+      (item.phone || "").includes(term);
+
     const isUserActive = item.total_payments > 0;
-    const matchesStatus = statusFilter === "all" || 
-      (statusFilter === "active" && isUserActive) || 
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "active" && isUserActive) ||
       (statusFilter === "registered" && !isUserActive);
     return matchesSearch && matchesStatus;
   });
 
   const getStatusBadge = (user: UserResponse) => {
     if (user.total_payments > 0) {
-      return <Badge variant="success" size="sm">Active</Badge>;
+      return (
+        <Badge variant="success" size="sm">
+          Active
+        </Badge>
+      );
     }
-    return <Badge variant="primary-light" size="sm">Registered</Badge>;
-  };
-
-  const getDonationBadge = (user: UserResponse) => {
-    if (user.total_payments > 0) {
-      return <Badge variant="success" size="sm">Donated</Badge>;
-    }
-    return <Badge variant="neutral" size="sm">None</Badge>;
+    return (
+      <Badge variant="primary-light" size="sm">
+        Registered
+      </Badge>
+    );
   };
 
   const headers: Header<UserResponse>[] = [
@@ -55,22 +65,34 @@ export default function ReferredMembersTable({ members, loading = false }: Refer
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center font-bold text-xs text-primary shrink-0 relative overflow-hidden">
             {row.profile_photo ? (
-              <Image src={row.profile_photo} alt={row.name} fill className="object-cover" sizes="32px" />
+              <Image
+                src={row.profile_photo}
+                alt={row.name}
+                fill
+                className="object-cover"
+                sizes="32px"
+              />
             ) : (
               row.name.charAt(0).toUpperCase()
             )}
           </div>
-          <span className="font-bold text-sm text-text truncate max-w-[120px] sm:max-w-none">{row.name}</span>
+          <span className="font-bold text-sm text-text truncate max-w-[120px] sm:max-w-none">
+            {row.name}
+          </span>
         </div>
+      ),
+    },
+    {
+      label: "Contact Number",
+      render: (row) => (
+        <span className="font-mono text-xs font-semibold text-text">
+          {row.phone ? `+91 ${row.phone}` : "N/A"}
+        </span>
       ),
     },
     {
       label: "Join Status",
       render: (row) => getStatusBadge(row),
-    },
-    {
-      label: "Donation Status",
-      render: (row) => getDonationBadge(row),
     },
     {
       label: "Contributions Generated",

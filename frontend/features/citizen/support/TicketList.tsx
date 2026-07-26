@@ -30,15 +30,17 @@ export default function TicketList({
           <h3 className="font-display text-base font-bold text-text">Support Inbox</h3>
           <p className="text-text-muted text-[11px] font-medium">History of your support reports</p>
         </div>
-        <Button
-          onClick={onCreateTrigger}
-          size="sm"
-          variant={isCreating ? "outline" : "primary"}
-          className="border-primary/20"
-        >
-          <Plus size={14} />
-          New Issue
-        </Button>
+        {tickets.length > 0 && (
+          <Button
+            onClick={onCreateTrigger}
+            size="sm"
+            variant={isCreating ? "outline" : "primary"}
+            className="border-primary/20"
+          >
+            <Plus size={14} />
+            New Issue
+          </Button>
+        )}
       </div>
 
       {/* Ticket Cards Stack */}

@@ -31,9 +31,11 @@ export interface CreateVolunteerPayload {
   address: string;
   city: string;
   district: string;
+  state?: string;
   pincode: string;
   profession: string;
   experience: string;
+  specialties?: string[];
   ispublicconsent?: boolean;
   password?: string;
 }

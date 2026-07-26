@@ -78,10 +78,13 @@ jobs:
             git reset --hard origin/main
 
             echo "Rebuilding and restarting containers..."
-            docker compose up -d --build
+            docker compose up -d --build --no-cache
 
             echo "Removing unused Docker images..."
             docker image prune -f
+
+            echo "Removing unused Docker build cache..."
+            docker builder prune -af
 
             echo "Checking running containers..."
             docker compose ps

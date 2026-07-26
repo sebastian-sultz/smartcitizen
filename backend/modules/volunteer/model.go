@@ -29,11 +29,12 @@ type Volunteer struct {
 	Address        string         `json:"address"`
 	City           string         `json:"city"`
 	District       string         `json:"district"`
-	Pincode        string         `json:"pincode"`
-	State          string         `json:"state"`
-	Profession     string         `json:"profession"`
-	Experience     string         `json:"experience"`
-	IsPublicConsent bool          `gorm:"default:false" json:"ispublicconsent"`
+	Pincode         string          `json:"pincode"`
+	State           string          `json:"state"`
+	Profession      string          `json:"profession"`
+	Experience      string          `json:"experience"`
+	Specialties     string          `json:"specialties"`
+	IsPublicConsent bool            `gorm:"default:false" json:"ispublicconsent"`
 	Status          VolunteerStatus `gorm:"type:varchar(50);not null;default:'PENDING'" json:"status"`
 	Image          *string        `json:"image"`
 	ImagePublicID  *string        `json:"-"`

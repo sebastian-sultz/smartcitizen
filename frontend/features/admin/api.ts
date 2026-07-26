@@ -38,15 +38,26 @@ export const getNonAdminUsers = async (
   page?: number,
   limit?: number,
   search?: string,
-  sort?: string
+  sort?: string,
+  referralsOnly?: boolean
 ): Promise<{ users: UserResponse[]; pagination?: PaginationInfo }> => {
   try {
     const response = await api.get<{ users: UserResponse[]; pagination?: PaginationInfo }>("/users", {
-      params: { page, limit, q: search, sort },
+      params: { page, limit, q: search, sort, referrals_only: referralsOnly },
     });
     return response.data;
   } catch (error: unknown) {
     handleApiError(error, "Failed to load users list");
+    throw error;
+  }
+};
+
+export const getUserById = async (id: string): Promise<UserResponse> => {
+  try {
+    const response = await api.get<{ user: UserResponse }>(`/auth/profile/${id}`);
+    return response.data.user;
+  } catch (error: unknown) {
+    handleApiError(error, "Failed to load user profile");
     throw error;
   }
 };

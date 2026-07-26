@@ -331,15 +331,16 @@ func (h *Handler) GetAllNonAdminUsers(c *gin.Context) {
 
 	search := c.Query("q")
 	sort := c.Query("sort")
+	referralsOnly := c.Query("referrals_only") == "true"
 
 	pagination := utils.GetPaginationFromContext(c)
-	usersList, err := h.service.GetNonAdminUsers(search, sort, &pagination)
+	usersList, err := h.service.GetNonAdminUsers(search, sort, referralsOnly, &pagination)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch users"})
 		return
 	}
 
-	var res []response.User
+	res := make([]response.User, 0)
 	for _, u := range usersList {
 		var refName *string
 		if u.ReferralID != nil {

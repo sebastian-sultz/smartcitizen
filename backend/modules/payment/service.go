@@ -407,13 +407,21 @@ func (s *service) GetReceiptURL(ctx context.Context, transactionID string) (stri
 	
 	receipt, err := s.repo.GetReceiptByPaymentID(ctx, payment.ID.String())
 	if err != nil {
-		return "", err
+		if payment.Status == PaymentStatusSuccess {
+			s.processSuccessfulPayment(ctx, payment)
+			receipt, err = s.repo.GetReceiptByPaymentID(ctx, payment.ID.String())
+			if err != nil {
+				return "", err
+			}
+		} else {
+			return "", err
+		}
 	}
 	
 	// Generate a temporary signed URL dynamically for private file
 	publicID := fmt.Sprintf("receipts/receipts/%s", strings.ReplaceAll(receipt.ReceiptNumber, "/", "-"))
 	signedURL, err := cloudinary.GetPrivateURL(publicID)
-	if err != nil {
+	if err != nil || signedURL == "" {
 		log.Printf("Failed to generate signed URL for receipt %s: %v", receipt.ReceiptNumber, err)
 		return receipt.CloudinaryURL, nil // Fallback to raw stored URL
 	}

@@ -186,7 +186,7 @@ export const LoginForm = () => {
 
           <Button 
             type="submit" 
-            size="lg" 
+            size="md" 
             fullWidth
             isLoading={formik.isSubmitting}
           >

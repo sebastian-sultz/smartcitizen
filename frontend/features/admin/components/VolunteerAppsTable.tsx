@@ -42,7 +42,7 @@ export const VolunteerAppsTable = () => {
   const fetchVolunteers = async () => {
     try {
       setIsLoading(true);
-      const res = await getAllVolunteers(debouncedSearch, page, limit);
+      const res = await getAllVolunteers({ search: debouncedSearch, page, limit });
       if (res && res.volunteers) {
         setVolunteers(res.volunteers);
         if (res.pagination) {

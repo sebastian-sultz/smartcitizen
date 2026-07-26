@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Spinner } from "@/components/ui/spinner";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 font-bold transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none select-none outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
+  "relative inline-flex items-center justify-center gap-2 font-bold transition-all active:scale-95 disabled:opacity-50 disabled:pointer-events-none select-none outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
   {
     variants: {
       variant: {
@@ -30,18 +30,18 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline shadow-none",
       },
       size: {
-        default: "px-5 py-2.5 md:px-6 md:py-3 text-sm md:text-base",
-        xs: "px-3 py-1 text-xs",
-        sm: "px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm",
-        small: "px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm",
-        md: "px-5 py-2.5 md:px-6 md:py-3 text-sm md:text-base",
-        medium: "px-5 py-2.5 md:px-6 md:py-3 text-sm md:text-base",
-        lg: "px-6 py-3.5 md:px-8 md:py-4 text-sm md:text-lg",
-        large: "px-6 py-3.5 md:px-8 md:py-4 text-sm md:text-lg",
-        icon: "p-2 aspect-square flex items-center justify-center",
-        "icon-xs": "p-1 aspect-square flex items-center justify-center",
-        "icon-sm": "p-1.5 aspect-square flex items-center justify-center",
-        "icon-lg": "p-3 aspect-square flex items-center justify-center",
+        default: "px-5 py-2.5 md:px-6 md:py-3 text-sm md:text-base min-h-[44px]",
+        xs: "px-3 py-1 text-xs min-h-[28px]",
+        sm: "px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm min-h-[36px]",
+        small: "px-3 py-1.5 md:px-4 md:py-2 text-xs md:text-sm min-h-[36px]",
+        md: "px-5 py-2.5 md:px-6 md:py-3 text-sm md:text-base min-h-[44px]",
+        medium: "px-5 py-2.5 md:px-6 md:py-3 text-sm md:text-base min-h-[44px]",
+        lg: "px-6 py-3.5 md:px-8 md:py-4 text-sm md:text-lg min-h-[52px]",
+        large: "px-6 py-3.5 md:px-8 md:py-4 text-sm md:text-lg min-h-[52px]",
+        icon: "p-2 aspect-square flex items-center justify-center min-h-[36px]",
+        "icon-xs": "p-1 aspect-square flex items-center justify-center min-h-[24px]",
+        "icon-sm": "p-1.5 aspect-square flex items-center justify-center min-h-[32px]",
+        "icon-lg": "p-3 aspect-square flex items-center justify-center min-h-[44px]",
       },
       shape: {
         default: "rounded-xl",
@@ -92,13 +92,31 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ...props 
   }, ref) => {
     const isBtnLoading = isLoading || loading;
-    const Comp = asChild ? Slot.Root : "button";
+
+    if (asChild) {
+      return (
+        <Slot.Root
+          ref={ref as any}
+          className={cn(
+            buttonVariants({ variant, size, shape }),
+            normalCase && "normal-case font-medium",
+            fullWidth && "w-full",
+            noShadow && "shadow-none",
+            alignLeft && "justify-start",
+            className
+          )}
+          {...props}
+        >
+          {children}
+        </Slot.Root>
+      );
+    }
 
     return (
-      <Comp
-        ref={ref as any}
-        type={asChild ? undefined : type}
-        disabled={asChild ? undefined : (props.disabled || isBtnLoading)}
+      <button
+        ref={ref}
+        type={type}
+        disabled={props.disabled || isBtnLoading}
         aria-busy={isBtnLoading ? "true" : undefined}
         className={cn(
           buttonVariants({ variant, size, shape }),
@@ -110,18 +128,17 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         )}
         {...props}
       >
-        {isBtnLoading ? (
-          <Spinner className="size-5" />
-        ) : asChild ? (
-          children
-        ) : (
-          <>
-            {startIcon && <span className="shrink-0 flex items-center justify-center">{startIcon}</span>}
-            {children}
-            {endIcon && <span className="shrink-0 flex items-center justify-center">{endIcon}</span>}
-          </>
+        {isBtnLoading && (
+          <span className="absolute inset-0 flex items-center justify-center">
+            <Spinner className="size-5 shrink-0" />
+          </span>
         )}
-      </Comp>
+        <span className={cn("inline-flex items-center justify-center gap-2", isBtnLoading && "invisible opacity-0")}>
+          {startIcon && <span className="shrink-0 flex items-center justify-center">{startIcon}</span>}
+          {children}
+          {endIcon && <span className="shrink-0 flex items-center justify-center">{endIcon}</span>}
+        </span>
+      </button>
     );
   }
 );

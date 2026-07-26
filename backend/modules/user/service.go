@@ -19,7 +19,7 @@ type Service interface {
 	ForgetPassword(req *request.ForgetPassword) error
 	UpdateProfilePhoto(ctx context.Context, id string, url string, publicID string) error
 	GetSystemStats() (int64, int64, int64, float64, error)
-	GetNonAdminUsers(search string, sort string, pagination *utils.Pagination) ([]User, error)
+	GetNonAdminUsers(search string, sort string, referralsOnly bool, pagination *utils.Pagination) ([]User, error)
 	SuspendUser(id string, suspend bool) error
 	DeleteUser(id string) error
 	GetUsersByReferralID(referralID string) ([]User, error)
@@ -164,8 +164,8 @@ func (s *service) GetSystemStats() (int64, int64, int64, float64, error) {
 	return s.repo.GetSystemStats()
 }
 
-func (s *service) GetNonAdminUsers(search string, sort string, pagination *utils.Pagination) ([]User, error) {
-	return s.repo.FindNonAdminUsers(search, sort, pagination)
+func (s *service) GetNonAdminUsers(search string, sort string, referralsOnly bool, pagination *utils.Pagination) ([]User, error) {
+	return s.repo.FindNonAdminUsers(search, sort, referralsOnly, pagination)
 }
 
 func (s *service) SuspendUser(id string, suspend bool) error {

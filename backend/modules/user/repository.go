@@ -14,7 +14,7 @@ type Repository interface {
 	Update(user *User) error
 	Delete(id string) error
 	GetSystemStats() (int64, int64, int64, float64, error)
-	FindNonAdminUsers(search string, sort string, pagination *utils.Pagination) ([]User, error)
+	FindNonAdminUsers(search string, sort string, referralsOnly bool, pagination *utils.Pagination) ([]User, error)
 	FindAllNonAdminUsers() ([]User, error)
 	FindByReferralID(referralID string) ([]User, error)
 	FindVolunteerByUserID(userID string) (*response.Volunteer, error)
@@ -124,15 +124,19 @@ func (r *repository) GetSystemStats() (int64, int64, int64, float64, error) {
 	return totalUsers, totalPayments, totalReferrals, totalAmountFloat, nil
 }
 
-func (r *repository) FindNonAdminUsers(search string, sort string, pagination *utils.Pagination) ([]User, error) {
+func (r *repository) FindNonAdminUsers(search string, sort string, referralsOnly bool, pagination *utils.Pagination) ([]User, error) {
 	var users []User
 	query := r.db.Model(&User{}).Where("user_type != ?", string(Admin))
 
-	if search != "" {
-		query = query.Where("name ILIKE ? OR phone ILIKE ? OR member_id ILIKE ?", "%"+search+"%", "%"+search+"%", "%"+search+"%")
+	if referralsOnly {
+		query = query.Where("total_referrals > ?", 0)
 	}
 
-	if err := query.Count(&pagination.TotalRows).Error; err != nil {
+	if search != "" {
+		query = query.Where("(name ILIKE ? OR phone ILIKE ? OR member_id ILIKE ?)", "%"+search+"%", "%"+search+"%", "%"+search+"%")
+	}
+
+	if err := query.Session(&gorm.Session{}).Count(&pagination.TotalRows).Error; err != nil {
 		return nil, err
 	}
 	pagination.Calculate()
