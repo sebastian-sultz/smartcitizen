@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   # 1. CI Validation: Compile backend and frontend BEFORE touching production server
