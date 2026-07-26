@@ -147,6 +147,47 @@ export interface ReferralMember {
   membershipStatus: "active" | "inactive";
 }
 
+export interface PhonepePaymentDetail {
+  paymentMode?: string;
+  transactionId?: string;
+  utr?: string;
+  bankTransactionId?: string;
+  amount?: number;
+  timestamp?: number;
+}
+
+export interface PhonepePaymentInstrument {
+  type?: string;
+  utr?: string;
+  bankTransactionId?: string;
+  targetApp?: string;
+}
+
+export interface PhonepeResponsePayload {
+  merchantId?: string;
+  merchantTransactionId?: string;
+  merchantOrderId?: string;
+  transactionId?: string;
+  amount?: number;
+  state?: string;
+  responseCode?: string;
+  paymentDetails?: PhonepePaymentDetail[];
+  paymentInstrument?: PhonepePaymentInstrument;
+}
+
+export interface PhonepeResponseData {
+  code?: string;
+  message?: string;
+  success?: boolean;
+  data?: PhonepeResponsePayload;
+  payload?: PhonepeResponsePayload;
+  paymentDetails?: PhonepePaymentDetail[];
+  paymentInstrument?: PhonepePaymentInstrument;
+  transactionId?: string;
+}
+
+export type PhonepeResponse = PhonepeResponseData | string;
+
 export interface Payment {
   id: string;
   userId?: string;
@@ -160,6 +201,7 @@ export interface Payment {
   donorPhone?: string;
   donorPan?: string;
   donorAddress?: string;
+  phonepeResponse?: PhonepeResponse;
   createdAt: string;
   updatedAt: string;
 }

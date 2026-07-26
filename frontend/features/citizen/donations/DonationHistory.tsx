@@ -6,12 +6,12 @@ import { TableComponent, Header } from "@/components/ui/TableComponent";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import EmptyState from "@/components/ui/EmptyState";
 import { Search, Eye, Filter, Download, Heart } from "lucide-react";
@@ -46,7 +46,9 @@ export default function DonationHistory({
     null,
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [downloadingReceiptId, setDownloadingReceiptId] = useState<string | null>(null);
+  const [downloadingReceiptId, setDownloadingReceiptId] = useState<
+    string | null
+  >(null);
 
   const handleDownloadReceipt = async (transactionId: string) => {
     try {
@@ -55,7 +57,9 @@ export default function DonationHistory({
       if (res && res.url) {
         downloadBlob(res.url, `80G_Receipt_${transactionId}.pdf`);
       } else if (res && res.status === "processing") {
-        toast.info("Your tax receipt is still being compiled. Please wait a moment...");
+        toast.info(
+          "Your tax receipt is still being compiled. Please wait a moment...",
+        );
       } else {
         toast.error("Receipt is currently unavailable.");
       }
@@ -71,17 +75,51 @@ export default function DonationHistory({
     const matchesSearch = item.merchantOrderId
       .toLowerCase()
       .includes(searchTerm.toLowerCase());
-    
+
     const matchesStatus =
       statusFilter === "all" ||
       item.status.toLowerCase() === statusFilter.toLowerCase();
-    
+
     return matchesSearch && matchesStatus;
   });
 
   const handleViewDetails = (donation: Payment) => {
     setSelectedDonation(donation);
     setIsModalOpen(true);
+  };
+
+  const getUtrNumber = (row: Payment): string => {
+    if (row.providerReferenceId) return row.providerReferenceId;
+
+    try {
+      const raw =
+        typeof row.phonepeResponse === "string"
+          ? JSON.parse(row.phonepeResponse)
+          : row.phonepeResponse;
+
+      const data = raw?.data || raw?.payload || raw;
+      const details = data?.paymentDetails;
+      const instrument = data?.paymentInstrument;
+
+      // 1. Check paymentDetails array (PhonePe PG v1 / v2 S2S Status & Webhook)
+      if (Array.isArray(details) && details.length > 0) {
+        const item = details[0];
+        if (item?.utr) return item.utr;
+        if (item?.bankTransactionId) return item.bankTransactionId;
+        if (item?.transactionId) return item.transactionId;
+      }
+
+      // 2. Check paymentInstrument object (PhonePe Standard Checkout)
+      if (instrument?.utr) return instrument.utr;
+      if (instrument?.bankTransactionId) return instrument.bankTransactionId;
+
+      // 3. Check top-level PhonePe transactionId
+      if (data?.transactionId) return data.transactionId;
+    } catch {
+      // Ignore JSON parse errors
+    }
+
+    return row.merchantOrderId;
   };
 
   const tableHeaders: Header<Payment>[] = [
@@ -94,14 +132,14 @@ export default function DonationHistory({
       ),
     },
     {
-      label: "Transaction ID",
+      label: "Transaction ID / UTR",
       render: (row) => (
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-bg border border-border flex items-center justify-center shrink-0">
             <Heart size={14} className="text-accent" fill="currentColor" />
           </div>
           <span className="font-mono text-xs font-bold text-text-muted select-all">
-            {row.merchantOrderId}
+            {getUtrNumber(row)}
           </span>
         </div>
       ),
@@ -117,7 +155,10 @@ export default function DonationHistory({
               : "text-text",
           )}
         >
-          ₹{(row.amount / 100).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+          ₹
+          {(row.amount / 100).toLocaleString("en-IN", {
+            minimumFractionDigits: 2,
+          })}
         </span>
       ),
     },
@@ -133,7 +174,9 @@ export default function DonationHistory({
       label: "Tax Status",
       render: (row) => {
         if (row.status.toLowerCase() !== "success") {
-          return <span className="text-text-muted text-xs font-semibold">-</span>;
+          return (
+            <span className="text-text-muted text-xs font-semibold">-</span>
+          );
         }
         const isEligible = !!(row.donorPan && row.donorAddress);
         return (

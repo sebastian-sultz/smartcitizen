@@ -42,12 +42,12 @@ type Service interface {
 }
 
 type service struct {
-	repo         Repository
-	userService  user.Service
-	client       *standardcheckout.StandardCheckoutClient
-	webhookUser  string
-	webhookPass  string
-	frontendURL  string
+	repo        Repository
+	userService user.Service
+	client      *standardcheckout.StandardCheckoutClient
+	webhookUser string
+	webhookPass string
+	frontendURL string
 }
 
 func NewService(repo Repository, userService user.Service) Service {
@@ -87,12 +87,12 @@ func NewService(repo Repository, userService user.Service) Service {
 	}
 
 	return &service{
-		repo:         repo,
-		userService:  userService,
-		client:       client,
-		webhookUser:  webhookUser,
-		webhookPass:  webhookPass,
-		frontendURL:  frontendURL,
+		repo:        repo,
+		userService: userService,
+		client:      client,
+		webhookUser: webhookUser,
+		webhookPass: webhookPass,
+		frontendURL: frontendURL,
 	}
 }
 
@@ -157,7 +157,7 @@ func (s *service) InitiatePayment(ctx context.Context, req dtorequest.InitiatePa
 
 func (s *service) HandleWebhook(ctx context.Context, authHeader string, responseBody []byte) error {
 	log.Printf("Received Webhook from PhonePe")
-	
+
 	callbackResponse, err := s.client.ValidateCallback(s.webhookUser, s.webhookPass, authHeader, string(responseBody))
 	if err != nil {
 		log.Printf("Webhook validation failed: %v", err)
@@ -175,6 +175,10 @@ func (s *service) HandleWebhook(ctx context.Context, authHeader string, response
 		Payload struct {
 			MerchantOrderId string `json:"merchantOrderId"`
 			State           string `json:"state"`
+			PaymentDetails  []struct {
+				TransactionId string `json:"transactionId"`
+				PaymentMode   string `json:"paymentMode"`
+			} `json:"paymentDetails"`
 		} `json:"payload"`
 	}
 	if err := json.Unmarshal(responseBody, &parsedBody); err != nil {
@@ -184,7 +188,7 @@ func (s *service) HandleWebhook(ctx context.Context, authHeader string, response
 
 	orderID := parsedBody.Payload.MerchantOrderId
 	state := parsedBody.Payload.State
-	
+
 	log.Printf("Webhook processed for OrderID: %s, State: %s", orderID, state)
 
 	payment, err := s.repo.GetPaymentByOrderID(ctx, orderID)
@@ -194,6 +198,14 @@ func (s *service) HandleWebhook(ctx context.Context, authHeader string, response
 	}
 
 	payment.PhonepeResponse = datatypes.JSON(responseBody)
+	if len(parsedBody.Payload.PaymentDetails) > 0 {
+		if parsedBody.Payload.PaymentDetails[0].TransactionId != "" {
+			payment.ProviderReferenceID = parsedBody.Payload.PaymentDetails[0].TransactionId
+		}
+		if parsedBody.Payload.PaymentDetails[0].PaymentMode != "" {
+			payment.PaymentMethod = parsedBody.Payload.PaymentDetails[0].PaymentMode
+		}
+	}
 
 	switch state {
 	case "COMPLETED":
@@ -213,7 +225,7 @@ func (s *service) HandleWebhook(ctx context.Context, authHeader string, response
 		log.Printf("Failed to update payment status from webhook for OrderID %s: %v", orderID, err)
 		return err
 	}
-	
+
 	log.Printf("Successfully updated payment status for OrderID %s to %s via webhook", orderID, payment.Status)
 	return nil
 }
@@ -350,7 +362,7 @@ func (s *service) processSuccessfulPayment(ctx context.Context, payment *Payment
 	newReceipt := &Receipt{
 		PaymentID:     payment.ID,
 		ReceiptNumber: receiptNumber,
-		CloudinaryURL: "", 
+		CloudinaryURL: "",
 	}
 	if err := s.repo.CreateReceipt(ctx, newReceipt); err != nil {
 		log.Printf("Failed to create receipt record for OrderID %s: %v", payment.MerchantOrderID, err)
@@ -365,7 +377,7 @@ func (s *service) processSuccessfulPayment(ctx context.Context, payment *Payment
 
 	go func(p *Payment, rNum string, rID string) {
 		log.Printf("Generating PDF for Receipt: %s", rNum)
-		
+
 		receiptData := utils.ReceiptData{
 			ReceiptNum:    rNum,
 			CreatedAt:     p.CreatedAt,
@@ -404,7 +416,7 @@ func (s *service) GetReceiptURL(ctx context.Context, transactionID string) (stri
 	if err != nil {
 		return "", err
 	}
-	
+
 	receipt, err := s.repo.GetReceiptByPaymentID(ctx, payment.ID.String())
 	if err != nil {
 		if payment.Status == PaymentStatusSuccess {
@@ -417,7 +429,7 @@ func (s *service) GetReceiptURL(ctx context.Context, transactionID string) (stri
 			return "", err
 		}
 	}
-	
+
 	// Generate a temporary signed URL dynamically for private file
 	publicID := fmt.Sprintf("receipts/receipts/%s", strings.ReplaceAll(receipt.ReceiptNumber, "/", "-"))
 	signedURL, err := cloudinary.GetPrivateURL(publicID)
@@ -425,7 +437,7 @@ func (s *service) GetReceiptURL(ctx context.Context, transactionID string) (stri
 		log.Printf("Failed to generate signed URL for receipt %s: %v", receipt.ReceiptNumber, err)
 		return receipt.CloudinaryURL, nil // Fallback to raw stored URL
 	}
-	
+
 	return signedURL, nil
 }
 
@@ -533,7 +545,7 @@ func (s *service) regenerateReceipt(ctx context.Context, payment *Payment) error
 	}
 
 	log.Printf("Regenerating PDF for Receipt: %s due to tax info update", receiptNumber)
-	
+
 	receiptData := utils.ReceiptData{
 		ReceiptNum:    receiptNumber,
 		CreatedAt:     payment.CreatedAt,
