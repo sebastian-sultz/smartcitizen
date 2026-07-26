@@ -20,11 +20,17 @@ import {
 const delay = (ms: number = 400) =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
-// --- Direct REST API Wrappers ---
+interface CustomRequestConfig extends AxiosRequestConfig {
+  skipGlobalErrorToast?: boolean;
+  skipAuthRedirect?: boolean;
+}
 
 export const getMemberProfile = async (): Promise<UserProfileResponse> => {
   try {
-    const response = await api.get("/auth/me");
+    const config: CustomRequestConfig = {
+      skipAuthRedirect: true,
+    };
+    const response = await api.get("/auth/me", config);
     return response.data;
   } catch (error: unknown) {
     handleApiError(error, "Failed to load user profile");

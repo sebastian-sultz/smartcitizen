@@ -25,7 +25,7 @@ import { useCitizenStore } from "@/store/citizenStore";
 
 function PaymentStatusContent() {
   const router = useRouter();
-  const { user, fetchProfile } = useCitizenStore();
+  const { user } = useCitizenStore();
   const searchParams = useSearchParams();
   const transactionId = searchParams.get("transactionId");
   const [payment, setPayment] = useState<Payment | null>(null);
@@ -34,10 +34,6 @@ function PaymentStatusContent() {
   const [receiptUrl, setReceiptUrl] = useState<string | null>(null);
   const [receiptLoading, setReceiptLoading] = useState(false);
   const [receiptError, setReceiptError] = useState(false);
-
-  useEffect(() => {
-    fetchProfile();
-  }, [fetchProfile]);
 
   useEffect(() => {
     if (!transactionId) {
