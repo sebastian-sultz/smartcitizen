@@ -40,7 +40,7 @@ jobs:
           context: ./backend
           file: ./backend/Dockerfile
           push: true
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/arm64
           tags: ghcr.io/sebastian-sultz/smartcitizen-backend:latest
           cache-from: type=registry,ref=ghcr.io/sebastian-sultz/smartcitizen-backend:latest
           cache-to: type=inline
@@ -52,7 +52,7 @@ jobs:
           context: ./frontend
           file: ./frontend/Dockerfile
           push: true
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/arm64
           build-args: |
             NEXT_PUBLIC_API_URL=https://api.globalsmartcitizensfoundation.org/api
           tags: ghcr.io/sebastian-sultz/smartcitizen-frontend:latest
