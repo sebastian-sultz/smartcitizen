@@ -1,5 +1,5 @@
 # Multi-stage Dockerfile for Go Backend
-FROM golang:alpine AS builder
+FROM --platform=$BUILDPLATFORM golang:alpine AS builder
 
 WORKDIR /app
 
@@ -10,8 +10,10 @@ RUN go mod download
 # Copy source code
 COPY . .
 
-# Build statically linked binary natively for ARM64 (AWS Graviton)
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -a -installsuffix cgo -o server .
+# Build statically linked binary natively on host runner CPU for ARM64 target
+ARG TARGETOS=linux
+ARG TARGETARCH=arm64
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -a -installsuffix cgo -o server .
 
 # Final minimal runtime image
 FROM alpine:latest
