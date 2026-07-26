@@ -16,39 +16,20 @@ var cld *cloudinary.Cloudinary
 
 // InitCloudinary initializes the Cloudinary instance.
 func InitCloudinary() error {
-	var err error
-
-	// cld, err = cloudinary.NewFromParams(
-	// 	os.Getenv("CLOUDINARY_CLOUD_NAME"),
-	// 	os.Getenv("CLOUDINARY_API_KEY"),
-	// 	os.Getenv("CLOUDINARY_API_SECRET"),
-	// )
-	// return err
-
-	// new
-	if cldURL := os.Getenv("CLOUDINARY_URL"); cldURL != "" {
-		cld, err = cloudinary.NewFromURL(cldURL)
-		if err != nil {
-			return fmt.Errorf("failed to initialize Cloudinary from CLOUDINARY_URL: %w", err)
-		}
-		log.Println("Cloudinary initialized successfully via CLOUDINARY_URL")
-		return nil
-	}
-
 	cloudName := os.Getenv("CLOUDINARY_CLOUD_NAME")
 	apiKey := os.Getenv("CLOUDINARY_API_KEY")
 	apiSecret := os.Getenv("CLOUDINARY_API_SECRET")
 
 	if cloudName == "" || apiKey == "" || apiSecret == "" {
-		log.Println("WARNING: Cloudinary credentials (CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET) are missing or incomplete in environment!")
+		log.Println("WARNING: Cloudinary credentials (CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET) are missing in environment!")
 	}
 
+	var err error
 	cld, err = cloudinary.NewFromParams(cloudName, apiKey, apiSecret)
 	if err != nil {
 		return fmt.Errorf("failed to initialize Cloudinary: %w", err)
 	}
 	return nil
-	// new end
 }
 
 // UploadImage uploads an image to Cloudinary and returns the Secure URL and Public ID.
