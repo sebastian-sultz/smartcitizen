@@ -12,7 +12,10 @@ interface WelcomeHeroProps {
   onInviteClick?: () => void;
 }
 
-export default function WelcomeHero({ profile, onInviteClick }: WelcomeHeroProps) {
+export default function WelcomeHero({
+  profile,
+  onInviteClick,
+}: WelcomeHeroProps) {
   const router = useRouter();
   const [greeting, setGreeting] = useState("Hello");
 
@@ -50,7 +53,8 @@ export default function WelcomeHero({ profile, onInviteClick }: WelcomeHeroProps
           </h1>
           {formattedDate && (
             <p className="text-white/80 text-sm md:text-base font-medium">
-              Proud member of the foundation since <span className="font-bold text-white">{formattedDate}</span>
+              Proud member of the foundation since{" "}
+              <span className="font-bold text-white">{formattedDate}</span>
             </p>
           )}
         </div>
@@ -71,15 +75,6 @@ export default function WelcomeHero({ profile, onInviteClick }: WelcomeHeroProps
             className="border-white/20 bg-white/10 hover:bg-white/20 text-white"
           >
             Invite Friends
-          </Button>
-
-          <Button
-            onClick={() => router.push("/citizen/donations?tab=tax")}
-            variant="outline"
-            startIcon={<FileText size={16} />}
-            className="border-white/20 bg-white/10 hover:bg-white/20 text-white"
-          >
-            Download 80G Tax Receipt
           </Button>
         </div>
       </div>
