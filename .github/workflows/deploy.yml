@@ -4,39 +4,50 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:
+  workflow_dispatch:  # Enables manual execution from GitHub UI & VS Code extension
 
 jobs:
-  # 1. CI Validation: Compile backend and frontend BEFORE touching production server
+  # 1. CI Validation: Build backend and frontend
+  #    before deploying to the production EC2 server
   build-and-test:
     name: Build & Test Validation
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
+      # Backend - Go
       - name: Setup Go
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: '1.23'
+          cache: true
+          cache-dependency-path: backend/go.sum
 
       - name: Verify Backend Build
+        working-directory: backend
         run: |
-          cd backend
           go build ./...
 
+      # Frontend - Next.js
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
 
       - name: Verify Frontend Build
+        working-directory: frontend
+        env:
+          NEXT_PUBLIC_API_URL: https://api.globalsmartcitizensfoundation.org/api
         run: |
-          cd frontend
           npm ci
           npm run build
 
-  # 2. CD Deployment: Only executes if build-and-test succeeds
+  # 2. CD Deployment
+  #    Only runs if CI validation succeeds
   deploy:
     name: Deploy to AWS EC2
     needs: build-and-test
@@ -49,16 +60,21 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_SSH_KEY }}
-          port: ${{ secrets.EC2_PORT || 22 }}
+          port: 22
+
           script: |
             set -e
 
-            echo "Starting Global Smart Citizen deployment..."
+            echo "========================================="
+            echo "Starting Global Smart Citizen deployment"
+            echo "========================================="
 
             cd /opt/global-smart-citizen/smartcitizen
 
             echo "Fetching latest code..."
             git fetch origin main
+
+            echo "Resetting to latest main branch..."
             git reset --hard origin/main
 
             echo "Rebuilding and restarting containers..."
@@ -70,4 +86,6 @@ jobs:
             echo "Checking running containers..."
             docker compose ps
 
+            echo "========================================="
             echo "Global Smart Citizen deployment completed successfully!"
+            echo "========================================="
