@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Homepage -->
+  <url>
+    <loc>https://globalsmartcitizensfoundation.org/</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <!-- About -->
+  <url>
+    <loc>https://globalsmartcitizensfoundation.org/about</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Contact Us -->
+  <url>
+    <loc>https://globalsmartcitizensfoundation.org/contact_us</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Donation -->
+  <url>
+    <loc>https://globalsmartcitizensfoundation.org/donation</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Events -->
+  <url>
+    <loc>https://globalsmartcitizensfoundation.org/events</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Impact -->
+  <url>
+    <loc>https://globalsmartcitizensfoundation.org/impact</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Initiatives -->
+  <url>
+    <loc>https://globalsmartcitizensfoundation.org/initiatives</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Join Us -->
+  <url>
+    <loc>https://globalsmartcitizensfoundation.org/join_us</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Legal Documents -->
+  <url>
+    <loc>https://globalsmartcitizensfoundation.org/legal_documents</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <!-- Mission -->
+  <url>
+    <loc>https://globalsmartcitizensfoundation.org/mission</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Need Help -->
+  <url>
+    <loc>https://globalsmartcitizensfoundation.org/need_help</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Our Work -->
+  <url>
+    <loc>https://globalsmartcitizensfoundation.org/our_work</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <!-- Privacy Policy -->
+  <url>
+    <loc>https://globalsmartcitizensfoundation.org/privacy_policy</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <!-- Return Policy -->
+  <url>
+    <loc>https://globalsmartcitizensfoundation.org/return_policy</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <!-- Terms -->
+  <url>
+    <loc>https://globalsmartcitizensfoundation.org/term</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <!-- Member Login -->
+  <url>
+    <loc>https://globalsmartcitizensfoundation.org/member_login</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+</urlset>
