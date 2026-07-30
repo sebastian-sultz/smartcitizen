@@ -20,6 +20,23 @@ function parseJwt(token: string) {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Handle legacy redirects from previous version of the site (308 permanent for SEO)
+  const lowerPath = pathname.toLowerCase();
+  const legacyRedirects: Record<string, string> = {
+    "/memberlogin.aspx": "/member_login",
+    "/joinus.aspx": "/join_us",
+    "/ouractivity.aspx": "/events",
+    "/contactus.aspx": "/contact_us",
+    "/partner.aspx": "/contact_us",
+    "/donation.aspx": "/donation",
+  };
+
+  if (legacyRedirects[lowerPath]) {
+    const targetUrl = new URL(legacyRedirects[lowerPath], request.url);
+    targetUrl.search = request.nextUrl.search;
+    return NextResponse.redirect(targetUrl, 308);
+  }
+
   // Let static assets, api, or next internals pass through
   if (
     pathname.startsWith("/_next") ||

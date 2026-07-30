@@ -1,5 +1,11 @@
 import Link from "next/link";
 import { LoginForm } from "@/features/shared/auth";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Smart Citizen Login Portal | GlobalSmart Citizens Foundation",
+  description: "Log in to the Smart Citizen portal to manage your profile, view community initiatives, track your volunteer status, and participate in upcoming events.",
+};
 
 export default function LoginPage() {
   return (
