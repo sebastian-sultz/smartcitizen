@@ -1,5 +1,6 @@
 "use client";
 import { ASSETS } from "@/lib/assets";
+import { SOCIAL_LINKS } from "@/lib/constants";
 
 import { useState } from "react";
 import Image from "next/image";
@@ -171,7 +172,7 @@ export function MediaPresence() {
                   <FacebookIcon className="w-3.5 h-3.5" fill="currentColor" /> Community Feed
                 </span>
                 <a
-                  href="https://www.facebook.com/people/Dhirendra-Verma/61582196091523/?rdid=yNB82mSR51N964m4&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1DG2h5JHRw%2F%3Fref%3D1"
+                  href={SOCIAL_LINKS.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-text-muted hover:text-blue-500 transition-colors"
@@ -183,7 +184,7 @@ export function MediaPresence() {
 
               {/* Storytelling Post Card Mock acting as link */}
               <a
-                href="https://www.facebook.com/people/Dhirendra-Verma/61582196091523/?rdid=yNB82mSR51N964m4&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1DG2h5JHRw%2F%3Fref%3D1"
+                href={SOCIAL_LINKS.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block bg-white rounded-2xl border border-border/30 p-4 space-y-3 shadow-sm hover:shadow-md hover:border-blue-500/20 transition-all duration-300 mt-4 group/fb"
@@ -257,7 +258,7 @@ export function MediaPresence() {
                 className="group-hover/card:bg-blue-600 group-hover/card:hover:bg-blue-700 group-hover/card:shadow-blue-600/10 transition-colors"
               >
                 <a
-                  href="https://www.facebook.com/people/Dhirendra-Verma/61582196091523/?rdid=yNB82mSR51N964m4&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1DG2h5JHRw%2F%3Fref%3D1"
+                  href={SOCIAL_LINKS.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -279,7 +280,7 @@ export function MediaPresence() {
                   <InstagramIcon className="w-3.5 h-3.5" /> Instagram Stories
                 </span>
                 <a
-                  href="https://www.instagram.com/global_smartcitizen_foundation?utm_source=qr&igsh=NXk4MnE4OG51YWR6"
+                  href={SOCIAL_LINKS.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-text-muted hover:text-pink-500 transition-colors"
@@ -291,7 +292,7 @@ export function MediaPresence() {
 
               {/* Instagram Card Mock acting as link */}
               <a
-                href="https://www.instagram.com/global_smartcitizen_foundation?utm_source=qr&igsh=NXk4MnE4OG51YWR6"
+                href={SOCIAL_LINKS.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block bg-white rounded-2xl border border-border/30 p-4 space-y-3 shadow-sm hover:shadow-md hover:border-pink-500/20 transition-all duration-300 mt-4 group/ig"
@@ -350,7 +351,7 @@ export function MediaPresence() {
                 className="group-hover/card:bg-pink-600 group-hover/card:hover:bg-pink-700 group-hover/card:shadow-pink-600/10 transition-colors"
               >
                 <a
-                  href="https://www.instagram.com/global_smartcitizen_foundation?utm_source=qr&igsh=NXk4MnE4OG51YWR6"
+                  href={SOCIAL_LINKS.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
                 >

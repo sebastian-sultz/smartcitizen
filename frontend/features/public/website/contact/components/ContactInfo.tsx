@@ -1,5 +1,6 @@
 import { MapPin, Phone, Mail } from "lucide-react";
 import { Facebook, Instagram, Twitter, Youtube } from "@/components/icons/SocialIcons";
+import { SOCIAL_LINKS, CONTACT_INFO } from "@/lib/constants";
 
 export const ContactInfo = () => {
   return (
@@ -13,7 +14,7 @@ export const ContactInfo = () => {
             </div>
             <div>
               <p className="text-[14px] font-bold text-text uppercase tracking-wider mb-1">Address</p>
-              <p className="text-text-muted leading-relaxed">139/2 Bhulaika Pura, Teliarganj, Allahabad (U.P.) – 211001</p>
+              <p className="text-text-muted leading-relaxed">{CONTACT_INFO.address}</p>
             </div>
           </div>
           <div className="flex gap-4 group">
@@ -22,7 +23,7 @@ export const ContactInfo = () => {
             </div>
             <div>
               <p className="text-[14px] font-bold text-text uppercase tracking-wider mb-1">Phone</p>
-              <p className="text-text-muted">84 29 69 69 69</p>
+              <p className="text-text-muted">{CONTACT_INFO.phoneFormatted}</p>
             </div>
           </div>
           <div className="flex gap-4 group">
@@ -31,7 +32,7 @@ export const ContactInfo = () => {
             </div>
             <div>
               <p className="text-[14px] font-bold text-text uppercase tracking-wider mb-1">Email</p>
-              <p className="text-text-muted break-words">globalsmartcitizensfoundation@gmail.com</p>
+              <p className="text-text-muted break-words">{CONTACT_INFO.email}</p>
             </div>
           </div>
         </div>
@@ -41,9 +42,9 @@ export const ContactInfo = () => {
         <p className="font-bold text-text uppercase tracking-widest text-[13px]">Follow Us</p>
         <div className="flex gap-4">
           {[
-            { Icon: Facebook, href: "https://www.facebook.com/people/Dhirendra-Verma/61582196091523/?rdid=yNB82mSR51N964m4&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1DG2h5JHRw%2F%3Fref%3D1" },
-            { Icon: Instagram, href: "https://www.instagram.com/global_smartcitizen_foundation?utm_source=qr&igsh=NXk4MnE4OG51YWR6" },
-            { Icon: Youtube, href: "https://www.youtube.com/@globalsmartcitizensfoundation" },
+            { Icon: Facebook, href: SOCIAL_LINKS.facebook },
+            { Icon: Instagram, href: SOCIAL_LINKS.instagram },
+            { Icon: Youtube, href: SOCIAL_LINKS.youtube },
           ].map((social, i) => (
             <a key={i} href={social.href} target="_blank" rel="noopener noreferrer" className="w-12 h-12 rounded-full border border-border flex items-center justify-center text-text-muted hover:bg-primary hover:text-white hover:border-primary transition-all">
               <social.Icon size={20} />
