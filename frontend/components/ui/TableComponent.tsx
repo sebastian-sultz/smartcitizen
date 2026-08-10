@@ -98,12 +98,13 @@ export function TableComponent<T>({
     const endRange = Math.min(currentPage * pageSize, totalRecords);
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-3 items-center justify-between gap-4 px-6 py-4 border border-border/70 md:border-none md:border-t md:border-border/80 bg-white rounded-card md:rounded-none select-none shadow-sm md:shadow-none mt-4 md:mt-0">
+      <div className="grid grid-cols-1 md:grid-cols-3 items-center justify-between gap-4 px-6 py-4 border border-border/70 md:border-none md:border-t md:border-border/80 bg-white rounded-card md:rounded-none  shadow-sm md:shadow-none mt-4 md:mt-0">
         {/* Total records display */}
         <div className="text-xs text-text-muted font-medium text-center md:text-left">
-          Showing <span className="font-semibold text-text">{startRange}</span> to{" "}
-          <span className="font-semibold text-text">{endRange}</span> of{" "}
-          <span className="font-semibold text-text">{totalRecords}</span> entries
+          Showing <span className="font-semibold text-text">{startRange}</span>{" "}
+          to <span className="font-semibold text-text">{endRange}</span> of{" "}
+          <span className="font-semibold text-text">{totalRecords}</span>{" "}
+          entries
         </div>
 
         {/* Pagination Controls */}
@@ -159,7 +160,7 @@ export function TableComponent<T>({
                             "size-8 p-0 rounded-lg font-bold text-xs transition-colors",
                             currentPage === p
                               ? "border-2 border-primary text-primary hover:bg-primary/5"
-                              : "text-text-muted hover:text-primary hover:bg-bg"
+                              : "text-text-muted hover:text-primary hover:bg-bg",
                           )}
                         >
                           {p}
@@ -203,7 +204,9 @@ export function TableComponent<T>({
 
         {/* Rows per page selector */}
         <div className="hidden md:flex items-center gap-2 justify-end w-full">
-          <span className="text-xs text-text-muted font-medium">Rows per page:</span>
+          <span className="text-xs text-text-muted font-medium">
+            Rows per page:
+          </span>
           <Select
             value={pageSize.toString()}
             onValueChange={(val) => handleLimitChange(Number(val))}
@@ -213,7 +216,11 @@ export function TableComponent<T>({
             </SelectTrigger>
             <SelectContent position="popper" className="min-w-[75px]">
               {pageSizeOptions.map((opt) => (
-                <SelectItem key={opt} value={opt.toString()} className="text-xs font-semibold">
+                <SelectItem
+                  key={opt}
+                  value={opt.toString()}
+                  className="text-xs font-semibold"
+                >
                   {opt}
                 </SelectItem>
               ))}

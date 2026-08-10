@@ -2,8 +2,13 @@ package user
 
 import (
 	"fmt"
+	"io"
+	"net"
 	"net/http"
+	"net/url"
 	"os"
+	"strings"
+	"time"
 
 	"backend/dto/request"
 	"backend/dto/response"
@@ -36,7 +41,13 @@ func (h *Handler) issueAuthTokens(c *gin.Context, userID uuid.UUID, userType str
 	return nil
 }
 
-func mapToResponse(u *User, refName *string, vol *response.Volunteer) response.User {
+func mapToResponse(u *User, refName *string, vol *response.Volunteer, stats *response.UserNetworkStatsResponse) response.User {
+	var overallReferrals int64
+	var overallNetworkDonation float64
+	if stats != nil {
+		overallReferrals = stats.TotalDownlineCount
+		overallNetworkDonation = stats.TotalNetworkDonationAmount
+	}
 	return response.User{
 		ID:                    u.ID,
 		MemberID:              u.MemberID,
@@ -49,6 +60,8 @@ func mapToResponse(u *User, refName *string, vol *response.Volunteer) response.U
 		ReferralPaymentCount:  u.ReferralPaymentCount,
 		ReferralPaymentAmount: u.ReferralPaymentAmount,
 		TotalReferrals:        u.TotalReferrals,
+		OverallReferrals:      overallReferrals,
+		OverallNetworkDonation: overallNetworkDonation,
 		TotalEventsRegistered: u.TotalEventsRegistered,
 		ReferralID:            u.ReferralID,
 		ReferralName:          refName,
@@ -77,7 +90,7 @@ func (h *Handler) Register(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "registered successfully", "user": mapToResponse(user, nil, nil)})
+	c.JSON(http.StatusCreated, gin.H{"message": "registered successfully", "user": mapToResponse(user, nil, nil, nil)})
 }
 
 func (h *Handler) Login(c *gin.Context) {
@@ -98,7 +111,7 @@ func (h *Handler) Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "logged in successfully", "user": mapToResponse(user, nil, nil)})
+	c.JSON(http.StatusOK, gin.H{"message": "logged in successfully", "user": mapToResponse(user, nil, nil, nil)})
 }
 
 func (h *Handler) CheckRole(c *gin.Context) {
@@ -130,7 +143,7 @@ func (h *Handler) CheckRole(c *gin.Context) {
 			"authenticated":     true,
 			"password_required": false,
 			"role":              string(user.UserType),
-			"user":              mapToResponse(user, nil, nil),
+			"user":              mapToResponse(user, nil, nil, nil),
 		})
 		return
 	}
@@ -272,7 +285,8 @@ func (h *Handler) GetProfile(c *gin.Context) {
 		vol, _ = h.service.GetVolunteerByUserID(user.ID.String())
 	}
 
-	c.JSON(http.StatusOK, gin.H{"user": mapToResponse(user, refName, vol)})
+	netStats, _ := h.service.GetNetworkStats(c.Request.Context(), idStr)
+	c.JSON(http.StatusOK, gin.H{"user": mapToResponse(user, refName, vol, netStats)})
 }
 
 func (h *Handler) GetStats(c *gin.Context) {
@@ -318,7 +332,8 @@ func (h *Handler) Me(c *gin.Context) {
 		vol, _ = h.service.GetVolunteerByUserID(user.ID.String())
 	}
 
-	c.JSON(http.StatusOK, gin.H{"user": mapToResponse(user, refName, vol)})
+	netStats, _ := h.service.GetNetworkStats(c.Request.Context(), idStr)
+	c.JSON(http.StatusOK, gin.H{"user": mapToResponse(user, refName, vol, netStats)})
 }
 
 func (h *Handler) GetAllNonAdminUsers(c *gin.Context) {
@@ -349,7 +364,8 @@ func (h *Handler) GetAllNonAdminUsers(c *gin.Context) {
 				refName = &refUser.Name
 			}
 		}
-		res = append(res, mapToResponse(&u, refName, nil))
+		netStats, _ := h.service.GetNetworkStats(c.Request.Context(), u.ID.String())
+		res = append(res, mapToResponse(&u, refName, nil, netStats))
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -427,7 +443,8 @@ func (h *Handler) GetReferredUsers(c *gin.Context) {
 		// Since all these users have the same referral_id, their referrer is the user with 'id'
 		// We could fetch the referrer's name once to set ReferralName, or just set it if needed.
 		// For now we just map them.
-		res = append(res, mapToResponse(&u, nil, nil))
+		netStats, _ := h.service.GetNetworkStats(c.Request.Context(), u.ID.String())
+		res = append(res, mapToResponse(&u, nil, nil, netStats))
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -492,6 +509,84 @@ func (h *Handler) AddDirectMember(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "member enrolled successfully",
-		"user":    mapToResponse(user, nil, nil),
+		"user":    mapToResponse(user, nil, nil, nil),
 	})
+}
+
+func (h *Handler) ProxyImage(c *gin.Context) {
+	targetURL := c.Query("url")
+	if targetURL == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing url query parameter"})
+		return
+	}
+
+	parsedURL, err := url.Parse(targetURL)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid URL format"})
+		return
+	}
+
+	if parsedURL.Scheme != "http" && parsedURL.Scheme != "https" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Only http and https schemes are allowed"})
+		return
+	}
+
+	host := parsedURL.Host
+	if hHost, _, err := net.SplitHostPort(parsedURL.Host); err == nil {
+		host = hHost
+	}
+
+	ips, err := net.LookupIP(host)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to resolve hostname"})
+		return
+	}
+
+	for _, ip := range ips {
+		if ip.IsLoopback() || ip.IsLinkLocalUnicast() || ip.IsLinkLocalMulticast() || ip.IsPrivate() {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Access to private or local network is forbidden"})
+			return
+		}
+	}
+
+	// Create client with timeout to prevent connection leakage
+	client := &http.Client{
+		Timeout: 5 * time.Second,
+	}
+
+	// Fetch the remote image
+	resp, err := client.Get(targetURL)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch remote image"})
+		return
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		c.JSON(resp.StatusCode, gin.H{"error": "Remote server returned non-200 status"})
+		return
+	}
+
+	// Safety check: ensure content-type is indeed an image to prevent XSS
+	contentType := resp.Header.Get("Content-Type")
+	if !strings.HasPrefix(contentType, "image/") {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "URL does not point to a valid image"})
+		return
+	}
+
+	// Set content headers and CORS headers
+	c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+	c.Writer.Header().Set("Content-Type", contentType)
+	wCacheHeader := resp.Header.Get("Cache-Control")
+	if wCacheHeader != "" {
+		c.Writer.Header().Set("Cache-Control", wCacheHeader)
+	} else {
+		c.Writer.Header().Set("Cache-Control", "public, max-age=86400") // Default to caching for 1 day
+	}
+
+	// Stream response body back to Gin response writer
+	_, err = io.Copy(c.Writer, resp.Body)
+	if err != nil {
+		c.Error(err)
+	}
 }

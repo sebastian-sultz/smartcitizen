@@ -46,7 +46,7 @@ export default function TicketList({
       {/* Ticket Cards Stack */}
       <div className="flex-1 overflow-y-auto space-y-2.5 pr-1.5 min-h-0">
         {tickets.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-center p-6 bg-bg/10 rounded-3xl border border-dashed border-border/60">
+          <div className="h-full flex flex-col items-center justify-center text-center p-6 bg-bg/10 rounded-2xl border border-dashed border-border/60">
             <MessageSquare className="size-8 text-text-muted opacity-40 mb-2" />
             <p className="text-xs font-bold text-text-muted">No support records</p>
             <p className="text-[10px] text-text-muted/80 mt-1 max-w-[180px]">
@@ -98,7 +98,7 @@ export default function TicketList({
                 {/* Latest message snippet */}
                 {lastMessage && (
                   <p className="text-[11px] text-text-muted truncate mt-0.5 max-w-full font-medium italic">
-                    "{lastMessage}"
+                    &quot;{lastMessage}&quot;
                   </p>
                 )}
               </Button>

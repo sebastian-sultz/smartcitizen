@@ -76,7 +76,7 @@ func (s *service) CreateVolunteer(req *request.CreateVolunteer) (*Volunteer, err
 		Experience:      req.Experience,
 		Specialties:     specialtiesStr,
 		IsPublicConsent: req.IsPublicConsent,
-		Status:          VolunteerStatusPending,
+		Status:          VolunteerStatusApproved,
 	}
 
 	if u.ProfilePhoto != nil {

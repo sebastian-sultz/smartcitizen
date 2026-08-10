@@ -58,7 +58,7 @@ export default function ShareReferral({
 
   return (
     <>
-      <Card className="rounded-[32px] border border-border/80 shadow-sm bg-white flex flex-col justify-between h-full">
+      <Card className="rounded-3xl sm:rounded-[32px] border border-border/80 shadow-sm bg-white flex flex-col justify-between h-full">
         <div>
           <CardHeader className="pb-4">
             <CardTitle className="font-display text-lg font-bold text-text flex items-center gap-2">

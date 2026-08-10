@@ -19,6 +19,7 @@ type Repository interface {
 	FindByReferralID(referralID string) ([]User, error)
 	FindVolunteerByUserID(userID string) (*response.Volunteer, error)
 	RecordSuccessfulPayment(userID string, amount float64) error
+	GetDownlineStats(userID string) (int64, float64, error)
 }
 
 type repository struct {
@@ -215,4 +216,31 @@ func (r *repository) FindAllNonAdminUsers() ([]User, error) {
 	var users []User
 	err := r.db.Where("user_type != ?", string(Admin)).Find(&users).Error
 	return users, err
+}
+
+func (r *repository) GetDownlineStats(userID string) (int64, float64, error) {
+	var result struct {
+		Count int64
+		Sum   float64
+	}
+
+	query := `
+		WITH RECURSIVE downline AS (
+			SELECT id, total_amount 
+			FROM users 
+			WHERE referral_id = ? AND deleted_at IS NULL
+			UNION ALL
+			SELECT u.id, u.total_amount 
+			FROM users u
+			INNER JOIN downline d ON u.referral_id = CAST(d.id AS text)
+			WHERE u.deleted_at IS NULL
+		)
+		SELECT COUNT(*) as count, COALESCE(SUM(total_amount), 0.0) as sum FROM downline
+	`
+
+	err := r.db.Raw(query, userID).Scan(&result).Error
+	if err != nil {
+		return 0, 0.0, err
+	}
+	return result.Count, result.Sum, nil
 }

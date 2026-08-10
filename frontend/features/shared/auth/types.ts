@@ -12,6 +12,8 @@ export interface UserResponse {
   referral_payment_count: number;
   referral_payment_amount: number;
   total_referrals: number;
+  overall_referrals: number;
+  overall_network_donation: number;
   referral_id: string | null;
   total_events_registered: number;
   referral_name?: string | null;

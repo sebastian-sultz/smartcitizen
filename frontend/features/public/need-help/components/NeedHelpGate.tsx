@@ -36,7 +36,7 @@ export function NeedHelpGate() {
     <div className="relative w-full min-h-[600px]">
       {/* Blurred Background Preview of volunteer cards */}
       <div
-        className="absolute inset-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pointer-events-none select-none"
+        className="absolute inset-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pointer-events-none "
         aria-hidden="true"
       >
         {FAKE_CARDS.map((card, i) => (
@@ -103,8 +103,8 @@ export function NeedHelpGate() {
                   <p className="text-text-muted text-[15px] leading-relaxed">
                     As a Smart Citizen, you gain direct access to our network of
                     verified legal advisors, health counselors, educators, and
-                    social workers — all volunteering their expertise to
-                    uplift our communities, free of charge.
+                    social workers — all volunteering their expertise to uplift
+                    our communities, free of charge.
                   </p>
                 </div>
               </div>
@@ -142,7 +142,9 @@ export function NeedHelpGate() {
                 </div>
                 <p className="text-[13px] text-text-muted font-medium">
                   Join{" "}
-                  <span className="font-black text-primary">5,000+ citizens</span>{" "}
+                  <span className="font-black text-primary">
+                    5,000+ citizens
+                  </span>{" "}
                   already making a difference
                 </p>
               </div>

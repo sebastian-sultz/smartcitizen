@@ -34,7 +34,17 @@ func NewRepository(db *gorm.DB) Repository {
 }
 
 func (r *repository) Create(volunteer *Volunteer) error {
-	return r.db.Create(volunteer).Error
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(volunteer).Error; err != nil {
+			return err
+		}
+		if volunteer.Status == VolunteerStatusApproved {
+			if err := tx.Model(&user.User{}).Where("id = ?", volunteer.UserID).Update("user_type", string(user.Volunteer)).Error; err != nil {
+				return err
+			}
+		}
+		return nil
+	})
 }
 
 func (r *repository) FindByID(id string) (*Volunteer, error) {

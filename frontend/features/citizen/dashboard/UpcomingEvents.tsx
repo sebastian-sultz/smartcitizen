@@ -15,6 +15,10 @@ import { EventResponse } from "../community/types";
 import { useAuthStore } from "@/store/authStore";
 import EmptyState from "@/components/ui/EmptyState";
 import EventCard from "./EventCard";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import EventDetailDialog from "./EventDetailDialog";
+import { cn } from "@/lib/utils";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function UpcomingEvents() {
   const { showAlert, showConfirm } = useAlert();
@@ -87,7 +91,17 @@ export default function UpcomingEvents() {
             Upcoming Events
           </h3>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Mobile Skeleton */}
+        <div className="block sm:hidden">
+          <Card className="bg-white border border-border shadow-sm p-4 rounded-2xl space-y-4">
+            <Skeleton className="h-12 w-full rounded-2xl" />
+            <Skeleton className="h-12 w-full rounded-2xl" />
+            <Skeleton className="h-12 w-full rounded-2xl" />
+          </Card>
+        </div>
+
+        {/* Desktop Skeleton */}
+        <div className="hidden sm:grid sm:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
             <Card key={i} className="rounded-[32px] border-primary/5 shadow-sm animate-pulse h-[26rem] bg-card flex flex-col overflow-hidden">
               {/* Image Skeleton */}
@@ -148,7 +162,64 @@ export default function UpcomingEvents() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {/* Mobile view: Compact Event List */}
+      <div className="block sm:hidden">
+        <Card className="bg-white border border-border shadow-sm p-4 rounded-2xl divide-y divide-border/60">
+          {events.map((evt) => {
+            const dateObj = new Date(evt.event_date);
+            const day = isNaN(dateObj.getTime()) ? "--" : dateObj.getDate().toString();
+            const month = isNaN(dateObj.getTime()) ? "---" : dateObj.toLocaleString("en-US", { month: "short" });
+            const fullDate = isNaN(dateObj.getTime())
+              ? "TBA"
+              : dateObj.toLocaleString("en-US", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            const timeStr = isNaN(dateObj.getTime())
+              ? "TBA"
+              : dateObj.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+
+            return (
+              <Dialog key={evt.id}>
+                <DialogTrigger asChild>
+                  <div className="flex items-center justify-between gap-3 py-3 first:pt-1 last:pb-1 cursor-pointer active:bg-bg/50 transition-colors">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-8 h-8 rounded-xl bg-primary/5 border border-primary/10 flex flex-col items-center justify-center shrink-0">
+                        <span className="text-[9px] uppercase font-black text-primary leading-none">{month}</span>
+                        <span className="text-sm font-display font-black text-primary mt-0.5 leading-none">{day}</span>
+                      </div>
+                      <div className="min-w-0 space-y-0.5">
+                        <h4 className="font-bold text-xs text-text truncate">
+                          {evt.event_name}
+                        </h4>
+                        <p className="text-[10px] text-text-muted truncate leading-tight">
+                          {evt.event_address}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="shrink-0 text-right">
+                      <span className="text-[10px] font-bold px-2.5 py-1 bg-primary/5 text-primary rounded-full uppercase tracking-wider">
+                        Details
+                      </span>
+                    </div>
+                  </div>
+                </DialogTrigger>
+                <EventDetailDialog
+                  event={evt}
+                  isRegistered={registeredEvents.includes(evt.id)}
+                  onRegister={(e) => {
+                    e.stopPropagation();
+                    handleRegister(evt.id, evt.event_name);
+                  }}
+                  fullDate={fullDate}
+                  timeStr={timeStr}
+                />
+              </Dialog>
+            );
+          })}
+        </Card>
+      </div>
+
+      {/* Desktop view: Event Grid */}
+      <div className="hidden sm:grid grid-cols-1 md:grid-cols-3 gap-6">
         {events.map((evt) => (
           <EventCard
             key={evt.id}

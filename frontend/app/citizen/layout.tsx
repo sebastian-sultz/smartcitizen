@@ -28,16 +28,16 @@ import Image from "next/image";
 export default function CitizenLayout({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const { volunteer, fetchProfile } = useCitizenStore();
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("citizen-sidebar-collapsed") === "true";
+    }
+    return false;
+  });
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   useEffect(() => {
     fetchProfile();
-
-    const saved = localStorage.getItem("citizen-sidebar-collapsed");
-    if (saved === "true") {
-      setIsCollapsed(true);
-    }
   }, [fetchProfile]);
 
   const toggleCollapse = () => {
@@ -70,35 +70,39 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen md:h-screen bg-bg flex flex-col md:flex-row md:overflow-hidden">
       {/* Mobile Header Bar */}
-      <header className="md:hidden h-20 bg-white/95 backdrop-blur-md border-b border-border/60 flex items-center justify-between px-6 sticky top-0 z-40 shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)]">
-        <Link href="/citizen" className="flex items-center gap-3">
-          <div className="relative w-10 h-10 shrink-0">
+      <header className="md:hidden h-14 bg-white/75 backdrop-blur-lg border-b border-black/[0.04] flex items-center justify-between px-4 sticky top-0 z-40 transition-all duration-200">
+        <Link
+          href="/citizen"
+          className="flex items-center gap-2.5 active:opacity-80 transition-opacity"
+        >
+          <div className="relative w-8.5 h-8.5 shrink-0  overflow-hidden">
             <Image
               src={ASSETS.logo}
               alt="GlobalSmart Logo"
               fill
-              sizes="40px"
+              sizes="32px"
               className="object-contain"
               priority
             />
           </div>
           <div className="flex flex-col">
-            <span className="font-display font-black text-xl text-primary leading-none">
+            <span className="font-display font-black text-[15px] tracking-tight text-primary leading-none">
               GlobalSmart
             </span>
-            <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-text-muted opacity-60 mt-0.5">
+            <span className="text-[7.5px] font-bold uppercase tracking-[0.18em] text-text-muted/90 leading-none mt-1">
               Citizen Portal
             </span>
           </div>
         </Link>
         <Button
           variant="ghost"
-          size="icon"
+          size="icon-sm"
+          shape="circle"
           onClick={() => setIsMobileOpen(true)}
-          className="p-2 text-text hover:bg-bg rounded-lg transition-colors"
+          className="w-9 h-9 rounded-full bg-bg/50 border border-border/50 text-text hover:bg-bg transition-all active:scale-95 shadow-sm"
           aria-label="Open navigation menu"
         >
-          <Menu size={24} />
+          <Menu size={16} className="text-text-light" />
         </Button>
       </header>
 
@@ -118,43 +122,44 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
         )}
       >
         {/* Mobile menu top */}
-        <div className="p-6 border-b border-border/40 flex items-center justify-between bg-white">
+        <div className="p-4 border-b border-border/40 flex items-center justify-between bg-white h-16 shrink-0">
           <Link
             href="/citizen"
-            className="flex items-center gap-3.5"
+            className="flex items-center gap-2.5"
             onClick={() => setIsMobileOpen(false)}
           >
-            <div className="relative w-10 h-10 shrink-0">
+            <div className="relative w-8 h-8 shrink-0 rounded-full overflow-hidden border border-primary/10 shadow-sm">
               <Image
                 src={ASSETS.logo}
                 alt="GlobalSmart Logo"
                 fill
-                sizes="40px"
+                sizes="32px"
                 className="object-contain"
               />
             </div>
             <div className="flex flex-col">
-              <span className="font-display font-black text-xl text-primary leading-none">
+              <span className="font-display font-black text-[15px] tracking-tight text-primary leading-none">
                 GlobalSmart
               </span>
-              <span className="text-[9.5px] font-bold uppercase tracking-[0.12em] text-text-muted opacity-60 mt-0.5">
+              <span className="text-[7.5px] font-bold uppercase tracking-[0.18em] text-text-muted/90 leading-none mt-1">
                 Citizen Portal
               </span>
             </div>
           </Link>
           <Button
             variant="ghost"
-            size="icon"
+            size="icon-sm"
+            shape="circle"
             onClick={() => setIsMobileOpen(false)}
-            className="p-2 text-text hover:bg-bg rounded-lg transition-colors"
+            className="w-9 h-9 rounded-full bg-bg/50 border border-border/50 text-text hover:bg-bg transition-all active:scale-95 shadow-sm"
             aria-label="Close navigation menu"
           >
-            <X size={20} />
+            <X size={16} className="text-text-light" />
           </Button>
         </div>
 
         {/* Mobile Navigation links */}
-        <nav className="p-4 space-y-1.5 overflow-y-auto flex-1">
+        <nav className="p-4 space-y-1 overflow-y-auto flex-1">
           {filteredNavItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -164,14 +169,14 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
                 href={item.href}
                 onClick={() => setIsMobileOpen(false)}
                 className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-[14px] transition-all relative overflow-hidden",
+                  "flex items-center gap-3 px-4 py-3.5 rounded-xl text-[13.5px] transition-all relative overflow-hidden",
                   isActive
-                    ? "bg-primary/[0.04] text-primary before:absolute before:left-0 before:top-2 before:bottom-2 before:w-[3.5px] before:bg-primary before:rounded-r-md"
-                    : "text-text-light hover:bg-bg hover:text-text duration-200",
+                    ? "bg-primary/[0.04] text-primary font-bold before:absolute before:left-0 before:top-2.5 before:bottom-2.5 before:w-[3.5px] before:bg-primary before:rounded-r-md"
+                    : "text-text-light hover:bg-bg hover:text-text font-medium duration-200",
                 )}
               >
                 <Icon
-                  size={18}
+                  size={17}
                   className={cn(
                     "shrink-0",
                     isActive ? "text-primary" : "text-text-light/85",
@@ -184,7 +189,7 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
         </nav>
 
         {/* Mobile bottom panel containing Logout */}
-        <div className="p-4 border-t border-border/40 bg-white mt-auto">
+        <div className="p-4 border-t border-border/40 bg-white mt-auto shrink-0">
           <Button
             variant="ghost-danger"
             fullWidth
@@ -321,7 +326,7 @@ export default function CitizenLayout({ children }: { children: ReactNode }) {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 p-6 md:p-8 lg:p-10 overflow-y-auto pb-24 md:pb-12">
+      <main className="flex-1 p-6 md:p-8 lg:p-10 overflow-y-auto pb-8 md:pb-12">
         <div className="max-w-6xl mx-auto">{children}</div>
       </main>
     </div>

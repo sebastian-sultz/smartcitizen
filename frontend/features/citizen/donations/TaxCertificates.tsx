@@ -53,7 +53,7 @@ export default function TaxCertificates({
         {certificates.map((cert) => (
           <Card
             key={cert.id}
-            className="rounded-[32px] border-primary/5 shadow-sm overflow-hidden animate-scale-in"
+            className="rounded-3xl sm:rounded-[32px] border-primary/5 shadow-sm overflow-hidden animate-scale-in"
           >
             <CardContent className="p-5 space-y-4">
               <div className="flex justify-between items-start">
@@ -90,7 +90,6 @@ export default function TaxCertificates({
                 fullWidth
                 startIcon={<Download size={14} />}
                 className={cn(
-                  "font-bold",
                   cert.status !== "generated" &&
                     "border-primary/20 text-primary hover:bg-primary/5",
                 )}

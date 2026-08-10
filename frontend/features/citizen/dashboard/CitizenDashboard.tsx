@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useAlert } from "@/components/ui/AlertProvider";
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   useCitizenStore,
   selectReferralCode,
@@ -49,7 +49,8 @@ export function CitizenDashboard() {
     ? {
         total_amount: user.total_amount,
         total_referrals: user.total_referrals,
-        events_attended: user.total_events_registered || 0,
+        overall_referrals: user.overall_referrals || 0,
+        overall_network_donation: user.overall_network_donation || 0,
       }
     : null;
 
@@ -60,8 +61,59 @@ export function CitizenDashboard() {
 
   if (storeLoading || localLoading) {
     return (
-      <div className="flex justify-center items-center py-32">
-        <Spinner className="size-10 text-primary" />
+      <div className="space-y-8 w-full animate-pulse">
+        {/* Welcome Hero Skeleton */}
+        <Skeleton className="h-44 w-full rounded-card" />
+
+        {/* Main Grid: Left Column for Actions/Stats, Right Column for Info/Status widgets */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+          {/* Left Column (Main Panel) */}
+          <div className="lg:col-span-2 space-y-8">
+            <div className="space-y-4">
+              <Skeleton className="h-6 w-40 rounded-lg" />
+              <div className="flex sm:grid sm:grid-cols-3 gap-6 overflow-x-auto sm:overflow-x-visible pb-4 sm:pb-0 -mx-6 px-6 sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                <Skeleton className="h-28 w-[82%] sm:w-full shrink-0 rounded-card" />
+                <Skeleton className="h-28 w-[82%] sm:w-full shrink-0 rounded-card" />
+                <Skeleton className="h-28 w-[82%] sm:w-full shrink-0 rounded-card" />
+              </div>
+            </div>
+            
+            {/* Quick Actions */}
+            <div className="space-y-4">
+              <Skeleton className="h-6 w-32 rounded-lg" />
+              {/* Mobile skeleton */}
+              <div className="grid grid-cols-3 gap-4 sm:hidden">
+                <Skeleton className="h-20 w-full rounded-2xl" />
+                <Skeleton className="h-20 w-full rounded-2xl" />
+                <Skeleton className="h-20 w-full rounded-2xl" />
+                <Skeleton className="h-20 w-full rounded-2xl" />
+                <Skeleton className="h-20 w-full rounded-2xl" />
+                <Skeleton className="h-20 w-full rounded-2xl" />
+              </div>
+              {/* Desktop skeleton */}
+              <div className="hidden sm:grid sm:grid-cols-4 gap-4">
+                <Skeleton className="h-24 w-full rounded-xl" />
+                <Skeleton className="h-24 w-full rounded-xl" />
+                <Skeleton className="h-24 w-full rounded-xl" />
+                <Skeleton className="h-24 w-full rounded-xl" />
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column (Sidebar Panels) */}
+          <div className="h-full">
+            <Skeleton className="h-[380px] w-full rounded-card" />
+          </div>
+        </div>
+
+        {/* Upcoming Events Section */}
+        <div className="space-y-4">
+          <Skeleton className="h-6 w-48 rounded-lg" />
+          <div className="space-y-3">
+            <Skeleton className="h-16 w-full rounded-xl" />
+            <Skeleton className="h-16 w-full rounded-xl" />
+          </div>
+        </div>
       </div>
     );
   }

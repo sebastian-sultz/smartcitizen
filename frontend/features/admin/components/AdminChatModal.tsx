@@ -13,9 +13,9 @@ import { Input } from "@/components/ui/Input";
 import { Send, AlertCircle } from "lucide-react";
 import { SupportTicket, TicketMessage, getReport, addReportMessage } from "@/features/shared/reports";
 import { useAuthStore } from "@/store/authStore";
-import { cn, formatDate } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { getTicketStatusBadge } from "@/features/citizen/support/ticket-utils";
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 
 interface AdminChatModalProps {
@@ -33,7 +33,7 @@ export default function AdminChatModal({
 }: AdminChatModalProps) {
   const [messages, setMessages] = useState<TicketMessage[]>([]);
   const [replyText, setReplyText] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const { session } = useAuthStore();
   const currentUserId = session?.userId;
@@ -54,19 +54,17 @@ export default function AdminChatModal({
       console.error("Failed to load ticket messages for admin:", err);
       if (!silent) toast.error("Failed to load chat history.");
     } finally {
-      if (!silent) setLoading(false);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (open && ticket) {
-      loadMessages(false);
+    if (ticket) {
+      loadMessages(true);
       const interval = setInterval(() => loadMessages(true), 5000);
       return () => clearInterval(interval);
-    } else {
-      setMessages([]);
     }
-  }, [open, ticket]);
+  }, [ticket]);
 
   useEffect(() => {
     scrollToBottom();
@@ -105,22 +103,33 @@ export default function AdminChatModal({
         <DialogHeader className="border-b border-border/60 pb-4 shrink-0">
           <div className="flex justify-between items-start gap-4">
             <div>
-              <DialogTitle>
-                {subject}
-              </DialogTitle>
+              <DialogTitle>{subject}</DialogTitle>
               <DialogDescription>
                 Submitted by: {ticket.user?.name || "Anonymous User"}
               </DialogDescription>
             </div>
-            <div className="shrink-0">{getTicketStatusBadge(ticket.status)}</div>
+            <div className="shrink-0">
+              {getTicketStatusBadge(ticket.status)}
+            </div>
           </div>
         </DialogHeader>
 
         {/* Conversation Thread */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4 rounded-2xl bg-bg/25 border border-border/60 min-h-0">
           {loading ? (
-            <div className="h-full flex items-center justify-center">
-              <Spinner className="size-6 text-primary" />
+            <div className="space-y-4 animate-pulse p-2">
+              <div className="flex gap-2 max-w-[70%]">
+                <Skeleton className="w-8 h-8 rounded-full shrink-0" />
+                <Skeleton className="h-10 w-44 rounded-2xl rounded-tl-none bg-border/40" />
+              </div>
+              <div className="flex gap-2 max-w-[70%] ml-auto flex-row-reverse">
+                <Skeleton className="w-8 h-8 rounded-full shrink-0" />
+                <Skeleton className="h-12 w-56 rounded-2xl rounded-tr-none bg-border/40" />
+              </div>
+              <div className="flex gap-2 max-w-[70%]">
+                <Skeleton className="w-8 h-8 rounded-full shrink-0" />
+                <Skeleton className="h-10 w-36 rounded-2xl rounded-tl-none bg-border/40" />
+              </div>
             </div>
           ) : (
             <>
@@ -132,7 +141,7 @@ export default function AdminChatModal({
                     key={msg.id}
                     className={cn(
                       "flex gap-2.5 max-w-[85%]",
-                      isSelf ? "ml-auto flex-row-reverse" : "mr-auto"
+                      isSelf ? "ml-auto flex-row-reverse" : "mr-auto",
                     )}
                   >
                     <div
@@ -140,7 +149,7 @@ export default function AdminChatModal({
                         "w-7 h-7 rounded-full flex items-center justify-center font-bold text-[9px] shrink-0 border",
                         isSelf
                           ? "bg-primary/10 border-primary/20 text-primary"
-                          : "bg-surface border-border text-text-muted"
+                          : "bg-surface border-border text-text-muted",
                       )}
                     >
                       {isSelf ? "A" : "U"}
@@ -152,15 +161,17 @@ export default function AdminChatModal({
                           "p-3 rounded-2xl text-xs sm:text-sm leading-relaxed shadow-sm font-medium",
                           isSelf
                             ? "bg-primary text-white rounded-tr-none"
-                            : "bg-white text-text border border-border/60 rounded-tl-none"
+                            : "bg-white text-text border border-border/60 rounded-tl-none",
                         )}
                       >
-                        <p className="whitespace-pre-wrap break-words">{msg.message}</p>
+                        <p className="whitespace-pre-wrap break-words">
+                          {msg.message}
+                        </p>
                       </div>
                       <p
                         className={cn(
                           "text-[8px] text-text-muted/70 font-mono font-bold px-1.5",
-                          isSelf ? "text-right" : "text-left"
+                          isSelf ? "text-right" : "text-left",
                         )}
                       >
                         {new Date(msg.created_at).toLocaleTimeString("en-IN", {

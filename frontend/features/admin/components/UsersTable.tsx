@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { TableComponent } from "@/components/ui/TableComponent";
-import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/Input";
 import { Search } from "lucide-react";
 import { getUsersColumns } from "./UsersColumns";
@@ -35,13 +34,23 @@ export const UsersTable = () => {
     return () => clearTimeout(timer);
   }, [search]);
 
-  useEffect(() => {
-    setPage(1);
-  }, [debouncedSearch]);
+  const [prevSearch, setPrevSearch] = useState(debouncedSearch);
+  const [prevPage, setPrevPage] = useState(page);
+  const [prevLimit, setPrevLimit] = useState(limit);
 
-  const fetchUsers = async () => {
+  if (debouncedSearch !== prevSearch) {
+    setPrevSearch(debouncedSearch);
+    setPage(1);
+    setIsLoading(true);
+  } else if (page !== prevPage || limit !== prevLimit) {
+    setPrevPage(page);
+    setPrevLimit(limit);
+    setIsLoading(true);
+  }
+
+  const fetchUsers = async (showLoading = false) => {
     try {
-      setIsLoading(true);
+      if (showLoading) setIsLoading(true);
       const res = await getNonAdminUsers(page, limit, debouncedSearch);
       if (res && res.users) {
         setUsers(res.users);
@@ -57,7 +66,7 @@ export const UsersTable = () => {
   };
 
   useEffect(() => {
-    fetchUsers();
+    fetchUsers(false);
   }, [page, limit, debouncedSearch]);
 
   const handleViewDetails = (user: UserResponse) => {

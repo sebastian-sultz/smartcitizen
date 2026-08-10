@@ -65,10 +65,47 @@ export default function QuickActions({ onInviteClick }: QuickActionsProps) {
 
   return (
     <div className="space-y-4">
-      <h3 className="font-display text-lg font-bold text-text">
+      <h3 className="font-display text-lg font-bold text-text px-1">
         Quick Actions
       </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+      {/* Mobile view: Slick App-Style Icon Grid (3 Columns) */}
+      <div className="grid grid-cols-3 gap-y-6 gap-x-3 p-5 bg-white border border-border shadow-sm rounded-2xl sm:hidden ">
+        {actions.map((act, idx) => {
+          const Icon = act.icon;
+          const mobileLabel =
+            act.title === "Make Donation"
+              ? "Donate"
+              : act.title === "Invite Friends"
+                ? "Invite"
+                : act.title === "Apply Volunteer"
+                  ? "Volunteer"
+                  : act.title === "Support Desk"
+                    ? "Support"
+                    : act.title === "Edit Profile"
+                      ? "Profile"
+                      : act.title === "Upcoming Events"
+                        ? "Events"
+                        : act.title;
+          return (
+            <div
+              key={idx}
+              className="flex flex-col items-center text-center cursor-pointer active:scale-95 transition-transform"
+              onClick={act.onClick}
+            >
+              <div className="p-3 rounded-2xl bg-bg border border-border flex items-center justify-center mb-1.5 shadow-sm">
+                <Icon size={20} className={act.iconColor.split(" ")[0]} />
+              </div>
+              <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">
+                {mobileLabel}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop view: Detailed Cards */}
+      <div className="hidden sm:grid grid-cols-2 lg:grid-cols-3 gap-4">
         {actions.map((act, idx) => {
           const Icon = act.icon;
           return (

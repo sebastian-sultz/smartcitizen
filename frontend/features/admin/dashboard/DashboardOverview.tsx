@@ -8,9 +8,9 @@ import { getSystemStats, SystemStatsResponse } from "@/features/shared/auth";
 import { getAdminAnalytics, syncPendingReceipts } from "@/features/admin/api";
 import { AdminAnalyticsResponse } from "@/features/admin/types";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { toast } from "sonner";
+import Link from "next/link";
 
 export function DashboardOverview() {
   const [statsData, setStatsData] = useState<SystemStatsResponse | null>(null);
@@ -100,7 +100,7 @@ export function DashboardOverview() {
         <div>
           <h2 className="text-2xl font-bold text-text">Dashboard Overview</h2>
           <p className="text-text-muted">
-            Welcome back, Admin. Here's what's happening today.
+            {"Welcome back, Admin. Here's what's happening today."}
           </p>
         </div>
 
@@ -149,24 +149,28 @@ export function DashboardOverview() {
       value: (statsData?.total_users ?? 0).toString(),
       icon: <Users className="w-6 h-6" />,
       color: "bg-blue-500",
+      href: "/admin/users",
     },
     {
       title: "Total Referrals",
       value: (statsData?.total_referrals ?? 0).toString(),
       icon: <UserCheck className="w-6 h-6" />,
       color: "bg-teal-600",
+      href: "/admin/networks",
     },
     {
       title: "Total Amount Donated",
       value: `₹ ${(statsData?.total_amount ?? 0).toLocaleString("en-IN")}`,
       icon: <Heart className="w-6 h-6" />,
       color: "bg-accent",
+      href: "/admin/donations",
     },
     {
       title: "Total Payments",
       value: (statsData?.total_payments ?? 0).toString(),
       icon: <Activity className="w-6 h-6" />,
       color: "bg-orange-500",
+      href: "/admin/donations",
     },
   ];
 
@@ -221,65 +225,76 @@ export function DashboardOverview() {
       <div>
         <h2 className="text-2xl font-bold text-text">Dashboard Overview</h2>
         <p className="text-text-muted">
-          Welcome back, Admin. Here's what's happening today.
+          {"Welcome back, Admin. Here's what's happening today."}
         </p>
       </div>
 
       {/* Compliance Warning Banner */}
-      {analyticsData?.receiptStats && analyticsData.receiptStats.pendingCount > 0 && (
-        <div className="bg-accent/5 border border-accent/20 p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm animate-fade-in-down">
-          <div className="flex items-start gap-3 text-left">
-            <AlertTriangle className="text-accent w-5 h-5 mt-0.5 shrink-0 animate-pulse" />
-            <div className="space-y-1">
-              <h4 className="font-bold text-text text-sm">Receipt Compliance Action Required</h4>
-              <p className="text-text-muted text-xs leading-relaxed">
-                There are <strong className="text-text">{analyticsData.receiptStats.pendingCount}</strong> successful payments that do not have associated PDF receipts compiled yet.
-              </p>
+      {analyticsData?.receiptStats &&
+        analyticsData.receiptStats.pendingCount > 0 && (
+          <div className="bg-accent/5 border border-accent/20 p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm animate-fade-in-down">
+            <div className="flex items-start gap-3 text-left">
+              <AlertTriangle className="text-accent w-5 h-5 mt-0.5 shrink-0 animate-pulse" />
+              <div className="space-y-1">
+                <h4 className="font-bold text-text text-sm">
+                  Receipt Compliance Action Required
+                </h4>
+                <p className="text-text-muted text-xs leading-relaxed">
+                  There are{" "}
+                  <strong className="text-text">
+                    {analyticsData.receiptStats.pendingCount}
+                  </strong>{" "}
+                  successful payments that do not have associated PDF receipts
+                  compiled yet.
+                </p>
+              </div>
             </div>
+            <Button
+              variant="accent"
+              size="sm"
+              onClick={handleSyncReceipts}
+              isLoading={isSyncing}
+              startIcon={<Sparkles size={16} />}
+            >
+              Auto-Resolve & Sync
+            </Button>
           </div>
-          <Button
-            variant="accent"
-            size="sm"
-            onClick={handleSyncReceipts}
-            isLoading={isSyncing}
-            startIcon={<Sparkles size={16} />}
-          >
-            Auto-Resolve & Sync
-          </Button>
-        </div>
-      )}
+        )}
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
-          <div
+          <Link
+            href={stat.href}
             key={stat.title}
             style={{ animationDelay: `${index * 0.05}s` }}
-            className="animate-fade-in-up bg-surface p-6 rounded-2xl shadow-card border border-border relative overflow-hidden group"
+            className="animate-fade-in-up block group "
           >
-            <div
-              className={cn(
-                "absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 rounded-full opacity-10 transition-transform group-hover:scale-125",
-                stat.color,
-              )}
-            />
-
-            <div className="flex justify-between items-start mb-4">
+            <div className="bg-surface p-6 rounded-2xl border border-border relative overflow-hidden cursor-pointer shadow-card transition-all duration-300 group-hover:shadow-md group-hover:scale-[1.01] h-full">
               <div
                 className={cn(
-                  "p-3 rounded-xl text-white shadow-lg",
+                  "absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 rounded-full opacity-10 transition-transform group-hover:scale-125",
                   stat.color,
                 )}
-              >
-                {stat.icon}
-              </div>
-            </div>
+              />
 
-            <h3 className="text-text-muted text-sm font-medium">
-              {stat.title}
-            </h3>
-            <p className="text-2xl font-bold text-text mt-1">{stat.value}</p>
-          </div>
+              <div className="flex justify-between items-start mb-4">
+                <div
+                  className={cn(
+                    "p-3 rounded-xl text-white shadow-lg",
+                    stat.color,
+                  )}
+                >
+                  {stat.icon}
+                </div>
+              </div>
+
+              <h3 className="text-text-muted text-sm font-medium">
+                {stat.title}
+              </h3>
+              <p className="text-2xl font-bold text-text mt-1">{stat.value}</p>
+            </div>
+          </Link>
         ))}
       </div>
 
@@ -288,54 +303,78 @@ export function DashboardOverview() {
         {/* Monthly Contributions (Line Chart) */}
         <div className="bg-surface p-6 rounded-2xl shadow-card border border-border space-y-4">
           <div>
-            <h3 className="text-text font-bold text-lg">Monthly Contributions</h3>
-            <p className="text-text-muted text-xs">Fundraising aggregates over time</p>
+            <h3 className="text-text font-bold text-lg">
+              Monthly Contributions
+            </h3>
+            <p className="text-text-muted text-xs">
+              Fundraising aggregates over time
+            </p>
           </div>
           {donationData.length > 0 ? (
             <div className="relative w-full overflow-hidden">
-              <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full h-auto">
+              <svg
+                viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+                className="w-full h-auto"
+              >
                 <defs>
-                  <linearGradient id="donation-gradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="var(--color-primary)" stopOpacity="0.2" />
-                    <stop offset="100%" stopColor="var(--color-primary)" stopOpacity="0.0" />
+                  <linearGradient
+                    id="donation-gradient"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop
+                      offset="0%"
+                      stopColor="var(--color-primary)"
+                      stopOpacity="0.2"
+                    />
+                    <stop
+                      offset="100%"
+                      stopColor="var(--color-primary)"
+                      stopOpacity="0.0"
+                    />
                   </linearGradient>
                 </defs>
 
                 {/* Grid Lines */}
                 {gridLines.map((gl, i) => (
                   <g key={i}>
-                    <line 
-                      x1={paddingLeft} 
-                      y1={gl.y} 
-                      x2={paddingLeft + chartWidth} 
-                      y2={gl.y} 
-                      stroke="var(--color-border)" 
-                      strokeDasharray="4 4" 
+                    <line
+                      x1={paddingLeft}
+                      y1={gl.y}
+                      x2={paddingLeft + chartWidth}
+                      y2={gl.y}
+                      stroke="var(--color-border)"
+                      strokeDasharray="4 4"
                     />
-                    <text 
-                      x={paddingLeft - 10} 
-                      y={gl.y + 4} 
-                      textAnchor="end" 
+                    <text
+                      x={paddingLeft - 10}
+                      y={gl.y + 4}
+                      textAnchor="end"
                       className="fill-text-muted text-[10px] font-bold"
                     >
-                      ₹{gl.val >= 1000 ? (gl.val / 1000).toFixed(0) + 'k' : gl.val}
+                      ₹
+                      {gl.val >= 1000
+                        ? (gl.val / 1000).toFixed(0) + "k"
+                        : gl.val}
                     </text>
                   </g>
                 ))}
 
                 {/* Area under the line */}
-                <path 
-                  d={areaPath} 
-                  fill="url(#donation-gradient)" 
+                <path
+                  d={areaPath}
+                  fill="url(#donation-gradient)"
                   className="transition-all duration-500"
                 />
 
                 {/* Main line path */}
-                <path 
-                  d={linePath} 
-                  fill="none" 
-                  stroke="var(--color-primary)" 
-                  strokeWidth="3" 
+                <path
+                  d={linePath}
+                  fill="none"
+                  stroke="var(--color-primary)"
+                  strokeWidth="3"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   className="transition-all duration-500"
@@ -343,8 +382,13 @@ export function DashboardOverview() {
 
                 {/* Data point circles */}
                 {donationData.map((d, i) => {
-                  const x = paddingLeft + (i / Math.max(1, donationData.length - 1)) * chartWidth;
-                  const y = paddingTop + chartHeight - (d.total / Math.max(1, maxDonation)) * chartHeight;
+                  const x =
+                    paddingLeft +
+                    (i / Math.max(1, donationData.length - 1)) * chartWidth;
+                  const y =
+                    paddingTop +
+                    chartHeight -
+                    (d.total / Math.max(1, maxDonation)) * chartHeight;
                   return (
                     <g key={i} className="group/dot">
                       <circle
@@ -360,13 +404,15 @@ export function DashboardOverview() {
 
                 {/* X Axis Labels */}
                 {donationData.map((d, i) => {
-                  const x = paddingLeft + (i / Math.max(1, donationData.length - 1)) * chartWidth;
+                  const x =
+                    paddingLeft +
+                    (i / Math.max(1, donationData.length - 1)) * chartWidth;
                   return (
-                    <text 
-                      key={i} 
-                      x={x} 
-                      y={paddingTop + chartHeight + 20} 
-                      textAnchor="middle" 
+                    <text
+                      key={i}
+                      x={x}
+                      y={paddingTop + chartHeight + 20}
+                      textAnchor="middle"
                       className="fill-text-muted text-[10px] font-bold"
                     >
                       {d.month}
@@ -386,26 +432,31 @@ export function DashboardOverview() {
         <div className="bg-surface p-6 rounded-2xl shadow-card border border-border space-y-4">
           <div>
             <h3 className="text-text font-bold text-lg">User Onboarding</h3>
-            <p className="text-text-muted text-xs">New user registrations by month</p>
+            <p className="text-text-muted text-xs">
+              New user registrations by month
+            </p>
           </div>
           {registrationData.length > 0 ? (
             <div className="relative w-full overflow-hidden">
-              <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full h-auto">
+              <svg
+                viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+                className="w-full h-auto"
+              >
                 {/* Grid Lines */}
                 {regGridLines.map((gl, i) => (
                   <g key={i}>
-                    <line 
-                      x1={paddingLeft} 
-                      y1={gl.y} 
-                      x2={paddingLeft + chartWidth} 
-                      y2={gl.y} 
-                      stroke="var(--color-border)" 
-                      strokeDasharray="4 4" 
+                    <line
+                      x1={paddingLeft}
+                      y1={gl.y}
+                      x2={paddingLeft + chartWidth}
+                      y2={gl.y}
+                      stroke="var(--color-border)"
+                      strokeDasharray="4 4"
                     />
-                    <text 
-                      x={paddingLeft - 10} 
-                      y={gl.y + 4} 
-                      textAnchor="end" 
+                    <text
+                      x={paddingLeft - 10}
+                      y={gl.y + 4}
+                      textAnchor="end"
                       className="fill-text-muted text-[10px] font-bold"
                     >
                       {gl.val}
@@ -417,8 +468,12 @@ export function DashboardOverview() {
                 {registrationData.map((d, i) => {
                   const spacing = chartWidth / registrationData.length;
                   const barWidth = Math.max(12, spacing * 0.5);
-                  const x = paddingLeft + i * spacing + (spacing - barWidth) / 2;
-                  const y = paddingTop + chartHeight - (d.count / Math.max(1, maxReg)) * chartHeight;
+                  const x =
+                    paddingLeft + i * spacing + (spacing - barWidth) / 2;
+                  const y =
+                    paddingTop +
+                    chartHeight -
+                    (d.count / Math.max(1, maxReg)) * chartHeight;
                   const height = (d.count / Math.max(1, maxReg)) * chartHeight;
 
                   return (
@@ -439,10 +494,10 @@ export function DashboardOverview() {
                       >
                         {d.count}
                       </text>
-                      <text 
-                        x={x + barWidth / 2} 
-                        y={paddingTop + chartHeight + 20} 
-                        textAnchor="middle" 
+                      <text
+                        x={x + barWidth / 2}
+                        y={paddingTop + chartHeight + 20}
+                        textAnchor="middle"
                         className="fill-text-muted text-[10px] font-bold"
                       >
                         {d.month}
@@ -466,8 +521,12 @@ export function DashboardOverview() {
         {/* Volunteer Application Status Splits */}
         <div className="bg-surface p-6 rounded-2xl shadow-card border border-border space-y-6">
           <div>
-            <h3 className="text-text font-bold text-lg">Volunteer Applications</h3>
-            <p className="text-text-muted text-xs">Lifecycle splits for NGO volunteers</p>
+            <h3 className="text-text font-bold text-lg">
+              Volunteer Applications
+            </h3>
+            <p className="text-text-muted text-xs">
+              Lifecycle splits for NGO volunteers
+            </p>
           </div>
           <div className="space-y-4">
             {/* Active / Approved */}
@@ -477,10 +536,17 @@ export function DashboardOverview() {
                   <span className="w-2.5 h-2.5 rounded-full bg-success inline-block"></span>
                   Approved
                 </span>
-                <span className="text-text">{activeVolunteers} / {totalVolunteers}</span>
+                <span className="text-text">
+                  {activeVolunteers} / {totalVolunteers}
+                </span>
               </div>
               <div className="w-full bg-bg h-2 rounded-full overflow-hidden">
-                <div className="bg-success h-full transition-all duration-500" style={{ width: `${totalVolunteers > 0 ? (activeVolunteers / totalVolunteers) * 100 : 0}%` }}></div>
+                <div
+                  className="bg-success h-full transition-all duration-500"
+                  style={{
+                    width: `${totalVolunteers > 0 ? (activeVolunteers / totalVolunteers) * 100 : 0}%`,
+                  }}
+                ></div>
               </div>
             </div>
 
@@ -491,10 +557,17 @@ export function DashboardOverview() {
                   <span className="w-2.5 h-2.5 rounded-full bg-accent inline-block"></span>
                   Pending Review
                 </span>
-                <span className="text-text">{pendingVolunteers} / {totalVolunteers}</span>
+                <span className="text-text">
+                  {pendingVolunteers} / {totalVolunteers}
+                </span>
               </div>
               <div className="w-full bg-bg h-2 rounded-full overflow-hidden">
-                <div className="bg-accent h-full transition-all duration-500" style={{ width: `${totalVolunteers > 0 ? (pendingVolunteers / totalVolunteers) * 100 : 0}%` }}></div>
+                <div
+                  className="bg-accent h-full transition-all duration-500"
+                  style={{
+                    width: `${totalVolunteers > 0 ? (pendingVolunteers / totalVolunteers) * 100 : 0}%`,
+                  }}
+                ></div>
               </div>
             </div>
 
@@ -505,10 +578,17 @@ export function DashboardOverview() {
                   <span className="w-2.5 h-2.5 rounded-full bg-text-muted inline-block"></span>
                   Suspended
                 </span>
-                <span className="text-text">{suspendedVolunteers} / {totalVolunteers}</span>
+                <span className="text-text">
+                  {suspendedVolunteers} / {totalVolunteers}
+                </span>
               </div>
               <div className="w-full bg-bg h-2 rounded-full overflow-hidden">
-                <div className="bg-text-muted h-full transition-all duration-500" style={{ width: `${totalVolunteers > 0 ? (suspendedVolunteers / totalVolunteers) * 100 : 0}%` }}></div>
+                <div
+                  className="bg-text-muted h-full transition-all duration-500"
+                  style={{
+                    width: `${totalVolunteers > 0 ? (suspendedVolunteers / totalVolunteers) * 100 : 0}%`,
+                  }}
+                ></div>
               </div>
             </div>
 
@@ -519,10 +599,17 @@ export function DashboardOverview() {
                   <span className="w-2.5 h-2.5 rounded-full bg-danger inline-block"></span>
                   Rejected
                 </span>
-                <span className="text-text">{rejectedVolunteers} / {totalVolunteers}</span>
+                <span className="text-text">
+                  {rejectedVolunteers} / {totalVolunteers}
+                </span>
               </div>
               <div className="w-full bg-bg h-2 rounded-full overflow-hidden">
-                <div className="bg-danger h-full transition-all duration-500" style={{ width: `${totalVolunteers > 0 ? (rejectedVolunteers / totalVolunteers) * 100 : 0}%` }}></div>
+                <div
+                  className="bg-danger h-full transition-all duration-500"
+                  style={{
+                    width: `${totalVolunteers > 0 ? (rejectedVolunteers / totalVolunteers) * 100 : 0}%`,
+                  }}
+                ></div>
               </div>
             </div>
           </div>
@@ -532,18 +619,26 @@ export function DashboardOverview() {
         <div className="bg-surface p-6 rounded-2xl shadow-card border border-border flex flex-col justify-between space-y-6">
           <div className="space-y-2">
             <h3 className="text-text font-bold text-lg">Receipt Compliance</h3>
-            <p className="text-text-muted text-xs">PDF generation status for successful donations</p>
+            <p className="text-text-muted text-xs">
+              PDF generation status for successful donations
+            </p>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-bg p-4 rounded-xl space-y-1">
-              <span className="text-xs text-text-muted font-medium">Generated Receipts</span>
+              <span className="text-xs text-text-muted font-medium">
+                Generated Receipts
+              </span>
               <p className="text-2xl font-bold text-success">
                 {analyticsData?.receiptStats?.generatedCount || 0}
               </p>
             </div>
             <div className="bg-bg p-4 rounded-xl space-y-1">
-              <span className="text-xs text-text-muted font-medium">Pending Generation</span>
-              <p className={`text-2xl font-bold ${analyticsData?.receiptStats?.pendingCount && analyticsData.receiptStats.pendingCount > 0 ? 'text-accent' : 'text-text'}`}>
+              <span className="text-xs text-text-muted font-medium">
+                Pending Generation
+              </span>
+              <p
+                className={`text-2xl font-bold ${analyticsData?.receiptStats?.pendingCount && analyticsData.receiptStats.pendingCount > 0 ? "text-accent" : "text-text"}`}
+              >
                 {analyticsData?.receiptStats?.pendingCount || 0}
               </p>
             </div>
@@ -551,9 +646,13 @@ export function DashboardOverview() {
           <div className="border-t border-border/40 pt-4 flex justify-between items-center text-xs">
             <span className="text-text-muted font-medium">Compliance Rate</span>
             <span className="font-bold text-primary">
-              {analyticsData?.receiptStats?.successPayments 
-                ? ((analyticsData.receiptStats.generatedCount / analyticsData.receiptStats.successPayments) * 100).toFixed(1) + '%'
-                : '100%'}
+              {analyticsData?.receiptStats?.successPayments
+                ? (
+                    (analyticsData.receiptStats.generatedCount /
+                      analyticsData.receiptStats.successPayments) *
+                    100
+                  ).toFixed(1) + "%"
+                : "100%"}
             </span>
           </div>
         </div>

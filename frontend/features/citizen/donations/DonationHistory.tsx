@@ -138,7 +138,7 @@ export default function DonationHistory({
           <div className="w-8 h-8 rounded-lg bg-bg border border-border flex items-center justify-center shrink-0">
             <Heart size={14} className="text-accent" fill="currentColor" />
           </div>
-          <span className="font-mono text-xs font-bold text-text-muted select-all">
+          <span className="font-mono text-xs font-bold text-text-muted select-all truncate block max-w-[90px] sm:max-w-none">
             {getUtrNumber(row)}
           </span>
         </div>

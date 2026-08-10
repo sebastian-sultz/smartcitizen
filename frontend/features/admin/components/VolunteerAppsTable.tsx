@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { TableComponent } from "@/components/ui/TableComponent";
-import { Spinner } from "@/components/ui/spinner";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/Input";
 import { Search } from "lucide-react";
@@ -35,13 +34,23 @@ export const VolunteerAppsTable = () => {
     return () => clearTimeout(timer);
   }, [search]);
 
-  useEffect(() => {
-    setPage(1);
-  }, [debouncedSearch]);
+  const [prevSearch, setPrevSearch] = useState(debouncedSearch);
+  const [prevPage, setPrevPage] = useState(page);
+  const [prevLimit, setPrevLimit] = useState(limit);
 
-  const fetchVolunteers = async () => {
+  if (debouncedSearch !== prevSearch) {
+    setPrevSearch(debouncedSearch);
+    setPage(1);
+    setIsLoading(true);
+  } else if (page !== prevPage || limit !== prevLimit) {
+    setPrevPage(page);
+    setPrevLimit(limit);
+    setIsLoading(true);
+  }
+
+  const fetchVolunteers = async (showLoading = false) => {
     try {
-      setIsLoading(true);
+      if (showLoading) setIsLoading(true);
       const res = await getAllVolunteers({ search: debouncedSearch, page, limit });
       if (res && res.volunteers) {
         setVolunteers(res.volunteers);
@@ -57,7 +66,7 @@ export const VolunteerAppsTable = () => {
   };
 
   useEffect(() => {
-    fetchVolunteers();
+    fetchVolunteers(false);
   }, [page, limit, debouncedSearch]);
 
   const updateVolunteerAppStatus = async (id: string, status: "APPROVED" | "REJECTED" | "SUSPENDED" | "PENDING") => {
@@ -217,5 +226,3 @@ export const VolunteerAppsTable = () => {
     </Card>
   );
 };
-
-

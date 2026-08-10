@@ -284,33 +284,23 @@ func (s *service) GetDownlineNetwork(ctx context.Context, userID string, recursi
 }
 
 func (s *service) GetNetworkStats(ctx context.Context, userID string) (*response.UserNetworkStatsResponse, error) {
-	users, err := s.repo.FindAllNonAdminUsers()
+	// Fetch direct referrals using repository
+	directReferrals, err := s.repo.FindByReferralID(userID)
 	if err != nil {
 		return nil, err
 	}
 
-	referralsMap := make(map[string][]User)
-	directDonations := make(map[string]float64)
-	for _, u := range users {
-		if u.ReferralID != nil && *u.ReferralID != "" {
-			referralsMap[*u.ReferralID] = append(referralsMap[*u.ReferralID], u)
-		}
-		directDonations[u.ID.String()] = u.TotalAmount
-	}
-
-	directReferrals := referralsMap[userID]
 	directCount := int64(len(directReferrals))
 	directDonationsSum := 0.0
 	for _, child := range directReferrals {
 		directDonationsSum += child.TotalAmount
 	}
 
-	cache := make(map[string]float64)
-	var referralsList []response.ReferralInfo
-	buildDownline(userID, 1, -1, referralsMap, directDonations, cache, &referralsList)
-
-	totalDownlineCount := int64(len(referralsList))
-	totalNetworkDonationAmount := computeNetworkDonations(userID, referralsMap, directDonations, cache)
+	// Fetch overall downline count and network donations using high-performance recursive CTE
+	totalDownlineCount, totalNetworkDonationAmount, err := s.repo.GetDownlineStats(userID)
+	if err != nil {
+		return nil, err
+	}
 
 	return &response.UserNetworkStatsResponse{
 		DirectReferralsCount:         directCount,

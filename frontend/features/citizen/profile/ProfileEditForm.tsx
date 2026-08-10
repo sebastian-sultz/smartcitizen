@@ -57,7 +57,7 @@ export default function ProfileEditForm({ profile, volunteer, onSave, onCancel }
   });
 
   return (
-    <Card className="rounded-[40px] border-primary/5 shadow-sm">
+    <Card className="rounded-2xl sm:rounded-[40px] border-primary/5 shadow-sm">
       <CardHeader>
         <CardTitle className="font-display text-lg font-bold text-text">Edit Personal Information</CardTitle>
       </CardHeader>

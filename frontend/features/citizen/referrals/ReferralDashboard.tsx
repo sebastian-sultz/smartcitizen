@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   useCitizenStore,
   selectReferralCode,
@@ -32,10 +32,10 @@ export default function ReferralDashboard() {
     fetchProfile();
   }, [fetchProfile]);
 
-  const loadReferrals = async () => {
+  const loadReferrals = async (showLoading = true) => {
     if (!user?.id) return;
     try {
-      setLocalLoading(true);
+      if (showLoading) setLocalLoading(true);
       const membersData = await getReferredMembers(user.id);
       setMembers(membersData || []);
     } catch (err) {
@@ -47,21 +47,53 @@ export default function ReferralDashboard() {
 
   useEffect(() => {
     if (user?.id) {
-      loadReferrals();
-    } else if (!storeLoading) {
-      setLocalLoading(false);
+      getReferredMembers(user.id)
+        .then((membersData) => {
+          setMembers(membersData || []);
+          setLocalLoading(false);
+        })
+        .catch((err) => {
+          console.error("Failed to load referral details:", err);
+          setLocalLoading(false);
+        });
     }
-  }, [user, storeLoading]);
+  }, [user]);
 
   const handleMemberAdded = async () => {
     await refreshProfile();
-    await loadReferrals();
+    await loadReferrals(true);
   };
 
-  if (storeLoading || localLoading) {
+  const isLoading = storeLoading || (user?.id ? localLoading : false);
+
+  if (isLoading) {
     return (
-      <div className="flex justify-center items-center py-24">
-        <Spinner className="size-10 text-primary" />
+      <div className="space-y-8 w-full animate-pulse">
+        {/* Referral Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <Skeleton className="h-28 w-full rounded-card" />
+          <Skeleton className="h-28 w-full rounded-card" />
+          <Skeleton className="h-28 w-full rounded-card" />
+        </div>
+
+        {/* Share and Progress Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+          <div className="lg:col-span-3">
+            <Skeleton className="h-64 w-full rounded-card" />
+          </div>
+          <div className="lg:col-span-2">
+            <Skeleton className="h-64 w-full rounded-card" />
+          </div>
+        </div>
+
+        {/* Table Directory Placeholder */}
+        <div className="space-y-4">
+          <Skeleton className="h-6 w-48 rounded-lg" />
+          <div className="space-y-3">
+            <Skeleton className="h-14 w-full rounded-xl" />
+            <Skeleton className="h-14 w-full rounded-xl" />
+          </div>
+        </div>
       </div>
     );
   }

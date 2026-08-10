@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { getUserNetworkStats } from "../../api";
 import { UserNetworkStats } from "../../types";
 import { Card, CardContent } from "@/components/ui/Card";
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Users, GitCommit, Heart, GitFork } from "lucide-react";
 import { toast } from "sonner";
 
@@ -38,8 +38,20 @@ export const UserNetworkStatsTab = ({ userId }: UserNetworkStatsTabProps) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center py-16">
-        <Spinner className="size-8 text-primary" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 animate-pulse">
+        {[1, 2, 3, 4].map((i) => (
+          <Card key={i} className="border border-border/40">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <Skeleton className="w-12 h-12 rounded-xl shrink-0" />
+                <div className="space-y-2 w-full">
+                  <Skeleton className="h-4 w-24 rounded-lg" />
+                  <Skeleton className="h-6 w-16 rounded-lg" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     );
   }

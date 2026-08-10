@@ -38,10 +38,10 @@ export default function CreateTicketForm({
       try {
         await onSubmit(values);
         toast.success("Support ticket successfully lodged!");
-      } catch (err: any) {
+      } catch (err) {
         console.error("Lodge ticket failed:", err);
         const errMsg =
-          err?.message || (typeof err === "string" ? err : "Unknown error");
+          err instanceof Error ? err.message : String(err);
         toast.error(`Failed to lodge support ticket: ${errMsg}`);
       } finally {
         setSubmitting(false);
@@ -50,7 +50,7 @@ export default function CreateTicketForm({
   });
 
   return (
-    <Card className="p-5 md:p-6 flex flex-col h-full rounded-[30px] shadow-none bg-white">
+    <Card className="p-5 md:p-6 flex flex-col h-full rounded-2xl shadow-none bg-white">
       <div className="flex items-center gap-3 pb-4 border-b border-border/60 shrink-0">
         <Button
           type="button"

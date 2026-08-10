@@ -120,40 +120,76 @@ export default function DonationStats({ stats }: DonationStatsProps) {
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-      {statsItems.map((item, idx) => (
-        <Card
-          key={idx}
-          className={cn(
-            "border p-6 flex flex-col justify-between shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-300 rounded-[32px] bg-gradient-to-br min-h-[130px] h-auto",
-            item.bgGradient
-          )}
-        >
-          <div className="space-y-1">
-            <span className={cn("text-xs font-bold uppercase tracking-wider opacity-80", item.titleClass)}>
-              {item.title}
-            </span>
-            <div className="flex items-baseline font-display">
-              <span className={cn("text-3xl md:text-4xl font-black tracking-tight", item.valueClass)}>
-                {item.whole}
-              </span>
-              {item.decimal && (
-                <span className={cn("text-xl md:text-2xl font-bold opacity-75 ml-0.5", item.valueClass)}>
-                  {item.decimal}
+    <>
+      {/* Mobile view: Unified Row List Card */}
+      <div className="block sm:hidden">
+        <Card className="bg-white border border-border shadow-sm p-4 rounded-2xl divide-y divide-border/60">
+          {statsItems.map((item, idx) => (
+            <div key={idx} className="flex items-center justify-between gap-3 py-3.5 first:pt-1.5 last:pb-1.5 min-w-0">
+              <div className="min-w-0 flex-1 space-y-0.5">
+                <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider block">
+                  {item.title}
                 </span>
-              )}
+                <p className="text-[10.5px] text-text-muted/90 font-medium truncate" title={item.subtitle}>
+                  {item.subtitle}
+                </p>
+              </div>
+              <div className="shrink-0 text-right space-y-1">
+                <div className="flex items-baseline justify-end font-display">
+                  <span className="text-sm font-black text-text">
+                    {item.whole}
+                  </span>
+                  {item.decimal && (
+                    <span className="text-[10px] font-bold text-text-muted ml-0.5">
+                      {item.decimal}
+                    </span>
+                  )}
+                </div>
+                <div className="flex justify-end">
+                  {item.badge}
+                </div>
+              </div>
             </div>
-          </div>
-          
-          <div className="mt-4 flex flex-col items-start gap-1.5">
-            {item.badge}
-            <span className={cn("text-[11px] font-semibold leading-none", item.subtitleClass)}>
-              {item.subtitle}
-            </span>
-          </div>
+          ))}
         </Card>
-      ))}
-    </div>
+      </div>
+
+      {/* Desktop view: Stats Grid */}
+      <div className="hidden sm:grid grid-cols-2 lg:grid-cols-4 gap-5">
+        {statsItems.map((item, idx) => (
+          <Card
+            key={idx}
+            className={cn(
+              "border p-6 flex flex-col justify-between shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-300 rounded-[32px] bg-gradient-to-br min-h-[130px] h-auto",
+              item.bgGradient
+            )}
+          >
+            <div className="space-y-1">
+              <span className={cn("text-xs font-bold uppercase tracking-wider opacity-85", item.titleClass)}>
+                {item.title}
+              </span>
+              <div className="flex items-baseline font-display">
+                <span className={cn("text-3xl md:text-4xl font-black tracking-tight", item.valueClass)}>
+                  {item.whole}
+                </span>
+                {item.decimal && (
+                  <span className={cn("text-xl md:text-2xl font-bold opacity-75 ml-0.5", item.valueClass)}>
+                    {item.decimal}
+                  </span>
+                )}
+              </div>
+            </div>
+            
+            <div className="mt-4 flex flex-col items-start gap-1.5">
+              {item.badge}
+              <span className={cn("text-[11px] font-semibold leading-none", item.subtitleClass)}>
+                {item.subtitle}
+              </span>
+            </div>
+          </Card>
+        ))}
+      </div>
+    </>
   );
 }
 

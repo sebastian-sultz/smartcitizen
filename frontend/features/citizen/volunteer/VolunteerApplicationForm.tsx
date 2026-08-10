@@ -529,7 +529,7 @@ export default function VolunteerApplicationForm({
               <div className="space-y-1">
                 <label
                   htmlFor="consent"
-                  className="text-xs font-bold text-text leading-none select-none cursor-pointer"
+                  className="text-xs font-bold text-text leading-none  cursor-pointer"
                 >
                   Commitment to Coordinator Code of Conduct
                 </label>

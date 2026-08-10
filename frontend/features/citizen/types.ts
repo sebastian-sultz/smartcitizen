@@ -3,7 +3,8 @@ import { UserResponse } from "@/features/shared/auth/types";
 export interface DashboardStats {
   total_amount: number;
   total_referrals: number;
-  events_attended: number;
+  overall_referrals: number;
+  overall_network_donation: number;
 }
 
 export interface ReferralStats {

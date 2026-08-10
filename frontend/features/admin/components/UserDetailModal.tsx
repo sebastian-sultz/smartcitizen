@@ -116,12 +116,20 @@ export const UserDetailModal = ({
                     {user.referral_payment_count ?? 0} paid
                   </span>
                 </div>
-                <div>
+                 <div>
                   <span className="block text-xs font-semibold text-text-muted mb-1">
-                    Events Registered
+                    Network Size
                   </span>
                   <span className="font-bold text-text">
-                    {user.total_events_registered ?? 0} events
+                    {user.overall_referrals ?? 0} members
+                  </span>
+                </div>
+                <div>
+                  <span className="block text-xs font-semibold text-text-muted mb-1">
+                    Network Donations Generated
+                  </span>
+                  <span className="font-bold text-text">
+                    ₹{(user.overall_network_donation ?? 0).toLocaleString("en-IN")}
                   </span>
                 </div>
                 <div>

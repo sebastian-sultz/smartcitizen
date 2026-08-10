@@ -42,7 +42,7 @@ export default function EventCard({ event, isRegistered, onRegister }: EventCard
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Card className="group border border-primary/5 hover:border-primary/20 hover:shadow-md transition-all duration-300 rounded-[32px] overflow-hidden bg-card flex flex-col h-full cursor-pointer outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 text-left">
+        <Card className="group border border-primary/5 hover:border-primary/20 hover:shadow-md transition-all duration-300 rounded-3xl md:rounded-[32px] overflow-hidden bg-card flex flex-col h-full cursor-pointer outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 text-left">
           {/* Image Header */}
           <div className="relative w-full h-40 bg-muted/50 overflow-hidden shrink-0">
             {event.image ? (
@@ -59,7 +59,7 @@ export default function EventCard({ event, isRegistered, onRegister }: EventCard
               </div>
             )}
             {/* Floating Date Badge */}
-            <div className="absolute top-4 left-4 flex flex-col items-center justify-center bg-surface/90 backdrop-blur-md rounded-2xl w-14 h-14 border border-border/50 shadow-sm shrink-0 select-none z-10">
+            <div className="absolute top-4 left-4 flex flex-col items-center justify-center bg-surface/90 backdrop-blur-md rounded-2xl w-14 h-14 border border-border/50 shadow-sm shrink-0  z-10">
               <span className="text-[9px] uppercase font-black text-text-muted tracking-wider leading-none">
                 {month}
               </span>
@@ -75,7 +75,7 @@ export default function EventCard({ event, isRegistered, onRegister }: EventCard
             </div>
           </div>
 
-          <CardContent className="p-6 flex flex-col flex-grow justify-between gap-6">
+          <CardContent className="p-5 md:p-6 flex flex-col flex-grow justify-between gap-4 md:gap-6">
             <div className="space-y-3">
               <h4
                 className="font-bold text-lg text-text leading-tight group-hover:text-primary transition-colors duration-200 line-clamp-2"
@@ -116,12 +116,16 @@ export default function EventCard({ event, isRegistered, onRegister }: EventCard
                 size="sm"
                 className={cn(
                   "duration-200",
-                  isRegistered && "border-green-200 text-green-700 bg-green-50/50 hover:bg-green-50 opacity-100"
+                  isRegistered &&
+                    "border-green-200 text-green-700 bg-green-50/50 hover:bg-green-50 opacity-100",
                 )}
               >
                 {isRegistered ? (
                   <span className="flex items-center justify-center gap-1.5">
-                    <CheckCircle size={16} className="text-green-600 shrink-0" />
+                    <CheckCircle
+                      size={16}
+                      className="text-green-600 shrink-0"
+                    />
                     Registered
                   </span>
                 ) : (

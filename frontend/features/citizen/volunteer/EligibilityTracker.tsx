@@ -41,8 +41,8 @@ export default function EligibilityTracker({ eligibility }: EligibilityTrackerPr
   ];
 
   return (
-    <Card className="rounded-[32px] border-border shadow-sm max-w-3xl w-full mx-auto">
-      <CardHeader className="text-center pb-2 p-6 md:p-8">
+    <Card className="rounded-2xl sm:rounded-[32px] border-border shadow-sm max-w-3xl w-full mx-auto">
+      <CardHeader className="text-center pb-2 p-5 md:p-8">
         <CardTitle className="font-display text-xl md:text-2xl font-bold text-text">
           Volunteer Eligibility Gating
         </CardTitle>
@@ -51,7 +51,7 @@ export default function EligibilityTracker({ eligibility }: EligibilityTrackerPr
         </p>
       </CardHeader>
       
-      <CardContent className="space-y-4 md:space-y-6 p-6 md:p-8 pt-0">
+      <CardContent className="space-y-4 md:space-y-6 p-5 md:p-8 pt-0">
         {/* Step List */}
         <div className="space-y-3 md:space-y-4">
           {steps.map((step, idx) => {
@@ -59,7 +59,7 @@ export default function EligibilityTracker({ eligibility }: EligibilityTrackerPr
             return (
               <div 
                 key={idx} 
-                className={`p-4 md:p-5 rounded-2xl md:rounded-3xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 transition-all duration-300 ${
+                className={`p-3.5 md:p-5 rounded-2xl md:rounded-3xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 transition-all duration-300 ${
                   step.isDone 
                     ? "bg-emerald-50/20 border-emerald-100/50" 
                     : "bg-bg/40 border-border/80"
@@ -98,7 +98,7 @@ export default function EligibilityTracker({ eligibility }: EligibilityTrackerPr
           })}
         </div>
 
-        <div className="p-4 bg-primary/5 rounded-2xl md:rounded-3xl border border-primary/10 text-center text-xs font-bold text-primary">
+        <div className="p-4 bg-primary/5 rounded-xl md:rounded-3xl border border-primary/10 text-center text-xs font-bold text-primary">
           Checklist status: {eligibility.is_eligible ? "🔓 Gating Unlocked! Please fill out the application below." : "🔒 Complete the checklist above to unlock the volunteer coordinator form."}
         </div>
       </CardContent>

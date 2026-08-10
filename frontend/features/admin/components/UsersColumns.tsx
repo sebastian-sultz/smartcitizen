@@ -105,10 +105,10 @@ export const getUsersColumns = (
     ),
   },
   {
-    label: "Events Registered",
+    label: "Network Size",
     render: (user) => (
       <Badge variant="primary-light" size="sm">
-        {user.total_events_registered ?? 0}
+        {user.overall_referrals ?? 0}
       </Badge>
     ),
   },

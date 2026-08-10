@@ -92,6 +92,7 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 	users.Use(middleware.AuthMiddleware())
 	{
 		users.GET("", userHandler.GetAllNonAdminUsers)
+		users.GET("/proxy-image", userHandler.ProxyImage)
 		users.PUT("/:id/suspend", userHandler.SuspendUser)
 		users.DELETE("/:id", userHandler.DeleteUser)
 		users.GET("/:id/events", eventHandler.GetEventsByUserID)

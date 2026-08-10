@@ -2,6 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react";
 import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import {
@@ -118,8 +119,28 @@ function DonationDashboardContent() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-24">
-        <Spinner className="size-10 text-primary" />
+      <div className="space-y-8 w-full animate-pulse">
+        {/* Donation Hero Skeleton */}
+        <Skeleton className="h-40 w-full rounded-card" />
+        
+        {/* KPI Stats Skeleton */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <Skeleton className="h-28 w-full rounded-card" />
+          <Skeleton className="h-28 w-full rounded-card" />
+          <Skeleton className="h-28 w-full rounded-card" />
+        </div>
+
+        {/* Quick Donation Form Skeleton */}
+        <Skeleton className="h-24 w-full rounded-card" />
+
+        {/* Tabs and Content list Skeleton */}
+        <div className="space-y-4">
+          <Skeleton className="h-10 w-64 rounded-lg" />
+          <div className="space-y-3">
+            <Skeleton className="h-14 w-full rounded-xl" />
+            <Skeleton className="h-14 w-full rounded-xl" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -177,8 +198,14 @@ export default function DonationDashboard() {
   return (
     <Suspense
       fallback={
-        <div className="flex justify-center items-center py-24">
-          <Spinner className="size-10 text-primary" />
+        <div className="space-y-8 w-full animate-pulse">
+          <Skeleton className="h-40 w-full rounded-card" />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <Skeleton className="h-28 w-full rounded-card" />
+            <Skeleton className="h-28 w-full rounded-card" />
+            <Skeleton className="h-28 w-full rounded-card" />
+          </div>
+          <Skeleton className="h-24 w-full rounded-card" />
         </div>
       }
     >

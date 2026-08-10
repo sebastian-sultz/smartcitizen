@@ -58,9 +58,10 @@ export default function TicketDetail({ ticket, onBack, onUpdateTicket }: TicketD
       const res = await getReport(ticket.id);
       onUpdateTicket(res.report);
       setReplyText("");
-    } catch (err: any) {
+    } catch (err) {
       console.error("Failed to post reply:", err);
-      toast.error(`Failed to send message: ${err?.message || err}`);
+      const errMsg = err instanceof Error ? err.message : String(err);
+      toast.error(`Failed to send message: ${errMsg}`);
     } finally {
       setSubmitting(false);
     }
@@ -70,10 +71,10 @@ export default function TicketDetail({ ticket, onBack, onUpdateTicket }: TicketD
   const subject = ticket.title;
 
   return (
-    <Card className="flex flex-col h-full bg-bg/10 rounded-[30px] border border-border/80 shadow-none overflow-hidden">
+    <Card className="flex flex-col h-full bg-bg/10 rounded-2xl border border-border/80 shadow-none overflow-hidden">
       
       {/* Header Info */}
-      <div className="bg-white border-b border-border/80 px-6 py-4 flex flex-row items-center justify-between gap-4 shrink-0">
+      <div className="bg-white border-b border-border/80 px-4 sm:px-6 py-3 sm:py-4 flex flex-row items-center justify-between gap-4 shrink-0">
         <div className="flex items-center gap-3">
           <Button
             onClick={onBack}

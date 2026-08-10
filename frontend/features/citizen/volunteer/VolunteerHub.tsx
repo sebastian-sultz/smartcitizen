@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   useCitizenStore,
   selectIsVolunteer,
@@ -27,8 +27,12 @@ export default function VolunteerHub() {
 
   if (storeLoading) {
     return (
-      <div className="flex justify-center items-center py-24">
-        <Spinner className="size-10 text-primary" />
+      <div className="space-y-6 w-full animate-pulse">
+        {/* Eligibility Tracker Skeleton */}
+        <Skeleton className="h-64 w-full rounded-card" />
+
+        {/* Application Form Skeleton */}
+        <Skeleton className="h-[420px] w-full rounded-card" />
       </div>
     );
   }

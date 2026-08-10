@@ -6,7 +6,7 @@ import { TableComponent } from "@/components/ui/TableComponent";
 import { getModerationColumns } from "./ModerationColumns";
 import { SupportTicket } from "@/features/shared/reports";
 import { getAdminReports, resolveAdminReport } from "../api";
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import AdminChatModal from "./AdminChatModal";
 
@@ -16,9 +16,9 @@ export const ModerationTable = () => {
   const [selectedChatTicket, setSelectedChatTicket] = useState<SupportTicket | null>(null);
   const [chatOpen, setChatOpen] = useState(false);
 
-  const fetchReports = async () => {
+  const fetchReports = async (showLoading = false) => {
     try {
-      setLoading(true);
+      if (showLoading) setLoading(true);
       const res = await getAdminReports();
       setReports(res);
     } catch (err) {
@@ -30,7 +30,7 @@ export const ModerationTable = () => {
   };
 
   useEffect(() => {
-    fetchReports();
+    fetchReports(false);
   }, []);
 
   const handleResolveReport = async (id: string) => {
@@ -60,12 +60,19 @@ export const ModerationTable = () => {
 
   if (loading) {
     return (
-      <Card className="w-full">
+      <Card className="w-full animate-pulse">
         <CardHeader>
-          <CardTitle>Abuse & Moderation</CardTitle>
+          <div className="space-y-2">
+            <Skeleton className="h-6 w-48 rounded-lg" />
+          </div>
         </CardHeader>
-        <CardContent className="flex justify-center items-center py-12">
-          <Spinner className="size-8 text-primary" />
+        <CardContent className="space-y-4">
+          <Skeleton className="h-10 w-full rounded-xl" />
+          <div className="space-y-3">
+            <Skeleton className="h-14 w-full rounded-xl" />
+            <Skeleton className="h-14 w-full rounded-xl" />
+            <Skeleton className="h-14 w-full rounded-xl" />
+          </div>
         </CardContent>
       </Card>
     );
@@ -85,12 +92,14 @@ export const ModerationTable = () => {
         />
       </CardContent>
 
-      <AdminChatModal
-        ticket={selectedChatTicket}
-        open={chatOpen}
-        onOpenChange={setChatOpen}
-        onTicketUpdated={handleTicketUpdated}
-      />
+      {chatOpen && selectedChatTicket && (
+        <AdminChatModal
+          ticket={selectedChatTicket}
+          open={chatOpen}
+          onOpenChange={setChatOpen}
+          onTicketUpdated={handleTicketUpdated}
+        />
+      )}
     </Card>
   );
 };

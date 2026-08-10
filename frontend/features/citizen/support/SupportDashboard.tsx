@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useCitizenStore } from "@/store/citizenStore";
 import { useAuthStore } from "@/store/authStore";
 import {
@@ -114,14 +114,29 @@ export default function SupportDashboard() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-24">
-        <Spinner className="size-10 text-primary" />
+      <div className="w-full bg-white/60 backdrop-blur-md p-4 md:p-6 flex flex-col md:flex-row gap-6 rounded-card h-auto min-h-[500px] md:h-[620px] border border-border/40 animate-pulse">
+        {/* Left pane list skeleton */}
+        <div className="w-full md:w-[300px] lg:w-[340px] shrink-0 flex flex-col gap-4">
+          <Skeleton className="h-10 w-full rounded-xl" />
+          <div className="space-y-3">
+            <Skeleton className="h-20 w-full rounded-xl" />
+            <Skeleton className="h-20 w-full rounded-xl" />
+            <Skeleton className="h-20 w-full rounded-xl" />
+          </div>
+        </div>
+        
+        {/* Right pane details skeleton */}
+        <div className="flex-1 flex flex-col gap-6">
+          <Skeleton className="h-8 w-64 rounded-lg" />
+          <Skeleton className="flex-1 w-full rounded-xl" />
+          <Skeleton className="h-24 w-full rounded-xl" />
+        </div>
       </div>
     );
   }
 
   return (
-    <Card className="w-full bg-white/60 backdrop-blur-md p-4 md:p-6 flex flex-col md:flex-row gap-6 h-auto min-h-[500px] md:h-[620px]">
+    <Card className="w-full bg-white/60 backdrop-blur-md p-4 md:p-6 flex flex-col md:flex-row gap-6 h-auto min-h-[500px] md:h-[620px] rounded-2xl md:rounded-[40px]">
       {/* Sidebar List (Left) */}
       <div className={`w-full md:w-[300px] lg:w-[340px] shrink-0 flex flex-col h-full ${mobileActivePane === "list" ? "flex" : "hidden md:flex"}`}>
         <TicketList
