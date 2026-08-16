@@ -24,6 +24,13 @@ import (
 	"github.com/PhonePe/phonepe-pg-sdk-go/payments/v2/models/request"
 	"github.com/PhonePe/phonepe-pg-sdk-go/payments/v2/standardcheckout"
 	"github.com/google/uuid"
+	"github.com/johnfercher/maroto/v2/pkg/components/col"
+	"github.com/johnfercher/maroto/v2/pkg/components/line"
+	"github.com/johnfercher/maroto/v2/pkg/components/row"
+	"github.com/johnfercher/maroto/v2/pkg/components/text"
+	"github.com/johnfercher/maroto/v2/pkg/consts/align"
+	"github.com/johnfercher/maroto/v2/pkg/consts/fontstyle"
+	"github.com/johnfercher/maroto/v2/pkg/props"
 	"gorm.io/datatypes"
 )
 
@@ -37,6 +44,7 @@ type Service interface {
 	GetTaxCertificates(ctx context.Context, userID string) ([]dtoresponse.TaxCertificate, error)
 	UpdateTaxDetails(ctx context.Context, transactionID string, donorPAN string, donorAddress string) error
 	ExportPaymentsCSV(ctx context.Context, filter dtorequest.PaymentFilter, w io.Writer) error
+	ExportPaymentsPDF(ctx context.Context, filter dtorequest.PaymentFilter) ([]byte, error)
 	ExportForm10BDCSV(ctx context.Context, financialYear string, w io.Writer) error
 	SyncPendingReceipts(ctx context.Context) (int, error)
 }
@@ -584,11 +592,15 @@ func (s *service) ExportPaymentsCSV(ctx context.Context, filter dtorequest.Payme
 		return err
 	}
 
+	if _, err := w.Write([]byte("\xEF\xBB\xBF")); err != nil {
+		return fmt.Errorf("failed to write UTF-8 BOM: %w", err)
+	}
+
 	writer := csv.NewWriter(w)
 	defer writer.Flush()
 
 	headers := []string{
-		"Transaction ID", "Order ID", "Donor Name", "Email", "Phone", "PAN", "Address", "Amount (INR)", "Status", "Payment Mode", "Date Created", "Receipt Number",
+		"Transaction ID / UTR", "Merchant Order ID", "Receipt Number", "Donor Name", "Email", "Phone", "PAN", "Address", "Amount (INR)", "Status", "Payment Mode", "Date Created",
 	}
 	if err := writer.Write(headers); err != nil {
 		return err
@@ -599,6 +611,7 @@ func (s *service) ExportPaymentsCSV(ctx context.Context, filter dtorequest.Payme
 		row := []string{
 			p.ProviderReferenceID,
 			p.MerchantOrderID,
+			p.ReceiptNumber,
 			p.DonorName,
 			p.DonorEmail,
 			p.DonorPhone,
@@ -607,8 +620,12 @@ func (s *service) ExportPaymentsCSV(ctx context.Context, filter dtorequest.Payme
 			amountINR,
 			string(p.Status),
 			p.PaymentMethod,
-			p.CreatedAt.Format(time.RFC3339),
-			p.ReceiptNumber,
+			p.CreatedAt.Format("02 Jan 2006 15:04:05"),
+		}
+		for i, cell := range row {
+			if len(cell) > 0 && (cell[0] == '=' || cell[0] == '+' || cell[0] == '-' || cell[0] == '@' || cell[0] == '\t' || cell[0] == '\r') {
+				row[i] = "'" + cell
+			}
 		}
 		if err := writer.Write(row); err != nil {
 			return err
@@ -617,6 +634,147 @@ func (s *service) ExportPaymentsCSV(ctx context.Context, filter dtorequest.Payme
 
 	return nil
 }
+
+func (s *service) ExportPaymentsPDF(ctx context.Context, filter dtorequest.PaymentFilter) ([]byte, error) {
+	pagination := utils.Pagination{Limit: -1}
+	payments, err := s.repo.ListPayments(ctx, filter, &pagination)
+	if err != nil {
+		return nil, fmt.Errorf("failed to list payments for PDF: %w", err)
+	}
+
+	m := utils.BuildPortraitMaroto()
+
+	utils.AddAdminReportHeader(m, utils.AdminReportHeaderProps{
+		Title:       "DONATIONS & FINANCIAL AUDIT REPORT",
+		TotalCount:  len(payments),
+		GeneratedAt: time.Now(),
+	})
+
+	totalCollections := 0.0
+	successfulCount := 0
+	for _, p := range payments {
+		if p.Status == "SUCCESS" {
+			successfulCount++
+			totalCollections += float64(p.Amount) / 100.0
+		}
+	}
+
+	avgDonation := 0.0
+	if successfulCount > 0 {
+		avgDonation = totalCollections / float64(successfulCount)
+	}
+
+	cardBg := &props.Color{Red: 248, Green: 250, Blue: 252}
+	darkBlue := &props.Color{Red: 15, Green: 23, Blue: 42}
+	emerald := &props.Color{Red: 16, Green: 185, Blue: 129}
+	muted := &props.Color{Red: 100, Green: 116, Blue: 139}
+
+	// Summary Statistics Row
+	m.AddRows(
+		row.New(10).Add(
+			col.New(4).WithStyle(&props.Cell{BackgroundColor: cardBg}).Add(
+				text.New("TOTAL COLLECTIONS", props.Text{Size: 6.5, Style: fontstyle.Bold, Color: muted, Top: 1}),
+				text.New(fmt.Sprintf("Rs. %.2f", totalCollections), props.Text{Size: 9, Style: fontstyle.Bold, Color: darkBlue, Top: 4}),
+			),
+			col.New(4).WithStyle(&props.Cell{BackgroundColor: cardBg}).Add(
+				text.New("SUCCESSFUL PAYMENTS", props.Text{Size: 6.5, Style: fontstyle.Bold, Color: muted, Top: 1}),
+				text.New(fmt.Sprintf("%d transactions", successfulCount), props.Text{Size: 9, Style: fontstyle.Bold, Color: emerald, Top: 4}),
+			),
+			col.New(4).WithStyle(&props.Cell{BackgroundColor: cardBg}).Add(
+				text.New("AVERAGE DONATION", props.Text{Size: 6.5, Style: fontstyle.Bold, Color: muted, Top: 1}),
+				text.New(fmt.Sprintf("Rs. %.2f", avgDonation), props.Text{Size: 9, Style: fontstyle.Bold, Color: darkBlue, Top: 4}),
+			),
+		),
+		row.New(3).Add(col.New(12)),
+	)
+
+	// Table Header
+	headerBg := darkBlue
+	headerFg := &props.Color{Red: 255, Green: 255, Blue: 255}
+
+	m.AddRows(
+		row.New(6.5).Add(
+			col.New(3).WithStyle(&props.Cell{BackgroundColor: headerBg}).Add(
+				text.New("DATE / RECEIPT NO", props.Text{Size: 7, Style: fontstyle.Bold, Color: headerFg, Top: 1.8}),
+			),
+			col.New(4).WithStyle(&props.Cell{BackgroundColor: headerBg}).Add(
+				text.New("DONOR & PHONE", props.Text{Size: 7, Style: fontstyle.Bold, Color: headerFg, Top: 1.8}),
+			),
+			col.New(3).WithStyle(&props.Cell{BackgroundColor: headerBg}).Add(
+				text.New("AMOUNT & MODE", props.Text{Size: 7, Style: fontstyle.Bold, Color: headerFg, Top: 1.8}),
+			),
+			col.New(2).WithStyle(&props.Cell{BackgroundColor: headerBg}).Add(
+				text.New("UTR / STATUS", props.Text{Size: 7, Style: fontstyle.Bold, Color: headerFg, Top: 1.8, Align: align.Right}),
+			),
+		),
+	)
+
+	altBg := &props.Color{Red: 248, Green: 250, Blue: 252}
+	whiteBg := &props.Color{Red: 255, Green: 255, Blue: 255}
+
+	for i, p := range payments {
+		bg := whiteBg
+		if i%2 == 1 {
+			bg = altBg
+		}
+
+		rNum := p.ReceiptNumber
+		if rNum == "" {
+			rNum = "No Receipt"
+		}
+
+		statusColor := emerald
+		if p.Status == "FAILED" {
+			statusColor = &props.Color{Red: 225, Green: 29, Blue: 72}
+		} else if p.Status == "PENDING" {
+			statusColor = &props.Color{Red: 234, Green: 179, Blue: 8}
+		}
+
+		m.AddRows(
+			row.New(6).Add(
+				col.New(3).WithStyle(&props.Cell{BackgroundColor: bg}).Add(
+					text.New(p.CreatedAt.Format("02/01/2006 15:04"), props.Text{Size: 6.5, Style: fontstyle.Bold, Color: darkBlue, Top: 1}),
+					text.New(rNum, props.Text{Size: 5.5, Color: muted, Top: 3.5}),
+				),
+				col.New(4).WithStyle(&props.Cell{BackgroundColor: bg}).Add(
+					text.New(p.DonorName, props.Text{Size: 6.5, Style: fontstyle.Bold, Color: darkBlue, Top: 1}),
+					text.New(p.DonorPhone, props.Text{Size: 5.5, Color: muted, Top: 3.5}),
+				),
+				col.New(3).WithStyle(&props.Cell{BackgroundColor: bg}).Add(
+					text.New(fmt.Sprintf("Rs. %.2f", float64(p.Amount)/100.0), props.Text{Size: 6.5, Style: fontstyle.Bold, Color: darkBlue, Top: 1}),
+					text.New(p.PaymentMethod, props.Text{Size: 5.5, Color: muted, Top: 3.5}),
+				),
+				col.New(2).WithStyle(&props.Cell{BackgroundColor: bg}).Add(
+					text.New(string(p.Status), props.Text{Size: 6.5, Style: fontstyle.Bold, Color: statusColor, Align: align.Right, Top: 1}),
+					text.New(p.ProviderReferenceID, props.Text{Size: 5.5, Color: muted, Align: align.Right, Top: 3.5}),
+				),
+			),
+		)
+	}
+
+	// Footer line
+	m.AddRows(
+		row.New(6).Add(
+			col.New(12).Add(
+				line.New(props.Line{Color: &props.Color{Red: 203, Green: 213, Blue: 225}, Thickness: 0.5}),
+				text.New("Global Smart Citizens Foundation - Financial Audit & 80G Statutory Ledger Document", props.Text{
+					Size:  5.5,
+					Color: muted,
+					Top:   2,
+					Align: align.Center,
+				}),
+			),
+		),
+	)
+
+	document, err := m.Generate()
+	if err != nil {
+		return nil, fmt.Errorf("failed to render payments PDF: %w", err)
+	}
+
+	return document.GetBytes(), nil
+}
+
 
 func (s *service) ExportForm10BDCSV(ctx context.Context, financialYear string, w io.Writer) error {
 	parts := strings.Split(financialYear, "-")

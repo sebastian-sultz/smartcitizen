@@ -590,3 +590,93 @@ func (h *Handler) ProxyImage(c *gin.Context) {
 		c.Error(err)
 	}
 }
+
+func (h *Handler) ExportUsers(c *gin.Context) {
+	search := c.Query("q")
+	sort := c.Query("sort")
+	format := strings.ToLower(c.DefaultQuery("format", "csv"))
+
+	if format == "pdf" {
+		pdfBytes, err := h.service.ExportUsersPDF(c.Request.Context(), search, sort)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate users PDF: " + err.Error()})
+			return
+		}
+
+		filename := fmt.Sprintf("smartcitizens_audit_%s.pdf", time.Now().Format("20060102_150405"))
+		c.Header("Content-Description", "File Transfer")
+		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+		c.Header("Content-Type", "application/pdf")
+		c.Data(http.StatusOK, "application/pdf", pdfBytes)
+		return
+	}
+
+	filename := fmt.Sprintf("smartcitizens_export_%s.csv", time.Now().Format("20060102_150405"))
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	c.Header("Content-Type", "text/csv; charset=utf-8")
+	c.Header("Transfer-Encoding", "chunked")
+
+	if err := h.service.ExportUsersCSV(c.Request.Context(), search, sort, c.Writer); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to stream CSV: " + err.Error()})
+		return
+	}
+}
+
+func (h *Handler) ExportUserNetwork(c *gin.Context) {
+	idStr := c.Param("id")
+	if idStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing user ID"})
+		return
+	}
+
+	format := strings.ToLower(c.DefaultQuery("format", "csv"))
+	recursive := c.DefaultQuery("recursive", "false") == "true"
+
+	if format == "pdf" {
+		pdfBytes, err := h.service.ExportUserNetworkPDF(c.Request.Context(), idStr, recursive)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate network PDF: " + err.Error()})
+			return
+		}
+
+		filename := fmt.Sprintf("network_hierarchy_%s_%s.pdf", idStr[:8], time.Now().Format("20060102_150405"))
+		c.Header("Content-Description", "File Transfer")
+		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+		c.Header("Content-Type", "application/pdf")
+		c.Data(http.StatusOK, "application/pdf", pdfBytes)
+		return
+	}
+
+	filename := fmt.Sprintf("network_hierarchy_%s_%s.csv", idStr[:8], time.Now().Format("20060102_150405"))
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	c.Header("Content-Type", "text/csv; charset=utf-8")
+
+	if err := h.service.ExportUserNetworkCSV(c.Request.Context(), idStr, recursive, c.Writer); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to export network CSV: " + err.Error()})
+		return
+	}
+}
+
+func (h *Handler) ExportUserDossierPDF(c *gin.Context) {
+	idStr := c.Param("id")
+	if idStr == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing user ID"})
+		return
+	}
+
+	pdfBytes, err := h.service.ExportUserDossierPDF(c.Request.Context(), idStr)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate user dossier PDF: " + err.Error()})
+		return
+	}
+
+	filename := fmt.Sprintf("citizen_dossier_%s_%s.pdf", idStr[:8], time.Now().Format("20060102_150405"))
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	c.Header("Content-Type", "application/pdf")
+	c.Data(http.StatusOK, "application/pdf", pdfBytes)
+}
+
+

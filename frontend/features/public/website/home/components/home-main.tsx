@@ -18,12 +18,12 @@ export function HomeMain() {
       <Hero />
       <PartnerMarquee />
       <AboutIntro />
+      <MediaPresence />
       <CoreFocus />
       <ProgramSection />
       <UpcomingEvents />
       <WhyChooseUs />
       <DonationCTA />
-      <MediaPresence />
     </main>
   );
 }

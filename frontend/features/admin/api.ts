@@ -101,22 +101,32 @@ export const getAdminPaymentHistory = async (
   }
 };
 
+import { downloadBlob } from "@/lib/utils";
+
 export const downloadPaymentsCSV = async (params: Record<string, any>): Promise<void> => {
   try {
     const response = await api.get("/admin/payments/export", {
       params,
       responseType: "blob",
     });
-    const blob = new Blob([response.data], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", "payments_export.csv");
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+    const blob = new Blob([response.data], { type: "text/csv;charset=utf-8;" });
+    downloadBlob(blob, `payments_export_${Date.now()}.csv`);
   } catch (error: unknown) {
-    handleApiError(error, "Failed to export CSV");
+    handleApiError(error, "Failed to export payments CSV");
+    throw error;
+  }
+};
+
+export const downloadPaymentsPDF = async (params: Record<string, any>): Promise<void> => {
+  try {
+    const response = await api.get("/admin/payments/export-pdf", {
+      params,
+      responseType: "blob",
+    });
+    const blob = new Blob([response.data], { type: "application/pdf" });
+    downloadBlob(blob, `payments_audit_${Date.now()}.pdf`);
+  } catch (error: unknown) {
+    handleApiError(error, "Failed to export payments PDF report");
     throw error;
   }
 };
@@ -127,16 +137,110 @@ export const downloadForm10BDCSV = async (financialYear: string): Promise<void> 
       params: { financialYear },
       responseType: "blob",
     });
-    const blob = new Blob([response.data], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", `form_10bd_${financialYear}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+    const blob = new Blob([response.data], { type: "text/csv;charset=utf-8;" });
+    downloadBlob(blob, `form_10bd_${financialYear}.csv`);
   } catch (error: unknown) {
     handleApiError(error, "Failed to export Form 10BD CSV");
+    throw error;
+  }
+};
+
+export const downloadUsersExport = async (
+  format: "csv" | "pdf",
+  params?: { q?: string; sort?: string }
+): Promise<void> => {
+  try {
+    const response = await api.get("/admin/users/export", {
+      params: { ...params, format },
+      responseType: "blob",
+    });
+    const mimeType = format === "csv" ? "text/csv;charset=utf-8;" : "application/pdf";
+    const extension = format === "csv" ? "csv" : "pdf";
+    const blob = new Blob([response.data], { type: mimeType });
+    downloadBlob(blob, `smartcitizens_${format === "pdf" ? "audit" : "export"}_${Date.now()}.${extension}`);
+  } catch (error: unknown) {
+    handleApiError(error, `Failed to export users as ${format.toUpperCase()}`);
+    throw error;
+  }
+};
+
+export const downloadVolunteersExport = async (
+  format: "csv" | "pdf",
+  params?: {
+    q?: string;
+    status?: string;
+    profession?: string;
+    state?: string;
+    city?: string;
+    sort?: string;
+  }
+): Promise<void> => {
+  try {
+    const response = await api.get("/admin/volunteers/export", {
+      params: { ...params, format },
+      responseType: "blob",
+    });
+    const mimeType = format === "csv" ? "text/csv;charset=utf-8;" : "application/pdf";
+    const extension = format === "csv" ? "csv" : "pdf";
+    const blob = new Blob([response.data], { type: mimeType });
+    downloadBlob(blob, `volunteers_${format === "pdf" ? "audit" : "export"}_${Date.now()}.${extension}`);
+  } catch (error: unknown) {
+    handleApiError(error, `Failed to export volunteers as ${format.toUpperCase()}`);
+    throw error;
+  }
+};
+
+export const downloadUserNetworkExport = async (
+  userId: string,
+  format: "csv" | "pdf",
+  recursive: boolean
+): Promise<void> => {
+  try {
+    const response = await api.get(`/admin/users/${userId}/network/export`, {
+      params: { format, recursive },
+      responseType: "blob",
+    });
+    const mimeType = format === "csv" ? "text/csv;charset=utf-8;" : "application/pdf";
+    const extension = format === "csv" ? "csv" : "pdf";
+    const blob = new Blob([response.data], { type: mimeType });
+    const mode = recursive ? "multilevel_tree" : "direct_referrals";
+    downloadBlob(blob, `network_${mode}_${userId.substring(0, 8)}_${Date.now()}.${extension}`);
+  } catch (error: unknown) {
+    handleApiError(error, `Failed to export network as ${format.toUpperCase()}`);
+    throw error;
+  }
+};
+
+export const downloadUserDossierPDF = async (
+  userId: string,
+  userName?: string
+): Promise<void> => {
+  try {
+    const response = await api.get(`/admin/users/${userId}/dossier-pdf`, {
+      responseType: "blob",
+    });
+    const blob = new Blob([response.data], { type: "application/pdf" });
+    const cleanName = userName ? userName.toLowerCase().replace(/[^a-z0-9]/g, "_") : "citizen";
+    downloadBlob(blob, `member_dossier_${cleanName}_${Date.now()}.pdf`);
+  } catch (error: unknown) {
+    handleApiError(error, "Failed to download member profile statement PDF");
+    throw error;
+  }
+};
+
+export const downloadVolunteerDossierPDF = async (
+  id: string,
+  name?: string
+): Promise<void> => {
+  try {
+    const response = await api.get(`/admin/volunteers/${id}/dossier-pdf`, {
+      responseType: "blob",
+    });
+    const blob = new Blob([response.data], { type: "application/pdf" });
+    const cleanName = name ? name.toLowerCase().replace(/[^a-z0-9]/g, "_") : "volunteer";
+    downloadBlob(blob, `volunteer_dossier_${cleanName}_${Date.now()}.pdf`);
+  } catch (error: unknown) {
+    handleApiError(error, "Failed to download volunteer application dossier PDF");
     throw error;
   }
 };

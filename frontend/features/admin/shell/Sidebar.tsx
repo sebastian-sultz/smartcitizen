@@ -92,14 +92,27 @@ export function Sidebar() {
         )}
       >
         <div className="flex flex-col h-full px-3 py-4 overflow-y-auto">
-          <div className="flex items-center px-2 mb-8 mt-4">
-            <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center font-bold text-xl mr-3">
-              G
+          <div className="flex items-center justify-between px-2 mb-8 mt-4">
+            <div className="flex items-center">
+              <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center font-bold text-xl mr-3">
+                G
+              </div>
+              <div>
+                <h1 className="text-lg font-bold leading-tight">GSCF Admin</h1>
+                <p className="text-xs text-white/60">Modernized Panel</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-lg font-bold leading-tight">GSCF Admin</h1>
-              <p className="text-xs text-white/60">Modernized Panel</p>
-            </div>
+            {/* Mobile Close Button */}
+            <Button
+              variant="ghost-white"
+              size="icon"
+              shape="square"
+              onClick={() => setIsSidebarOpen(false)}
+              className="lg:hidden shrink-0 size-8 p-0"
+              title="Close Menu"
+            >
+              <X size={18} />
+            </Button>
           </div>
 
           <nav className="flex-1 space-y-1">

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { 
   getAdminPaymentHistory, 
   downloadPaymentsCSV, 
+  downloadPaymentsPDF,
   downloadForm10BDCSV
 } from "../api";
 import { getReceiptStatus } from "@/features/citizen/api";
@@ -14,7 +15,7 @@ import { Input } from "@/components/ui/Input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/Button";
 import { downloadBlob } from "@/lib/utils";
-import { FileSpreadsheet, Calendar } from "lucide-react";
+import { FileSpreadsheet, FileText, Calendar } from "lucide-react";
 import { toast } from "sonner";
 import { getDonationColumns } from "./DonationColumns";
 import { DonationDetailsDialog } from "./DonationDetailsDialog";
@@ -37,6 +38,8 @@ export const DonationAuditCenter = () => {
 
   const [payments, setPayments] = useState<PaymentAdminResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isExportingCSV, setIsExportingCSV] = useState(false);
+  const [isExportingPDF, setIsExportingPDF] = useState(false);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
@@ -47,6 +50,7 @@ export const DonationAuditCenter = () => {
   const [taxExemption, setTaxExemption] = useState("ALL");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   // Modal States
   const [selectedPayment, setSelectedPayment] = useState<PaymentAdminResponse | null>(null);
@@ -104,6 +108,7 @@ export const DonationAuditCenter = () => {
 
   const handleExportCSV = async () => {
     try {
+      setIsExportingCSV(true);
       const filterParams: Record<string, any> = {};
       if (search) filterParams.search = search;
       if (status !== "ALL") filterParams.status = status;
@@ -117,6 +122,29 @@ export const DonationAuditCenter = () => {
     } catch (err) {
       console.error(err);
       toast.error("Failed to export CSV");
+    } finally {
+      setIsExportingCSV(false);
+    }
+  };
+
+  const handleExportPDF = async () => {
+    try {
+      setIsExportingPDF(true);
+      const filterParams: Record<string, any> = {};
+      if (search) filterParams.search = search;
+      if (status !== "ALL") filterParams.status = status;
+      if (taxExemption !== "ALL") filterParams.taxExemption = taxExemption === "yes";
+      if (startDate) filterParams.startDate = startDate;
+      if (endDate) filterParams.endDate = endDate;
+
+      toast.info("Generating donations financial audit PDF report...");
+      await downloadPaymentsPDF(filterParams);
+      toast.success("Donations audit PDF downloaded successfully");
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to export donations PDF report");
+    } finally {
+      setIsExportingPDF(false);
     }
   };
 
@@ -159,8 +187,28 @@ export const DonationAuditCenter = () => {
 
   return (
     <div className="space-y-6">
+      {/* Mobile Filters Toggle Button */}
+      <div className="flex md:hidden justify-between items-center gap-4 bg-white p-4 rounded-card border border-border/70 shadow-sm">
+        <div className="flex flex-col min-w-0">
+          <span className="text-sm font-bold text-text truncate">Filters & Search</span>
+          <span className="text-[11px] text-text-muted truncate">
+            {status !== "ALL" || taxExemption !== "ALL" || startDate || endDate || search
+              ? "Active filters applied"
+              : "Tap to filter payments"}
+          </span>
+        </div>
+        <Button
+          variant={showMobileFilters ? "primary" : "secondary"}
+          size="sm"
+          onClick={() => setShowMobileFilters(!showMobileFilters)}
+          className="shrink-0"
+        >
+          {showMobileFilters ? "Hide Filters" : "Show Filters"}
+        </Button>
+      </div>
+
       {/* Search and Filter Panel */}
-      <Card>
+      <Card className={`md:block ${!showMobileFilters ? "hidden" : ""}`}>
         <CardContent className="pt-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
             {/* Search Input */}
@@ -236,20 +284,36 @@ export const DonationAuditCenter = () => {
           </div>
 
           {/* Action Toolbar */}
-          <div className="flex flex-col sm:flex-row justify-end gap-3 mt-6 border-t border-border/40 pt-4">
+          <div className="grid grid-cols-2 sm:flex sm:flex-row sm:justify-end gap-3 mt-6 border-t border-border/40 pt-4">
             <Button 
-              variant="outline" 
+              className="col-span-1"
+              variant="secondary" 
               onClick={handleExportCSV}
-              startIcon={<FileSpreadsheet size={16} />}
+              startIcon={<FileSpreadsheet size={16} className="text-emerald-600 shrink-0" />}
               size="sm"
+              loading={isExportingCSV}
+              title="Export all filtered payment records as CSV (Includes all hidden transaction & gateway fields)"
             >
               Export CSV
             </Button>
             <Button 
+              className="col-span-1"
+              variant="secondary" 
+              onClick={handleExportPDF}
+              startIcon={<FileText size={16} className="text-primary shrink-0" />}
+              size="sm"
+              loading={isExportingPDF}
+              title="Export official financial audit PDF ledger"
+            >
+              Export PDF
+            </Button>
+            <Button 
+              className="col-span-2"
               variant="primary" 
               onClick={() => setFyOpen(true)}
-              startIcon={<Calendar size={16} />}
+              startIcon={<Calendar size={16} className="shrink-0" />}
               size="sm"
+              title="Export 80G Statutory Form 10BD for Income Tax compliance"
             >
               Export Form 10BD
             </Button>

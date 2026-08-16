@@ -1,11 +1,24 @@
 package user
 
 import (
+	"context"
+	"time"
+
 	"backend/dto/response"
 	"backend/pkg/utils"
 
 	"gorm.io/gorm"
 )
+
+type UserPaymentRecord struct {
+	Amount              int64     `json:"amount"` // in paise
+	Status              string    `json:"status"`
+	PaymentMethod       string    `json:"paymentMethod"`
+	ProviderReferenceID string    `json:"providerReferenceId"`
+	MerchantOrderID     string    `json:"merchantOrderId"`
+	ReceiptNumber       string    `json:"receiptNumber"`
+	CreatedAt           time.Time `json:"createdAt"`
+}
 
 type Repository interface {
 	Create(user *User) error
@@ -20,6 +33,9 @@ type Repository interface {
 	FindVolunteerByUserID(userID string) (*response.Volunteer, error)
 	RecordSuccessfulPayment(userID string, amount float64) error
 	GetDownlineStats(userID string) (int64, float64, error)
+	StreamNonAdminUsers(ctx context.Context, search string, sort string, fn func(u User) error) error
+	FindAllNonAdminUsersFiltered(ctx context.Context, search string, sort string) ([]User, error)
+	GetUserPayments(ctx context.Context, userID string) ([]UserPaymentRecord, error)
 }
 
 type repository struct {
@@ -243,4 +259,94 @@ func (r *repository) GetDownlineStats(userID string) (int64, float64, error) {
 		return 0, 0.0, err
 	}
 	return result.Count, result.Sum, nil
+}
+
+func (r *repository) StreamNonAdminUsers(ctx context.Context, search string, sort string, fn func(u User) error) error {
+	query := r.db.WithContext(ctx).Model(&User{}).Where("user_type != ?", string(Admin))
+
+	if search != "" {
+		query = query.Where("(name ILIKE ? OR phone ILIKE ? OR member_id ILIKE ?)", "%"+search+"%", "%"+search+"%", "%"+search+"%")
+	}
+
+	orderClause := "created_at desc"
+	if sort != "" {
+		switch sort {
+		case "name_asc":
+			orderClause = "name asc"
+		case "name_desc":
+			orderClause = "name desc"
+		case "newest":
+			orderClause = "created_at desc"
+		case "oldest":
+			orderClause = "created_at asc"
+		case "referrals_desc":
+			orderClause = "total_referrals desc"
+		case "donations_desc":
+			orderClause = "total_amount desc"
+		}
+	}
+
+	rows, err := query.Order(orderClause).Rows()
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+		}
+
+		var u User
+		if err := r.db.ScanRows(rows, &u); err != nil {
+			return err
+		}
+		if err := fn(u); err != nil {
+			return err
+		}
+	}
+	return rows.Err()
+}
+
+func (r *repository) FindAllNonAdminUsersFiltered(ctx context.Context, search string, sort string) ([]User, error) {
+	var users []User
+	query := r.db.WithContext(ctx).Model(&User{}).Where("user_type != ?", string(Admin))
+
+	if search != "" {
+		query = query.Where("(name ILIKE ? OR phone ILIKE ? OR member_id ILIKE ?)", "%"+search+"%", "%"+search+"%", "%"+search+"%")
+	}
+
+	orderClause := "created_at desc"
+	if sort != "" {
+		switch sort {
+		case "name_asc":
+			orderClause = "name asc"
+		case "name_desc":
+			orderClause = "name desc"
+		case "newest":
+			orderClause = "created_at desc"
+		case "oldest":
+			orderClause = "created_at asc"
+		case "referrals_desc":
+			orderClause = "total_referrals desc"
+		case "donations_desc":
+			orderClause = "total_amount desc"
+		}
+	}
+
+	err := query.Order(orderClause).Find(&users).Error
+	return users, err
+}
+
+func (r *repository) GetUserPayments(ctx context.Context, userID string) ([]UserPaymentRecord, error) {
+	var records []UserPaymentRecord
+	err := r.db.WithContext(ctx).Table("payments").
+		Select("payments.amount, payments.status, payments.payment_method, payments.provider_reference_id, payments.merchant_order_id, COALESCE(receipts.receipt_number, '') as receipt_number, payments.created_at").
+		Joins("LEFT JOIN receipts ON receipts.payment_id = payments.id").
+		Where("payments.user_id = ? AND payments.deleted_at IS NULL", userID).
+		Order("payments.created_at desc").
+		Scan(&records).Error
+	return records, err
 }

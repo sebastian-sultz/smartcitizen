@@ -77,7 +77,7 @@ export const NetworkUserList = () => {
     <div className="space-y-6">
       {/* Search and Sort Toolbar */}
       <Card>
-        <CardContent className="pt-6">
+        <CardContent >
           <div className="flex flex-col sm:flex-row gap-4 items-end justify-between">
             {/* Search Input */}
             <div className="flex-1 max-w-md space-y-1">
@@ -102,7 +102,7 @@ export const NetworkUserList = () => {
                   startIcon={<Search size={16} />}
                   size="sm"
                 >
-                  Search
+                  <span className="hidden sm:inline">Search</span>
                 </Button>
               </div>
             </div>

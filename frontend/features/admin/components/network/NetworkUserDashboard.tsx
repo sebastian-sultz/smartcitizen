@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getUserById } from "../../api";
+import { getUserById, downloadUserDossierPDF } from "../../api";
 import { UserResponse } from "@/features/shared/auth/types";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
@@ -23,6 +23,7 @@ import {
   Users,
   CreditCard,
   TrendingUp,
+  FileText,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -39,6 +40,7 @@ export const NetworkUserDashboard = ({
   const router = useRouter();
   const [user, setUser] = useState<UserResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isExportingDossier, setIsExportingDossier] = useState(false);
   const [activeTab, setActiveTab] = useState("donations");
 
   useEffect(() => {
@@ -60,6 +62,21 @@ export const NetworkUserDashboard = ({
 
     fetchUser();
   }, [userId]);
+
+  const handleDownloadDossier = async () => {
+    if (!user) return;
+    try {
+      setIsExportingDossier(true);
+      toast.info(`Preparing official KYC statement dossier for ${user.name}...`);
+      await downloadUserDossierPDF(user.id, user.name);
+      toast.success(`Dossier for ${user.name} downloaded successfully`);
+    } catch (err: unknown) {
+      console.error(err);
+      toast.error("Failed to download member statement dossier PDF");
+    } finally {
+      setIsExportingDossier(false);
+    }
+  };
 
   if (loading) {
     return <DashboardSkeleton />;
@@ -168,6 +185,20 @@ export const NetworkUserDashboard = ({
                   </div>
                 )}
               </div>
+            </div>
+
+            {/* Dossier Download Action */}
+            <div className="flex items-center gap-2 self-start sm:self-auto">
+              <Button
+                variant="secondary"
+                size="sm"
+                startIcon={<FileText size={15} className="text-primary shrink-0" />}
+                onClick={handleDownloadDossier}
+                loading={isExportingDossier}
+                title="Download complete KYC profile, referral lineage, and full donation statement PDF"
+              >
+                Download Dossier (PDF)
+              </Button>
             </div>
           </div>
 

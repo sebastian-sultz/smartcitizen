@@ -6,15 +6,20 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { TableComponent } from "@/components/ui/TableComponent";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/Input";
-import { Search } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { Search, FileSpreadsheet, FileText } from "lucide-react";
 import { getVolunteerAppsColumns } from "./VolunteerAppsColumns";
 import { getAllVolunteers, VolunteerResponse } from "@/features/public/volunteer";
-import { updateVolunteerStatus } from "@/features/admin/api";
+import { updateVolunteerStatus, downloadVolunteersExport, downloadVolunteerDossierPDF } from "@/features/admin/api";
 import { Badge } from "@/components/ui/Badge";
+import { toast } from "sonner";
 
 export const VolunteerAppsTable = () => {
   const [volunteers, setVolunteers] = useState<VolunteerResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isExportingCSV, setIsExportingCSV] = useState(false);
+  const [isExportingPDF, setIsExportingPDF] = useState(false);
+  const [isExportingVolunteerDossier, setIsExportingVolunteerDossier] = useState(false);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
@@ -86,21 +91,84 @@ export const VolunteerAppsTable = () => {
     setDetailsOpen(true);
   };
 
+  const handleExport = async (format: "csv" | "pdf") => {
+    try {
+      if (format === "csv") setIsExportingCSV(true);
+      else setIsExportingPDF(true);
+
+      toast.info(`Preparing Volunteer Applications ${format.toUpperCase()} export...`);
+      await downloadVolunteersExport(format, { q: debouncedSearch });
+      toast.success(`Volunteer Applications ${format.toUpperCase()} downloaded successfully`);
+    } catch (error: unknown) {
+      console.error("Volunteer export error:", error);
+      toast.error(`Failed to export volunteers as ${format.toUpperCase()}`);
+    } finally {
+      if (format === "csv") setIsExportingCSV(false);
+      else setIsExportingPDF(false);
+    }
+  };
+
+  const handleDownloadVolunteerDossier = async () => {
+    if (!selectedVolunteer) return;
+    try {
+      setIsExportingVolunteerDossier(true);
+      toast.info(`Preparing volunteer application dossier for ${selectedVolunteer.name}...`);
+      await downloadVolunteerDossierPDF(selectedVolunteer.id, selectedVolunteer.name);
+      toast.success(`Dossier for ${selectedVolunteer.name} downloaded successfully`);
+    } catch (err: unknown) {
+      console.error(err);
+      toast.error("Failed to download volunteer dossier PDF");
+    } finally {
+      setIsExportingVolunteerDossier(false);
+    }
+  };
+
   const columns = getVolunteerAppsColumns(updateVolunteerAppStatus, handleViewDetails);
 
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <CardTitle>Volunteer Applications</CardTitle>
-        <div className="w-full sm:w-72">
-          <Input 
-            placeholder="Search name, phone, city..." 
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            icon={<Search size={16} />}
-            size="sm"
-            shape="pill"
-          />
+        <div>
+          <CardTitle>Volunteer Applications</CardTitle>
+          <p className="text-xs text-text-muted mt-1">
+            {totalRows} applicant{totalRows === 1 ? "" : "s"} across all regions
+          </p>
+        </div>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto">
+          <div className="w-full sm:w-80">
+            <Input 
+              placeholder="Search name, phone, city..." 
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              icon={<Search size={16} />}
+              size="sm"
+              shape="pill"
+            />
+          </div>
+          <div className="flex items-center justify-between gap-2">
+            <Button
+              className="flex-1 sm:flex-initial whitespace-nowrap"
+              variant="secondary"
+              size="sm"
+              startIcon={<FileSpreadsheet size={15} className="text-emerald-600 shrink-0" />}
+              onClick={() => handleExport("csv")}
+              loading={isExportingCSV}
+              title="Export complete volunteer applicant database as CSV"
+            >
+              Export CSV
+            </Button>
+            <Button
+              className="flex-1 sm:flex-initial whitespace-nowrap"
+              variant="secondary"
+              size="sm"
+              startIcon={<FileText size={15} className="text-primary shrink-0" />}
+              onClick={() => handleExport("pdf")}
+              loading={isExportingPDF}
+              title="Export official volunteer roster audit PDF"
+            >
+              Export PDF
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
@@ -125,13 +193,27 @@ export const VolunteerAppsTable = () => {
       {/* Volunteer Application Details Modal */}
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
         <DialogContent size="xl" className="max-h-[85vh] flex flex-col p-6 overflow-hidden">
-          <DialogHeader className="border-b border-border/60 pb-4 shrink-0">
-            <DialogTitle>
-              Volunteer Application Details
-            </DialogTitle>
-            <DialogDescription>
-              Full profile info for NGO coordinator applicant
-            </DialogDescription>
+          <DialogHeader className="border-b border-border/60 pb-4 shrink-0 flex flex-row items-center justify-between">
+            <div>
+              <DialogTitle>
+                Volunteer Application Details
+              </DialogTitle>
+              <DialogDescription>
+                Full profile info for NGO coordinator applicant
+              </DialogDescription>
+            </div>
+            {selectedVolunteer && (
+              <Button
+                variant="secondary"
+                size="sm"
+                startIcon={<FileText size={15} className="text-primary shrink-0" />}
+                onClick={handleDownloadVolunteerDossier}
+                loading={isExportingVolunteerDossier}
+                title="Download complete volunteer application profile and accreditation dossier PDF"
+              >
+                Download Dossier (PDF)
+              </Button>
+            )}
           </DialogHeader>
 
           <div className="flex-1 overflow-y-auto min-h-0 pt-4">

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import {
   Dialog,
@@ -8,8 +8,12 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { UserResponse } from "@/features/shared/auth/types";
-import { formatDate, formatUserSlug } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+import { FileText } from "lucide-react";
+import { downloadUserDossierPDF } from "../api";
+import { toast } from "sonner";
 
 interface UserDetailModalProps {
   open: boolean;
@@ -22,17 +26,48 @@ export const UserDetailModal = ({
   onOpenChange,
   user,
 }: UserDetailModalProps) => {
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleDownload = async () => {
+    if (!user) return;
+    try {
+      setIsExporting(true);
+      toast.info(`Preparing official KYC statement dossier for ${user.name}...`);
+      await downloadUserDossierPDF(user.id, user.name);
+      toast.success(`Dossier for ${user.name} downloaded successfully`);
+    } catch (err: unknown) {
+      console.error(err);
+      toast.error("Failed to download member statement dossier PDF");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         size="xl"
         className="max-h-[85vh] flex flex-col p-6 overflow-hidden"
       >
-        <DialogHeader className="border-b border-border/60 pb-4 shrink-0">
-          <DialogTitle>User Profile Details</DialogTitle>
-          <DialogDescription>
-            Detailed metadata and engagement stats for this member
-          </DialogDescription>
+        <DialogHeader className="border-b border-border/60 pb-4 shrink-0 flex flex-row items-center justify-between">
+          <div>
+            <DialogTitle>User Profile Details</DialogTitle>
+            <DialogDescription>
+              Detailed metadata and engagement stats for this member
+            </DialogDescription>
+          </div>
+          {user && (
+            <Button
+              variant="secondary"
+              size="sm"
+              startIcon={<FileText size={15} className="text-primary shrink-0" />}
+              onClick={handleDownload}
+              loading={isExporting}
+              title="Download official member KYC and donation statement dossier PDF"
+            >
+              Download Dossier (PDF)
+            </Button>
+          )}
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto min-h-0 py-4 space-y-6">

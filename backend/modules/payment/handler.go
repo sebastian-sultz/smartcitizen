@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"time"
 
 	dtorequest "backend/dto/request"
 	"backend/pkg/utils"
@@ -233,6 +234,27 @@ func (h *Handler) ExportCSV(c *gin.Context) {
 		return
 	}
 }
+
+func (h *Handler) ExportPaymentsPDF(c *gin.Context) {
+	var filter dtorequest.PaymentFilter
+	if err := c.ShouldBindQuery(&filter); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	pdfBytes, err := h.service.ExportPaymentsPDF(c.Request.Context(), filter)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate payments audit PDF: " + err.Error()})
+		return
+	}
+
+	filename := fmt.Sprintf("payments_audit_%s.pdf", time.Now().Format("20060102_150405"))
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	c.Header("Content-Type", "application/pdf")
+	c.Data(http.StatusOK, "application/pdf", pdfBytes)
+}
+
 
 func (h *Handler) Export10BD(c *gin.Context) {
 	financialYear := c.Query("financialYear")

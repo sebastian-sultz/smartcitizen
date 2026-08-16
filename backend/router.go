@@ -151,16 +151,24 @@ func SetupRoutes(r *gin.Engine, db *gorm.DB) {
 		admin.GET("/reports", reportHandler.GetReports)
 		admin.PUT("/reports/:id/resolve", reportHandler.ResolveReport)
 
-		// Donation Management admin routes
+		// Member & User Exports
+		admin.GET("/users/export", userHandler.ExportUsers)
+		admin.GET("/users/:id/dossier-pdf", userHandler.ExportUserDossierPDF)
+
+		// Volunteer Lifecycle & Exports
+		admin.GET("/volunteers/export", volunteerHandler.ExportVolunteers)
+		admin.GET("/volunteers/:id/dossier-pdf", volunteerHandler.ExportVolunteerDossierPDF)
+		admin.PUT("/volunteers/:id/status", volunteerHandler.UpdateVolunteerStatus)
+
+		// Donation Management & Fiscal Audit Exports
 		admin.GET("/payments/export", paymentHandler.ExportCSV)
+		admin.GET("/payments/export-pdf", paymentHandler.ExportPaymentsPDF)
 		admin.GET("/payments/export-10bd", paymentHandler.Export10BD)
 
-		// Network Hierarchy admin routes
+		// Network Hierarchy admin routes & exports
 		admin.GET("/users/:id/network", userHandler.GetDownlineNetwork)
 		admin.GET("/users/:id/network-stats", userHandler.GetNetworkStats)
-
-		// Volunteer Lifecycle admin routes
-		admin.PUT("/volunteers/:id/status", volunteerHandler.UpdateVolunteerStatus)
+		admin.GET("/users/:id/network/export", userHandler.ExportUserNetwork)
 
 		// Analytics dashboard admin route
 		admin.GET("/analytics", analyticsHandler.GetOperationalSummary)

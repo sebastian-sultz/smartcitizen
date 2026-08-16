@@ -68,7 +68,7 @@ const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 export function MediaPresence() {
   return (
-    <section className="py-16 md:py-24 bg-surface border-b border-border/40 relative overflow-hidden">
+    <section className="pt-4 md:pt-6 pb-16 md:pb-20 bg-surface border-b border-border/40 relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none opacity-[0.2]">
         <div className="absolute top-[20%] -left-[10%] w-[35%] h-[35%] bg-primary/10 rounded-full blur-[100px]" />

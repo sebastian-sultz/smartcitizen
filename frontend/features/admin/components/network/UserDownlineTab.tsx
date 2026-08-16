@@ -1,12 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { getUserNetwork } from "../../api";
+import { getUserNetwork, downloadUserNetworkExport } from "../../api";
 import { ReferralNetworkMember } from "../../types";
 import { TableComponent } from "@/components/ui/TableComponent";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/Button";
 import { getDownlineColumns } from "./UserDownlineColumns";
-import { Layers } from "lucide-react";
+import { Layers, FileSpreadsheet, FileText } from "lucide-react";
 import { toast } from "sonner";
 
 interface UserDownlineTabProps {
@@ -16,12 +17,32 @@ interface UserDownlineTabProps {
 export const UserDownlineTab = ({ userId }: UserDownlineTabProps) => {
   const [downline, setDownline] = useState<ReferralNetworkMember[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isExportingCSV, setIsExportingCSV] = useState(false);
+  const [isExportingPDF, setIsExportingPDF] = useState(false);
   const [recursive, setRecursive] = useState(false);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [total, setTotal] = useState(0);
 
   const columns = getDownlineColumns();
+
+  const handleExport = async (format: "csv" | "pdf") => {
+    try {
+      if (format === "csv") setIsExportingCSV(true);
+      else setIsExportingPDF(true);
+
+      const modeText = recursive ? "Multi-Level Network Downline" : "Direct Referrals";
+      toast.info(`Preparing ${modeText} ${format.toUpperCase()} export...`);
+      await downloadUserNetworkExport(userId, format, recursive);
+      toast.success(`${modeText} ${format.toUpperCase()} downloaded successfully`);
+    } catch (err: unknown) {
+      console.error(err);
+      toast.error(`Failed to export network as ${format.toUpperCase()}`);
+    } finally {
+      if (format === "csv") setIsExportingCSV(false);
+      else setIsExportingPDF(false);
+    }
+  };
 
   useEffect(() => {
     const fetchDownline = async () => {
@@ -50,13 +71,35 @@ export const UserDownlineTab = ({ userId }: UserDownlineTabProps) => {
 
   return (
     <div className="space-y-4">
-      {/* Header explanation */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-bg/50 p-4 rounded-2xl border border-border/30 gap-2">
+      {/* Header explanation and Action Toolbar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-bg/50 p-4 rounded-2xl border border-border/30 gap-4">
         <div>
-          <h3 className="text-base font-bold text-text">Referred Members</h3>
+          <h3 className="text-base font-bold text-text">Referred Members & Downline</h3>
           <p className="text-xs text-text-muted mt-0.5">
-            List of members who joined using this user's referral link, and their donation amounts.
+            List of members who joined using this user&apos;s referral link, with direct and multi-level donation impact.
           </p>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <Button
+            variant="secondary"
+            size="sm"
+            startIcon={<FileSpreadsheet size={15} className="text-emerald-600 shrink-0" />}
+            onClick={() => handleExport("csv")}
+            loading={isExportingCSV}
+            title={recursive ? "Export all multi-level downlines as CSV" : "Export direct referrals as CSV"}
+          >
+            Export CSV
+          </Button>
+          <Button
+            variant="secondary"
+            size="sm"
+            startIcon={<FileText size={15} className="text-primary shrink-0" />}
+            onClick={() => handleExport("pdf")}
+            loading={isExportingPDF}
+            title={recursive ? "Export official multi-level downline audit PDF" : "Export direct referrals audit PDF"}
+          >
+            Export PDF
+          </Button>
         </div>
       </div>
 
@@ -68,12 +111,12 @@ export const UserDownlineTab = ({ userId }: UserDownlineTabProps) => {
           </div>
           <div>
             <span className="text-sm font-bold text-text block">
-              Recursive Search
+              Multi-Level Recursive Search
             </span>
             <span className="text-xs text-text-muted">
               {recursive
-                ? "Showing all levels of the downline tree"
-                : "Showing only direct referrals (Level 1)"}
+                ? "Currently displaying all levels of the downline hierarchy tree"
+                : "Currently displaying only direct referrals (Level 1)"}
             </span>
           </div>
         </div>

@@ -1,9 +1,8 @@
-import { UserResponse } from "@/features/shared/auth/types";
-import { Payment } from "@/features/citizen/types";
+import { Payment, PhonepeResponse } from "@/features/citizen/types";
 
 export interface PaymentAdminResponse extends Payment {
   receiptNumber?: string;
-  phonepeResponse?: any;
+  phonepeResponse?: PhonepeResponse;
 }
 
 export interface UserNetworkStats {
@@ -15,9 +14,17 @@ export interface UserNetworkStats {
 
 export interface ReferralNetworkMember {
   id: string;
+  memberId?: string;
   name: string;
   phone: string;
+  role?: string;
+  status?: string;
   level: number;
+  sponsorName?: string;
+  sponsorMemberId?: string;
+  directReferralsCount?: number;
+  directReferralRevenue?: number;
+  downlineTreeSize?: number;
   totalDirectDonations: number;
   totalNetworkDonations: number;
   joinedAt: string;

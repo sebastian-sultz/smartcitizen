@@ -4,17 +4,21 @@ import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { TableComponent } from "@/components/ui/TableComponent";
 import { Input } from "@/components/ui/Input";
-import { Search } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { Search, FileSpreadsheet, FileText } from "lucide-react";
 import { getUsersColumns } from "./UsersColumns";
-import { getNonAdminUsers, suspendUser, deleteUser } from "../api";
+import { getNonAdminUsers, suspendUser, deleteUser, downloadUsersExport } from "../api";
 import { UserResponse } from "@/features/shared/auth/types";
 import { UserDetailModal } from "./UserDetailModal";
 import { useAlert } from "@/components/ui/AlertProvider";
+import { toast } from "sonner";
 
 export const UsersTable = () => {
   const { showConfirm } = useAlert();
   const [users, setUsers] = useState<UserResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isExportingCSV, setIsExportingCSV] = useState(false);
+  const [isExportingPDF, setIsExportingPDF] = useState(false);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
@@ -113,6 +117,23 @@ export const UsersTable = () => {
     });
   };
 
+  const handleExport = async (format: "csv" | "pdf") => {
+    try {
+      if (format === "csv") setIsExportingCSV(true);
+      else setIsExportingPDF(true);
+
+      toast.info(`Preparing Smart Citizens ${format.toUpperCase()} export...`);
+      await downloadUsersExport(format, { q: debouncedSearch });
+      toast.success(`Smart Citizens ${format.toUpperCase()} downloaded successfully`);
+    } catch (error: unknown) {
+      console.error("Export error:", error);
+      toast.error(`Failed to export users as ${format.toUpperCase()}`);
+    } finally {
+      if (format === "csv") setIsExportingCSV(false);
+      else setIsExportingPDF(false);
+    }
+  };
+
   const columns = getUsersColumns(
     handleViewDetails,
     handleSuspendToggle,
@@ -122,16 +143,47 @@ export const UsersTable = () => {
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <CardTitle>User Management</CardTitle>
-        <div className="w-full sm:w-72">
-          <Input
-            placeholder="Search by name, phone or ID..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            icon={<Search size={16} />}
-            size="sm"
-            shape="pill"
-          />
+        <div>
+          <CardTitle>User Management</CardTitle>
+          <p className="text-xs text-text-muted mt-1">
+            {totalRows} registered Smart Citizen{totalRows === 1 ? "" : "s"}
+          </p>
+        </div>
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto">
+          <div className="w-full sm:w-64">
+            <Input
+              placeholder="Search by name, phone or ID..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              icon={<Search size={16} />}
+              size="sm"
+              shape="pill"
+            />
+          </div>
+          <div className="flex items-center justify-between gap-2">
+            <Button
+              className="flex-1 sm:flex-initial whitespace-nowrap"
+              variant="secondary"
+              size="sm"
+              startIcon={<FileSpreadsheet size={15} className="text-emerald-600 shrink-0" />}
+              onClick={() => handleExport("csv")}
+              loading={isExportingCSV}
+              title="Export all filtered users as CSV (Includes all hidden fields)"
+            >
+              Export CSV
+            </Button>
+            <Button
+              className="flex-1 sm:flex-initial whitespace-nowrap"
+              variant="secondary"
+              size="sm"
+              startIcon={<FileText size={15} className="text-primary shrink-0" />}
+              onClick={() => handleExport("pdf")}
+              loading={isExportingPDF}
+              title="Export official members roster audit PDF"
+            >
+              Export PDF
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent>

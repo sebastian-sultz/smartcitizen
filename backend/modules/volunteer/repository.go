@@ -1,6 +1,8 @@
 package volunteer
 
 import (
+	"context"
+
 	"backend/modules/user"
 	"backend/pkg/utils"
 
@@ -12,6 +14,7 @@ type VolunteerFilter struct {
 	Profession   string
 	State        string
 	City         string
+	Status       string
 	Sort         string
 	OnlyApproved bool
 }
@@ -23,6 +26,8 @@ type Repository interface {
 	Update(volunteer *Volunteer) error
 	Delete(id string) error
 	UpdateStatus(volunteerID string, status string, userID string, targetUserType string) error
+	StreamVolunteers(ctx context.Context, filter VolunteerFilter, fn func(v Volunteer) error) error
+	FindAllFiltered(ctx context.Context, filter VolunteerFilter) ([]Volunteer, error)
 }
 
 type repository struct {
@@ -126,4 +131,92 @@ func (r *repository) UpdateStatus(volunteerID string, status string, userID stri
 		return nil
 	})
 }
+
+func (r *repository) StreamVolunteers(ctx context.Context, filter VolunteerFilter, fn func(v Volunteer) error) error {
+	query := r.db.WithContext(ctx).Model(&Volunteer{})
+
+	if filter.Status != "" && filter.Status != "ALL" {
+		query = query.Where("status = ?", filter.Status)
+	}
+
+	if filter.Search != "" {
+		searchTerm := "%" + filter.Search + "%"
+		query = query.Where(
+			"name ILIKE ? OR email ILIKE ? OR phone ILIKE ? OR profession ILIKE ? OR specialties ILIKE ? OR experience ILIKE ? OR city ILIKE ? OR district ILIKE ? OR state ILIKE ? OR pincode ILIKE ? OR address ILIKE ?",
+			searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm,
+		)
+	}
+
+	orderClause := "created_at desc"
+	if filter.Sort != "" {
+		switch filter.Sort {
+		case "name_asc":
+			orderClause = "name asc"
+		case "name_desc":
+			orderClause = "name desc"
+		case "profession":
+			orderClause = "profession asc"
+		case "newest":
+			orderClause = "created_at desc"
+		}
+	}
+
+	rows, err := query.Order(orderClause).Rows()
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+		}
+
+		var v Volunteer
+		if err := r.db.ScanRows(rows, &v); err != nil {
+			return err
+		}
+		if err := fn(v); err != nil {
+			return err
+		}
+	}
+	return rows.Err()
+}
+
+func (r *repository) FindAllFiltered(ctx context.Context, filter VolunteerFilter) ([]Volunteer, error) {
+	var volunteers []Volunteer
+	query := r.db.WithContext(ctx).Model(&Volunteer{})
+
+	if filter.Status != "" && filter.Status != "ALL" {
+		query = query.Where("status = ?", filter.Status)
+	}
+
+	if filter.Search != "" {
+		searchTerm := "%" + filter.Search + "%"
+		query = query.Where(
+			"name ILIKE ? OR email ILIKE ? OR phone ILIKE ? OR profession ILIKE ? OR specialties ILIKE ? OR experience ILIKE ? OR city ILIKE ? OR district ILIKE ? OR state ILIKE ? OR pincode ILIKE ? OR address ILIKE ?",
+			searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm,
+		)
+	}
+
+	orderClause := "created_at desc"
+	if filter.Sort != "" {
+		switch filter.Sort {
+		case "name_asc":
+			orderClause = "name asc"
+		case "name_desc":
+			orderClause = "name desc"
+		case "profession":
+			orderClause = "profession asc"
+		case "newest":
+			orderClause = "created_at desc"
+		}
+	}
+
+	err := query.Order(orderClause).Find(&volunteers).Error
+	return volunteers, err
+}
+
 

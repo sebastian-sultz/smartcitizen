@@ -31,9 +31,17 @@ type User struct {
 
 type ReferralInfo struct {
 	ID                    uuid.UUID `json:"id"`
+	MemberID              string    `json:"memberId"`
 	Name                  string    `json:"name"`
 	Phone                 string    `json:"phone"`
+	Role                  string    `json:"role"`
+	Status                string    `json:"status"`
 	Level                 int       `json:"level"`
+	SponsorName           string    `json:"sponsorName"`
+	SponsorMemberID       string    `json:"sponsorMemberId"`
+	DirectReferralsCount  int64     `json:"directReferralsCount"`
+	DirectReferralRevenue float64   `json:"directReferralRevenue"`
+	DownlineTreeSize      int64     `json:"downlineTreeSize"`
 	TotalDirectDonations  float64   `json:"totalDirectDonations"`
 	TotalNetworkDonations float64   `json:"totalNetworkDonations"`
 	JoinedAt              time.Time `json:"joinedAt"`

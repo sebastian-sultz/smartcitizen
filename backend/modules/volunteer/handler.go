@@ -1,8 +1,10 @@
 package volunteer
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
+	"time"
 
 	"backend/dto/request"
 	"backend/dto/response"
@@ -201,3 +203,65 @@ func (h *Handler) UpdateVolunteerStatus(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "volunteer status updated", "volunteer": mapToResponse(volunteer)})
 }
+
+func (h *Handler) ExportVolunteers(c *gin.Context) {
+	filter := VolunteerFilter{
+		Search:       c.Query("q"),
+		Profession:   c.Query("profession"),
+		State:        c.Query("state"),
+		City:         c.Query("city"),
+		Status:       c.Query("status"),
+		Sort:         c.Query("sort"),
+		OnlyApproved: false,
+	}
+
+	format := strings.ToLower(c.DefaultQuery("format", "csv"))
+
+	if format == "pdf" {
+		pdfBytes, err := h.service.ExportVolunteersPDF(c.Request.Context(), filter)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate volunteers PDF: " + err.Error()})
+			return
+		}
+
+		filename := fmt.Sprintf("volunteers_audit_%s.pdf", time.Now().Format("20060102_150405"))
+		c.Header("Content-Description", "File Transfer")
+		c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+		c.Header("Content-Type", "application/pdf")
+		c.Data(http.StatusOK, "application/pdf", pdfBytes)
+		return
+	}
+
+	filename := fmt.Sprintf("volunteers_export_%s.csv", time.Now().Format("20060102_150405"))
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	c.Header("Content-Type", "text/csv; charset=utf-8")
+	c.Header("Transfer-Encoding", "chunked")
+
+	if err := h.service.ExportVolunteersCSV(c.Request.Context(), filter, c.Writer); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to stream CSV: " + err.Error()})
+		return
+	}
+}
+
+func (h *Handler) ExportVolunteerDossierPDF(c *gin.Context) {
+	id := c.Param("id")
+	if id == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "missing volunteer ID"})
+		return
+	}
+
+	pdfBytes, err := h.service.ExportVolunteerDossierPDF(c.Request.Context(), id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate volunteer dossier PDF: " + err.Error()})
+		return
+	}
+
+	filename := fmt.Sprintf("volunteer_dossier_%s_%s.pdf", id[:8], time.Now().Format("20060102_150405"))
+	c.Header("Content-Description", "File Transfer")
+	c.Header("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	c.Header("Content-Type", "application/pdf")
+	c.Data(http.StatusOK, "application/pdf", pdfBytes)
+}
+
+

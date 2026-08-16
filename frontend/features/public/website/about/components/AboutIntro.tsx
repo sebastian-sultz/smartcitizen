@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export function AboutIntro() {
   return (
-    <section className="py-8 md:py-16 bg-surface">
+    <section className="pt-8 md:pt-16 pb-10 md:pb-6 bg-surface">
       <div className="max-content">
         <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
           {/* Left - Text */}
