@@ -91,7 +91,7 @@ export default function ProfileView() {
     return (
       <div className="space-y-8 w-full animate-pulse">
         {/* Profile Card Header Skeleton */}
-        <div className="bg-surface p-5 sm:p-8 rounded-2xl sm:rounded-[40px] border border-border/40 shadow-sm flex flex-col sm:flex-row items-center gap-6">
+        <div className="bg-surface p-5 sm:p-8 rounded-2xl sm:rounded-[24px] border border-border/40 shadow-sm flex flex-col sm:flex-row items-center gap-6">
           <Skeleton className="w-24 h-24 rounded-full shrink-0" />
           <div className="space-y-3 w-full max-w-xs text-center sm:text-left">
             <Skeleton className="h-8 w-48 rounded-lg mx-auto sm:mx-0" />
@@ -142,7 +142,7 @@ export default function ProfileView() {
   return (
     <div className="space-y-8">
       {/* Top Banner Profile Summary */}
-      <Card className="rounded-2xl sm:rounded-[40px] border-primary/5 shadow-sm overflow-hidden relative">
+      <Card className="rounded-2xl sm:rounded-[24px] border-primary/5 shadow-sm overflow-hidden relative">
         <div className="absolute top-0 inset-x-0 h-36 bg-gradient-to-r from-primary/15 to-primary/5" />
 
         <CardContent className="pt-20 pb-8 px-5 sm:px-10 relative z-10 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6">
@@ -152,7 +152,9 @@ export default function ProfileView() {
               htmlFor="profile-photo-upload"
               className={cn(
                 "relative block w-24 h-24 rounded-full bg-white border-4 border-white shadow-lg overflow-hidden flex items-center justify-center font-bold text-3xl text-primary font-display transition-all duration-200",
-                !isUploading ? "cursor-pointer hover:border-primary/20 hover:shadow-md" : "pointer-events-none"
+                !isUploading
+                  ? "cursor-pointer hover:border-primary/20 hover:shadow-md"
+                  : "pointer-events-none",
               )}
               title="Click to update profile photo"
             >
@@ -235,7 +237,7 @@ export default function ProfileView() {
             onCancel={() => setIsEditing(false)}
           />
         ) : (
-          <Card className="rounded-2xl sm:rounded-[40px] border-primary/5 shadow-sm">
+          <Card className="rounded-2xl sm:rounded-[24px] border-primary/5 shadow-sm">
             <CardContent className="p-5 sm:p-8 space-y-6">
               <div className="flex justify-between items-center pb-4 border-b border-border">
                 <h3 className="font-display text-lg font-bold text-text">

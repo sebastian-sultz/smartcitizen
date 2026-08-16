@@ -208,8 +208,8 @@ export const DonationAuditCenter = () => {
       </div>
 
       {/* Search and Filter Panel */}
-      <Card className={`md:block ${!showMobileFilters ? "hidden" : ""}`}>
-        <CardContent className="pt-6">
+      <Card className={`md:block border-0 sm:border rounded-none sm:rounded-24px shadow-none sm:shadow-card bg-transparent sm:bg-white ${!showMobileFilters ? "hidden" : ""}`}>
+        <CardContent className="p-0 pt-6 sm:p-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
             {/* Search Input */}
             <div className="lg:col-span-2 space-y-1">

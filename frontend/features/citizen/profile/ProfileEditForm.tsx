@@ -57,9 +57,11 @@ export default function ProfileEditForm({ profile, volunteer, onSave, onCancel }
   });
 
   return (
-    <Card className="rounded-2xl sm:rounded-[40px] border-primary/5 shadow-sm">
+    <Card className="rounded-2xl sm:rounded-[24px] border-primary/5 shadow-sm">
       <CardHeader>
-        <CardTitle className="font-display text-lg font-bold text-text">Edit Personal Information</CardTitle>
+        <CardTitle className="font-display text-lg font-bold text-text">
+          Edit Personal Information
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={formik.handleSubmit} className="space-y-6">
@@ -120,7 +122,9 @@ export default function ProfileEditForm({ profile, volunteer, onSave, onCancel }
               value={formik.values.district}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={formik.touched.district ? formik.errors.district : undefined}
+              error={
+                formik.touched.district ? formik.errors.district : undefined
+              }
             />
 
             <Input
@@ -150,11 +154,7 @@ export default function ProfileEditForm({ profile, volunteer, onSave, onCancel }
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              isLoading={formik.isSubmitting}
-              size="sm"
-            >
+            <Button type="submit" isLoading={formik.isSubmitting} size="sm">
               Save Changes
             </Button>
           </div>

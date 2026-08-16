@@ -141,8 +141,8 @@ export const UsersTable = () => {
   );
 
   return (
-    <Card className="w-full">
-      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <Card className="w-full border-0 sm:border rounded-none sm:rounded-[24px] shadow-none sm:shadow-card bg-transparent sm:bg-white">
+      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-0 sm:p-8 sm:pb-0">
         <div>
           <CardTitle>User Management</CardTitle>
           <p className="text-xs text-text-muted mt-1">
@@ -165,7 +165,12 @@ export const UsersTable = () => {
               className="flex-1 sm:flex-initial whitespace-nowrap"
               variant="secondary"
               size="sm"
-              startIcon={<FileSpreadsheet size={15} className="text-emerald-600 shrink-0" />}
+              startIcon={
+                <FileSpreadsheet
+                  size={15}
+                  className="text-emerald-600 shrink-0"
+                />
+              }
               onClick={() => handleExport("csv")}
               loading={isExportingCSV}
               title="Export all filtered users as CSV (Includes all hidden fields)"
@@ -176,7 +181,9 @@ export const UsersTable = () => {
               className="flex-1 sm:flex-initial whitespace-nowrap"
               variant="secondary"
               size="sm"
-              startIcon={<FileText size={15} className="text-primary shrink-0" />}
+              startIcon={
+                <FileText size={15} className="text-primary shrink-0" />
+              }
               onClick={() => handleExport("pdf")}
               loading={isExportingPDF}
               title="Export official members roster audit PDF"
@@ -186,7 +193,7 @@ export const UsersTable = () => {
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-0 pt-4 sm:p-8 sm:pt-0">
         <TableComponent
           headers={columns}
           data={users}

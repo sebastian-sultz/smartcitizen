@@ -99,21 +99,29 @@ export function OurWorkMain() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-10">
             {programs.map((program, i) => (
               <div 
                 key={i} 
-                className="bg-white p-10 rounded-[32px] shadow-card hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 group flex flex-col items-start text-left border border-transparent hover:border-primary/10"
+                className="group relative p-5 md:p-8 rounded-2xl md:rounded-[32px] bg-white border border-border/50 hover:border-primary/20 hover:shadow-2xl transition-all duration-500 overflow-hidden flex gap-5"
               >
-                <div className="w-16 h-16 rounded-2xl bg-primary/5 flex items-center justify-center text-primary mb-8 group-hover:bg-primary group-hover:text-white transition-all duration-300 transform group-hover:rotate-6">
-                  <program.icon size={32} strokeWidth={1.5} />
+                {/* Colored Accent Strip */}
+                <div className="w-1 md:w-1.5 self-stretch rounded-full bg-primary shrink-0" />
+                
+                {/* Large low-opacity background watermark */}
+                <div className="absolute -bottom-8 -right-8 pointer-events-none transition-all duration-700 ease-out group-hover:scale-110 group-hover:-translate-x-3 group-hover:-translate-y-3 z-0">
+                  <program.icon className="size-32 md:size-40 text-primary opacity-[0.06]" />
                 </div>
-                <h3 className="font-display text-2xl font-bold mb-4 text-text group-hover:text-primary transition-colors leading-tight">
-                  {program.title}
-                </h3>
-                <p className="text-text-muted text-[15px] leading-relaxed">
-                  {program.desc}
-                </p>
+
+                {/* Content Container */}
+                <div className="relative z-10 flex-1 space-y-2 md:space-y-3">
+                  <h3 className="font-display text-lg md:text-2xl font-bold text-text group-hover:text-primary transition-colors leading-tight">
+                    {program.title}
+                  </h3>
+                  <p className="text-text-muted text-sm md:text-base leading-relaxed pr-6 md:pr-10">
+                    {program.desc}
+                  </p>
+                </div>
               </div>
             ))}
           </div>

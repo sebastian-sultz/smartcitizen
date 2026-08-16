@@ -60,13 +60,13 @@ export const ModerationTable = () => {
 
   if (loading) {
     return (
-      <Card className="w-full animate-pulse">
-        <CardHeader>
+      <Card className="w-full animate-pulse border-0 sm:border rounded-none sm:rounded-[24px] shadow-none sm:shadow-card bg-transparent sm:bg-white">
+        <CardHeader className="p-0 sm:p-8 sm:pb-0">
           <div className="space-y-2">
             <Skeleton className="h-6 w-48 rounded-lg" />
           </div>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 p-0 pt-4 sm:p-8 sm:pt-0">
           <Skeleton className="h-10 w-full rounded-xl" />
           <div className="space-y-3">
             <Skeleton className="h-14 w-full rounded-xl" />
@@ -79,16 +79,16 @@ export const ModerationTable = () => {
   }
 
   return (
-    <Card className="w-full">
-      <CardHeader>
+    <Card className="w-full border-0 sm:border rounded-none sm:rounded-[24px] shadow-none sm:shadow-card bg-transparent sm:bg-white">
+      <CardHeader className="p-0 sm:p-8 sm:pb-0">
         <CardTitle>Abuse & Moderation</CardTitle>
       </CardHeader>
-      <CardContent>
-        <TableComponent 
-          headers={columns} 
-          data={reports} 
-          emptyMessage="No moderation reports found" 
-          className="shadow-none border-0" 
+      <CardContent className="p-0 pt-4 sm:p-8 sm:pt-0">
+        <TableComponent
+          headers={columns}
+          data={reports}
+          emptyMessage="No moderation reports found"
+          className="shadow-none border-0"
         />
       </CardContent>
 

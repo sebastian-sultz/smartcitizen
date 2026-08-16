@@ -103,27 +103,31 @@ export const ProgramsTable = () => {
   ];
 
   return (
-    <Card className="w-full">
-      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <Card className="w-full border-0 sm:border rounded-none sm:rounded-[24px] shadow-none sm:shadow-card bg-transparent sm:bg-white">
+      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-0 sm:p-8 sm:pb-0">
         <CardTitle>Program Management</CardTitle>
-        <Button 
-          size="sm" 
-          variant="primary" 
+        <Button
+          size="sm"
+          variant="primary"
           startIcon={<Plus size={16} />}
           onClick={() => setOpen(true)}
           className="w-full sm:w-auto"
         >
           Create Program
         </Button>
-        <CreateProgramModal open={open} onOpenChange={setOpen} onSuccess={fetchPrograms} />
+        <CreateProgramModal
+          open={open}
+          onOpenChange={setOpen}
+          onSuccess={fetchPrograms}
+        />
       </CardHeader>
-      <CardContent>
-        <TableComponent 
-          headers={columns} 
-          data={programs} 
+      <CardContent className="p-0 pt-4 sm:p-8 sm:pt-0">
+        <TableComponent
+          headers={columns}
+          data={programs}
           loading={loading}
-          emptyMessage="No programs found" 
-          className="shadow-none border-0" 
+          emptyMessage="No programs found"
+          className="shadow-none border-0"
           pagination={{
             page,
             limit,
@@ -131,7 +135,7 @@ export const ProgramsTable = () => {
             onChange: (p, l) => {
               setPage(p);
               setLimit(l);
-            }
+            },
           }}
         />
       </CardContent>
@@ -140,11 +144,10 @@ export const ProgramsTable = () => {
       <Dialog open={participantsOpen} onOpenChange={setParticipantsOpen}>
         <DialogContent size="xl" className="max-h-[80vh] flex flex-col p-6">
           <DialogHeader className="border-b border-border/60 pb-4 shrink-0">
-            <DialogTitle>
-              Program Participants
-            </DialogTitle>
+            <DialogTitle>Program Participants</DialogTitle>
             <DialogDescription>
-              Registered users for: <span className="font-bold text-text">{selectedProgramName}</span>
+              Registered users for:{" "}
+              <span className="font-bold text-text">{selectedProgramName}</span>
             </DialogDescription>
           </DialogHeader>
 

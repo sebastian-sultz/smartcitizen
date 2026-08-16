@@ -1,5 +1,6 @@
 import { Leaf, Shield, Scale, Heart, Baby, BookOpen, MoveRight } from "lucide-react";
 import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 
 const featuredPrograms = [
   {
@@ -46,19 +47,24 @@ export function ProgramSection() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {featuredPrograms.map((program, i) => (
             <div 
               key={i} 
-              className="bg-white p-8 rounded-xl shadow-card border-l-4 border-transparent hover:border-primary hover:-translate-y-1 transition-all duration-300 group cursor-default"
+              className="group bg-white p-3 rounded-2xl border border-border/60 hover:border-primary/30 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-default"
             >
-              <div className="w-14 h-14 rounded-lg bg-primary/5 flex items-center justify-center text-primary mb-6 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                <program.icon size={32} strokeWidth={1.5} />
+              {/* Icon and Title Row */}
+              <div className="flex items-center gap-3.5 mb-4">
+                <div className="w-11 h-11 rounded-full bg-primary/5 border border-primary/10 flex items-center justify-center text-primary shrink-0 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                  <program.icon size={22} strokeWidth={2} />
+                </div>
+                <h3 className="font-display text-lg font-bold text-text group-hover:text-primary transition-colors leading-tight">
+                  {program.title}
+                </h3>
               </div>
-              <h3 className="font-display text-xl font-bold mb-3 text-text group-hover:text-primary transition-colors">
-                {program.title}
-              </h3>
-              <p className="text-text-muted text-[15px] leading-relaxed">
+
+              {/* Description */}
+              <p className="text-text-muted text-sm leading-relaxed pl-1">
                 {program.desc}
               </p>
             </div>
@@ -66,13 +72,16 @@ export function ProgramSection() {
         </div>
 
         <div className="mt-8 md:mt-10 text-center">
-          <Link 
-            href="/our_work" 
-            className="inline-flex items-center gap-2 px-8 py-3 rounded-lg border-2 border-primary text-primary font-bold hover:bg-primary hover:text-white transition-all"
+          <Button 
+            asChild
+            variant="outline"
+            size={"sm"}   
+            endIcon={<MoveRight size={20} />}
           >
-            View All 15 Programs
-            <MoveRight size={20} />
-          </Link>
+            <Link href="/our_work">
+              View All 15 Programs
+            </Link>
+          </Button>
         </div>
       </div>
     </section>

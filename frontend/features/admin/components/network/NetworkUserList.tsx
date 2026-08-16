@@ -76,8 +76,8 @@ export const NetworkUserList = () => {
   return (
     <div className="space-y-6">
       {/* Search and Sort Toolbar */}
-      <Card>
-        <CardContent >
+      <Card className="border-0 sm:border rounded-none sm:rounded-[24px] shadow-none sm:shadow-card bg-transparent sm:bg-white">
+        <CardContent className="px-4 sm:px-8 pt-6">
           <div className="flex flex-col sm:flex-row gap-4 items-end justify-between">
             {/* Search Input */}
             <div className="flex-1 max-w-md space-y-1">

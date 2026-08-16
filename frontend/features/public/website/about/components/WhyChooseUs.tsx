@@ -27,12 +27,12 @@ const reasons = [
 
 export function WhyChooseUs() {
   return (
-    <section className="py-12 md:py-16 bg-bg-alt">
+    <section className="py-8 md:py-12 bg-bg-alt">
       <div className="max-content">
-        <div className="flex flex-col lg:flex-row gap-16">
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
           {/* Left - Image */}
           <div className="flex-1">
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl h-full min-h-[400px]">
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl h-[280px] sm:h-[400px] lg:h-full lg:min-h-[450px]">
               <Image
                 src={ASSETS.a9}
                 alt="Foundation Seminar"
@@ -44,27 +44,27 @@ export function WhyChooseUs() {
           </div>
 
           {/* Right - Text Content */}
-          <div className="flex-1 space-y-8">
-            <div className="space-y-4">
+          <div className="flex-1 space-y-6 md:space-y-8">
+            <div className="space-y-3 md:space-y-4">
               <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-accent">
                 OUR COMMITMENT
               </span>
-              <h2 className="font-display text-4xl md:text-5xl font-bold text-text">
+              <h2 className="font-display text-3xl md:text-5xl font-bold text-text leading-tight">
                 Our Promise to Every Community
               </h2>
             </div>
 
-            <div className="space-y-8">
+            <div className="space-y-5 md:space-y-7">
               {reasons.map((reason, i) => (
-                <div key={i} className="flex gap-4 group">
+                <div key={i} className="flex gap-3.5 group">
                   <div className="mt-1 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0 group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                    <Check size={14} strokeWidth={3} />
+                    <Check size={13} strokeWidth={3} />
                   </div>
                   <div>
-                    <h4 className="font-body font-bold text-lg text-text mb-1">
+                    <h4 className="font-body font-bold text-base md:text-lg text-text mb-1">
                       {reason.title}
                     </h4>
-                    <p className="text-text-muted text-[15px] leading-relaxed">
+                    <p className="text-text-muted text-sm md:text-[15px] leading-relaxed">
                       {reason.desc}
                     </p>
                   </div>
