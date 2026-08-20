@@ -77,7 +77,7 @@ export const DonationDetailsDialog = ({
               )}
             </div>
 
-            <DialogFooter className="pt-4 border-t border-border/40">
+            <DialogFooter>
               <Button variant="secondary" onClick={() => onOpenChange(false)} size="sm">Close Inspector</Button>
             </DialogFooter>
           </div>

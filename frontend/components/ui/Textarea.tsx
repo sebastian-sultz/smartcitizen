@@ -5,69 +5,111 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const textareaVariants = cva(
-  "w-full bg-bg border outline-none transition-all text-text focus:ring-1 focus:ring-primary/20",
+  [
+    "w-full",
+    "bg-bg",
+    "border",
+    "outline-none",
+    "text-text",
+    "transition-[border-color,box-shadow,background-color]",
+    "placeholder:text-text-light",
+    "focus-visible:outline-none",
+    "focus-visible:ring-2",
+    "focus-visible:ring-primary/20",
+    "disabled:cursor-not-allowed",
+    "disabled:opacity-60",
+    "disabled:bg-bg/70",
+  ].join(" "),
   {
     variants: {
       size: {
-        sm: "px-4 py-2 text-xs sm:text-sm",
-        md: "px-6 py-4 text-[15px]",
-        lg: "px-8 py-5 text-lg",
+        sm: "p-3 text-base sm:text-sm",
+        md: "p-4 text-base sm:text-sm",
+        lg: "p-5 text-base",
       },
       shape: {
-        default: "rounded-xl",
+        default: "rounded-lg",
         pill: "rounded-2xl",
-        square: "rounded-lg",
+        square: "rounded-md",
       },
       errorState: {
-        true: "border-red-500 focus:ring-red-500 focus:border-red-500",
-        false: "border-border focus:border-primary",
-      }
+        true: [
+          "border-danger",
+          "focus-visible:border-danger",
+          "focus-visible:ring-danger/20",
+        ].join(" "),
+        false: ["border-border", "focus-visible:border-primary"].join(" "),
+      },
     },
     defaultVariants: {
       size: "md",
       shape: "default",
       errorState: false,
-    }
-  }
+    },
+  },
 );
 
 export interface TextareaProps
   extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, "size">,
     VariantProps<typeof textareaVariants> {
-  label?: string;
+  label?: React.ReactNode;
   error?: string;
 }
 
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, label, error, size = "md", shape = "default", id: customId, ...props }, ref) => {
+  (
+    {
+      className,
+      label,
+      error,
+      size = "md",
+      shape = "default",
+      id: customId,
+      disabled,
+      ...props
+    },
+    ref,
+  ) => {
     const reactId = React.useId();
     const id = customId || reactId;
     const errorId = `${id}-error`;
 
     return (
-      <div className="space-y-2 w-full">
+      <div className="w-full">
         {label && (
-          <label htmlFor={id} className="text-[14px] font-bold text-text ml-1 block">
+          <label
+            htmlFor={id}
+            className="ml-1 block text-sm font-semibold leading-5 text-text"
+          >
             {label}
           </label>
         )}
-        <textarea
-          id={id}
-          className={cn(
-            textareaVariants({ size, shape, errorState: !!error }),
-            className
-          )}
-          ref={ref}
-          aria-invalid={error ? "true" : undefined}
-          aria-describedby={error ? errorId : undefined}
-          {...props}
-        />
+        <div className={cn(label && "mt-1.5")}>
+          <textarea
+            id={id}
+            disabled={disabled}
+            className={cn(
+              textareaVariants({ size, shape, errorState: !!error }),
+              className,
+            )}
+            ref={ref}
+            aria-invalid={error ? "true" : undefined}
+            aria-describedby={error ? errorId : undefined}
+            {...props}
+          />
+        </div>
         {error && (
-          <p id={errorId} className="text-red-500 text-[12px] ml-1">{error}</p>
+          <p
+            id={errorId}
+            role="alert"
+            className="ml-1 mt-1 text-xs leading-4 text-danger sm:text-sm sm:leading-5"
+          >
+            {error}
+          </p>
         )}
       </div>
     );
-  }
+  },
 );
 Textarea.displayName = "Textarea";
 

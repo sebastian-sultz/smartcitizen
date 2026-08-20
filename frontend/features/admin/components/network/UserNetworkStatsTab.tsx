@@ -73,8 +73,8 @@ export const UserNetworkStatsTab = ({ userId }: UserNetworkStatsTabProps) => {
     },
     {
       icon: GitCommit,
-      label: "Total Downline Network",
-      value: `${stats.totalDownlineCount} total users`,
+      label: "Total Referred Network",
+      value: `${stats.totalDownlineCount} total members`,
       colorClass: "bg-accent/10 text-accent",
     },
     {

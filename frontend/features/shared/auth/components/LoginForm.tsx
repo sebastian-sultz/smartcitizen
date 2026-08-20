@@ -85,7 +85,7 @@ export const LoginForm = () => {
   });
 
   return (
-    <Card className="w-full max-w-[450px]">
+    <Card className="w-full max-w-[450px] ">
       <CardHeader>
         <CardTitle className="text-3xl text-center">
           {view === "phone_entry" && "Smart Citizen Login"}
@@ -116,6 +116,7 @@ export const LoginForm = () => {
               label="Mobile Number"
               placeholder="10-digit mobile number"
               type="tel"
+              size={"md"}
               icon={<Phone size={20} />}
               name="mobileNumber"
               value={formik.values.mobileNumber}
@@ -149,6 +150,7 @@ export const LoginForm = () => {
                 placeholder="••••••••"
                 icon={<Lock size={20} />}
                 name="password"
+                size="md"
                 value={formik.values.password}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -163,6 +165,7 @@ export const LoginForm = () => {
                 label="New Password"
                 placeholder="••••••••"
                 type="password"
+                size="md"
                 icon={<Lock size={20} />}
                 name="newPassword"
                 value={formik.values.newPassword}
@@ -174,6 +177,7 @@ export const LoginForm = () => {
                 label="Confirm New Password"
                 placeholder="••••••••"
                 type="password"
+                size="md"
                 icon={<Lock size={20} />}
                 name="confirmPassword"
                 value={formik.values.confirmPassword}

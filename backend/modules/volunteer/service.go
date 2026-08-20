@@ -27,13 +27,13 @@ import (
 type Service interface {
 	CreateVolunteer(req *request.CreateVolunteer) (*Volunteer, error)
 	GetVolunteer(id string) (*Volunteer, error)
-	GetAllVolunteers(filter VolunteerFilter, pagination *utils.Pagination) ([]Volunteer, error)
+	GetAllVolunteers(filter request.VolunteerFilter, pagination *utils.Pagination) ([]Volunteer, error)
 	UpdateVolunteer(id string, req *request.UpdateVolunteer) (*Volunteer, error)
 	UpdateVolunteerImage(ctx context.Context, id string, url string, publicID string) error
 	DeleteVolunteer(ctx context.Context, id string) error
 	UpdateVolunteerStatus(ctx context.Context, id string, status VolunteerStatus) (*Volunteer, error)
-	ExportVolunteersCSV(ctx context.Context, filter VolunteerFilter, w io.Writer) error
-	ExportVolunteersPDF(ctx context.Context, filter VolunteerFilter) ([]byte, error)
+	ExportVolunteersCSV(ctx context.Context, filter request.VolunteerFilter, w io.Writer) error
+	ExportVolunteersPDF(ctx context.Context, filter request.VolunteerFilter) ([]byte, error)
 	ExportVolunteerDossierPDF(ctx context.Context, id string) ([]byte, error)
 }
 
@@ -111,7 +111,7 @@ func (s *service) GetVolunteer(id string) (*Volunteer, error) {
 	return s.repo.FindByID(id)
 }
 
-func (s *service) GetAllVolunteers(filter VolunteerFilter, pagination *utils.Pagination) ([]Volunteer, error) {
+func (s *service) GetAllVolunteers(filter request.VolunteerFilter, pagination *utils.Pagination) ([]Volunteer, error) {
 	return s.repo.FindAll(filter, pagination)
 }
 
@@ -220,7 +220,7 @@ func sanitizeCSVCell(val string) string {
 	return val
 }
 
-func (s *service) ExportVolunteersCSV(ctx context.Context, filter VolunteerFilter, w io.Writer) error {
+func (s *service) ExportVolunteersCSV(ctx context.Context, filter request.VolunteerFilter, w io.Writer) error {
 	if _, err := w.Write([]byte("\xEF\xBB\xBF")); err != nil {
 		return fmt.Errorf("failed to write UTF-8 BOM: %w", err)
 	}
@@ -302,7 +302,7 @@ func (s *service) ExportVolunteersCSV(ctx context.Context, filter VolunteerFilte
 	})
 }
 
-func (s *service) ExportVolunteersPDF(ctx context.Context, filter VolunteerFilter) ([]byte, error) {
+func (s *service) ExportVolunteersPDF(ctx context.Context, filter request.VolunteerFilter) ([]byte, error) {
 	volunteers, err := s.repo.FindAllFiltered(ctx, filter)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch volunteers for PDF: %w", err)

@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -75,25 +76,27 @@ export default function AddMemberDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleDialogChange}>
-      <DialogContent className="sm:max-w-md rounded-3xl p-6">
+      <DialogContent size="md" className="gap-4">
         <DialogHeader>
           <div className="flex items-center gap-2.5">
-            <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shrink-0 border border-primary/10">
+            <div className="w-12.5 h-12.5 rounded-xl bg-primary/10 flex items-center justify-center text-primary shrink-0 border border-primary/10">
               <UserPlus size={20} />
             </div>
             <div>
-              <DialogTitle className="font-display text-lg font-bold text-text">
-                Direct Member Enrollment
-              </DialogTitle>
-              <DialogDescription className="text-xs text-text-muted mt-0.5">
-                Register a new member directly into your downline network.
-              </DialogDescription>
+              <div className="flex flex-col gap-">
+                <DialogTitle className="font-display text-lg font-bold text-text leading-none">
+                  Direct Member Enrollment
+                </DialogTitle>
+                <DialogDescription className="text-xs text-text-muted leading-none">
+                  Register a new member directly under your invitation code.
+                </DialogDescription>
+              </div>
             </div>
           </div>
         </DialogHeader>
 
-        {/* Sponsor Badge Notice */}
-        <div className="flex items-center justify-between px-3.5 py-2.5 rounded-2xl bg-primary/5 border border-primary/10 my-1">
+        {/* Referrer Badge Notice */}
+        <div className="flex items-center justify-between px-3.5 py-3 rounded-2xl bg-primary/5 border border-primary/10 my-1">
           <div className="flex items-center gap-2">
             <ShieldCheck size={16} className="text-primary" />
             <span className="text-xs font-medium text-text-muted">
@@ -143,6 +146,7 @@ export default function AddMemberDialog({
               id="phone"
               name="phone"
               type="tel"
+              size="md"
               maxLength={10}
               placeholder="e.g. 9876543210"
               value={formik.values.phone}
@@ -156,11 +160,10 @@ export default function AddMemberDialog({
             />
           </div>
 
-          <div className="flex justify-between gap-3 pt-2">
+          <DialogFooter>
             <Button
               type="button"
               variant="secondary"
-              size="md"
               onClick={() => handleDialogChange(false)}
               disabled={formik.isSubmitting}
             >
@@ -169,13 +172,12 @@ export default function AddMemberDialog({
             <Button
               type="submit"
               variant="primary"
-              size="md"
               isLoading={formik.isSubmitting}
               startIcon={<UserCheck size={16} />}
             >
               Enroll Member
             </Button>
-          </div>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>

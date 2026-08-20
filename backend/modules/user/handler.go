@@ -336,6 +336,7 @@ func (h *Handler) Me(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"user": mapToResponse(user, refName, vol, netStats)})
 }
 
+
 func (h *Handler) GetAllNonAdminUsers(c *gin.Context) {
 	// Check if user is admin
 	userType, exists := c.Get("userType")
@@ -344,12 +345,14 @@ func (h *Handler) GetAllNonAdminUsers(c *gin.Context) {
 		return
 	}
 
-	search := c.Query("q")
-	sort := c.Query("sort")
-	referralsOnly := c.Query("referrals_only") == "true"
+	var filter request.UserFilter
+	if err := c.ShouldBindQuery(&filter); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
 	pagination := utils.GetPaginationFromContext(c)
-	usersList, err := h.service.GetNonAdminUsers(search, sort, referralsOnly, &pagination)
+	usersList, err := h.service.GetNonAdminUsers(filter, &pagination)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch users"})
 		return
@@ -592,12 +595,15 @@ func (h *Handler) ProxyImage(c *gin.Context) {
 }
 
 func (h *Handler) ExportUsers(c *gin.Context) {
-	search := c.Query("q")
-	sort := c.Query("sort")
+	var filter request.UserFilter
+	if err := c.ShouldBindQuery(&filter); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 	format := strings.ToLower(c.DefaultQuery("format", "csv"))
 
 	if format == "pdf" {
-		pdfBytes, err := h.service.ExportUsersPDF(c.Request.Context(), search, sort)
+		pdfBytes, err := h.service.ExportUsersPDF(c.Request.Context(), filter)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate users PDF: " + err.Error()})
 			return
@@ -617,7 +623,7 @@ func (h *Handler) ExportUsers(c *gin.Context) {
 	c.Header("Content-Type", "text/csv; charset=utf-8")
 	c.Header("Transfer-Encoding", "chunked")
 
-	if err := h.service.ExportUsersCSV(c.Request.Context(), search, sort, c.Writer); err != nil {
+	if err := h.service.ExportUsersCSV(c.Request.Context(), filter, c.Writer); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to stream CSV: " + err.Error()})
 		return
 	}

@@ -211,6 +211,37 @@ h1, h2, h3, .font-display {
   scrollbar-width: thin;
   scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
 }
+
+/* Hide scrollbars for dialogs and nested scrollable containers */
+[data-slot="dialog-content"],
+[data-slot="dialog-content"] * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+[data-slot="dialog-content"]::-webkit-scrollbar,
+[data-slot="dialog-content"] *::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Hide body/html viewport scrollbars when dialog scroll-lock is active */
+html[data-scroll-locked],
+body[data-scroll-locked],
+html[style*="overflow: hidden"],
+body[style*="overflow: hidden"] {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+html[data-scroll-locked]::-webkit-scrollbar,
+body[data-scroll-locked]::-webkit-scrollbar,
+html[style*="overflow: hidden"]::-webkit-scrollbar,
+body[style*="overflow: hidden"]::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
   
   /* Slow Opacity pulse animations for background blurred blobs to prevent GPU repainting */
   @keyframes pulse-slow {

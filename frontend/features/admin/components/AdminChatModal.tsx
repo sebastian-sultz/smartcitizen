@@ -98,7 +98,7 @@ export default function AdminChatModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent size="xl" className="h-[550px] flex flex-col p-6 gap-4">
+      <DialogContent size="xl" className="h-[550px] gap-4">
         {/* Modal Header */}
         <DialogHeader className="border-b border-border/60 pb-4 shrink-0">
           <div className="flex justify-between items-start gap-4">

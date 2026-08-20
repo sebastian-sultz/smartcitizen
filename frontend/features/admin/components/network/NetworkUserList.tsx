@@ -35,9 +35,11 @@ export const NetworkUserList = () => {
       const res = await getNonAdminUsers(
         page,
         limit,
-        search,
-        sort,
-        true, // Always filter for active referrers (> 0 referrals) on the backend
+        {
+          q: search,
+          sort,
+          referrals_only: true, // Always filter for active referrers (> 0 referrals) on the backend
+        }
       );
       if (res) {
         setCoordinators(res.users || []);
@@ -76,8 +78,8 @@ export const NetworkUserList = () => {
   return (
     <div className="space-y-6">
       {/* Search and Sort Toolbar */}
-      <Card className="border-0 sm:border rounded-none sm:rounded-[24px] shadow-none sm:shadow-card bg-transparent sm:bg-white">
-        <CardContent className="px-4 sm:px-8 pt-6">
+      <Card shape="mobile-flush" className="bg-transparent sm:bg-surface">
+        <CardContent>
           <div className="flex flex-col sm:flex-row gap-4 items-end justify-between">
             {/* Search Input */}
             <div className="flex-1 max-w-md space-y-1">

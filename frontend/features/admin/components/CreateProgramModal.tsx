@@ -140,7 +140,7 @@ export const CreateProgramModal: React.FC<CreateProgramModalProps> = ({
         }
       }}
     >
-      <DialogContent size="xl" className="max-h-[90vh] flex flex-col overflow-hidden gap-0">
+      <DialogContent size="xl" className="max-h-[90vh] overflow-hidden gap-0">
         <DialogHeader className="shrink-0 pb-4 border-b border-border/50">
           <DialogTitle>
             Create New Program
@@ -154,7 +154,7 @@ export const CreateProgramModal: React.FC<CreateProgramModalProps> = ({
           onSubmit={formik.handleSubmit}
           className="flex-1 flex flex-col min-h-0 mt-4"
         >
-          <div className="space-y-6 flex-1 overflow-y-auto pr-2 py-4">
+          <div className="space-y-6 flex-1 overflow-y-auto py-4">
             {/* Section 1: Basic Information */}
             <div className="space-y-4">
               <h4 className="text-xs font-bold uppercase tracking-wider text-text-muted block border-b border-border/20 pb-1">
@@ -178,63 +178,55 @@ export const CreateProgramModal: React.FC<CreateProgramModalProps> = ({
               />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="space-y-2">
-                  <label
-                    htmlFor="event_type"
-                    className="text-[14px] font-bold text-text ml-1 block"
+                <Select
+                  disabled={formik.isSubmitting}
+                  value={formik.values.event_type}
+                  onValueChange={(val) => formik.setFieldValue("event_type", val)}
+                >
+                  <SelectTrigger
+                    id="event_type"
+                    size="sm"
+                    label="Program Type"
+                    error={
+                      formik.touched.event_type
+                        ? (formik.errors.event_type as string)
+                        : undefined
+                    }
                   >
-                    Program Type
-                  </label>
-                  <Select
-                    disabled={formik.isSubmitting}
-                    value={formik.values.event_type}
-                    onValueChange={(val) => formik.setFieldValue("event_type", val)}
-                  >
-                    <SelectTrigger id="event_type" size="sm">
-                      <SelectValue placeholder="Select Program Type" />
-                    </SelectTrigger>
-                    <SelectContent position="popper">
-                      <SelectItem value="Event">Event</SelectItem>
-                      <SelectItem value="Initiative">Initiative</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {formik.touched.event_type && formik.errors.event_type && (
-                    <p className="text-red-500 text-[12px] ml-1">
-                      {formik.errors.event_type as string}
-                    </p>
-                  )}
-                </div>
+                    <SelectValue placeholder="Select Program Type" />
+                  </SelectTrigger>
+                  <SelectContent position="popper">
+                    <SelectItem value="Event">Event</SelectItem>
+                    <SelectItem value="Initiative">Initiative</SelectItem>
+                  </SelectContent>
+                </Select>
 
-                <div className="space-y-2">
-                  <label
-                    htmlFor="category"
-                    className="text-[14px] font-bold text-text ml-1 block"
+                <Select
+                  disabled={formik.isSubmitting}
+                  value={formik.values.category}
+                  onValueChange={(val) => formik.setFieldValue("category", val)}
+                >
+                  <SelectTrigger
+                    id="category"
+                    size="sm"
+                    label="Category"
+                    error={
+                      formik.touched.category
+                        ? (formik.errors.category as string)
+                        : undefined
+                    }
                   >
-                    Category
-                  </label>
-                  <Select
-                    disabled={formik.isSubmitting}
-                    value={formik.values.category}
-                    onValueChange={(val) => formik.setFieldValue("category", val)}
-                  >
-                    <SelectTrigger id="category" size="sm">
-                      <SelectValue placeholder="Select Category" />
-                    </SelectTrigger>
-                    <SelectContent position="popper">
-                      <SelectItem value="Community">Community</SelectItem>
-                      <SelectItem value="Environment">Environment</SelectItem>
-                      <SelectItem value="Education">Education</SelectItem>
-                      <SelectItem value="Healthcare">Healthcare</SelectItem>
-                      <SelectItem value="Sports">Sports</SelectItem>
-                      <SelectItem value="Others">Others</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {formik.touched.category && formik.errors.category && (
-                    <p className="text-red-500 text-[12px] ml-1">
-                      {formik.errors.category as string}
-                    </p>
-                  )}
-                </div>
+                    <SelectValue placeholder="Select Category" />
+                  </SelectTrigger>
+                  <SelectContent position="popper">
+                    <SelectItem value="Community">Community</SelectItem>
+                    <SelectItem value="Environment">Environment</SelectItem>
+                    <SelectItem value="Education">Education</SelectItem>
+                    <SelectItem value="Healthcare">Healthcare</SelectItem>
+                    <SelectItem value="Sports">Sports</SelectItem>
+                    <SelectItem value="Others">Others</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 

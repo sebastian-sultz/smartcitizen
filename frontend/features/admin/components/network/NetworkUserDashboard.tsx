@@ -34,9 +34,7 @@ interface NetworkUserDashboardProps {
   userId: string;
 }
 
-export const NetworkUserDashboard = ({
-  userId,
-}: NetworkUserDashboardProps) => {
+export const NetworkUserDashboard = ({ userId }: NetworkUserDashboardProps) => {
   const router = useRouter();
   const [user, setUser] = useState<UserResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -67,7 +65,9 @@ export const NetworkUserDashboard = ({
     if (!user) return;
     try {
       setIsExportingDossier(true);
-      toast.info(`Preparing official KYC statement dossier for ${user.name}...`);
+      toast.info(
+        `Preparing official KYC statement dossier for ${user.name}...`,
+      );
       await downloadUserDossierPDF(user.id, user.name);
       toast.success(`Dossier for ${user.name} downloaded successfully`);
     } catch (err: unknown) {
@@ -151,7 +151,10 @@ export const NetworkUserDashboard = ({
                   {user.is_suspended ? (
                     <Badge variant="danger">Suspended</Badge>
                   ) : (
-                    <Badge variant="outline" className="text-success border-success/30">
+                    <Badge
+                      variant="outline"
+                      className="text-success border-success/30"
+                    >
                       Active
                     </Badge>
                   )}
@@ -175,7 +178,9 @@ export const NetworkUserDashboard = ({
                 {user.referral_name && user.referral_id && (
                   <div className="flex items-center gap-1.5 pt-1.5">
                     <LinkIcon size={14} className="text-text-muted" />
-                    <span className="text-xs text-text-muted">Referred by:</span>
+                    <span className="text-xs text-text-muted">
+                      Referred by:
+                    </span>
                     <Link
                       href={`/admin/networks/${user.referral_id}`}
                       className="text-xs font-bold text-primary hover:underline"
@@ -192,10 +197,12 @@ export const NetworkUserDashboard = ({
               <Button
                 variant="secondary"
                 size="sm"
-                startIcon={<FileText size={15} className="text-primary shrink-0" />}
+                startIcon={
+                  <FileText size={15} className="text-primary shrink-0" />
+                }
                 onClick={handleDownloadDossier}
                 loading={isExportingDossier}
-                title="Download complete KYC profile, referral lineage, and full donation statement PDF"
+                title="Download complete KYC profile, referral network, and full donation statement PDF"
               >
                 Download Dossier (PDF)
               </Button>
@@ -300,7 +307,9 @@ const MetricCard = ({
     </div>
     <div>
       <span className="text-xl font-bold text-text block">{value}</span>
-      <span className="text-[11px] text-text-muted block mt-0.5">{subtitle}</span>
+      <span className="text-[11px] text-text-muted block mt-0.5">
+        {subtitle}
+      </span>
     </div>
   </div>
 );

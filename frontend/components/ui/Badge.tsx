@@ -26,7 +26,7 @@ const badgeVariants = cva(
         neutral: "bg-bg-alt text-text-muted border-transparent",
       },
       size: {
-        default: "h-5 px-2.5 py-0.5 text-[12px]",
+        default: "h-6 px-2.5 py-0.5 text-[12px]",
         md: "h-5 px-2.5 py-0.5 text-[10px] tracking-wide",
         sm: "h-4.5 px-2 py-0.5 text-[9px] tracking-wide",
         xs: "h-4 px-1.5 py-0 text-[9px] tracking-wide",

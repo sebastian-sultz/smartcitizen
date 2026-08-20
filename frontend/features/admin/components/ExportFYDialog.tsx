@@ -44,7 +44,7 @@ export const ExportFYDialog = ({
             </Select>
           </div>
 
-          <DialogFooter className="pt-4 border-t border-border/40">
+          <DialogFooter>
             <Button variant="secondary" onClick={() => onOpenChange(false)}>Cancel</Button>
             <Button 
               variant="primary" 

@@ -87,11 +87,18 @@ export const getActivityTimeline = async (): Promise<ActivityItem[]> => {
 export const getDonationHistory = async (
   page: number = 1,
   limit: number = 10,
+  search?: string,
+  status?: string,
 ): Promise<PaymentHistoryResponse> => {
   try {
-    const response = await api.get<PaymentHistoryResponse>(
-      `/payments/history?page=${page}&limit=${limit}`,
-    );
+    let url = `/payments/history?page=${page}&limit=${limit}`;
+    if (search) {
+      url += `&search=${encodeURIComponent(search)}`;
+    }
+    if (status && status !== "ALL" && status !== "all") {
+      url += `&status=${encodeURIComponent(status)}`;
+    }
+    const response = await api.get<PaymentHistoryResponse>(url);
     return response.data;
   } catch (error: unknown) {
     handleApiError(error, "Failed to load donation history");

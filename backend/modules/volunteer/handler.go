@@ -70,19 +70,20 @@ func (h *Handler) CreateVolunteer(c *gin.Context) {
 func (h *Handler) GetAllVolunteers(c *gin.Context) {
 	pagination := utils.GetPaginationFromContext(c)
 
-	filter := VolunteerFilter{
-		Search:       c.Query("q"),
-		Profession:   c.Query("profession"),
-		State:        c.Query("state"),
-		City:         c.Query("city"),
-		Sort:         c.Query("sort"),
-		OnlyApproved: true,
+	var filter request.VolunteerFilter
+	if err := c.ShouldBindQuery(&filter); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
+	onlyApproved := true
 	if val, exists := c.Get("userType"); exists {
 		if uType, ok := val.(string); ok && uType == "admin" {
-			filter.OnlyApproved = false
+			onlyApproved = false
 		}
+	}
+	if filter.OnlyApproved == nil {
+		filter.OnlyApproved = &onlyApproved
 	}
 
 	volunteers, err := h.service.GetAllVolunteers(filter, &pagination)
@@ -205,14 +206,14 @@ func (h *Handler) UpdateVolunteerStatus(c *gin.Context) {
 }
 
 func (h *Handler) ExportVolunteers(c *gin.Context) {
-	filter := VolunteerFilter{
-		Search:       c.Query("q"),
-		Profession:   c.Query("profession"),
-		State:        c.Query("state"),
-		City:         c.Query("city"),
-		Status:       c.Query("status"),
-		Sort:         c.Query("sort"),
-		OnlyApproved: false,
+	var filter request.VolunteerFilter
+	if err := c.ShouldBindQuery(&filter); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	onlyApproved := false
+	if filter.OnlyApproved == nil {
+		filter.OnlyApproved = &onlyApproved
 	}
 
 	format := strings.ToLower(c.DefaultQuery("format", "csv"))

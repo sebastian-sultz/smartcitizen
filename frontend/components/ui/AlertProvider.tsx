@@ -133,7 +133,7 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
           <div className="mb-4">
             {getIcon()}
           </div>
-          <DialogHeader className="space-y-2 mb-6">
+          <DialogHeader className="space-y-2 mb-6 pr-0 flex flex-col items-center justify-center text-center w-full">
             <DialogTitle className="text-center">
               {options.title}
             </DialogTitle>
@@ -141,7 +141,7 @@ export const AlertProvider: React.FC<{ children: React.ReactNode }> = ({ childre
               {options.message}
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="w-full mt-2 m-0 p-0 bg-transparent border-t-0 flex flex-row justify-center gap-3">
+          <DialogFooter className="w-full mt-2 m-0 p-0 sm:m-0 sm:p-0 bg-transparent sm:bg-transparent border-t-0 sm:border-t-0 flex flex-row justify-center sm:justify-center gap-3">
             {isConfirm ? (
               <>
                 <Button 

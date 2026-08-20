@@ -1,6 +1,11 @@
 "use client";
 
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/Button";
 import { Share2, Copy, Send, Mail } from "lucide-react";
 import { useAlert } from "@/components/ui/AlertProvider";
@@ -33,7 +38,7 @@ export default function ShareReferralDialog({
     const text = `Join me at the GlobalSmart Citizens Foundation! Sign up using my referral link and let's work together to empower communities: ${referralLink}`;
     window.open(
       `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`,
-      "_blank"
+      "_blank",
     );
   };
 
@@ -41,13 +46,13 @@ export default function ShareReferralDialog({
     const subject = "Invitation to Join GlobalSmart Citizens Foundation";
     const body = `Hi,\n\nI invite you to join me in supporting the GlobalSmart Citizens Foundation. Let's work together for clean environment, education, and legal rights.\n\nSign up using my link: ${referralLink}\n\nBest,`;
     window.open(
-      `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+      `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`,
     );
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent size="md" className="p-6 sm:p-8">
+      <DialogContent size="md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Share2 size={20} className="text-primary" />
@@ -62,24 +67,22 @@ export default function ShareReferralDialog({
             volunteer status.
           </p>
 
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2">
             <span className="text-xs font-bold uppercase tracking-wider text-text-muted">
               Your Referral Code
             </span>
-            <div className="p-4 bg-bg border border-border rounded-2xl font-mono text-center font-bold text-primary tracking-widest text-xl">
+            <div className="py-3 px-5 bg-bg border border-border rounded-2xl font-mono text-center font-bold text-primary text-xl">
               {referralCode}
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2">
             <span className="text-xs font-bold uppercase tracking-wider text-text-muted">
               Invitation Link
             </span>
             <div className="flex gap-2 items-stretch w-full min-w-0">
               <div className="flex-1 bg-bg px-4 py-3 rounded-xl border border-border text-sm font-mono text-text-muted overflow-hidden flex items-center min-w-0">
-                <span className="truncate w-full">
-                  {referralLink}
-                </span>
+                <span className="truncate w-full">{referralLink}</span>
               </div>
               <Button
                 onClick={handleCopyLink}

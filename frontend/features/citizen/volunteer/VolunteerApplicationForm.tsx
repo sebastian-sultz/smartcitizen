@@ -53,7 +53,6 @@ export default function VolunteerApplicationForm({
   user,
   onSubmitSuccess,
 }: VolunteerApplicationFormProps) {
-  const [showPassword, setShowPassword] = useState(false);
   const [isFetchingPincode, setIsFetchingPincode] = useState(false);
 
   const formik = useFormik({
@@ -158,28 +157,26 @@ export default function VolunteerApplicationForm({
     <div className="max-w-3xl w-full mx-auto space-y-6 md:space-y-8 mt-4 md:mt-6">
       <form onSubmit={formik.handleSubmit} className="space-y-6 md:space-y-8">
         {/* SECTION 1: PERSONAL & CONTACT INFORMATION */}
-        <Card className="rounded-[32px] border-border shadow-sm">
-          <CardHeader className="border-b border-border/50 p-6 md:p-8 pb-4">
-            <CardTitle className="font-display text-base md:text-lg font-bold text-text flex items-center gap-2">
+        <Card shape="xl">
+          <CardHeader bordered>
+            <CardTitle size="sm" className="flex items-center gap-2">
               <User size={18} className="text-primary" />
               1. Personal & Contact Information
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6 md:p-8 space-y-6">
+          <CardContent className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <Input
                 label="Full Name (Pre-filled)"
                 value={user.name}
                 disabled
                 icon={<User size={16} />}
-                className="bg-bg/60 text-text-muted font-bold"
               />
               <Input
                 label="Registered Phone (Pre-filled)"
                 value={user.phone}
                 disabled
                 icon={<Phone size={16} />}
-                className="bg-bg/60 text-text-muted font-bold"
               />
               <Input
                 label="Email Address"
@@ -217,95 +214,83 @@ export default function VolunteerApplicationForm({
         </Card>
 
         {/* SECTION 2: COVERAGE AREA (FOR "NEED HELP" TICKET ASSIGNMENT) */}
-        <Card className="rounded-[32px] border-border shadow-sm">
-          <CardHeader className="border-b border-border/50 p-6 md:p-8 pb-4">
-            <CardTitle className="font-display text-base md:text-lg font-bold text-text flex items-center gap-2">
+        <Card shape="xl">
+          <CardHeader bordered>
+            <CardTitle size="sm" className="flex items-center gap-2">
               <MapPin size={18} className="text-primary" />
               2. Coverage Area & Local Dispatch
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6 md:p-8 space-y-6">
+          <CardContent className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {/* Pincode with Auto-Lookup */}
-              <div className="relative">
-                <div className="flex items-center justify-between mb-1.5">
-                  <label
-                    htmlFor="pincode-input"
-                    className="text-[14px] font-bold text-text ml-1 block"
-                  >
-                    6-Digit Pincode
-                  </label>
-                  {formik.values.pincode.length === 6 && (
-                    <Button
-                      type="button"
-                      variant="link"
-                      size="sm"
-                      onClick={() => handlePincodeLookup(formik.values.pincode)}
-                      isLoading={isFetchingPincode}
-                      startIcon={<Search size={12} />}
-                      className="p-0 h-auto"
-                    >
-                      Auto-Fill Location
-                    </Button>
-                  )}
-                </div>
-                <Input
-                  id="pincode-input"
-                  placeholder="e.g. 400058"
-                  icon={<Hash size={16} />}
-                  name="pincode"
-                  value={formik.values.pincode}
-                  onChange={(e) => {
-                    const val = e.target.value.replace(/\D/g, "").slice(0, 6);
-                    formik.setFieldValue("pincode", val);
-                    if (val.length === 6) {
-                      handlePincodeLookup(val);
-                    }
-                  }}
-                  onBlur={(e) => {
-                    formik.handleBlur(e);
-                    if (
-                      formik.values.pincode.length === 6 &&
-                      !formik.values.state
-                    ) {
-                      handlePincodeLookup(formik.values.pincode);
-                    }
-                  }}
-                  maxLength={6}
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  error={
-                    formik.touched.pincode ? formik.errors.pincode : undefined
+              <Input
+                id="pincode-input"
+                label={
+                  <span className="flex items-center justify-between w-full">
+                    <span>6-Digit Pincode</span>
+                    {formik.values.pincode.length === 6 && (
+                      <Button
+                        type="button"
+                        variant="link"
+                        size="sm"
+                        onClick={() => handlePincodeLookup(formik.values.pincode)}
+                        isLoading={isFetchingPincode}
+                        startIcon={<Search size={12} />}
+                        className="p-0 h-auto text-xs text-primary font-bold hover:underline"
+                      >
+                        Auto-Fill Location
+                      </Button>
+                    )}
+                  </span>
+                }
+                placeholder="e.g. 400058"
+                icon={<Hash size={16} />}
+                name="pincode"
+                value={formik.values.pincode}
+                onChange={(e) => {
+                  const val = e.target.value.replace(/\D/g, "").slice(0, 6);
+                  formik.setFieldValue("pincode", val);
+                  if (val.length === 6) {
+                    handlePincodeLookup(val);
                   }
-                />
-              </div>
+                }}
+                onBlur={(e) => {
+                  formik.handleBlur(e);
+                  if (
+                    formik.values.pincode.length === 6 &&
+                    !formik.values.state
+                  ) {
+                    handlePincodeLookup(formik.values.pincode);
+                  }
+                }}
+                maxLength={6}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                error={
+                  formik.touched.pincode ? formik.errors.pincode : undefined
+                }
+              />
 
               {/* State Dropdown (Auto-filled or Manual Fallback) */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-text ml-1 block">
-                  State
-                </label>
-                <Select
-                  value={formik.values.state}
-                  onValueChange={(val) => formik.setFieldValue("state", val)}
+              <Select
+                value={formik.values.state}
+                onValueChange={(val) => formik.setFieldValue("state", val)}
+              >
+                <SelectTrigger
+                  label="State"
+                  error={formik.touched.state ? formik.errors.state : undefined}
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select State" />
-                  </SelectTrigger>
-                  <SelectContent position="popper">
-                    {INDIAN_STATES.map((st) => (
-                      <SelectItem key={st} value={st}>
-                        {st}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {formik.touched.state && formik.errors.state && (
-                  <p className="text-danger text-xs ml-1">
-                    {formik.errors.state}
-                  </p>
-                )}
-              </div>
+                  <SelectValue placeholder="Select State" />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  {INDIAN_STATES.map((st) => (
+                    <SelectItem key={st} value={st}>
+                      {st}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
 
               {/* District Input */}
               <Input
@@ -349,83 +334,78 @@ export default function VolunteerApplicationForm({
         </Card>
 
         {/* SECTION 3: EXPERTISE & SPECIALIZATION */}
-        <Card className="rounded-[32px] border-border shadow-sm">
-          <CardHeader className="border-b border-border/50 p-6 md:p-8 pb-4">
-            <CardTitle className="font-display text-base md:text-lg font-bold text-text flex items-center gap-2">
+        <Card shape="xl">
+          <CardHeader bordered>
+            <CardTitle size="sm" className="flex items-center gap-2">
               <Briefcase size={18} className="text-primary" />
               3. Professional Background & Specialization
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6 md:p-8 space-y-6">
+          <CardContent className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               {/* Primary Profession Dropdown */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-text ml-1 block">
-                  Primary Profession / Background
-                </label>
-                <Select
-                  value={formik.values.profession}
-                  onValueChange={(val) => {
-                    formik.setFieldValue("profession", val);
-                    formik.setFieldValue("specialties", []);
-                  }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Profession" />
-                  </SelectTrigger>
-                  <SelectContent position="popper">
-                    {VOLUNTEER_PROFESSIONS.map((prof) => (
-                      <SelectItem key={prof} value={prof}>
-                        {prof}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {formik.touched.profession && formik.errors.profession && (
-                  <p className="text-danger text-xs ml-1">
-                    {formik.errors.profession}
-                  </p>
-                )}
-              </div>
-
-              {/* Dynamic Speciality Dropdown Based on Selected Profession */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-text ml-1 block">
-                  Speciality / Specialization
-                </label>
-                <Select
-                  disabled={!formik.values.profession}
-                  value={formik.values.specialties[0] || ""}
-                  onValueChange={(val) =>
-                    formik.setFieldValue("specialties", [val])
+              <Select
+                value={formik.values.profession}
+                onValueChange={(val) => {
+                  formik.setFieldValue("profession", val);
+                  formik.setFieldValue("specialties", []);
+                }}
+              >
+                <SelectTrigger
+                  label="Primary Profession / Background"
+                  error={
+                    formik.touched.profession
+                      ? formik.errors.profession
+                      : undefined
                   }
                 >
-                  <SelectTrigger>
-                    <SelectValue
-                      placeholder={
-                        formik.values.profession
-                          ? "Select Specialization"
-                          : "Select Profession First"
-                      }
-                    />
-                  </SelectTrigger>
-                  <SelectContent position="popper">
-                    {(
-                      PROFESSION_SPECIALTIES[formik.values.profession] ||
-                      PROFESSION_SPECIALTIES["Other"]
-                    ).map((spec) => (
-                      <SelectItem key={spec} value={spec}>
-                        {spec}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {formik.touched.specialties && formik.errors.specialties && (
-                  <p className="text-danger text-xs ml-1">
-                    {formik.errors.specialties as string}
-                  </p>
-                )}
-              </div>
+                  <SelectValue placeholder="Select Profession" />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  {VOLUNTEER_PROFESSIONS.map((prof) => (
+                    <SelectItem key={prof} value={prof}>
+                      {prof}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* Dynamic Speciality Dropdown Based on Selected Profession */}
+              <Select
+                disabled={!formik.values.profession}
+                value={formik.values.specialties[0] || ""}
+                onValueChange={(val) =>
+                  formik.setFieldValue("specialties", [val])
+                }
+              >
+                <SelectTrigger
+                  label="Speciality / Specialization"
+                  disabled={!formik.values.profession}
+                  error={
+                    formik.touched.specialties
+                      ? (formik.errors.specialties as string)
+                      : undefined
+                  }
+                >
+                  <SelectValue
+                    placeholder={
+                      formik.values.profession
+                        ? "Select Specialization"
+                        : "Select Profession First"
+                    }
+                  />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  {(
+                    PROFESSION_SPECIALTIES[formik.values.profession] ||
+                    PROFESSION_SPECIALTIES["Other"]
+                  ).map((spec) => (
+                    <SelectItem key={spec} value={spec}>
+                      {spec}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <Input
@@ -443,14 +423,14 @@ export default function VolunteerApplicationForm({
         </Card>
 
         {/* SECTION 4: MOTIVATION & SECURITY */}
-        <Card className="rounded-[32px] border-border shadow-sm">
-          <CardHeader className="border-b border-border/50 p-6 md:p-8 pb-4">
-            <CardTitle className="font-display text-base md:text-lg font-bold text-text flex items-center gap-2">
+        <Card shape="xl">
+          <CardHeader bordered>
+            <CardTitle size="sm" className="flex items-center gap-2">
               <Lock size={18} className="text-primary" />
               4. Motivation & Profile Protection
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-6 md:p-8 space-y-6">
+          <CardContent className="space-y-6">
             <Textarea
               label="Motivation Statement"
               name="motivation"
@@ -482,7 +462,7 @@ export default function VolunteerApplicationForm({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <Input
                   label="Password"
-                  type={showPassword ? "text" : "password"}
+                  type="password"
                   placeholder="••••••••"
                   icon={<Lock size={16} />}
                   name="password"
@@ -495,7 +475,7 @@ export default function VolunteerApplicationForm({
                 />
                 <Input
                   label="Confirm Password"
-                  type={showPassword ? "text" : "password"}
+                  type="password"
                   placeholder="••••••••"
                   icon={<Lock size={16} />}
                   name="confirmPassword"

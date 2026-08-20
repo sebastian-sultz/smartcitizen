@@ -31,7 +31,7 @@ export const UserDownlineTab = ({ userId }: UserDownlineTabProps) => {
       if (format === "csv") setIsExportingCSV(true);
       else setIsExportingPDF(true);
 
-      const modeText = recursive ? "Multi-Level Network Downline" : "Direct Referrals";
+      const modeText = recursive ? "Extended Invitation Network" : "Direct Referrals";
       toast.info(`Preparing ${modeText} ${format.toUpperCase()} export...`);
       await downloadUserNetworkExport(userId, format, recursive);
       toast.success(`${modeText} ${format.toUpperCase()} downloaded successfully`);
@@ -51,11 +51,7 @@ export const UserDownlineTab = ({ userId }: UserDownlineTabProps) => {
         const res = await getUserNetwork(userId, recursive, page, limit);
         if (res && res.referrals) {
           setDownline(res.referrals);
-          setTotal(
-            res.referrals.length < limit && page === 1
-              ? res.referrals.length
-              : 100,
-          );
+          setTotal(res.pagination?.total_rows ?? res.referrals.length);
         }
       } catch (err: unknown) {
         if (err instanceof Error) {
@@ -74,7 +70,7 @@ export const UserDownlineTab = ({ userId }: UserDownlineTabProps) => {
       {/* Header explanation and Action Toolbar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-bg/50 p-4 rounded-2xl border border-border/30 gap-4">
         <div>
-          <h3 className="text-base font-bold text-text">Referred Members & Downline</h3>
+          <h3 className="text-base font-bold text-text">Referred Members & Invitation Tree</h3>
           <p className="text-xs text-text-muted mt-0.5">
             List of members who joined using this user&apos;s referral link, with direct and multi-level donation impact.
           </p>
@@ -86,7 +82,7 @@ export const UserDownlineTab = ({ userId }: UserDownlineTabProps) => {
             startIcon={<FileSpreadsheet size={15} className="text-emerald-600 shrink-0" />}
             onClick={() => handleExport("csv")}
             loading={isExportingCSV}
-            title={recursive ? "Export all multi-level downlines as CSV" : "Export direct referrals as CSV"}
+            title={recursive ? "Export all extended referred team members as CSV" : "Export direct referrals as CSV"}
           >
             Export CSV
           </Button>
@@ -96,7 +92,7 @@ export const UserDownlineTab = ({ userId }: UserDownlineTabProps) => {
             startIcon={<FileText size={15} className="text-primary shrink-0" />}
             onClick={() => handleExport("pdf")}
             loading={isExportingPDF}
-            title={recursive ? "Export official multi-level downline audit PDF" : "Export direct referrals audit PDF"}
+            title={recursive ? "Export official extended referred network audit PDF" : "Export direct referrals audit PDF"}
           >
             Export PDF
           </Button>
@@ -115,7 +111,7 @@ export const UserDownlineTab = ({ userId }: UserDownlineTabProps) => {
             </span>
             <span className="text-xs text-text-muted">
               {recursive
-                ? "Currently displaying all levels of the downline hierarchy tree"
+                ? "Currently displaying all levels of the referred network hierarchy tree"
                 : "Currently displaying only direct referrals (Level 1)"}
             </span>
           </div>
@@ -129,12 +125,12 @@ export const UserDownlineTab = ({ userId }: UserDownlineTabProps) => {
         />
       </div>
 
-      {/* Downline Table */}
+      {/* Referred Members Table */}
       <TableComponent
         headers={columns}
         data={downline}
         loading={loading}
-        emptyMessage="No referred users found in downline network"
+        emptyMessage="No referred users found in the referral network"
         pagination={{
           page,
           limit,

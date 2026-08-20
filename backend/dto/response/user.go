@@ -3,6 +3,7 @@ package response
 import (
 	"time"
 
+	"backend/pkg/utils"
 	"github.com/google/uuid"
 )
 
@@ -48,8 +49,9 @@ type ReferralInfo struct {
 }
 
 type UserNetworkResponse struct {
-	UserID    string         `json:"userId"`
-	Referrals []ReferralInfo `json:"referrals"`
+	UserID     string             `json:"userId"`
+	Referrals  []ReferralInfo     `json:"referrals"`
+	Pagination *utils.Pagination  `json:"pagination,omitempty"`
 }
 
 type UserNetworkStatsResponse struct {

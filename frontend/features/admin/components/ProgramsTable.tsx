@@ -103,8 +103,8 @@ export const ProgramsTable = () => {
   ];
 
   return (
-    <Card className="w-full border-0 sm:border rounded-none sm:rounded-[24px] shadow-none sm:shadow-card bg-transparent sm:bg-white">
-      <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-0 sm:p-8 sm:pb-0">
+    <Card shape="mobile-flush" className="w-full bg-transparent sm:bg-surface">
+      <CardHeader className="flex-col sm:flex-row sm:items-center justify-between gap-4">
         <CardTitle>Program Management</CardTitle>
         <Button
           size="sm"
@@ -121,7 +121,7 @@ export const ProgramsTable = () => {
           onSuccess={fetchPrograms}
         />
       </CardHeader>
-      <CardContent className="p-0 pt-4 sm:p-8 sm:pt-0">
+      <CardContent>
         <TableComponent
           headers={columns}
           data={programs}
@@ -142,7 +142,7 @@ export const ProgramsTable = () => {
 
       {/* View Participants Dialog */}
       <Dialog open={participantsOpen} onOpenChange={setParticipantsOpen}>
-        <DialogContent size="xl" className="max-h-[80vh] flex flex-col p-6">
+        <DialogContent size="xl" className="max-h-[80vh]">
           <DialogHeader className="border-b border-border/60 pb-4 shrink-0">
             <DialogTitle>Program Participants</DialogTitle>
             <DialogDescription>

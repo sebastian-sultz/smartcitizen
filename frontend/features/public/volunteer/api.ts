@@ -26,10 +26,15 @@ import { PaginationInfo } from "@/features/admin/api";
 
 export interface VolunteerQueryParams {
   search?: string;
+  q?: string;
   profession?: string;
   state?: string;
   city?: string;
+  status?: string;
   sort?: string;
+  startDate?: string;
+  endDate?: string;
+  onlyApproved?: boolean;
   page?: number;
   limit?: number;
 }
@@ -43,13 +48,19 @@ export const getAllVolunteers = async (
   queryParams?: VolunteerQueryParams
 ): Promise<GetVolunteersResponse> => {
   try {
-    const params: Record<string, string | number> = {};
+    const params: Record<string, string | number | boolean> = {};
 
-    if (queryParams?.search) params.q = queryParams.search;
+    if (queryParams?.q) params.q = queryParams.q;
+    else if (queryParams?.search) params.q = queryParams.search;
+
     if (queryParams?.profession && queryParams.profession !== "All") params.profession = queryParams.profession;
     if (queryParams?.state && queryParams.state !== "All") params.state = queryParams.state;
     if (queryParams?.city && queryParams.city !== "All") params.city = queryParams.city;
+    if (queryParams?.status && queryParams.status !== "ALL") params.status = queryParams.status;
     if (queryParams?.sort) params.sort = queryParams.sort;
+    if (queryParams?.startDate) params.startDate = queryParams.startDate;
+    if (queryParams?.endDate) params.endDate = queryParams.endDate;
+    if (queryParams?.onlyApproved !== undefined) params.onlyApproved = queryParams.onlyApproved;
     if (queryParams?.page) params.page = queryParams.page;
     if (queryParams?.limit) params.limit = queryParams.limit;
     

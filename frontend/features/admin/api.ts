@@ -2,8 +2,27 @@ import api from "@/lib/axios";
 import { handleApiError } from "@/lib/api-helpers";
 import { SupportTicket } from "@/features/shared/reports";
 import { UserResponse } from "@/features/shared/auth/types";
+import {
+  PaymentAdminResponse,
+  UserNetworkResponse,
+  UserNetworkStats,
+  AdminAnalyticsResponse,
+  PaginationInfo,
+  UserFilterParams,
+  VolunteerFilterParams,
+  PaymentFilterParams,
+} from "./types";
 
-export const getAdminReports = async (status?: string): Promise<SupportTicket[]> => {
+export type {
+  PaginationInfo,
+  UserFilterParams,
+  VolunteerFilterParams,
+  PaymentFilterParams,
+};
+
+export const getAdminReports = async (
+  status?: string,
+): Promise<SupportTicket[]> => {
   try {
     const url = status ? `/admin/reports?status=${status}` : "/admin/reports";
     const response = await api.get<{ reports: SupportTicket[] }>(url);
@@ -15,35 +34,32 @@ export const getAdminReports = async (status?: string): Promise<SupportTicket[]>
 
 export const resolveAdminReport = async (
   id: string,
-  actionTaken: string
+  actionTaken: string,
 ): Promise<SupportTicket> => {
   try {
-    const response = await api.put<{ report: SupportTicket }>(`/admin/reports/${id}/resolve`, {
-      action_taken: actionTaken,
-    });
+    const response = await api.put<{ report: SupportTicket }>(
+      `/admin/reports/${id}/resolve`,
+      {
+        action_taken: actionTaken,
+      },
+    );
     return response.data.report;
   } catch (error: unknown) {
     handleApiError(error, "Failed to resolve report");
   }
 };
 
-export interface PaginationInfo {
-  limit: number;
-  page: number;
-  total_rows: number;
-  total_pages: number;
-}
-
 export const getNonAdminUsers = async (
   page?: number,
   limit?: number,
-  search?: string,
-  sort?: string,
-  referralsOnly?: boolean
+  filters?: UserFilterParams,
 ): Promise<{ users: UserResponse[]; pagination?: PaginationInfo }> => {
   try {
-    const response = await api.get<{ users: UserResponse[]; pagination?: PaginationInfo }>("/users", {
-      params: { page, limit, q: search, sort, referrals_only: referralsOnly },
+    const response = await api.get<{
+      users: UserResponse[];
+      pagination?: PaginationInfo;
+    }>("/users", {
+      params: { page, limit, ...filters },
     });
     return response.data;
   } catch (error: unknown) {
@@ -54,7 +70,9 @@ export const getNonAdminUsers = async (
 
 export const getUserById = async (id: string): Promise<UserResponse> => {
   try {
-    const response = await api.get<{ user: UserResponse }>(`/auth/profile/${id}`);
+    const response = await api.get<{ user: UserResponse }>(
+      `/auth/profile/${id}`,
+    );
     return response.data.user;
   } catch (error: unknown) {
     handleApiError(error, "Failed to load user profile");
@@ -62,7 +80,10 @@ export const getUserById = async (id: string): Promise<UserResponse> => {
   }
 };
 
-export const suspendUser = async (id: string, isSuspended: boolean): Promise<void> => {
+export const suspendUser = async (
+  id: string,
+  isSuspended: boolean,
+): Promise<void> => {
   try {
     await api.put(`/users/${id}/suspend`, { is_suspended: isSuspended });
   } catch (error: unknown) {
@@ -80,18 +101,14 @@ export const deleteUser = async (id: string): Promise<void> => {
   }
 };
 
-import { 
-  PaymentAdminResponse, 
-  UserNetworkResponse, 
-  UserNetworkStats, 
-  AdminAnalyticsResponse 
-} from "./types";
-
 export const getAdminPaymentHistory = async (
-  params: Record<string, any>
+  params?: PaymentFilterParams,
 ): Promise<{ data: PaymentAdminResponse[]; pagination?: PaginationInfo }> => {
   try {
-    const response = await api.get<{ data: PaymentAdminResponse[]; pagination?: PaginationInfo }>("/payments/history", {
+    const response = await api.get<{
+      data: PaymentAdminResponse[];
+      pagination?: PaginationInfo;
+    }>("/payments/history", {
       params,
     });
     return response.data;
@@ -103,7 +120,9 @@ export const getAdminPaymentHistory = async (
 
 import { downloadBlob } from "@/lib/utils";
 
-export const downloadPaymentsCSV = async (params: Record<string, any>): Promise<void> => {
+export const downloadPaymentsCSV = async (
+  params?: PaymentFilterParams,
+): Promise<void> => {
   try {
     const response = await api.get("/admin/payments/export", {
       params,
@@ -117,7 +136,9 @@ export const downloadPaymentsCSV = async (params: Record<string, any>): Promise<
   }
 };
 
-export const downloadPaymentsPDF = async (params: Record<string, any>): Promise<void> => {
+export const downloadPaymentsPDF = async (
+  params?: PaymentFilterParams,
+): Promise<void> => {
   try {
     const response = await api.get("/admin/payments/export-pdf", {
       params,
@@ -131,7 +152,9 @@ export const downloadPaymentsPDF = async (params: Record<string, any>): Promise<
   }
 };
 
-export const downloadForm10BDCSV = async (financialYear: string): Promise<void> => {
+export const downloadForm10BDCSV = async (
+  financialYear: string,
+): Promise<void> => {
   try {
     const response = await api.get("/admin/payments/export-10bd", {
       params: { financialYear },
@@ -147,17 +170,21 @@ export const downloadForm10BDCSV = async (financialYear: string): Promise<void> 
 
 export const downloadUsersExport = async (
   format: "csv" | "pdf",
-  params?: { q?: string; sort?: string }
+  filters?: UserFilterParams,
 ): Promise<void> => {
   try {
     const response = await api.get("/admin/users/export", {
-      params: { ...params, format },
+      params: { ...filters, format },
       responseType: "blob",
     });
-    const mimeType = format === "csv" ? "text/csv;charset=utf-8;" : "application/pdf";
+    const mimeType =
+      format === "csv" ? "text/csv;charset=utf-8;" : "application/pdf";
     const extension = format === "csv" ? "csv" : "pdf";
     const blob = new Blob([response.data], { type: mimeType });
-    downloadBlob(blob, `smartcitizens_${format === "pdf" ? "audit" : "export"}_${Date.now()}.${extension}`);
+    downloadBlob(
+      blob,
+      `smartcitizens_${format === "pdf" ? "audit" : "export"}_${Date.now()}.${extension}`,
+    );
   } catch (error: unknown) {
     handleApiError(error, `Failed to export users as ${format.toUpperCase()}`);
     throw error;
@@ -166,26 +193,26 @@ export const downloadUsersExport = async (
 
 export const downloadVolunteersExport = async (
   format: "csv" | "pdf",
-  params?: {
-    q?: string;
-    status?: string;
-    profession?: string;
-    state?: string;
-    city?: string;
-    sort?: string;
-  }
+  params?: VolunteerFilterParams,
 ): Promise<void> => {
   try {
     const response = await api.get("/admin/volunteers/export", {
       params: { ...params, format },
       responseType: "blob",
     });
-    const mimeType = format === "csv" ? "text/csv;charset=utf-8;" : "application/pdf";
+    const mimeType =
+      format === "csv" ? "text/csv;charset=utf-8;" : "application/pdf";
     const extension = format === "csv" ? "csv" : "pdf";
     const blob = new Blob([response.data], { type: mimeType });
-    downloadBlob(blob, `volunteers_${format === "pdf" ? "audit" : "export"}_${Date.now()}.${extension}`);
+    downloadBlob(
+      blob,
+      `volunteers_${format === "pdf" ? "audit" : "export"}_${Date.now()}.${extension}`,
+    );
   } catch (error: unknown) {
-    handleApiError(error, `Failed to export volunteers as ${format.toUpperCase()}`);
+    handleApiError(
+      error,
+      `Failed to export volunteers as ${format.toUpperCase()}`,
+    );
     throw error;
   }
 };
@@ -193,34 +220,43 @@ export const downloadVolunteersExport = async (
 export const downloadUserNetworkExport = async (
   userId: string,
   format: "csv" | "pdf",
-  recursive: boolean
+  recursive: boolean,
 ): Promise<void> => {
   try {
     const response = await api.get(`/admin/users/${userId}/network/export`, {
       params: { format, recursive },
       responseType: "blob",
     });
-    const mimeType = format === "csv" ? "text/csv;charset=utf-8;" : "application/pdf";
+    const mimeType =
+      format === "csv" ? "text/csv;charset=utf-8;" : "application/pdf";
     const extension = format === "csv" ? "csv" : "pdf";
     const blob = new Blob([response.data], { type: mimeType });
     const mode = recursive ? "multilevel_tree" : "direct_referrals";
-    downloadBlob(blob, `network_${mode}_${userId.substring(0, 8)}_${Date.now()}.${extension}`);
+    downloadBlob(
+      blob,
+      `network_${mode}_${userId.substring(0, 8)}_${Date.now()}.${extension}`,
+    );
   } catch (error: unknown) {
-    handleApiError(error, `Failed to export network as ${format.toUpperCase()}`);
+    handleApiError(
+      error,
+      `Failed to export network as ${format.toUpperCase()}`,
+    );
     throw error;
   }
 };
 
 export const downloadUserDossierPDF = async (
   userId: string,
-  userName?: string
+  userName?: string,
 ): Promise<void> => {
   try {
     const response = await api.get(`/admin/users/${userId}/dossier-pdf`, {
       responseType: "blob",
     });
     const blob = new Blob([response.data], { type: "application/pdf" });
-    const cleanName = userName ? userName.toLowerCase().replace(/[^a-z0-9]/g, "_") : "citizen";
+    const cleanName = userName
+      ? userName.toLowerCase().replace(/[^a-z0-9]/g, "_")
+      : "citizen";
     downloadBlob(blob, `member_dossier_${cleanName}_${Date.now()}.pdf`);
   } catch (error: unknown) {
     handleApiError(error, "Failed to download member profile statement PDF");
@@ -230,17 +266,22 @@ export const downloadUserDossierPDF = async (
 
 export const downloadVolunteerDossierPDF = async (
   id: string,
-  name?: string
+  name?: string,
 ): Promise<void> => {
   try {
     const response = await api.get(`/admin/volunteers/${id}/dossier-pdf`, {
       responseType: "blob",
     });
     const blob = new Blob([response.data], { type: "application/pdf" });
-    const cleanName = name ? name.toLowerCase().replace(/[^a-z0-9]/g, "_") : "volunteer";
+    const cleanName = name
+      ? name.toLowerCase().replace(/[^a-z0-9]/g, "_")
+      : "volunteer";
     downloadBlob(blob, `volunteer_dossier_${cleanName}_${Date.now()}.pdf`);
   } catch (error: unknown) {
-    handleApiError(error, "Failed to download volunteer application dossier PDF");
+    handleApiError(
+      error,
+      "Failed to download volunteer application dossier PDF",
+    );
     throw error;
   }
 };
@@ -249,12 +290,15 @@ export const getUserNetwork = async (
   id: string,
   recursive: boolean,
   page?: number,
-  limit?: number
+  limit?: number,
 ): Promise<UserNetworkResponse> => {
   try {
-    const response = await api.get<UserNetworkResponse>(`/admin/users/${id}/network`, {
-      params: { recursive, page, limit },
-    });
+    const response = await api.get<UserNetworkResponse>(
+      `/admin/users/${id}/network`,
+      {
+        params: { recursive, page, limit },
+      },
+    );
     return response.data;
   } catch (error: unknown) {
     handleApiError(error, "Failed to load referred user network");
@@ -262,9 +306,13 @@ export const getUserNetwork = async (
   }
 };
 
-export const getUserNetworkStats = async (id: string): Promise<UserNetworkStats> => {
+export const getUserNetworkStats = async (
+  id: string,
+): Promise<UserNetworkStats> => {
   try {
-    const response = await api.get<UserNetworkStats>(`/admin/users/${id}/network-stats`);
+    const response = await api.get<UserNetworkStats>(
+      `/admin/users/${id}/network-stats`,
+    );
     return response.data;
   } catch (error: unknown) {
     handleApiError(error, "Failed to load network stats");
@@ -272,9 +320,14 @@ export const getUserNetworkStats = async (id: string): Promise<UserNetworkStats>
   }
 };
 
-export const updateVolunteerStatus = async (id: string, status: string): Promise<any> => {
+export const updateVolunteerStatus = async (
+  id: string,
+  status: string,
+): Promise<any> => {
   try {
-    const response = await api.put<any>(`/admin/volunteers/${id}/status`, { status });
+    const response = await api.put<any>(`/admin/volunteers/${id}/status`, {
+      status,
+    });
     return response.data;
   } catch (error: unknown) {
     handleApiError(error, "Failed to update volunteer status");
@@ -294,11 +347,12 @@ export const getAdminAnalytics = async (): Promise<AdminAnalyticsResponse> => {
 
 export const syncPendingReceipts = async (): Promise<{ count: number }> => {
   try {
-    const response = await api.post<{ count: number }>("/admin/payments/sync-receipts");
+    const response = await api.post<{ count: number }>(
+      "/admin/payments/sync-receipts",
+    );
     return response.data;
   } catch (error: unknown) {
     handleApiError(error, "Failed to synchronize pending receipts");
     throw error;
   }
 };
-

@@ -5,11 +5,11 @@ import { Separator } from "@/components/ui/separator";
 export const PaymentInfo = () => {
   return (
     <div className="lg:w-1/3 w-full flex flex-col items-stretch">
-      <Card className="h-full rounded-[32px] border border-border shadow-card overflow-hidden flex flex-col justify-between">
-        <CardHeader className="border-b border-border/40 pb-5 text-center">
+      <Card shape="xl" className="h-full flex flex-col justify-between overflow-hidden">
+        <CardHeader bordered className="text-center">
           <div className="flex items-center justify-center gap-3 text-primary mb-2">
             <Building2 size={24} className="text-primary" />
-            <CardTitle className="text-lg font-display font-black text-text">
+            <CardTitle>
               Bank Transfer Details
             </CardTitle>
           </div>
@@ -18,7 +18,7 @@ export const PaymentInfo = () => {
             foundation bank account.
           </p>
         </CardHeader>
-        <CardContent className="p-6 md:p-8 space-y-6 flex-1 flex flex-col justify-between">
+        <CardContent className="space-y-6 flex-1 flex flex-col justify-between">
           <div className="space-y-4 bg-bg/50 p-6 rounded-2xl border border-border/60 text-xs">
             <div className="space-y-1">
               <p className="text-text-muted uppercase text-[10px] font-bold tracking-wider">

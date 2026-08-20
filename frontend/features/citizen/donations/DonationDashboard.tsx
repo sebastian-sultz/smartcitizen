@@ -34,6 +34,8 @@ function DonationDashboardContent() {
   const [historyLoading, setHistoryLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
+  const [search, setSearch] = useState("");
+  const [status, setStatus] = useState("ALL");
 
   const loadInitialData = async () => {
     try {
@@ -41,7 +43,7 @@ function DonationDashboardContent() {
       setHistoryLoading(true);
       const [statsData, historyRes, certsData] = await Promise.all([
         getDonationStats(),
-        getDonationHistory(page, limit),
+        getDonationHistory(page, limit, search, status),
         getTaxCertificates(),
       ]);
       setStats(statsData || null);
@@ -59,7 +61,7 @@ function DonationDashboardContent() {
   const loadHistoryOnly = async () => {
     try {
       setHistoryLoading(true);
-      const historyRes = await getDonationHistory(page, limit);
+      const historyRes = await getDonationHistory(page, limit, search, status);
       setHistory(historyRes?.data || []);
       setTotalHistory(historyRes?.pagination?.total_rows || 0);
     } catch (err) {
@@ -73,7 +75,7 @@ function DonationDashboardContent() {
     try {
       const [statsData, historyRes, certsData] = await Promise.all([
         getDonationStats(),
-        getDonationHistory(page, limit),
+        getDonationHistory(page, limit, search, status),
         getTaxCertificates(),
       ]);
       setStats(statsData || null);
@@ -92,12 +94,27 @@ function DonationDashboardContent() {
   }, []);
 
   useEffect(() => {
-    if (!loading && activeTab === "history") {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      loadHistoryOnly();
-    }
+    if (loading) return;
+
+    const timer = setTimeout(() => {
+      if (activeTab === "history") {
+        loadHistoryOnly();
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, limit]);
+  }, [page, limit, search, status, activeTab]);
+
+  const handleSearchChange = (newSearch: string) => {
+    setSearch(newSearch);
+    setPage(1);
+  };
+
+  const handleStatusChange = (newStatus: string) => {
+    setStatus(newStatus);
+    setPage(1);
+  };
 
   const handleTabChange = (val: string) => {
     setActiveTab(val);
@@ -177,6 +194,10 @@ function DonationDashboardContent() {
             page={page}
             limit={limit}
             total={totalHistory}
+            searchTerm={search}
+            onSearchChange={handleSearchChange}
+            statusFilter={status}
+            onStatusChange={handleStatusChange}
             onPaginationChange={(p, l) => {
               setHistoryLoading(true);
               setPage(p);

@@ -10,8 +10,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { Mail, Phone, MapPin, Edit3, Building, Camera } from "lucide-react";
+import { Mail, Phone, MapPin, Edit3, Building, Camera, Lock, ShieldCheck, ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { formatDate, compressImage, cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -212,6 +213,8 @@ export default function ProfileView() {
                 <Badge variant="primary-light" size="sm">
                   {profile.user_type === "admin"
                     ? "Coordinator Admin"
+                    : profile.user_type === "volunteer"
+                    ? "Regional Volunteer"
                     : "Smart Citizen"}
                 </Badge>
               </div>
@@ -243,7 +246,7 @@ export default function ProfileView() {
                 <h3 className="font-display text-lg font-bold text-text">
                   Personal Details
                 </h3>
-                {volunteer && (
+                {volunteer ? (
                   <Button
                     onClick={() => setIsEditing(true)}
                     variant="outline"
@@ -252,60 +255,117 @@ export default function ProfileView() {
                   >
                     Edit Details
                   </Button>
+                ) : (
+                  <Badge variant="neutral" size="sm" className="gap-1 font-bold text-[11px]">
+                    <Lock size={12} />
+                    Profile Protected
+                  </Badge>
                 )}
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6 text-sm">
-                <div className="space-y-1">
-                  <span className="flex items-center gap-1.5 text-text-muted font-bold text-xs uppercase tracking-wider">
-                    <Mail size={14} className="text-primary/70" />
-                    Email Address
-                  </span>
-                  <p className="font-semibold text-text">
-                    {volunteer?.email || "Not Applied as Volunteer"}
-                  </p>
-                </div>
+              {volunteer ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6 text-sm">
+                  <div className="space-y-1">
+                    <span className="flex items-center gap-1.5 text-text-muted font-bold text-xs uppercase tracking-wider">
+                      <Mail size={14} className="text-primary/70" />
+                      Email Address
+                    </span>
+                    <p className="font-semibold text-text">
+                      {volunteer.email || "Not Set"}
+                    </p>
+                  </div>
 
-                <div className="space-y-1">
-                  <span className="flex items-center gap-1.5 text-text-muted font-bold text-xs uppercase tracking-wider">
-                    <Phone size={14} className="text-primary/70" />
-                    Mobile Number
-                  </span>
-                  <p className="font-semibold text-text">{profile.phone}</p>
-                </div>
+                  <div className="space-y-1">
+                    <span className="flex items-center gap-1.5 text-text-muted font-bold text-xs uppercase tracking-wider">
+                      <Phone size={14} className="text-primary/70" />
+                      Mobile Number
+                    </span>
+                    <p className="font-semibold text-text font-mono">+91 {profile.phone}</p>
+                  </div>
 
-                <div className="space-y-1">
-                  <span className="flex items-center gap-1.5 text-text-muted font-bold text-xs uppercase tracking-wider">
-                    <MapPin size={14} className="text-primary/70" />
-                    Residential Address
-                  </span>
-                  <p className="font-semibold text-text leading-relaxed">
-                    {volunteer?.address || "Not Set"}
-                  </p>
-                </div>
+                  <div className="space-y-1">
+                    <span className="flex items-center gap-1.5 text-text-muted font-bold text-xs uppercase tracking-wider">
+                      <MapPin size={14} className="text-primary/70" />
+                      Residential Address
+                    </span>
+                    <p className="font-semibold text-text leading-relaxed">
+                      {volunteer.address || "Not Set"}
+                    </p>
+                  </div>
 
-                <div className="space-y-1">
-                  <span className="flex items-center gap-1.5 text-text-muted font-bold text-xs uppercase tracking-wider">
-                    <Building size={14} className="text-primary/70" />
-                    City & Pincode
-                  </span>
-                  <p className="font-semibold text-text">
-                    {volunteer?.city
-                      ? `${volunteer.city} - ${volunteer.pincode}`
-                      : "Not Set"}
-                  </p>
-                </div>
+                  <div className="space-y-1">
+                    <span className="flex items-center gap-1.5 text-text-muted font-bold text-xs uppercase tracking-wider">
+                      <Building size={14} className="text-primary/70" />
+                      City & Pincode
+                    </span>
+                    <p className="font-semibold text-text">
+                      {volunteer.city
+                        ? `${volunteer.city} - ${volunteer.pincode}`
+                        : "Not Set"}
+                    </p>
+                  </div>
 
-                <div className="space-y-1">
-                  <span className="flex items-center gap-1.5 text-text-muted font-bold text-xs uppercase tracking-wider">
-                    <Building size={14} className="text-primary/70" />
-                    District
-                  </span>
-                  <p className="font-semibold text-text">
-                    {volunteer?.district || "Not Set"}
-                  </p>
+                  <div className="space-y-1">
+                    <span className="flex items-center gap-1.5 text-text-muted font-bold text-xs uppercase tracking-wider">
+                      <Building size={14} className="text-primary/70" />
+                      District
+                    </span>
+                    <p className="font-semibold text-text">
+                      {volunteer.district || "Not Set"}
+                    </p>
+                  </div>
                 </div>
-              </div>
+              ) : (
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6 text-sm">
+                    <div className="space-y-1">
+                      <span className="flex items-center gap-1.5 text-text-muted font-bold text-xs uppercase tracking-wider">
+                        <Phone size={14} className="text-primary/70" />
+                        Registered Mobile
+                      </span>
+                      <p className="font-semibold text-text font-mono">
+                        +91 {profile.phone}
+                      </p>
+                    </div>
+
+                    <div className="space-y-1">
+                      <span className="flex items-center gap-1.5 text-text-muted font-bold text-xs uppercase tracking-wider">
+                        <ShieldCheck size={14} className="text-primary/70" />
+                        Member Identification
+                      </span>
+                      <p className="font-semibold text-text font-mono">
+                        {profile.member_id || "N/A"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Security & Volunteer Gating Callout Banner */}
+                  <div className="p-4 sm:p-5 rounded-2xl bg-bg/60 border border-border/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 mt-0.5 border border-primary/15">
+                        <ShieldCheck size={20} />
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="text-sm font-bold text-text">
+                          Profile Details Protected
+                        </h4>
+                        <p className="text-xs text-text-muted leading-relaxed max-w-xl">
+                          Basic member credentials are locked to safeguard your donation receipts and community invitation records. Complete the volunteer application to register and edit full residential coordinates.
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      asChild
+                      className="w-full sm:w-auto shrink-0 shadow-sm"
+                      endIcon={<ArrowRight size={14} />}
+                    >
+                      <Link href="/citizen/volunteer">Apply as Volunteer</Link>
+                    </Button>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}

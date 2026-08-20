@@ -58,10 +58,10 @@ export default function ShareReferral({
 
   return (
     <>
-      <Card className="rounded-3xl sm:rounded-[32px] border border-border/80 shadow-sm bg-white flex flex-col justify-between h-full">
+      <Card shape="lg" className="flex flex-col justify-between h-full">
         <div>
-          <CardHeader className="pb-4">
-            <CardTitle className="font-display text-lg font-bold text-text flex items-center gap-2">
+          <CardHeader>
+            <CardTitle size="default" className="flex items-center gap-2">
               <Share2 size={20} className="text-primary" />
               Sharing Hub & Direct Enrollment
             </CardTitle>

@@ -32,7 +32,7 @@ type Service interface {
 	ForgetPassword(req *request.ForgetPassword) error
 	UpdateProfilePhoto(ctx context.Context, id string, url string, publicID string) error
 	GetSystemStats() (int64, int64, int64, float64, error)
-	GetNonAdminUsers(search string, sort string, referralsOnly bool, pagination *utils.Pagination) ([]User, error)
+	GetNonAdminUsers(filter request.UserFilter, pagination *utils.Pagination) ([]User, error)
 	SuspendUser(id string, suspend bool) error
 	DeleteUser(id string) error
 	GetUsersByReferralID(referralID string) ([]User, error)
@@ -44,8 +44,8 @@ type Service interface {
 	SetPassword(userID string, plainPassword string) error
 	UpdateName(userID string, name string) error
 	AddDirectMember(referrerUserID string, req *request.AddDirectMember) (*User, error)
-	ExportUsersCSV(ctx context.Context, search string, sort string, w io.Writer) error
-	ExportUsersPDF(ctx context.Context, search string, sort string) ([]byte, error)
+	ExportUsersCSV(ctx context.Context, filter request.UserFilter, w io.Writer) error
+	ExportUsersPDF(ctx context.Context, filter request.UserFilter) ([]byte, error)
 	ExportUserNetworkCSV(ctx context.Context, userID string, recursive bool, w io.Writer) error
 	ExportUserNetworkPDF(ctx context.Context, userID string, recursive bool) ([]byte, error)
 	ExportUserDossierPDF(ctx context.Context, userID string) ([]byte, error)
@@ -182,8 +182,8 @@ func (s *service) GetSystemStats() (int64, int64, int64, float64, error) {
 	return s.repo.GetSystemStats()
 }
 
-func (s *service) GetNonAdminUsers(search string, sort string, referralsOnly bool, pagination *utils.Pagination) ([]User, error) {
-	return s.repo.FindNonAdminUsers(search, sort, referralsOnly, pagination)
+func (s *service) GetNonAdminUsers(filter request.UserFilter, pagination *utils.Pagination) ([]User, error) {
+	return s.repo.FindNonAdminUsers(filter, pagination)
 }
 
 func (s *service) SuspendUser(id string, suspend bool) error {
@@ -353,8 +353,9 @@ func (s *service) GetDownlineNetwork(ctx context.Context, userID string, recursi
 	}
 
 	return &response.UserNetworkResponse{
-		UserID:    userID,
-		Referrals: paginatedReferrals,
+		UserID:     userID,
+		Referrals:  paginatedReferrals,
+		Pagination: pagination,
 	}, nil
 }
 
@@ -422,7 +423,7 @@ func sanitizeCSVCell(val string) string {
 	return val
 }
 
-func (s *service) ExportUsersCSV(ctx context.Context, search string, sort string, w io.Writer) error {
+func (s *service) ExportUsersCSV(ctx context.Context, filter request.UserFilter, w io.Writer) error {
 	if _, err := w.Write([]byte("\xEF\xBB\xBF")); err != nil {
 		return fmt.Errorf("failed to write UTF-8 BOM: %w", err)
 	}
@@ -453,7 +454,7 @@ func (s *service) ExportUsersCSV(ctx context.Context, search string, sort string
 	}
 	csvWriter.Flush()
 
-	return s.repo.StreamNonAdminUsers(ctx, search, sort, func(u User) error {
+	return s.repo.StreamNonAdminUsers(ctx, filter, func(u User) error {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
@@ -499,8 +500,8 @@ func (s *service) ExportUsersCSV(ctx context.Context, search string, sort string
 	})
 }
 
-func (s *service) ExportUsersPDF(ctx context.Context, search string, sort string) ([]byte, error) {
-	users, err := s.repo.FindAllNonAdminUsersFiltered(ctx, search, sort)
+func (s *service) ExportUsersPDF(ctx context.Context, filter request.UserFilter) ([]byte, error) {
+	users, err := s.repo.FindAllNonAdminUsersFiltered(ctx, filter)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch users for PDF: %w", err)
 	}
@@ -550,10 +551,13 @@ func (s *service) ExportUsersPDF(ctx context.Context, search string, sort string
 
 	m.AddRows(
 		row.New(6.5).Add(
+			col.New(1).WithStyle(&props.Cell{BackgroundColor: headerBg}).Add(
+				text.New("S.No.", props.Text{Size: 7, Style: fontstyle.Bold, Color: headerFg, Top: 1.8}),
+			),
 			col.New(3).WithStyle(&props.Cell{BackgroundColor: headerBg}).Add(
 				text.New("MEMBER / CITIZEN ID", props.Text{Size: 7, Style: fontstyle.Bold, Color: headerFg, Top: 1.8}),
 			),
-			col.New(3).WithStyle(&props.Cell{BackgroundColor: headerBg}).Add(
+			col.New(2).WithStyle(&props.Cell{BackgroundColor: headerBg}).Add(
 				text.New("PHONE / ROLE / STATUS", props.Text{Size: 7, Style: fontstyle.Bold, Color: headerFg, Top: 1.8}),
 			),
 			col.New(2).WithStyle(&props.Cell{BackgroundColor: headerBg}).Add(
@@ -593,11 +597,14 @@ func (s *service) ExportUsersPDF(ctx context.Context, search string, sort string
 
 		m.AddRows(
 			row.New(6).Add(
+				col.New(1).WithStyle(&props.Cell{BackgroundColor: bg}).Add(
+					text.New(fmt.Sprintf("%d", i+1), props.Text{Size: 6.5, Color: darkBlue, Top: 1.5}),
+				),
 				col.New(3).WithStyle(&props.Cell{BackgroundColor: bg}).Add(
 					text.New(u.Name, props.Text{Size: 6.5, Style: fontstyle.Bold, Color: darkBlue, Top: 1}),
 					text.New(u.MemberID, props.Text{Size: 5.5, Color: muted, Top: 3.5}),
 				),
-				col.New(3).WithStyle(&props.Cell{BackgroundColor: bg}).Add(
+				col.New(2).WithStyle(&props.Cell{BackgroundColor: bg}).Add(
 					text.New(u.Phone, props.Text{Size: 6.5, Top: 1}),
 					text.New(fmt.Sprintf("%s (%s)", roleStr, status), props.Text{Size: 5.5, Color: muted, Top: 3.5}),
 				),

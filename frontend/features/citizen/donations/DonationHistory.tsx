@@ -27,6 +27,10 @@ interface DonationHistoryProps {
   page: number;
   limit: number;
   total: number;
+  searchTerm: string;
+  onSearchChange: (search: string) => void;
+  statusFilter: string;
+  onStatusChange: (status: string) => void;
   onPaginationChange: (page: number, limit: number) => void;
   onRefresh?: () => void;
 }
@@ -37,11 +41,13 @@ export default function DonationHistory({
   page,
   limit,
   total,
+  searchTerm,
+  onSearchChange,
+  statusFilter,
+  onStatusChange,
   onPaginationChange,
   onRefresh,
 }: DonationHistoryProps) {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
   const [selectedDonation, setSelectedDonation] = useState<Payment | null>(
     null,
   );
@@ -70,18 +76,8 @@ export default function DonationHistory({
     }
   };
 
-  // Filter Logic
-  const filteredDonations = donations.filter((item) => {
-    const matchesSearch = item.merchantOrderId
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-
-    const matchesStatus =
-      statusFilter === "all" ||
-      item.status.toLowerCase() === statusFilter.toLowerCase();
-
-    return matchesSearch && matchesStatus;
-  });
+  // The donations array holds the pre-filtered items retrieved from the backend
+  const filteredDonations = donations;
 
   const handleViewDetails = (donation: Payment) => {
     setSelectedDonation(donation);
@@ -134,11 +130,8 @@ export default function DonationHistory({
     {
       label: "Transaction ID / UTR",
       render: (row) => (
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-bg border border-border flex items-center justify-center shrink-0">
-            <Heart size={14} className="text-accent" fill="currentColor" />
-          </div>
-          <span className="font-mono text-xs font-bold text-text-muted select-all truncate block max-w-[90px] sm:max-w-none">
+        <div className="flex items-center justify-center gap-2">
+          <span className="font-mono text-xs select-all">
             {getUtrNumber(row)}
           </span>
         </div>
@@ -220,7 +213,9 @@ export default function DonationHistory({
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  if (!loading && donations.length === 0) {
+  const isFilterActive = searchTerm !== "" || (statusFilter !== "ALL" && statusFilter !== "all");
+
+  if (!loading && donations.length === 0 && !isFilterActive) {
     return (
       <EmptyState
         icon={Heart}
@@ -240,7 +235,7 @@ export default function DonationHistory({
           <Input
             placeholder="Search transaction ID..."
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => onSearchChange(e.target.value)}
             size="sm"
             icon={<Search size={16} className="text-text-light" />}
             className="bg-bg/40 focus:bg-white"
@@ -253,15 +248,15 @@ export default function DonationHistory({
             Filter
           </div>
           <div className="w-40">
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <Select value={statusFilter} onValueChange={onStatusChange}>
               <SelectTrigger className="px-4 py-2 text-xs rounded-xl h-9 border-border bg-bg/50 focus:border-primary font-bold">
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
               <SelectContent position="popper">
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="success">Success</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="failed">Failed</SelectItem>
+                <SelectItem value="ALL">All Status</SelectItem>
+                <SelectItem value="SUCCESS">Success</SelectItem>
+                <SelectItem value="PENDING">Pending</SelectItem>
+                <SelectItem value="FAILED">Failed</SelectItem>
               </SelectContent>
             </Select>
           </div>

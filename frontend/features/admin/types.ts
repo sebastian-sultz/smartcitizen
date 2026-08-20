@@ -30,9 +30,17 @@ export interface ReferralNetworkMember {
   joinedAt: string;
 }
 
+export interface PaginationInfo {
+  limit: number;
+  page: number;
+  total_rows: number;
+  total_pages: number;
+}
+
 export interface UserNetworkResponse {
   userId: string;
   referrals: ReferralNetworkMember[];
+  pagination?: PaginationInfo;
 }
 
 export interface RegistrationGrowth {
@@ -63,3 +71,45 @@ export interface AdminAnalyticsResponse {
   volunteerActivity: VolunteerActivityCount[];
   receiptStats: ReceiptComplianceStats;
 }
+
+export interface UserFilterParams {
+  q?: string;
+  sort?: string;
+  role?: string;
+  is_suspended?: boolean | string;
+  min_referrals?: number | string;
+  max_referrals?: number | string;
+  min_payments?: number | string;
+  max_payments?: number | string;
+  min_amount?: number | string;
+  max_amount?: number | string;
+  joined_before?: string;
+  joined_after?: string;
+  referrals_only?: boolean;
+}
+
+export interface VolunteerFilterParams {
+  q?: string;
+  profession?: string;
+  state?: string;
+  city?: string;
+  status?: string;
+  sort?: string;
+  startDate?: string;
+  endDate?: string;
+  onlyApproved?: boolean;
+}
+
+export interface PaymentFilterParams {
+  userId?: string;
+  search?: string;
+  status?: string;
+  taxExemption?: boolean;
+  startDate?: string;
+  endDate?: string;
+  sortBy?: string;
+  sortOrder?: string;
+  page?: number;
+  limit?: number;
+}
+

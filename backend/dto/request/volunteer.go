@@ -38,3 +38,16 @@ type UpdateVolunteer struct {
 type UpdateVolunteerStatus struct {
 	Status string `json:"status" binding:"required"`
 }
+
+type VolunteerFilter struct {
+	Search       *string `json:"q" form:"q"`
+	Profession   *string `json:"profession" form:"profession"`
+	State        *string `json:"state" form:"state"`
+	City         *string `json:"city" form:"city"`
+	Status       *string `json:"status" form:"status"`
+	Sort         *string `json:"sort" form:"sort"`
+	StartDate    *string `json:"startDate" form:"startDate"`
+	EndDate      *string `json:"endDate" form:"endDate"`
+	OnlyApproved *bool   `json:"onlyApproved" form:"onlyApproved"`
+}
+

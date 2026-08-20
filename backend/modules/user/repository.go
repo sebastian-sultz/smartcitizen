@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	dtorequest "backend/dto/request"
 	"backend/dto/response"
 	"backend/pkg/utils"
 
@@ -27,14 +28,14 @@ type Repository interface {
 	Update(user *User) error
 	Delete(id string) error
 	GetSystemStats() (int64, int64, int64, float64, error)
-	FindNonAdminUsers(search string, sort string, referralsOnly bool, pagination *utils.Pagination) ([]User, error)
+	FindNonAdminUsers(filter dtorequest.UserFilter, pagination *utils.Pagination) ([]User, error)
 	FindAllNonAdminUsers() ([]User, error)
 	FindByReferralID(referralID string) ([]User, error)
 	FindVolunteerByUserID(userID string) (*response.Volunteer, error)
 	RecordSuccessfulPayment(userID string, amount float64) error
 	GetDownlineStats(userID string) (int64, float64, error)
-	StreamNonAdminUsers(ctx context.Context, search string, sort string, fn func(u User) error) error
-	FindAllNonAdminUsersFiltered(ctx context.Context, search string, sort string) ([]User, error)
+	StreamNonAdminUsers(ctx context.Context, filter dtorequest.UserFilter, fn func(u User) error) error
+	FindAllNonAdminUsersFiltered(ctx context.Context, filter dtorequest.UserFilter) ([]User, error)
 	GetUserPayments(ctx context.Context, userID string) ([]UserPaymentRecord, error)
 }
 
@@ -141,40 +142,114 @@ func (r *repository) GetSystemStats() (int64, int64, int64, float64, error) {
 	return totalUsers, totalPayments, totalReferrals, totalAmountFloat, nil
 }
 
-func (r *repository) FindNonAdminUsers(search string, sort string, referralsOnly bool, pagination *utils.Pagination) ([]User, error) {
-	var users []User
-	query := r.db.Model(&User{}).Where("user_type != ?", string(Admin))
-
-	if referralsOnly {
+func applyUserFilters(query *gorm.DB, filter dtorequest.UserFilter) *gorm.DB {
+	if filter.ReferralsOnly != nil && *filter.ReferralsOnly {
 		query = query.Where("total_referrals > ?", 0)
 	}
 
-	if search != "" {
-		query = query.Where("(name ILIKE ? OR phone ILIKE ? OR member_id ILIKE ?)", "%"+search+"%", "%"+search+"%", "%"+search+"%")
+	if filter.Search != nil && *filter.Search != "" {
+		query = query.Where("(name ILIKE ? OR phone ILIKE ? OR member_id ILIKE ?)", "%"+*filter.Search+"%", "%"+*filter.Search+"%", "%"+*filter.Search+"%")
 	}
+
+	if filter.Role != nil && *filter.Role != "" {
+		query = query.Where("user_type = ?", *filter.Role)
+	}
+
+	if filter.IsSuspended != nil {
+		query = query.Where("is_suspended = ?", *filter.IsSuspended)
+	}
+
+	if filter.ReferralsCountMin != nil {
+		query = query.Where("total_referrals >= ?", *filter.ReferralsCountMin)
+	}
+	if filter.ReferralsCountMax != nil {
+		query = query.Where("total_referrals <= ?", *filter.ReferralsCountMax)
+	}
+
+	if filter.PaymentsCountMin != nil {
+		query = query.Where("total_payments >= ?", *filter.PaymentsCountMin)
+	}
+	if filter.PaymentsCountMax != nil {
+		query = query.Where("total_payments <= ?", *filter.PaymentsCountMax)
+	}
+
+	if filter.AmountMin != nil {
+		query = query.Where("total_amount >= ?", *filter.AmountMin)
+	}
+	if filter.AmountMax != nil {
+		query = query.Where("total_amount <= ?", *filter.AmountMax)
+	}
+
+	if filter.JoinedBefore != nil && *filter.JoinedBefore != "" {
+		if t, err := time.Parse("2006-01-02", *filter.JoinedBefore); err == nil {
+			tEnd := time.Date(t.Year(), t.Month(), t.Day(), 23, 59, 59, 999999999, t.Location())
+			query = query.Where("created_at <= ?", tEnd)
+		} else if t, err := time.Parse(time.RFC3339, *filter.JoinedBefore); err == nil {
+			query = query.Where("created_at <= ?", t)
+		}
+	}
+	if filter.JoinedAfter != nil && *filter.JoinedAfter != "" {
+		if t, err := time.Parse("2006-01-02", *filter.JoinedAfter); err == nil {
+			tStart := time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
+			query = query.Where("created_at >= ?", tStart)
+		} else if t, err := time.Parse(time.RFC3339, *filter.JoinedAfter); err == nil {
+			query = query.Where("created_at >= ?", t)
+		}
+	}
+
+	return query
+}
+
+func getOrderClause(sort *string) string {
+	if sort == nil {
+		return "created_at desc"
+	}
+	switch *sort {
+	case "name_asc":
+		return "name asc"
+	case "name_desc":
+		return "name desc"
+	case "newest":
+		return "created_at desc"
+	case "oldest":
+		return "created_at asc"
+	case "referrals_desc":
+		return "total_referrals desc"
+	case "referrals_asc":
+		return "total_referrals asc"
+	case "donations_desc":
+		return "total_amount desc"
+	case "donations_asc":
+		return "total_amount asc"
+	case "payments_desc":
+		return "total_payments desc"
+	case "payments_asc":
+		return "total_payments asc"
+	case "member_id_asc":
+		return "member_id asc"
+	case "member_id_desc":
+		return "member_id desc"
+	case "phone_asc":
+		return "phone asc"
+	case "phone_desc":
+		return "phone desc"
+	default:
+		return "created_at desc"
+	}
+}
+
+func (r *repository) FindNonAdminUsers(filter dtorequest.UserFilter, pagination *utils.Pagination) ([]User, error) {
+	var users []User
+	query := r.db.Model(&User{}).Where("user_type != ?", string(Admin))
+
+	query = applyUserFilters(query, filter)
 
 	if err := query.Session(&gorm.Session{}).Count(&pagination.TotalRows).Error; err != nil {
 		return nil, err
 	}
 	pagination.Calculate()
 
-	orderClause := "created_at desc"
-	if sort != "" {
-		switch sort {
-		case "name_asc":
-			orderClause = "name asc"
-		case "name_desc":
-			orderClause = "name desc"
-		case "newest":
-			orderClause = "created_at desc"
-		case "oldest":
-			orderClause = "created_at asc"
-		case "referrals_desc":
-			orderClause = "total_referrals desc"
-		case "donations_desc":
-			orderClause = "total_amount desc"
-		}
-	}
+	orderClause := getOrderClause(filter.Sort)
 
 	err := query.Order(orderClause).Limit(pagination.Limit).Offset(pagination.Offset).Find(&users).Error
 	return users, err
@@ -261,30 +336,11 @@ func (r *repository) GetDownlineStats(userID string) (int64, float64, error) {
 	return result.Count, result.Sum, nil
 }
 
-func (r *repository) StreamNonAdminUsers(ctx context.Context, search string, sort string, fn func(u User) error) error {
+func (r *repository) StreamNonAdminUsers(ctx context.Context, filter dtorequest.UserFilter, fn func(u User) error) error {
 	query := r.db.WithContext(ctx).Model(&User{}).Where("user_type != ?", string(Admin))
+	query = applyUserFilters(query, filter)
 
-	if search != "" {
-		query = query.Where("(name ILIKE ? OR phone ILIKE ? OR member_id ILIKE ?)", "%"+search+"%", "%"+search+"%", "%"+search+"%")
-	}
-
-	orderClause := "created_at desc"
-	if sort != "" {
-		switch sort {
-		case "name_asc":
-			orderClause = "name asc"
-		case "name_desc":
-			orderClause = "name desc"
-		case "newest":
-			orderClause = "created_at desc"
-		case "oldest":
-			orderClause = "created_at asc"
-		case "referrals_desc":
-			orderClause = "total_referrals desc"
-		case "donations_desc":
-			orderClause = "total_amount desc"
-		}
-	}
+	orderClause := getOrderClause(filter.Sort)
 
 	rows, err := query.Order(orderClause).Rows()
 	if err != nil {
@@ -310,31 +366,12 @@ func (r *repository) StreamNonAdminUsers(ctx context.Context, search string, sor
 	return rows.Err()
 }
 
-func (r *repository) FindAllNonAdminUsersFiltered(ctx context.Context, search string, sort string) ([]User, error) {
+func (r *repository) FindAllNonAdminUsersFiltered(ctx context.Context, filter dtorequest.UserFilter) ([]User, error) {
 	var users []User
 	query := r.db.WithContext(ctx).Model(&User{}).Where("user_type != ?", string(Admin))
+	query = applyUserFilters(query, filter)
 
-	if search != "" {
-		query = query.Where("(name ILIKE ? OR phone ILIKE ? OR member_id ILIKE ?)", "%"+search+"%", "%"+search+"%", "%"+search+"%")
-	}
-
-	orderClause := "created_at desc"
-	if sort != "" {
-		switch sort {
-		case "name_asc":
-			orderClause = "name asc"
-		case "name_desc":
-			orderClause = "name desc"
-		case "newest":
-			orderClause = "created_at desc"
-		case "oldest":
-			orderClause = "created_at asc"
-		case "referrals_desc":
-			orderClause = "total_referrals desc"
-		case "donations_desc":
-			orderClause = "total_amount desc"
-		}
-	}
+	orderClause := getOrderClause(filter.Sort)
 
 	err := query.Order(orderClause).Find(&users).Error
 	return users, err

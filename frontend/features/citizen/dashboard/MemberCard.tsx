@@ -349,7 +349,7 @@ export default function MemberCard({ profile }: MemberCardProps) {
                       Digital Membership ID
                     </Button>
                   </DialogTrigger>
-                  <DialogContent size="sm" className="p-6 text-center">
+                  <DialogContent size="sm" className="text-center">
                     <DialogHeader>
                       <DialogTitle>Digital Membership ID</DialogTitle>
                     </DialogHeader>

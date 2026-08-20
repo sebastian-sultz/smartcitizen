@@ -1,24 +1,33 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { 
-  getAdminPaymentHistory, 
-  downloadPaymentsCSV, 
+import {
+  getAdminPaymentHistory,
+  downloadPaymentsCSV,
   downloadPaymentsPDF,
-  downloadForm10BDCSV
+  downloadForm10BDCSV,
+  PaymentFilterParams,
 } from "../api";
 import { getReceiptStatus } from "@/features/citizen/api";
 import { PaymentAdminResponse } from "../types";
-import { Card, CardContent } from "@/components/ui/Card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { TableComponent } from "@/components/ui/TableComponent";
 import { Input } from "@/components/ui/Input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Button } from "@/components/ui/Button";
 import { downloadBlob } from "@/lib/utils";
-import { FileSpreadsheet, FileText, Calendar } from "lucide-react";
+import {
+  FileSpreadsheet,
+  FileText,
+  Calendar,
+  Search,
+  SlidersHorizontal,
+} from "lucide-react";
+import { Badge } from "@/components/ui/Badge";
 import { toast } from "sonner";
 import { getDonationColumns } from "./DonationColumns";
 import { DonationDetailsDialog } from "./DonationDetailsDialog";
+import { DonationFiltersDialog } from "./DonationFiltersDialog";
 import { ExportFYDialog } from "./ExportFYDialog";
 
 export const DonationAuditCenter = () => {
@@ -46,11 +55,11 @@ export const DonationAuditCenter = () => {
 
   // Filters state
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [status, setStatus] = useState("ALL");
-  const [taxExemption, setTaxExemption] = useState("ALL");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [sort, setSort] = useState("newest");
+  const [filters, setFilters] = useState<PaymentFilterParams>({});
+  const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
 
   // Modal States
   const [selectedPayment, setSelectedPayment] = useState<PaymentAdminResponse | null>(null);
@@ -60,20 +69,57 @@ export const DonationAuditCenter = () => {
   const [fyOpen, setFyOpen] = useState(false);
   const [selectedFY, setSelectedFY] = useState(fyOptions[0]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const [prevSearch, setPrevSearch] = useState(debouncedSearch);
+  const [prevStatus, setPrevStatus] = useState(status);
+  const [prevSort, setPrevSort] = useState(sort);
+  const [prevFilters, setPrevFilters] = useState(filters);
+  const [prevPage, setPrevPage] = useState(page);
+  const [prevLimit, setPrevLimit] = useState(limit);
+
+  if (
+    debouncedSearch !== prevSearch ||
+    status !== prevStatus ||
+    sort !== prevSort ||
+    JSON.stringify(filters) !== JSON.stringify(prevFilters)
+  ) {
+    setPrevSearch(debouncedSearch);
+    setPrevStatus(status);
+    setPrevSort(sort);
+    setPrevFilters(filters);
+    setPage(1);
+    setIsLoading(true);
+  } else if (page !== prevPage || limit !== prevLimit) {
+    setPrevPage(page);
+    setPrevLimit(limit);
+    setIsLoading(true);
+  }
+
   const fetchPayments = async () => {
     try {
       setIsLoading(true);
       
-      const filterParams: Record<string, any> = {
+      const filterParams: PaymentFilterParams = {
         page,
         limit,
+        ...filters,
       };
 
-      if (search) filterParams.search = search;
+      if (debouncedSearch) filterParams.search = debouncedSearch;
       if (status !== "ALL") filterParams.status = status;
-      if (taxExemption !== "ALL") filterParams.taxExemption = taxExemption === "yes";
-      if (startDate) filterParams.startDate = startDate;
-      if (endDate) filterParams.endDate = endDate;
+      if (sort === "oldest") {
+        filterParams.sortBy = "created_at";
+        filterParams.sortOrder = "asc";
+      } else {
+        filterParams.sortBy = "created_at";
+        filterParams.sortOrder = "desc";
+      }
 
       const res = await getAdminPaymentHistory(filterParams);
       if (res) {
@@ -92,29 +138,16 @@ export const DonationAuditCenter = () => {
 
   useEffect(() => {
     fetchPayments();
-  }, [page, limit, status, taxExemption, startDate, endDate]);
-
-  const handleSearchKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      setPage(1);
-      fetchPayments();
-    }
-  };
-
-  const triggerSearch = () => {
-    setPage(1);
-    fetchPayments();
-  };
+  }, [page, limit, debouncedSearch, status, sort, filters]);
 
   const handleExportCSV = async () => {
     try {
       setIsExportingCSV(true);
-      const filterParams: Record<string, any> = {};
-      if (search) filterParams.search = search;
+      const filterParams: PaymentFilterParams = {
+        ...filters,
+      };
+      if (debouncedSearch) filterParams.search = debouncedSearch;
       if (status !== "ALL") filterParams.status = status;
-      if (taxExemption !== "ALL") filterParams.taxExemption = taxExemption === "yes";
-      if (startDate) filterParams.startDate = startDate;
-      if (endDate) filterParams.endDate = endDate;
 
       toast.info("Preparing payments CSV export...");
       await downloadPaymentsCSV(filterParams);
@@ -130,12 +163,11 @@ export const DonationAuditCenter = () => {
   const handleExportPDF = async () => {
     try {
       setIsExportingPDF(true);
-      const filterParams: Record<string, any> = {};
-      if (search) filterParams.search = search;
+      const filterParams: PaymentFilterParams = {
+        ...filters,
+      };
+      if (debouncedSearch) filterParams.search = debouncedSearch;
       if (status !== "ALL") filterParams.status = status;
-      if (taxExemption !== "ALL") filterParams.taxExemption = taxExemption === "yes";
-      if (startDate) filterParams.startDate = startDate;
-      if (endDate) filterParams.endDate = endDate;
 
       toast.info("Generating donations financial audit PDF report...");
       await downloadPaymentsPDF(filterParams);
@@ -180,161 +212,187 @@ export const DonationAuditCenter = () => {
     }
   };
 
+  const getActiveFiltersCount = () => {
+    let count = 0;
+    if (filters.taxExemption !== undefined) count++;
+    if (filters.startDate) count++;
+    if (filters.endDate) count++;
+    if (filters.status && filters.status !== "ALL" && status === "ALL") count++;
+    return count;
+  };
+
+  const activeFiltersCount = getActiveFiltersCount();
+
   const columns = getDonationColumns({
     onViewDetails: handleViewDetails,
     onDownloadReceipt: handleDownloadReceipt,
   });
 
   return (
-    <div className="space-y-6">
-      {/* Mobile Filters Toggle Button */}
-      <div className="flex md:hidden justify-between items-center gap-4 bg-white p-4 rounded-card border border-border/70 shadow-sm">
-        <div className="flex flex-col min-w-0">
-          <span className="text-sm font-bold text-text truncate">Filters & Search</span>
-          <span className="text-[11px] text-text-muted truncate">
-            {status !== "ALL" || taxExemption !== "ALL" || startDate || endDate || search
-              ? "Active filters applied"
-              : "Tap to filter payments"}
-          </span>
-        </div>
-        <Button
-          variant={showMobileFilters ? "primary" : "secondary"}
-          size="sm"
-          onClick={() => setShowMobileFilters(!showMobileFilters)}
-          className="shrink-0"
-        >
-          {showMobileFilters ? "Hide Filters" : "Show Filters"}
-        </Button>
-      </div>
-
-      {/* Search and Filter Panel */}
-      <Card className={`md:block border-0 sm:border rounded-none sm:rounded-24px shadow-none sm:shadow-card bg-transparent sm:bg-white ${!showMobileFilters ? "hidden" : ""}`}>
-        <CardContent className="p-0 pt-6 sm:p-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 items-end">
-            {/* Search Input */}
-            <div className="lg:col-span-2 space-y-1">
-              <span className="text-xs font-semibold text-text-muted">Search UTR / Order / Donor</span>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Enter order or donor name..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  onKeyDown={handleSearchKeyPress}
-                  className="bg-bg/40"
-                  size="sm"
-                />
-                <Button variant="primary" onClick={triggerSearch} size="sm">Go</Button>
-              </div>
-            </div>
-
-            {/* Status Select */}
-            <div className="space-y-1">
-              <span className="text-xs font-semibold text-text-muted">Payment Status</span>
-              <Select value={status} onValueChange={setStatus}>
-                <SelectTrigger className="bg-bg/40" size="sm">
-                  <SelectValue placeholder="All Statuses" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ALL">All Statuses</SelectItem>
-                  <SelectItem value="SUCCESS">Success</SelectItem>
-                  <SelectItem value="PENDING">Pending</SelectItem>
-                  <SelectItem value="FAILED">Failed</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Tax Exemption Select */}
-            <div className="space-y-1">
-              <span className="text-xs font-semibold text-text-muted">Tax PAN Status</span>
-              <Select value={taxExemption} onValueChange={setTaxExemption}>
-                <SelectTrigger className="bg-bg/40" size="sm">
-                  <SelectValue placeholder="All PANs" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ALL">All Payments</SelectItem>
-                  <SelectItem value="yes">PAN Provided</SelectItem>
-                  <SelectItem value="no">No PAN</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Start Date */}
-            <div className="space-y-1">
-              <span className="text-xs font-semibold text-text-muted">Start Date (YYYY-MM-DD)</span>
-              <Input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="bg-bg/40"
-                size="sm"
-              />
-            </div>
-
-            {/* End Date */}
-            <div className="space-y-1">
-              <span className="text-xs font-semibold text-text-muted">End Date (YYYY-MM-DD)</span>
-              <Input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="bg-bg/40"
-                size="sm"
-              />
-            </div>
+    <Card shape="mobile-flush" className="w-full bg-transparent sm:bg-surface">
+      <CardHeader className="flex-col gap-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <CardTitle>Donation & Transaction Ledger</CardTitle>
+            <p className="text-xs text-text-muted mt-1">
+              {totalRows} transaction record{totalRows === 1 ? "" : "s"} found
+            </p>
           </div>
 
-          {/* Action Toolbar */}
-          <div className="grid grid-cols-2 sm:flex sm:flex-row sm:justify-end gap-3 mt-6 border-t border-border/40 pt-4">
-            <Button 
-              className="col-span-1"
-              variant="secondary" 
+          <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap sm:flex-nowrap">
+            <Button
+              className="whitespace-nowrap"
+              variant="secondary"
               onClick={handleExportCSV}
-              startIcon={<FileSpreadsheet size={16} className="text-emerald-600 shrink-0" />}
+              startIcon={
+                <FileSpreadsheet
+                  size={15}
+                  className="text-emerald-600 shrink-0"
+                />
+              }
               size="sm"
               loading={isExportingCSV}
-              title="Export all filtered payment records as CSV (Includes all hidden transaction & gateway fields)"
+              title="Export all filtered payment records as CSV"
             >
               Export CSV
             </Button>
-            <Button 
-              className="col-span-1"
-              variant="secondary" 
+            <Button
+              className="whitespace-nowrap"
+              variant="secondary"
               onClick={handleExportPDF}
-              startIcon={<FileText size={16} className="text-primary shrink-0" />}
+              startIcon={
+                <FileText size={15} className="text-primary shrink-0" />
+              }
               size="sm"
               loading={isExportingPDF}
               title="Export official financial audit PDF ledger"
             >
               Export PDF
             </Button>
-            <Button 
-              className="col-span-2"
-              variant="primary" 
+            <Button
+              className="whitespace-nowrap"
+              variant="primary"
               onClick={() => setFyOpen(true)}
-              startIcon={<Calendar size={16} className="shrink-0" />}
+              startIcon={<Calendar size={15} className="shrink-0" />}
               size="sm"
               title="Export 80G Statutory Form 10BD for Income Tax compliance"
             >
-              Export Form 10BD
+              Form 10BD
             </Button>
           </div>
-        </CardContent>
-      </Card>
+        </div>
 
-      {/* Main Audit List */}
-      <TableComponent
-        headers={columns}
-        data={payments}
-        loading={isLoading}
-        emptyMessage="No matching donation records found"
-        pagination={{
-          page,
-          limit,
-          total: totalRows,
-          onChange: (p, l) => {
-            setPage(p);
-            setLimit(l);
+        {/* Quick Status Filter Pills (Mobile Scrollable) */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
+          {[
+            { label: "All Donations", value: "ALL" },
+            { label: "Successful", value: "SUCCESS" },
+            { label: "Pending", value: "PENDING" },
+            { label: "Failed", value: "FAILED" },
+            { label: "Cancelled", value: "CANCELLED" },
+          ].map((item) => (
+            <Badge
+              key={item.value}
+              variant={status === item.value ? "default" : "outline"}
+              className="cursor-pointer select-none"
+              role="button"
+              tabIndex={0}
+              onClick={() => {
+                setStatus(item.value);
+                setPage(1);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  setStatus(item.value);
+                  setPage(1);
+                }
+              }}
+            >
+              {item.label}
+            </Badge>
+          ))}
+        </div>
+
+        {/* Filter, Search & Sort Toolbar (Mobile-First) */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full">
+          <div className="flex items-center gap-2 w-full sm:w-80">
+            <div className="flex-1">
+              <Input
+                placeholder="Search donor name, order ID, UTR..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                icon={<Search size={16} />}
+                size="sm"
+                // shape="pill"
+              />
+            </div>
+            <Button
+              variant={activeFiltersCount > 0 ? "default" : "secondary"}
+              size="sm"
+              className="shrink-0 relative"
+              onClick={() => setIsFilterDialogOpen(true)}
+              startIcon={<SlidersHorizontal size={15} />}
+            >
+              Filters
+              {activeFiltersCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 bg-danger text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center font-bold">
+                  {activeFiltersCount}
+                </span>
+              )}
+            </Button>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+            <div className="w-full sm:w-44">
+              <Select value={sort} onValueChange={setSort}>
+                <SelectTrigger size="sm" className="w-full">
+                  <SelectValue placeholder="Sort By" />
+                </SelectTrigger>
+                <SelectContent position="popper">
+                  <SelectItem value="newest">Newest First</SelectItem>
+                  <SelectItem value="oldest">Oldest First</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <TableComponent
+          headers={columns}
+          data={payments}
+          loading={isLoading}
+          emptyMessage="No matching donation records found"
+          className="shadow-none border-0"
+          pagination={{
+            page,
+            limit,
+            total: totalRows,
+            onChange: (p, l) => {
+              setPage(p);
+              setLimit(l);
+            },
+          }}
+        />
+      </CardContent>
+
+      {/* Advanced Filters Modal */}
+      <DonationFiltersDialog
+        open={isFilterDialogOpen}
+        onOpenChange={setIsFilterDialogOpen}
+        filters={{
+          ...filters,
+          status: status !== "ALL" ? status : filters.status,
+        }}
+        onApply={(updated) => {
+          if (updated.status && updated.status !== status) {
+            setStatus(updated.status);
           }
+          setFilters(updated);
+        }}
+        onReset={() => {
+          setFilters({});
+          setStatus("ALL");
         }}
       />
 
@@ -353,6 +411,6 @@ export const DonationAuditCenter = () => {
         fyOptions={fyOptions}
         onExport={handleExport10BD}
       />
-    </div>
+    </Card>
   );
 };

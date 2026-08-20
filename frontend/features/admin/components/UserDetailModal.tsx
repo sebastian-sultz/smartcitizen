@@ -47,7 +47,7 @@ export const UserDetailModal = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         size="xl"
-        className="max-h-[85vh] flex flex-col p-6 overflow-hidden"
+        className="max-h-[85vh] overflow-hidden"
       >
         <DialogHeader className="border-b border-border/60 pb-4 shrink-0 flex flex-row items-center justify-between">
           <div>

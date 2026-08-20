@@ -123,7 +123,7 @@ export default function DonationStats({ stats }: DonationStatsProps) {
     <>
       {/* Mobile view: Unified Row List Card */}
       <div className="block sm:hidden">
-        <Card className="bg-white border border-border shadow-sm p-4 rounded-2xl divide-y divide-border/60">
+        <Card shape="lg" className="p-4 divide-y divide-border/60">
           {statsItems.map((item, idx) => (
             <div key={idx} className="flex items-center justify-between gap-3 py-3.5 first:pt-1.5 last:pb-1.5 min-w-0">
               <div className="min-w-0 flex-1 space-y-0.5">

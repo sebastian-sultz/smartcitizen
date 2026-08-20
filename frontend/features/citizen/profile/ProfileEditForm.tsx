@@ -7,7 +7,7 @@ import { Volunteer, UpdateVolunteerPayload } from "../types";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
-import { User, Mail, MapPin, Building, Hash } from "lucide-react";
+import { User, Mail, MapPin, Building, Hash, Phone, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import { 
   nameSchema, 
@@ -90,6 +90,22 @@ export default function ProfileEditForm({ profile, volunteer, onSave, onCancel }
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
               error={formik.touched.email ? formik.errors.email : undefined}
+            />
+
+            <Input
+              label="Registered Mobile Number"
+              value={profile.phone ? `+91 ${profile.phone}` : "N/A"}
+              disabled
+              icon={<Phone size={18} className="text-text-muted" />}
+              className="opacity-75 cursor-not-allowed"
+            />
+
+            <Input
+              label="Member ID"
+              value={profile.member_id || "N/A"}
+              disabled
+              icon={<ShieldCheck size={18} className="text-text-muted" />}
+              className="opacity-75 cursor-not-allowed"
             />
 
             <Input

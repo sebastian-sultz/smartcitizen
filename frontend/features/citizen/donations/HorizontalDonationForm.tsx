@@ -166,7 +166,7 @@ export default function HorizontalDonationForm({
   };
 
   return (
-    <Card className="w-full rounded-card-lg border border-border shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] overflow-hidden bg-white">
+    <Card shape="xl" className="w-full flex flex-col justify-between overflow-hidden">
       {/* Header and Step Tracker Panel */}
       <div className="border-b border-border/40 bg-gradient-to-r from-bg to-white p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
         {/* Title and Info */}
@@ -273,7 +273,7 @@ export default function HorizontalDonationForm({
       </div>
 
       {/* Content Area - Designed to maintain consistent height to avoid UI shifts */}
-      <CardContent className="p-6 md:p-8 min-h-[360px] flex flex-col justify-between">
+      <CardContent className="min-h-[360px] flex flex-col justify-between">
         <form
           onSubmit={(e) => {
             e.preventDefault();

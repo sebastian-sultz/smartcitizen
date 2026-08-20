@@ -171,7 +171,7 @@ export default function UnifiedDonationForm({
   };
 
   return (
-    <Card className="w-full h-full rounded-card-lg border border-border shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] overflow-hidden bg-white flex flex-col justify-between">
+    <Card shape="xl" className="w-full h-full flex flex-col justify-between overflow-hidden">
       {/* Header and Step Tracker Panel */}
       <div className="border-b border-border/40 bg-gradient-to-r from-bg to-white p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
         {/* Title and Info */}
@@ -278,7 +278,7 @@ export default function UnifiedDonationForm({
       </div>
 
       {/* Content Area */}
-      <CardContent className="p-6 md:p-8 min-h-[360px] flex-1 flex flex-col justify-between">
+      <CardContent className="min-h-[360px] flex-1 flex flex-col justify-between">
         <form
           onSubmit={(e) => {
             e.preventDefault();

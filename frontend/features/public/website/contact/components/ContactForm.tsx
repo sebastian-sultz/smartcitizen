@@ -90,25 +90,22 @@ export const ContactForm = ({ helpAreas }: ContactFormProps) => {
               error={formik.touched.email ? (formik.errors.email as string) : undefined}
             />
           </div>
-          <div className="space-y-2">
-            <label className="text-[14px] font-bold text-text ml-1 block">Area of Help Needed *</label>
-            <Select 
-              value={formik.values.helpArea} 
-              onValueChange={(val) => formik.setFieldValue("helpArea", val)}
+          <Select 
+            value={formik.values.helpArea} 
+            onValueChange={(val) => formik.setFieldValue("helpArea", val)}
+          >
+            <SelectTrigger
+              label="Area of Help Needed *"
+              error={formik.touched.helpArea ? formik.errors.helpArea : undefined}
             >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select an area" />
-              </SelectTrigger>
-              <SelectContent>
-                {helpAreas.map((area, i) => (
-                  <SelectItem key={i} value={area.title}>{area.title}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {formik.touched.helpArea && formik.errors.helpArea && (
-              <p className="text-red-500 text-[12px] ml-1">{formik.errors.helpArea}</p>
-            )}
-          </div>
+              <SelectValue placeholder="Select an area" />
+            </SelectTrigger>
+            <SelectContent>
+              {helpAreas.map((area, i) => (
+                <SelectItem key={i} value={area.title}>{area.title}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Textarea
             label="Your Message / Description *"
             rows={5} 
