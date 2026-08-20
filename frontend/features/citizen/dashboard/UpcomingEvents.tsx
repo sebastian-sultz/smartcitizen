@@ -93,7 +93,7 @@ export default function UpcomingEvents() {
         </div>
         {/* Mobile Skeleton */}
         <div className="block sm:hidden">
-          <Card className="bg-white border border-border shadow-sm p-4 rounded-2xl space-y-4">
+          <Card shape="lg" className="p-4 space-y-4">
             <Skeleton className="h-12 w-full rounded-2xl" />
             <Skeleton className="h-12 w-full rounded-2xl" />
             <Skeleton className="h-12 w-full rounded-2xl" />
@@ -103,7 +103,7 @@ export default function UpcomingEvents() {
         {/* Desktop Skeleton */}
         <div className="hidden sm:grid sm:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
-            <Card key={i} className="rounded-[32px] border-primary/5 shadow-sm animate-pulse h-[26rem] bg-card flex flex-col overflow-hidden">
+            <Card key={i} shape="xl" className="border-primary/5 animate-pulse h-[26rem] flex flex-col overflow-hidden">
               {/* Image Skeleton */}
               <div className="h-40 w-full bg-muted/50 shrink-0" />
               <CardContent className="p-6 space-y-4 flex flex-col flex-grow justify-between">
@@ -164,7 +164,7 @@ export default function UpcomingEvents() {
 
       {/* Mobile view: Compact Event List */}
       <div className="block sm:hidden">
-        <Card className="bg-white border border-border shadow-sm p-4 rounded-2xl divide-y divide-border/60">
+        <Card shape="lg" className="p-4 divide-y divide-border/60">
           {events.map((evt) => {
             const dateObj = new Date(evt.event_date);
             const day = isNaN(dateObj.getTime()) ? "--" : dateObj.getDate().toString();

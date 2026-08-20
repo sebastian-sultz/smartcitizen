@@ -42,7 +42,7 @@ export default function EventCard({ event, isRegistered, onRegister }: EventCard
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Card className="group border border-primary/5 hover:border-primary/20 hover:shadow-md transition-all duration-300 rounded-3xl md:rounded-[32px] overflow-hidden bg-card flex flex-col h-full cursor-pointer outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 text-left">
+        <Card shape="xl" className="group hover:border-primary/20 hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col h-full cursor-pointer outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 text-left">
           {/* Image Header */}
           <div className="relative w-full h-40 bg-muted/50 overflow-hidden shrink-0">
             {event.image ? (

@@ -41,8 +41,8 @@ export default function EligibilityTracker({ eligibility }: EligibilityTrackerPr
   ];
 
   return (
-    <Card className="rounded-2xl sm:rounded-[32px] border-border shadow-sm max-w-3xl w-full mx-auto">
-      <CardHeader className="text-center pb-2 p-5 md:p-8">
+    <Card shape="xl" className="max-w-3xl w-full mx-auto">
+      <CardHeader className="text-center pb-2">
         <CardTitle className="font-display text-xl md:text-2xl font-bold text-text">
           Volunteer Eligibility Gating
         </CardTitle>
@@ -51,7 +51,7 @@ export default function EligibilityTracker({ eligibility }: EligibilityTrackerPr
         </p>
       </CardHeader>
       
-      <CardContent className="space-y-4 md:space-y-6 p-5 md:p-8 pt-0">
+      <CardContent className="space-y-4 md:space-y-6 pt-0">
         {/* Step List */}
         <div className="space-y-3 md:space-y-4">
           {steps.map((step, idx) => {

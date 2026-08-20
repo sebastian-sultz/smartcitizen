@@ -35,7 +35,7 @@ export default function ReferralStats({ user }: ReferralStatsProps) {
     <>
       {/* Mobile view: Unified Row List Card */}
       <div className="block sm:hidden">
-        <Card className="bg-white border border-border shadow-sm p-4 rounded-2xl divide-y divide-border/60">
+        <Card shape="lg" className="p-4 divide-y divide-border/60">
           {cards.map((card, idx) => {
             const Icon = card.icon;
             return (

@@ -13,7 +13,7 @@ export const PrivacyControls = () => {
 
   return (
     <div className="space-y-6">
-      <Card className="rounded-[40px] border-primary/5 shadow-sm">
+      <Card shape="xl" className="border-primary/5">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl font-display font-bold text-text">
             <Shield className="text-primary" size={20} />
@@ -43,7 +43,7 @@ export const PrivacyControls = () => {
         </CardContent>
       </Card>
 
-      <Card className="rounded-[40px] border-red-100 shadow-sm">
+      <Card shape="xl" className="border-red-100">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-xl font-display font-bold text-red-600">
             <Trash2 size={20} />

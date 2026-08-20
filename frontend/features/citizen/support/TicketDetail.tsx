@@ -71,7 +71,7 @@ export default function TicketDetail({ ticket, onBack, onUpdateTicket }: TicketD
   const subject = ticket.title;
 
   return (
-    <Card className="flex flex-col h-full bg-bg/10 rounded-2xl border border-border/80 shadow-none overflow-hidden">
+    <Card className="flex flex-col h-full bg-bg/10 shadow-none overflow-hidden">
       
       {/* Header Info */}
       <div className="bg-white border-b border-border/80 px-4 sm:px-6 py-3 sm:py-4 flex flex-row items-center justify-between gap-4 shrink-0">

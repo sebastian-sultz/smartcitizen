@@ -16,9 +16,9 @@ export default function DonationStats({ stats }: DonationStatsProps) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {[...Array(4)].map((_, idx) => (
-          <Card
+          <Card shape="xl"
             key={idx}
-            className="bg-white border border-border/80 p-6 flex flex-col justify-between shadow-sm rounded-[32px] min-h-[130px] h-auto"
+            className="p-6 flex flex-col justify-between min-h-[130px] h-auto"
           >
             <div className="space-y-2">
               <Skeleton className="h-4 w-24" />
@@ -157,10 +157,10 @@ export default function DonationStats({ stats }: DonationStatsProps) {
       {/* Desktop view: Stats Grid */}
       <div className="hidden sm:grid grid-cols-2 lg:grid-cols-4 gap-5">
         {statsItems.map((item, idx) => (
-          <Card
+          <Card shape="xl"
             key={idx}
             className={cn(
-              "border p-6 flex flex-col justify-between shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-300 rounded-[32px] bg-gradient-to-br min-h-[130px] h-auto",
+              "p-6 flex flex-col justify-between hover:shadow-md hover:scale-[1.02] transition-all duration-300 bg-gradient-to-br min-h-[130px] h-auto",
               item.bgGradient
             )}
           >

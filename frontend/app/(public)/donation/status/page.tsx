@@ -142,7 +142,7 @@ function PaymentStatusContent() {
 
   if (error || !payment) {
     return (
-      <Card className="w-full max-w-lg mx-auto text-center py-10 rounded-[32px] border border-border shadow-card mt-8">
+      <Card shape="xl" className="w-full max-w-lg mx-auto text-center py-10 mt-8">
         <CardContent className="space-y-6">
           <div className="w-20 h-20 bg-rose-50 text-rose-500 rounded-full flex items-center justify-center mx-auto border border-rose-100">
             <AlertCircle size={40} className="stroke-[2.5]" />
@@ -184,7 +184,7 @@ function PaymentStatusContent() {
     payment.status === "FAILED" || payment.status === "CANCELLED";
 
   return (
-    <Card className="w-full max-w-lg mx-auto text-center py-10 rounded-[32px] border border-border shadow-card mt-8 animate-scale-in">
+    <Card shape="xl" className="w-full max-w-lg mx-auto text-center py-10 mt-8 animate-scale-in">
       <CardContent className="space-y-6">
         {isSuccess && (
           <>

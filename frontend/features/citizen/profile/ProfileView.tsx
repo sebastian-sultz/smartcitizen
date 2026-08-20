@@ -143,7 +143,7 @@ export default function ProfileView() {
   return (
     <div className="space-y-8">
       {/* Top Banner Profile Summary */}
-      <Card className="rounded-2xl sm:rounded-[24px] border-primary/5 shadow-sm overflow-hidden relative">
+      <Card className="border-primary/5 overflow-hidden relative">
         <div className="absolute top-0 inset-x-0 h-36 bg-gradient-to-r from-primary/15 to-primary/5" />
 
         <CardContent className="pt-20 pb-8 px-5 sm:px-10 relative z-10 flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-6">
@@ -240,7 +240,7 @@ export default function ProfileView() {
             onCancel={() => setIsEditing(false)}
           />
         ) : (
-          <Card className="rounded-2xl sm:rounded-[24px] border-primary/5 shadow-sm">
+          <Card className="border-primary/5">
             <CardContent className="p-5 sm:p-8 space-y-6">
               <div className="flex justify-between items-center pb-4 border-b border-border">
                 <h3 className="font-display text-lg font-bold text-text">

@@ -212,7 +212,7 @@ export default function MemberCard({ profile }: MemberCardProps) {
         </Card>
       </div>
 
-      <Card className="h-full shadow-card border-primary/10 overflow-hidden relative rounded-2xl sm:rounded-[24px] flex flex-col justify-between ">
+      <Card className="h-full border-primary/10 overflow-hidden relative flex flex-col justify-between ">
         <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-br from-primary/20 to-primary/5 pointer-events-none" />
 
         <CardContent className="pt-10 pb-8 px-8 relative z-10 flex-grow flex flex-col justify-between">

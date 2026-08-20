@@ -151,7 +151,7 @@ export function Hero() {
             {/* Floating Become Smart Citizen Card - One-time entrance animation */}
             {isInitialized && !isLoggedIn && (
               <div className="animate-fade-in-right-delay-1 absolute -top-12 -left-20 md:-left-32 lg:-left-40 z-20 max-w-[290px] hidden sm:block">
-                <Card className="bg-white/95 backdrop-blur-xl border border-white/50 shadow-2xl p-5 rounded-3xl relative overflow-hidden group hover:shadow-primary/20 hover:border-primary/20 transition-all duration-500">
+                <Card shape="lg" className="p-5 bg-white/95 backdrop-blur-xl border-white/50 shadow-2xl relative overflow-hidden group hover:shadow-primary/20 hover:border-primary/20 transition-all duration-500">
                   <div className="absolute top-0 right-0 w-28 h-28 bg-gradient-to-br from-primary/10 to-primary-light/5 rounded-full blur-2xl -z-10 group-hover:scale-110 transition-transform duration-500" />
                   <div className="space-y-4">
                     <div className="flex gap-3 items-start">
@@ -237,7 +237,7 @@ export function Hero() {
 
             {/* Floating Success Card - One-time entrance animation */}
             <div className="animate-fade-in-left-delay-2 absolute -bottom-6 -right-6 md:-right-12 z-20 max-w-[280px] hidden sm:block">
-              <Card className="bg-white/95 backdrop-blur-xl border border-white/40 shadow-2xl p-5 rounded-3xl relative overflow-hidden group hover:shadow-accent/30 transition-all duration-300">
+              <Card shape="lg" className="p-5 bg-white/95 backdrop-blur-xl border-white/40 shadow-2xl relative overflow-hidden group hover:shadow-accent/30 transition-all duration-300">
                 <div className="absolute top-0 left-0 w-24 h-24 bg-accent/10 rounded-full blur-2xl -z-10 group-hover:bg-accent/20 transition-all duration-500" />
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center text-white shadow-lg shrink-0">
@@ -303,7 +303,7 @@ export function Hero() {
 
         {/* MIDDLE FOLD: Transparent Blurred Card UI (Just below the text) */}
         <div className="animate-fade-in-up-delay-1 w-full">
-          <Card className="bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl p-5 rounded-3xl relative overflow-hidden text-white">
+          <Card shape="lg" className="p-5 bg-white/10 backdrop-blur-lg border-white/20 shadow-2xl relative overflow-hidden text-white">
             {/* Ambient accent background light inside card */}
             <div className="absolute -top-10 -right-10 w-24 h-24 bg-accent/25 rounded-full blur-xl -z-10" />
 

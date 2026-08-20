@@ -14,7 +14,7 @@ export default function VolunteerPreferences({ isVolunteer }: VolunteerPreferenc
   const router = useRouter();
 
   return (
-    <Card className="rounded-[40px] border-primary/5 shadow-sm">
+    <Card shape="xl" className="border-primary/5">
       <CardHeader>
         <CardTitle className="font-display text-lg font-bold text-text flex items-center gap-2">
           <Award size={20} className="text-primary" />

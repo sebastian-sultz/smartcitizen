@@ -10,7 +10,7 @@ export default function ApplicationStatus() {
   const router = useRouter();
 
   return (
-    <Card className="rounded-[40px] border-primary/5 shadow-sm max-w-2xl mx-auto overflow-hidden relative">
+    <Card shape="xl" className="border-primary/5 max-w-2xl mx-auto overflow-hidden relative">
       <div className="absolute top-0 inset-x-0 h-32 bg-gradient-to-r from-emerald-500/10 to-teal-500/5" />
       
       <CardHeader className="text-center pb-2 pt-10 relative z-10">

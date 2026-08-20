@@ -17,7 +17,7 @@ export const ProfessionalCard = (vol: VolunteerResponse) => {
       : vol.experience || "Community Support";
 
   return (
-    <Card className="rounded-2xl p-6 shadow-card hover:shadow-xl transition-all group">
+    <Card className="p-6 hover:shadow-xl transition-all group">
       <div className="flex items-start gap-4">
         <div className="relative w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0 overflow-hidden border border-primary/20">
           {vol.image ? (

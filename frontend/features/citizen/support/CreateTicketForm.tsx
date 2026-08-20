@@ -50,7 +50,7 @@ export default function CreateTicketForm({
   });
 
   return (
-    <Card className="p-5 md:p-6 flex flex-col h-full rounded-2xl shadow-none bg-white">
+    <Card className="p-5 md:p-6 flex flex-col h-full ">
       <div className="flex items-center gap-3 pb-4 border-b border-border/60 shrink-0">
         <Button
           type="button"

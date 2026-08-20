@@ -33,7 +33,7 @@ export const DonationForm = () => {
 
   if (step === "success") {
     return (
-      <Card className="flex-1 bg-bg border-border text-center py-8 rounded-[32px]">
+      <Card shape="xl" className="flex-1 bg-bg text-center py-8">
         <CardContent className="space-y-6">
           <div className="w-20 h-20 bg-green-50 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4 border border-green-100">
             <CheckCircle2 size={40} className="stroke-[2.5]" />
