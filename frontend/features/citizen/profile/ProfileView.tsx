@@ -140,6 +140,14 @@ export default function ProfileView() {
     ? formatDate(profile.created_at, "long-in")
     : "";
 
+  const isActiveMember = (profile.total_amount || 0) >= 100;
+  const memberStatus = isActiveMember ? "Active Member" : "Smart Citizen";
+  const roleName = profile.user_type === "admin"
+    ? "Admin"
+    : profile.user_type === "volunteer"
+    ? "Volunteer"
+    : "Smart Citizen";
+
   return (
     <div className="space-y-8">
       {/* Top Banner Profile Summary */}
@@ -207,16 +215,14 @@ export default function ProfileView() {
                 {profile.name}
               </h2>
               <div className="flex gap-1.5 justify-center sm:justify-start">
-                <Badge variant="success" size="sm">
-                  Active
+                <Badge variant={isActiveMember ? "success" : "neutral"} size="sm">
+                  {memberStatus}
                 </Badge>
-                <Badge variant="primary-light" size="sm">
-                  {profile.user_type === "admin"
-                    ? "Coordinator Admin"
-                    : profile.user_type === "volunteer"
-                    ? "Regional Volunteer"
-                    : "Smart Citizen"}
-                </Badge>
+                {memberStatus !== roleName && (
+                  <Badge variant="primary-light" size="sm">
+                    {roleName}
+                  </Badge>
+                )}
               </div>
             </div>
 

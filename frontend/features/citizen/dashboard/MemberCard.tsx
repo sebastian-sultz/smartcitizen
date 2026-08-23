@@ -85,6 +85,10 @@ export default function MemberCard({ profile }: MemberCardProps) {
     profile?.referral_id || `GSC-${profile?.id?.substring(0, 6).toUpperCase()}`;
   const memberId = `SC-${profile?.id?.substring(0, 8).toUpperCase() || "MEMBER"}`;
 
+  const isActiveMember = (profile?.total_amount || 0) >= 100;
+  const memberStatus = isActiveMember ? "Active Member" : "Smart Citizen";
+  const roleName = profile?.user_type === "admin" ? "Admin" : "Smart Citizen";
+
   const formattedDate = profile?.created_at
     ? formatDate(profile.created_at, "short")
     : "";
@@ -93,7 +97,7 @@ export default function MemberCard({ profile }: MemberCardProps) {
     name: profile?.name,
     memberId: memberId,
     referralCode: referralCode,
-    status: "Active",
+    status: memberStatus,
   });
 
   const downloadIDCard = async () => {
@@ -157,12 +161,14 @@ export default function MemberCard({ profile }: MemberCardProps) {
               </p>
 
               <div className="flex gap-2 mb-2">
-                <Badge variant="success" size="sm">
-                  Active Member
+                <Badge variant={isActiveMember ? "success" : "neutral"} size="sm">
+                  {memberStatus}
                 </Badge>
-                <Badge variant="primary-light" size="sm">
-                  {profile?.user_type === "admin" ? "Admin" : "Smart Citizen"}
-                </Badge>
+                {memberStatus !== roleName && (
+                  <Badge variant="primary-light" size="sm">
+                    {roleName}
+                  </Badge>
+                )}
               </div>
             </div>
 
@@ -296,12 +302,14 @@ export default function MemberCard({ profile }: MemberCardProps) {
               </p>
 
               <div className="flex gap-2 mb-2">
-                <Badge variant="success" size="md">
-                  Active Member
+                <Badge variant={isActiveMember ? "success" : "neutral"} size="md">
+                  {memberStatus}
                 </Badge>
-                <Badge variant="primary-light" size="md">
-                  {profile?.user_type === "admin" ? "Admin" : "Smart Citizen"}
-                </Badge>
+                {memberStatus !== roleName && (
+                  <Badge variant="primary-light" size="md">
+                    {roleName}
+                  </Badge>
+                )}
               </div>
             </div>
 
