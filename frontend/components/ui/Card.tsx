@@ -50,15 +50,15 @@ const cardVariants = cva(["relative w-full min-w-0 text-text", "border"], {
     },
 
     shape: {
-      default: "rounded-2xl sm:rounded-[20px] md:rounded-[24px]",
+      default: "rounded-xl sm:rounded-[16px] md:rounded-[20px]",
 
       sm: "rounded-xl",
 
       md: "rounded-2xl",
 
-      lg: "rounded-3xl sm:rounded-[28px] md:rounded-[32px]",
+      lg: "rounded-3xl sm:rounded-[24px] md:rounded-[28px]",
 
-      xl: "rounded-[28px] sm:rounded-[32px] md:rounded-[40px]",
+      xl: "rounded-3xl sm:rounded-[28px] md:rounded-[32px]",
 
       pill: "rounded-full",
 
@@ -69,7 +69,7 @@ const cardVariants = cva(["relative w-full min-w-0 text-text", "border"], {
         "border-x-0",
         "shadow-none",
         "sm:rounded-2xl sm:border-x sm:shadow-card",
-        "md:rounded-[24px]",
+        "md:rounded-[20px]",
       ].join(" "),
     },
 
@@ -255,14 +255,14 @@ const CardContent = React.forwardRef<HTMLDivElement, CardContentProps>(
           [
             "min-w-0",
             "px-4 py-4",
-            "sm:px-6 sm:py-5",
-            "md:px-8 md:py-6",
+            "sm:px-5 sm:py-3",
+            "md:p-5",
 
             // When CardContent is the first section of a card,
             // it needs its own top spacing (matching pb and px).
-            "first:pt-4",
-            "sm:first:pt-6",
-            "md:first:pt-8",
+            // "first:pt-4",
+            // "sm:first:pt-6",
+            // "md:first:pt-0",
           ].join(" "),
           className,
         )}

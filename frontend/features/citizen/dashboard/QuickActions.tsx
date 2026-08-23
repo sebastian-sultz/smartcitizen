@@ -114,19 +114,21 @@ export default function QuickActions({ onInviteClick }: QuickActionsProps) {
               className="h-full border-primary/5 hover:border-primary/20 hover:shadow-md hover:scale-[1.02] cursor-pointer transition-all duration-300 rounded-[32px] group"
               onClick={act.onClick}
             >
-              <CardContent className="p-5 flex items-start gap-4">
-                <div
-                  className={`p-3 rounded-2xl ${act.iconColor} shrink-0 group-hover:scale-105 transition-transform`}
-                >
-                  <Icon size={20} />
-                </div>
-                <div className="space-y-1">
-                  <h4 className="font-bold text-sm text-text group-hover:text-primary transition-colors">
-                    {act.title}
-                  </h4>
-                  <p className="text-[12px] text-text-muted leading-relaxed font-medium">
-                    {act.description}
-                  </p>
+              <CardContent className="">
+                <div className="flex items-start gap-4">
+                  <div
+                    className={`p-2.5 rounded-xl ${act.iconColor} shrink-0 group-hover:scale-105 transition-transform`}
+                  >
+                    <Icon size={20} />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="font-bold text-sm text-text group-hover:text-primary transition-colors">
+                      {act.title}
+                    </h4>
+                    <p className="text-[12px] text-text-muted leading-relaxed font-medium">
+                      {act.description}
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
